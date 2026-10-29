@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.turbo/
+.next/
+.svelte-kit/
+.angular/
+coverage/
+storybook-static/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Caches
+.cache/
+.eslintcache
+*.tsbuildinfo
+.vite/
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
