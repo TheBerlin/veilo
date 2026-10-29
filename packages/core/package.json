@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node -e \"require('fs').mkdirSync('dist',{recursive:true});require('fs').writeFileSync('dist/index.js','')\"",
     "test": "echo \"no tests yet\"",
-    "lint": "echo \"no lint yet\""
+    "lint": "echo \"no lint yet\"",
+    "typecheck": "tsc -p ."
   }
 }

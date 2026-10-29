@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    /* Language and output target */
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    /* Safe for bundlers tsup and Vite */
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* tsup emits thefiles, tsc only checks */
+    "noEmit": true,
+    "skipLibCheck": true
+  }
+}
