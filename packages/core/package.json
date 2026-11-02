@@ -24,7 +24,6 @@
     "build": "tsdown",
     "generate:schema": "node scripts/generate-schema.mjs",
     "test": "vitest run",
-    "lint": "echo \"no lint yet\"",
     "typecheck": "tsc -p ."
   }
 }

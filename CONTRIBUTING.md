@@ -25,6 +25,12 @@ pnpm test        # run every package once, skipping unchanged packages
 pnpm test:watch  # rerun all packages as you edit
 ```
 
+Lint with [ESLint](https://eslint.org/docs/latest/). Every export in `packages/*/src` needs a [TSDoc](https://tsdoc.org/) comment, and exported functions need `@param` and `@returns`. Declare exports inline, as a function exported later through `export { name }` skips those two checks:
+
+```sh
+pnpm lint
+```
+
 Format code with [Prettier](https://prettier.io/docs/) before pushing:
 
 ```sh

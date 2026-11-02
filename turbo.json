@@ -10,10 +10,10 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "lint": { "outputs": [] },
     "dev": { "cache": false, "persistent": true },
     "typecheck": { "outputs": [] },
-    // Not cached: it reads packages/core, which Turbo would not count as this task's input.
+    // Not cached: these read other packages, which Turbo would not count as their input.
+    "lint": { "cache": false },
     "check:layers": { "cache": false }
   }
 }
