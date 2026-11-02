@@ -43,6 +43,8 @@ pnpm format:check  # report unformatted files without changing them
 
 Use [Conventional Commits](https://www.conventionalcommits.org/), for example `feat(core): add mosaic origin`, `fix(css): remove pulse flicker`, `docs: clarify settings schema`.
 
+A `commit-msg` hook checks every message with [commitlint](https://commitlint.js.org/) and rejects it if it fails. `pnpm install` sets the hook up. The type must be lowercase and one of `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style` or `test`. The subject must not start with a capital or end with a full stop, and body lines can be at most 100 characters.
+
 ## Design rules for code
 
 - Keep all logic in the framework-agnostic core. Framework packages stay thin wrappers.
