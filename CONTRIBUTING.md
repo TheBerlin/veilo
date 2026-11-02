@@ -18,6 +18,13 @@ pnpm build
 pnpm test
 ```
 
+Format code with [Prettier](https://prettier.io/docs/) before pushing:
+
+```sh
+pnpm format        # rewrite files
+pnpm format:check  # report unformatted files without changing them
+```
+
 ## Workflow
 
 1. Fork the repository and create a branch from `main` (for example `feat/hex-ramp` or `fix/scrub-seek`).

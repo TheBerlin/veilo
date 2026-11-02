@@ -23,13 +23,13 @@ Tune an effect with live controls, scrub it frame by frame, and export it as CSS
 
 ## Planned packages
 
-| Package | Purpose |
-| --- | --- |
-| `core` | Effects engine: settings schema, easing, grid sampling, renderers, timeline, controller |
-| `css` | CSS-only loaders (shimmer, wave, pulse) |
-| `presets` | Preset library as typed JSON, with schema and migrations |
-| `element` | Web components built on core |
-| `react`, `vue`, `svelte`, `angular` | Thin framework wrappers |
+| Package                             | Purpose                                                                                 |
+| ----------------------------------- | --------------------------------------------------------------------------------------- |
+| `core`                              | Effects engine: settings schema, easing, grid sampling, renderers, timeline, controller |
+| `css`                               | CSS-only loaders (shimmer, wave, pulse)                                                 |
+| `presets`                           | Preset library as typed JSON, with schema and migrations                                |
+| `element`                           | Web components built on core                                                            |
+| `react`, `vue`, `svelte`, `angular` | Thin framework wrappers                                                                 |
 
 ## Planned repository layout
 
