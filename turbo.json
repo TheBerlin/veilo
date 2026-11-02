@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalDependencies": ["vitest.shared.ts", "tsconfig.base.json"],
+  "globalDependencies": ["vitest.shared.ts", "tsdown.shared.ts", "tsconfig.base.json"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
