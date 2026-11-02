@@ -18,7 +18,7 @@ pnpm build
 pnpm test
 ```
 
-Tests use [Vitest](https://vitest.dev/guide/). Place them next to the code as `src/**/*.test.ts`:
+Tests use [Vitest](https://vitest.dev/guide/). They live in `test/`, which mirrors `src/` one file to one file:
 
 ```sh
 pnpm test        # run every package once, skipping unchanged packages
@@ -30,6 +30,29 @@ Format code with [Prettier](https://prettier.io/docs/) before pushing:
 ```sh
 pnpm format        # rewrite files
 pnpm format:check  # report unformatted files without changing them
+```
+
+## Core layers
+
+`packages/core/src` is split into layers, and a layer imports only from the layers below it:
+
+| Layer | Folders                     | May import     | Environment                                                                 |
+| ----- | --------------------------- | -------------- | --------------------------------------------------------------------------- |
+| 0     | `schema`, `math`            | Nothing        | Pure, runs anywhere                                                         |
+| 1     | `grid`, `timeline`, `dom`   | Layer 0        | `dom` is the only browser access; `grid/sample` and `grid/ramps` may use it |
+| 2     | `render`, `loader`, `slots` | Layers 0 and 1 | DOM and canvas, draws one frame at progress `p`, no timers                  |
+| 3     | `controller`                | Everything     | The only layer with state, timers and observers                             |
+
+- `schema` and `math` may share types, but not values.
+- Folders in the same layer stay independent.
+- `src/index.ts` is the only public entry, and nothing inside `src` imports it.
+- Only `src/dom/` may touch `window` or `document`.
+- Every file starts with a short comment naming its purpose and layer.
+
+CI enforces the import and browser rules. Run the same check locally:
+
+```sh
+pnpm check:layers
 ```
 
 ## Workflow

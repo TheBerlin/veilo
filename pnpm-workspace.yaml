@@ -2,3 +2,11 @@ packages:
   - "apps/*"
   - "packages/*"
   - "examples/*"
+  - "tools/*"
+
+# dependency-cruiser loads TypeScript at runtime without declaring it, so pnpm must be told to
+# link it. Otherwise it finds no compiler and scans nothing.
+packageExtensions:
+  dependency-cruiser:
+    peerDependencies:
+      typescript: "*"

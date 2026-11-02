@@ -29,6 +29,7 @@ jobs:
           TO: ${{ github.event.pull_request.head.sha || github.sha }}
       - run: pnpm format:check
       - run: pnpm lint
+      - run: pnpm check:layers
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build

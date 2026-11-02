@@ -12,6 +12,8 @@
     },
     "lint": { "outputs": [] },
     "dev": { "cache": false, "persistent": true },
-    "typecheck": { "outputs": [] }
+    "typecheck": { "outputs": [] },
+    // Not cached: it reads packages/core, which Turbo would not count as this task's input.
+    "check:layers": { "cache": false }
   }
 }

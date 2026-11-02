@@ -1,0 +1,13 @@
+{
+  "name": "layer-check",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check:layers": "node check.mjs"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "^18.7.2",
+    "typescript": "^6.0.3"
+  }
+}
