@@ -1,0 +1,20 @@
+name: Token check
+
+on:
+  push:
+    branches: [chore/token-check]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check who the token belongs to
+        run: gh api user --jq .login
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      - name: Open a draft PR, then close it and delete the branch
+        run: |
+          gh pr create --repo "$GITHUB_REPOSITORY" --base main --head chore/token-check --draft --title "chore: token check" --body "Temporary token check."
+          gh pr close chore/token-check --repo "$GITHUB_REPOSITORY" --delete-branch
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
