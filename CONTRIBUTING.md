@@ -18,6 +18,13 @@ pnpm build
 pnpm test
 ```
 
+Tests use [Vitest](https://vitest.dev/guide/). Place them next to the code as `src/**/*.test.ts`:
+
+```sh
+pnpm test        # run every package once, skipping unchanged packages
+pnpm test:watch  # rerun all packages as you edit
+```
+
 Format code with [Prettier](https://prettier.io/docs/) before pushing:
 
 ```sh
