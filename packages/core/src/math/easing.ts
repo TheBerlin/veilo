@@ -5,6 +5,7 @@
 
 import type { EASING_KEYS } from "../schema/ranges.ts";
 import type { Settings } from "../schema/types.ts";
+import { clamp } from "./number.ts";
 
 /** Name of an easing option, including `custom`. */
 export type EasingKey = (typeof EASING_KEYS)[number];
@@ -44,7 +45,7 @@ const BISECTION_STEPS = 40;
  */
 export function cubicBezier(x1: number, y1: number, x2: number, y2: number): EasingFunction {
   // Control points on the diagonal make y equal x, so no solving is needed.
-  if (x1 === y1 && x2 === y2) return (p) => Math.min(1, Math.max(0, p || 0));
+  if (x1 === y1 && x2 === y2) return (p) => clamp(p || 0);
 
   // Polynomial form of the Bezier with end points (0,0) and (1,1): a*t^3 + b*t^2 + c*t.
   const cx = 3 * x1;
