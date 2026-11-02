@@ -1,7 +1,10 @@
+// Tests for src/schema/json-schema.ts: the schema matches the table and the committed file.
+
 import { describe, expect, it } from "vitest";
 import committedSchema from "../../settings.schema.json";
-import { settingsJsonSchema } from "./schema.ts";
-import { COLOR_KEYS, COLOR_PATTERN, SETTINGS_SPEC, SETTINGS_VERSION } from "./spec.ts";
+import { settingsJsonSchema } from "../../src/schema/json-schema.ts";
+import { COLOR_KEYS, COLOR_PATTERN, SETTINGS_SPEC } from "../../src/schema/ranges.ts";
+import { SETTINGS_VERSION } from "../../src/schema/version.ts";
 
 const schema = settingsJsonSchema();
 const properties = schema.properties as Record<string, Record<string, unknown>>;

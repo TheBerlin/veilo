@@ -1,5 +1,10 @@
-import type { Settings } from "./settings/settings.ts";
-import type { EASING_KEYS } from "./settings/spec.ts";
+/**
+ * easing.ts: cubic-bezier solver (Newton's method, bisection fallback) and easing presets.
+ * Layer 0 (pure). Must not import DOM code. Imports only types from schema/.
+ */
+
+import type { EASING_KEYS } from "../schema/ranges.ts";
+import type { Settings } from "../schema/types.ts";
 
 /** Name of an easing option, including `custom`. */
 export type EasingKey = (typeof EASING_KEYS)[number];

@@ -1,28 +1,17 @@
+/**
+ * validate.ts: checks and clamps untrusted settings input.
+ * Layer 0 (pure). Must not import DOM code.
+ */
+
+import { defaultSettings } from "./defaults.ts";
 import {
   COLOR_KEYS,
   COLOR_PATTERN,
+  SETTING_KEYS,
   SETTINGS_SPEC,
-  SETTINGS_VERSION,
   type SettingEntry,
-} from "./spec.ts";
-
-/** Name of a setting in the table. */
-export type SettingKey = keyof typeof SETTINGS_SPEC;
-
-/** Name of an optional color override. */
-export type ColorKey = (typeof COLOR_KEYS)[number];
-
-/** The value type of a table row: `number`, or the union of its options. */
-type SettingValue<Entry> = Entry extends { readonly kind: "number" }
-  ? number
-  : Entry extends { readonly options: readonly (infer Option)[] }
-    ? Option
-    : never;
-
-/** The flat settings object shared by the playground, the exports and the packages. */
-export type Settings = { version: typeof SETTINGS_VERSION } & {
-  [Key in SettingKey]: SettingValue<(typeof SETTINGS_SPEC)[Key]>;
-} & { [Key in ColorKey]?: string };
+} from "./ranges.ts";
+import type { ColorKey, SettingKey, Settings } from "./types.ts";
 
 /** The result of {@link parseSettings}. */
 export interface ParsedSettings {
@@ -30,19 +19,6 @@ export interface ParsedSettings {
   settings: Settings;
   /** Keys taken from the input, including clamped numbers. Its length is the spec's "N settings applied". */
   applied: (SettingKey | ColorKey)[];
-}
-
-const SETTING_KEYS = Object.keys(SETTINGS_SPEC) as SettingKey[];
-
-/**
- * Builds a complete settings object from the table.
- *
- * @returns A new object with every default, safe for the caller to change. Color
- * overrides are absent because their defaults come from the theme.
- */
-export function defaultSettings(): Settings {
-  const defaults = SETTING_KEYS.map((key) => [key, SETTINGS_SPEC[key].default]);
-  return { version: SETTINGS_VERSION, ...Object.fromEntries(defaults) } as Settings;
 }
 
 /**

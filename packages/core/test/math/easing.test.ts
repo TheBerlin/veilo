@@ -1,7 +1,14 @@
+// Tests for src/math/easing.ts, from the spec's easing table and the Bezier definition.
+
 import { describe, expect, it } from "vitest";
-import { type BezierCurve, cubicBezier, EASING_CURVES, resolveEasing } from "./easing.ts";
-import { defaultSettings } from "./settings/settings.ts";
-import { EASING_KEYS } from "./settings/spec.ts";
+import {
+  type BezierCurve,
+  cubicBezier,
+  EASING_CURVES,
+  resolveEasing,
+} from "../../src/math/easing.ts";
+import { defaultSettings } from "../../src/schema/defaults.ts";
+import { EASING_KEYS } from "../../src/schema/ranges.ts";
 
 /** Evaluates one axis of the Bezier directly from its definition, independent of the solver. */
 const bezierAxis = (a: number, b: number, t: number) =>

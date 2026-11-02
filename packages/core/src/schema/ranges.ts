@@ -1,5 +1,7 @@
-/** Current version of the settings format, stored in the `version` field of every settings object. */
-export const SETTINGS_VERSION = 1;
+/**
+ * ranges.ts: the settings table, with every default, range and option in one place.
+ * Layer 0 (pure). Must not import DOM code.
+ */
 
 /** Easing preset keys shared by the loader and the reveal (spec: Easing presets). */
 export const EASING_KEYS = ["out", "outSoft", "inOut", "in", "linear", "back", "custom"] as const;
@@ -68,3 +70,6 @@ export const SETTINGS_SPEC = {
   ry2: num(1, -0.6, 1.6, 0.01),
   hold: num(1.2, 0, 5, 0.1),
 } as const satisfies Record<string, SettingEntry>;
+
+/** Every key in the settings table, in table order. */
+export const SETTING_KEYS = Object.keys(SETTINGS_SPEC) as (keyof typeof SETTINGS_SPEC)[];
