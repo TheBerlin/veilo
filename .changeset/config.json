@@ -1,0 +1,9 @@
+{
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [["@veilo/*"]],
+  "access": "public",
+  "baseBranch": "main",
+  "privatePackages": { "version": true, "tag": true },
+  "updateInternalDependencies": "patch"
+}

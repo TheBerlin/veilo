@@ -15,9 +15,11 @@
     "dev": "turbo run dev",
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "changeset": "changeset"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "prettier": "^3.9.10",
     "tsdown": "^0.23.4",
     "turbo": "^2.11.10",

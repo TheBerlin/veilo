@@ -55,7 +55,9 @@ Use [Conventional Commits](https://www.conventionalcommits.org/), for example `f
 
 ## Releases
 
-Versioning and changelogs will use Changesets. If your change affects a published package, add a changeset with `pnpm changeset`.
+Versioning and changelogs use [Changesets](https://changesets.dev/). All `@veilo/*` packages share one version. If your change affects a package, run `pnpm changeset`, choose the bump type, and commit the file it creates in `.changeset/`.
+
+While the version is below 1.0.0, a breaking change is a `minor` bump, not a `major` one.
 
 ## Reporting bugs
 
