@@ -94,15 +94,26 @@ export function cubicBezier(x1: number, y1: number, x2: number, y2: number): Eas
 }
 
 /**
- * Picks the easing for the loader or the reveal from the settings.
+ * Picks the curve for the loader or the reveal from the settings.
  *
  * @param settings - The settings to read.
  * @param target - `"l"` for the loader (`lEase`, `lx1`...) or `"r"` for the reveal (`rEase`, `rx1`...).
- * @returns The easing function. With `custom` it uses the curve stored in the settings.
+ * @returns The four curve numbers. With `custom` they are the ones stored in the settings.
  */
-export function resolveEasing(settings: Settings, target: "l" | "r"): EasingFunction {
+export function resolveCurve(settings: Settings, target: "l" | "r"): BezierCurve {
   const { lEase, lx1, ly1, lx2, ly2, rEase, rx1, ry1, rx2, ry2 } = settings;
   const key = target === "l" ? lEase : rEase;
-  if (key !== "custom") return cubicBezier(...EASING_CURVES[key]);
-  return target === "l" ? cubicBezier(lx1, ly1, lx2, ly2) : cubicBezier(rx1, ry1, rx2, ry2);
+  if (key !== "custom") return EASING_CURVES[key];
+  return target === "l" ? [lx1, ly1, lx2, ly2] : [rx1, ry1, rx2, ry2];
+}
+
+/**
+ * Picks the easing function for the loader or the reveal from the settings.
+ *
+ * @param settings - The settings to read.
+ * @param target - `"l"` for the loader or `"r"` for the reveal, as in {@link resolveCurve}.
+ * @returns The easing function.
+ */
+export function resolveEasing(settings: Settings, target: "l" | "r"): EasingFunction {
+  return cubicBezier(...resolveCurve(settings, target));
 }

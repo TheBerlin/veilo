@@ -5,6 +5,7 @@ import {
   type BezierCurve,
   cubicBezier,
   EASING_CURVES,
+  resolveCurve,
   resolveEasing,
 } from "../../src/math/easing.ts";
 import { defaultSettings } from "../../src/schema/defaults.ts";
@@ -138,5 +139,31 @@ describe("resolveEasing", () => {
   it("ignores stored curve points while a preset is selected", () => {
     const settings = { ...defaultSettings(), lx1: 0.9, ly1: 0.1 };
     expect(resolveEasing(settings, "l")(0.4)).toBe(cubicBezier(...EASING_CURVES.out)(0.4));
+  });
+});
+
+describe("resolveCurve", () => {
+  it("returns the preset's curve for each target", () => {
+    const settings = { ...defaultSettings(), lEase: "in", rEase: "back" } as const;
+    expect(resolveCurve(settings, "l")).toEqual(EASING_CURVES.in);
+    expect(resolveCurve(settings, "r")).toEqual(EASING_CURVES.back);
+  });
+
+  it("returns the stored points for a custom curve", () => {
+    const settings = {
+      ...defaultSettings(),
+      lEase: "custom",
+      lx1: 0.1,
+      ly1: 0.2,
+      lx2: 0.3,
+      ly2: 0.9,
+      rEase: "custom",
+      rx1: 0.4,
+      ry1: 0.1,
+      rx2: 0.8,
+      ry2: 0.7,
+    } as const;
+    expect(resolveCurve(settings, "l")).toEqual([0.1, 0.2, 0.3, 0.9]);
+    expect(resolveCurve(settings, "r")).toEqual([0.4, 0.1, 0.8, 0.7]);
   });
 });
