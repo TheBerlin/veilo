@@ -13,13 +13,16 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    }
+    },
+    "./settings.schema.json": "./settings.schema.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "settings.schema.json"
   ],
   "scripts": {
     "build": "tsdown",
+    "generate:schema": "node scripts/generate-schema.mjs",
     "test": "vitest run",
     "lint": "echo \"no lint yet\"",
     "typecheck": "tsc -p ."

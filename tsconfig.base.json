@@ -17,6 +17,8 @@
     /* Safe for bundlers tsdown and Vite */
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    /* Node runs scripts from source, which needs real .ts paths */
+    "allowImportingTsExtensions": true,
 
     /* tsdown emits the files, tsc only checks */
     "noEmit": true,

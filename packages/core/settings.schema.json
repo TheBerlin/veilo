@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Veilo settings",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "effect": {
+      "type": "string",
+      "enum": [
+        "shimmer",
+        "wave",
+        "pulse"
+      ],
+      "default": "shimmer"
+    },
+    "lDur": {
+      "type": "number",
+      "minimum": 0.3,
+      "maximum": 4,
+      "default": 1.2
+    },
+    "lGap": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2,
+      "default": 0.2
+    },
+    "lEase": {
+      "type": "string",
+      "enum": [
+        "out",
+        "outSoft",
+        "inOut",
+        "in",
+        "linear",
+        "back",
+        "custom"
+      ],
+      "default": "out"
+    },
+    "lx1": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.22
+    },
+    "ly1": {
+      "type": "number",
+      "minimum": -0.6,
+      "maximum": 1.6,
+      "default": 1
+    },
+    "lx2": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.36
+    },
+    "ly2": {
+      "type": "number",
+      "minimum": -0.6,
+      "maximum": 1.6,
+      "default": 1
+    },
+    "repeat": {
+      "type": "string",
+      "enum": [
+        "loop",
+        "once"
+      ],
+      "default": "loop"
+    },
+    "stagger": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 0.4,
+      "default": 0.12
+    },
+    "angle": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 180,
+      "default": 100
+    },
+    "lWidth": {
+      "type": "number",
+      "minimum": 8,
+      "maximum": 70,
+      "default": 30
+    },
+    "depth": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 0.9,
+      "default": 0.5
+    },
+    "radius": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 24,
+      "default": 6
+    },
+    "imageFx": {
+      "type": "string",
+      "enum": [
+        "dots",
+        "hex",
+        "binary",
+        "mosaic",
+        "blur",
+        "crossfade",
+        "wipe",
+        "zoom"
+      ],
+      "default": "dots"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "left",
+        "right",
+        "top",
+        "bottom",
+        "center",
+        "diagonal",
+        "random"
+      ],
+      "default": "left"
+    },
+    "cols": {
+      "type": "number",
+      "minimum": 16,
+      "maximum": 110,
+      "default": 64
+    },
+    "startScale": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 4,
+      "default": 2.5
+    },
+    "spread": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 0.9,
+      "default": 0.6
+    },
+    "textFx": {
+      "type": "string",
+      "enum": [
+        "scramble",
+        "typewriter",
+        "rise",
+        "fade"
+      ],
+      "default": "scramble"
+    },
+    "charset": {
+      "type": "string",
+      "enum": [
+        "hex",
+        "binary",
+        "symbols",
+        "dots"
+      ],
+      "default": "dots"
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "char",
+        "word"
+      ],
+      "default": "char"
+    },
+    "rDur": {
+      "type": "number",
+      "minimum": 0.4,
+      "maximum": 5,
+      "default": 1.04
+    },
+    "rEase": {
+      "type": "string",
+      "enum": [
+        "out",
+        "outSoft",
+        "inOut",
+        "in",
+        "linear",
+        "back",
+        "custom"
+      ],
+      "default": "outSoft"
+    },
+    "rx1": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.33
+    },
+    "ry1": {
+      "type": "number",
+      "minimum": -0.6,
+      "maximum": 1.6,
+      "default": 1
+    },
+    "rx2": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.68
+    },
+    "ry2": {
+      "type": "number",
+      "minimum": -0.6,
+      "maximum": 1.6,
+      "default": 1
+    },
+    "hold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 1.2
+    },
+    "baseColor": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "highlightColor": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    }
+  }
+}
