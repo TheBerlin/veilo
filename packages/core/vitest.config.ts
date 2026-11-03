@@ -8,6 +8,7 @@ const BROWSER_TESTS = [
   "test/dom/**/*.test.ts",
   "test/grid/sample.test.ts",
   "test/grid/ramps.test.ts",
+  "test/render/**/*.test.ts",
 ];
 
 export default defineProject({
