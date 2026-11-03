@@ -112,3 +112,15 @@ describe("mountTextOverlay", () => {
     expect(filled.style.getPropertyPriority("-webkit-text-fill-color")).toBe("important");
   });
 });
+
+describe("mountTextOverlay and authored style text", () => {
+  it("restores the page's own style text exactly", () => {
+    const element = document.createElement("p");
+    element.textContent = "x";
+    element.setAttribute("style", "color:red;margin:0");
+    document.body.append(element);
+    const before = element.outerHTML;
+    mountTextOverlay(element).unmount();
+    expect(element.outerHTML).toBe(before);
+  });
+});

@@ -47,13 +47,19 @@ export function createCleanup(): Cleanup {
     style(element, property, value) {
       const { style } = element;
       if (firstChange(element, "style-attribute")) {
-        // Added before the property steps, so it runs after them: an element that had no
-        // style attribute must not keep an empty one.
-        const hadAttribute = element.hasAttribute("style");
+        // Added before the property steps, so it runs after them. Writing through `style`
+        // makes the browser rewrite the attribute text ("width:8px" becomes "width: 8px;"), so
+        // once the properties are back, the original text is put back too. Only when the style
+        // still means the same: a change the page made meanwhile is kept.
+        const original = element.getAttribute("style");
+        const meaning = style.cssText;
         steps.push(() => {
-          if (!hadAttribute && element.getAttribute("style") === "") {
-            element.removeAttribute("style");
-          }
+          if (style.cssText !== meaning) return;
+          // Chromium writes `style` changes into the attribute lazily, on the next read. Reading
+          // it now settles that; otherwise a late write would put back an empty `style=""`.
+          element.getAttribute("style");
+          if (original === null) element.removeAttribute("style");
+          else element.setAttribute("style", original);
         });
       }
       if (firstChange(style, `style:${property}`)) {

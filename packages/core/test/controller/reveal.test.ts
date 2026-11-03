@@ -482,3 +482,26 @@ describe("destroy", () => {
     expect(listener).not.toHaveBeenCalled();
   });
 });
+
+describe("authored markup", () => {
+  it("restores markup written as HTML exactly, style text included", async () => {
+    document.body.innerHTML =
+      '<article><div><canvas width="20" height="20" style="width:80px;height:80px"></canvas></div>' +
+      '<h3 style="margin:0">Title</h3><button style="border:0"><span>Buy</span></button></article>';
+    const root = document.body.firstElementChild as HTMLElement;
+    const before = document.body.innerHTML;
+    const [canvas, title, label, button] = ["canvas", "h3", "span", "button"].map(
+      (s) => root.querySelector(s) as HTMLElement,
+    );
+    const reveal = createReveal(
+      { image: canvas as HTMLCanvasElement, text: [title!, label!], button },
+      BASE,
+      { scheduler: fakeScheduler().scheduler, reducedMotion: false, busy: root },
+    );
+    reveal.showLoading();
+    await reveal.ready;
+    reveal.seek(0.5);
+    reveal.destroy();
+    expect(document.body.innerHTML).toBe(before);
+  });
+});

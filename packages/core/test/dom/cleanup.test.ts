@@ -105,3 +105,27 @@ describe("createCleanup", () => {
     expect(element.style.color).toBe("green");
   });
 });
+
+describe("createCleanup and authored style text", () => {
+  it("puts the page's own style text back exactly, spacing included", () => {
+    const element = document.createElement("div");
+    element.setAttribute("style", "width:80px;height:80px");
+    const cleanup = createCleanup();
+    cleanup.style(element, "opacity", "0.5");
+    expect(element.getAttribute("style")).not.toBe("width:80px;height:80px");
+    cleanup.run();
+    expect(element.getAttribute("style")).toBe("width:80px;height:80px");
+  });
+
+  it("keeps a style change the page made meanwhile", () => {
+    const element = document.createElement("div");
+    element.setAttribute("style", "width:80px");
+    const cleanup = createCleanup();
+    cleanup.style(element, "opacity", "0.5");
+    element.style.height = "10px";
+    cleanup.run();
+    expect(element.style.width).toBe("80px");
+    expect(element.style.height).toBe("10px");
+    expect(element.style.opacity).toBe("");
+  });
+});
