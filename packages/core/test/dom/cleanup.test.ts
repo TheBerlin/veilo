@@ -48,11 +48,24 @@ describe("createCleanup", () => {
 
   it("restores custom properties", () => {
     const element = document.createElement("div");
+    element.style.color = "red";
     const cleanup = createCleanup();
     cleanup.style(element, "--bg-a", "0.5");
     expect(element.style.getPropertyValue("--bg-a")).toBe("0.5");
     cleanup.run();
-    expect(element.getAttribute("style")).toBe("");
+    expect(element.getAttribute("style")).toBe("color: red;");
+  });
+
+  it("removes a style attribute it created, and keeps one that was there", () => {
+    const bare = document.createElement("div");
+    const empty = document.createElement("div");
+    empty.setAttribute("style", "");
+    const cleanup = createCleanup();
+    cleanup.style(bare, "opacity", "0");
+    cleanup.style(empty, "opacity", "0");
+    cleanup.run();
+    expect(bare.hasAttribute("style")).toBe(false);
+    expect(empty.getAttribute("style")).toBe("");
   });
 
   it("restores attributes, and removes ones that were not there", () => {

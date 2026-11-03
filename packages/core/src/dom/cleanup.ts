@@ -11,7 +11,7 @@ export interface Cleanup {
    * Sets an inline style property and records its original value. Only the first change of a
    * property is recorded, so later changes still restore the original.
    */
-  style(element: ElementCSSInlineStyle, property: string, value: string): void;
+  style(element: Element & ElementCSSInlineStyle, property: string, value: string): void;
   /** Sets an attribute and records its original value, or its absence, the same way. */
   attribute(element: Element, name: string, value: string): void;
   /** Runs every undo step, newest first, and empties the list. Errors do not stop the rest. */
@@ -46,6 +46,16 @@ export function createCleanup(): Cleanup {
 
     style(element, property, value) {
       const { style } = element;
+      if (firstChange(element, "style-attribute")) {
+        // Added before the property steps, so it runs after them: an element that had no
+        // style attribute must not keep an empty one.
+        const hadAttribute = element.hasAttribute("style");
+        steps.push(() => {
+          if (!hadAttribute && element.getAttribute("style") === "") {
+            element.removeAttribute("style");
+          }
+        });
+      }
       if (firstChange(style, `style:${property}`)) {
         const old = style.getPropertyValue(property);
         const priority = style.getPropertyPriority(property);

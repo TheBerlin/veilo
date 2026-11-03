@@ -15,6 +15,12 @@ export interface LoaderCssOptions {
   base?: string;
   /** Highlight color when the settings have no override. Defaults to `var(--sk-hi)`. */
   highlight?: string;
+  /**
+   * The `@keyframes` name. Defaults to `sk-sweep` or `sk-pulse`. Give each stylesheet on one
+   * page its own name, or the last one's keyframes apply to all. Written as is, so it must be
+   * trusted.
+   */
+  keyframes?: string;
 }
 
 const WAVE_NOTE = "/* Set --i on each element: 0, 1, 2... Each one starts later than the last. */";
@@ -27,6 +33,7 @@ const WAVE_NOTE = "/* Set --i on each element: 0, 1, 2... Each one starts later 
  * @param highlight - The highlight color.
  * @param easing - The CSS timing function.
  * @param iterations - The CSS iteration count.
+ * @param name - The keyframes name.
  * @returns The declarations and the keyframes.
  */
 function sweepCss(
@@ -35,6 +42,7 @@ function sweepCss(
   highlight: string,
   easing: string,
   iterations: string,
+  name: string,
 ) {
   const { angle, lDur, lGap, lWidth, stagger, effect } = settings;
   const total = lDur + lGap;
@@ -50,10 +58,10 @@ function sweepCss(
     // which hides the restart.
     "background-size: 300% 100%;",
     "background-position: 100% 0;",
-    `animation: sk-sweep ${cssNumber(total)}s ${easing} ${delay} ${iterations} both;`,
+    `animation: ${name} ${cssNumber(total)}s ${easing} ${delay} ${iterations} both;`,
   ];
   const keyframes = [
-    "@keyframes sk-sweep {",
+    `@keyframes ${name} {`,
     "  0% { background-position: 100% 0; }",
     `  ${cssNumber(sweepEnd)}% { background-position: 0% 0; }`,
     "  100% { background-position: 0% 0; }",
@@ -69,16 +77,23 @@ function sweepCss(
  * @param base - The base color.
  * @param easing - The CSS timing function.
  * @param iterations - The CSS iteration count.
+ * @param name - The keyframes name.
  * @returns The declarations and the keyframes.
  */
-function pulseCss(settings: Settings, base: string, easing: string, iterations: string) {
+function pulseCss(
+  settings: Settings,
+  base: string,
+  easing: string,
+  iterations: string,
+  name: string,
+) {
   const { lDur, depth } = settings;
   const declarations = [
     `background: ${base};`,
-    `animation: sk-pulse ${cssNumber(lDur)}s ${easing} ${iterations} both;`,
+    `animation: ${name} ${cssNumber(lDur)}s ${easing} ${iterations} both;`,
   ];
   const keyframes = [
-    "@keyframes sk-pulse {",
+    `@keyframes ${name} {`,
     "  0%, 100% { opacity: 1; }",
     `  50% { opacity: ${cssNumber(depth)}; }`,
     "}",
@@ -98,7 +113,7 @@ function pulseCss(settings: Settings, base: string, easing: string, iterations: 
  * @returns A stylesheet with one rule and its keyframes.
  */
 export function generateLoaderCss(settings: Settings, options: LoaderCssOptions = {}): string {
-  const { selector = ".skeleton", base, highlight } = options;
+  const { selector = ".skeleton", base, highlight, keyframes: name } = options;
   const baseColor = settings.baseColor ?? base ?? "var(--sk-base)";
   const highlightColor = settings.highlightColor ?? highlight ?? "var(--sk-hi)";
   const easing = `cubic-bezier(${resolveCurve(settings, "l").map(cssNumber).join(", ")})`;
@@ -106,8 +121,8 @@ export function generateLoaderCss(settings: Settings, options: LoaderCssOptions 
 
   const { declarations, keyframes } =
     settings.effect === "pulse"
-      ? pulseCss(settings, baseColor, easing, iterations)
-      : sweepCss(settings, baseColor, highlightColor, easing, iterations);
+      ? pulseCss(settings, baseColor, easing, iterations, name ?? "sk-pulse")
+      : sweepCss(settings, baseColor, highlightColor, easing, iterations, name ?? "sk-sweep");
 
   const rule = [
     `${selector} {`,

@@ -150,3 +150,12 @@ describe("generateLoaderCss", () => {
     expect(generateLoaderCss(settings())).toBe(generateLoaderCss(settings()));
   });
 });
+
+describe("generateLoaderCss keyframes name", () => {
+  it.each(["shimmer", "wave", "pulse"] as const)("uses the given name for %s", (effect) => {
+    const css = generateLoaderCss(settings({ effect }), { keyframes: "veilo-sk-a1" });
+    expect(css).toContain("animation: veilo-sk-a1 ");
+    expect(css).toContain("@keyframes veilo-sk-a1 {");
+    expect(css).not.toMatch(/sk-(sweep|pulse)/);
+  });
+});
