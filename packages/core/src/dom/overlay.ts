@@ -7,46 +7,52 @@
 export interface TextOverlay {
   /** The `aria-hidden` element on top of the real text. */
   overlay: HTMLSpanElement;
-  /** Removes the overlay and restores the element's inline `color` and `position`. */
+  /** Removes the overlay and restores the element's inline styles. */
   unmount(): void;
 }
+
+const FILL = "-webkit-text-fill-color";
 
 /**
  * Covers a text element with an overlay.
  *
- * The real text stays in place but turns transparent, so the layout does not move and screen
- * readers still read it. The overlay is `aria-hidden`, absolutely positioned over the element and
- * ignores the pointer. If the element is `position: static` it becomes `relative`, so the overlay
- * is placed on it; this does not move the element. Child elements with a color of their own stay
- * visible, so point this at plain text elements.
+ * The real text stays in place, so the layout does not move and screen readers still read it,
+ * but its glyphs are not painted (`-webkit-text-fill-color: transparent`, which children
+ * inherit too). The element's `color` is untouched, so the overlay, which paints with
+ * `currentcolor`, always follows the live text color. Decorations such as a strike-through are
+ * not shown on the overlay text. The overlay is `aria-hidden`, absolutely positioned over the element and ignores
+ * the pointer. If the element is `position: static` it becomes `relative`, which does not move
+ * it. On an inline element the overlay does not wrap, because it is only as wide as the text.
  *
- * @param element - The text element. Must be attached to the page, so its color can be read.
+ * @param element - The text element. Must be attached to the page, so its styles can be read.
  * @returns The overlay and its `unmount`.
  */
 export function mountTextOverlay(element: HTMLElement): TextOverlay {
   const computed = getComputedStyle(element);
-  const { color, position } = element.style;
+  const { style } = element;
+  const position = style.position;
+  const fill = style.getPropertyValue(FILL);
+  const fillPriority = style.getPropertyPriority(FILL);
+  const hadStyle = element.hasAttribute("style");
 
   const overlay = document.createElement("span");
   overlay.setAttribute("aria-hidden", "true");
-  // Set before the element turns transparent, because the overlay would inherit that.
-  Object.assign(overlay.style, {
-    position: "absolute",
-    inset: "0",
-    pointerEvents: "none",
-    color: computed.color,
-  });
+  Object.assign(overlay.style, { position: "absolute", inset: "0", pointerEvents: "none" });
+  overlay.style.setProperty(FILL, "currentcolor");
+  if (computed.display === "inline") overlay.style.whiteSpace = "nowrap";
 
-  if (computed.position === "static") element.style.position = "relative";
-  element.style.color = "transparent";
+  if (computed.position === "static") style.position = "relative";
+  style.setProperty(FILL, "transparent");
   element.append(overlay);
 
   return {
     overlay,
     unmount() {
       overlay.remove();
-      element.style.color = color;
-      element.style.position = position;
+      style.position = position;
+      if (fill) style.setProperty(FILL, fill, fillPriority);
+      else style.removeProperty(FILL);
+      if (!hadStyle && element.getAttribute("style") === "") element.removeAttribute("style");
     },
   };
 }

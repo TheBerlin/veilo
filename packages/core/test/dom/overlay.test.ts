@@ -24,14 +24,46 @@ afterEach(() => {
 });
 
 describe("mountTextOverlay", () => {
-  it("keeps the real text in place, transparent, and hides the overlay from screen readers", () => {
+  it("keeps the real text in place, unpainted, and hides the overlay from screen readers", () => {
     const element = textElement();
     const { overlay } = mountTextOverlay(element);
     expect(element.firstChild?.textContent).toBe(TEXT);
-    expect(getComputedStyle(element).color).toBe("rgba(0, 0, 0, 0)");
+    expect(getComputedStyle(element).webkitTextFillColor).toBe("rgba(0, 0, 0, 0)");
+    expect(getComputedStyle(element).color).toBe("rgb(10, 20, 30)");
     expect(overlay.getAttribute("aria-hidden")).toBe("true");
-    expect(getComputedStyle(overlay).color).toBe("rgb(10, 20, 30)");
+    expect(getComputedStyle(overlay).webkitTextFillColor).toBe("rgb(10, 20, 30)");
     expect(getComputedStyle(overlay).pointerEvents).toBe("none");
+  });
+
+  it("follows a text color that changes while mounted, such as a theme switch", () => {
+    const element = textElement();
+    const { overlay } = mountTextOverlay(element);
+    element.style.color = "rgb(200, 100, 50)";
+    expect(getComputedStyle(overlay).webkitTextFillColor).toBe("rgb(200, 100, 50)");
+  });
+
+  it("also hides child elements that set their own color", () => {
+    const element = textElement();
+    const bold = document.createElement("b");
+    bold.textContent = "!";
+    bold.style.color = "red";
+    element.append(bold);
+    mountTextOverlay(element);
+    expect(getComputedStyle(bold).webkitTextFillColor).toBe("rgba(0, 0, 0, 0)");
+  });
+
+  it("keeps the overlay of an inline element on one line", () => {
+    const element = textElement();
+    element.style.display = "inline";
+    const { overlay } = mountTextOverlay(element);
+    overlay.textContent = `${TEXT}▍`;
+    expect(overlay.getBoundingClientRect().height).toBe(element.getBoundingClientRect().height);
+    expect(getComputedStyle(overlay).whiteSpace).toBe("nowrap");
+  });
+
+  it("lets the overlay of a block element wrap like the real text", () => {
+    const { overlay } = mountTextOverlay(textElement());
+    expect(getComputedStyle(overlay).whiteSpace).toBe("normal");
   });
 
   it("does not change the element's size and covers it exactly", () => {
@@ -61,12 +93,22 @@ describe("mountTextOverlay", () => {
     expect(absolute.style.position).toBe("absolute");
   });
 
-  it("restores the element on unmount", () => {
+  it("restores the element exactly on unmount", () => {
     const element = textElement();
-    const handle = mountTextOverlay(element);
-    handle.unmount();
-    expect(element.childNodes).toHaveLength(1);
-    expect(element.style.color).toBe("rgb(10, 20, 30)");
-    expect(element.style.position).toBe("");
+    const before = element.outerHTML;
+    mountTextOverlay(element).unmount();
+    expect(element.outerHTML).toBe(before);
+
+    const bare = document.createElement("p");
+    bare.textContent = "x";
+    document.body.append(bare);
+    mountTextOverlay(bare).unmount();
+    expect(bare.hasAttribute("style")).toBe(false);
+
+    const filled = textElement();
+    filled.style.setProperty("-webkit-text-fill-color", "blue", "important");
+    mountTextOverlay(filled).unmount();
+    expect(filled.style.getPropertyValue("-webkit-text-fill-color")).toBe("blue");
+    expect(filled.style.getPropertyPriority("-webkit-text-fill-color")).toBe("important");
   });
 });
