@@ -14,9 +14,9 @@ export interface SkeletonOptions {
   busy?: Element;
   /** Where to add the stylesheet when the elements live in a shadow root. */
   root?: ShadowRoot;
-  /** Base color when the settings have no override. Defaults to `--sk-base`, then light theme. */
+  /** Base color when the settings have no override. Defaults to `--veilo-base`, then light theme. */
   base?: string;
-  /** Highlight color when the settings have no override. Defaults to `--sk-hi`, then light theme. */
+  /** Highlight color when the settings have no override. Defaults to `--veilo-hi`, then light theme. */
   highlight?: string;
 }
 
@@ -32,9 +32,9 @@ export interface Skeleton {
   destroy(): void;
 }
 
-// The spec's light theme colors, used when the page defines no --sk-base or --sk-hi.
-const DEFAULT_BASE = "var(--sk-base, #dde5e6)";
-const DEFAULT_HIGHLIGHT = "var(--sk-hi, #f6fafa)";
+// The spec's light theme colors, used when the page defines no --veilo-base or --veilo-hi.
+const DEFAULT_BASE = "var(--veilo-base, #dde5e6)";
+const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f6fafa)";
 
 /**
  * Creates a skeleton loader for elements.
@@ -78,7 +78,7 @@ export function createSkeleton(
       const css = [
         generateLoaderCss(parsed, {
           selector,
-          keyframes: `veilo-sk-${id}`,
+          keyframes: `veilo-skeleton-${id}`,
           base: options.base ?? DEFAULT_BASE,
           highlight: options.highlight ?? DEFAULT_HIGHLIGHT,
         }),

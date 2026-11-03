@@ -50,8 +50,8 @@ describe("createCleanup", () => {
     const element = document.createElement("div");
     element.style.color = "red";
     const cleanup = createCleanup();
-    cleanup.style(element, "--bg-a", "0.5");
-    expect(element.style.getPropertyValue("--bg-a")).toBe("0.5");
+    cleanup.style(element, "--veilo-bg-a", "0.5");
+    expect(element.style.getPropertyValue("--veilo-bg-a")).toBe("0.5");
     cleanup.run();
     expect(element.getAttribute("style")).toBe("color: red;");
   });

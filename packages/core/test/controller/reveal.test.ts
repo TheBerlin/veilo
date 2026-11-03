@@ -218,9 +218,9 @@ describe("grid image effect", () => {
     expect(first).toBeGreaterThan(0);
   });
 
-  it("draws in --sk-ink from the photo's wrapper", async () => {
+  it("draws in --veilo-ink from the photo's wrapper", async () => {
     const { media, photo, reveal } = setup();
-    media.style.setProperty("--sk-ink", "rgb(255, 0, 0)");
+    media.style.setProperty("--veilo-ink", "rgb(255, 0, 0)");
     await reveal.ready;
     reveal.seek(0.7);
     const canvas = photo.nextElementSibling as HTMLCanvasElement;
@@ -311,7 +311,9 @@ describe("text and button", () => {
     await reveal.ready;
     reveal.seek(0.6);
     // The label is text element 2 of 3: its window starts at 0.3 and lasts 0.55.
-    expect(button.style.getPropertyValue("--bg-a")).toBe(cssNumber(clamp((0.6 - 0.3) / 0.55)));
+    expect(button.style.getPropertyValue("--veilo-bg-a")).toBe(
+      cssNumber(clamp((0.6 - 0.3) / 0.55)),
+    );
     reveal.seek(1);
     expect(button.hasAttribute("style")).toBe(false);
   });

@@ -4,10 +4,10 @@
  */
 
 /**
- * Reads the computed value of a CSS property, including custom properties such as `--sk-ink`.
+ * Reads the computed value of a CSS property, including custom properties such as `--veilo-ink`.
  *
  * @param element - The element to read.
- * @param property - The property name, in CSS form (`color`, `--sk-ink`).
+ * @param property - The property name, in CSS form (`color`, `--veilo-ink`).
  * @returns The trimmed value, or an empty string when it is not set.
  */
 export function computedValue(element: Element, property: string): string {

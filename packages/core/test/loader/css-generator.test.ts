@@ -17,10 +17,10 @@ describe("generateLoaderCss", () => {
   background: linear-gradient(100deg, #dde5e6 0%, #dde5e6 35%, #f6fafa 50%, #dde5e6 65%, #dde5e6 100%);
   background-size: 300% 100%;
   background-position: 100% 0;
-  animation: sk-sweep 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0s infinite both;
+  animation: veilo-sweep 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0s infinite both;
 }
 
-@keyframes sk-sweep {
+@keyframes veilo-sweep {
   0% { background-position: 100% 0; }
   85.7143% { background-position: 0% 0; }
   100% { background-position: 0% 0; }
@@ -37,10 +37,10 @@ describe("generateLoaderCss", () => {
   color: transparent;
   border-radius: 6px;
   background: #dde5e6;
-  animation: sk-pulse 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite both;
+  animation: veilo-pulse 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite both;
 }
 
-@keyframes sk-pulse {
+@keyframes veilo-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
@@ -62,13 +62,13 @@ describe("generateLoaderCss", () => {
 
   it("uses the Cascade wave preset's timing", () => {
     const css = generateLoaderCss(settings({ effect: "wave", lDur: 1, lGap: 0.4 }));
-    expect(css).toContain("animation: sk-sweep 1.4s");
+    expect(css).toContain("animation: veilo-sweep 1.4s");
     expect(css).toContain("71.4286% { background-position: 0% 0; }");
   });
 
   it("puts the sweep end at 100% with no pause", () => {
     const css = generateLoaderCss(settings({ lGap: 0 }));
-    expect(css).toContain("animation: sk-sweep 1.2s");
+    expect(css).toContain("animation: veilo-sweep 1.2s");
     expect(css).toContain("  100% { background-position: 0% 0; }\n  100% {");
   });
 
@@ -109,8 +109,8 @@ describe("generateLoaderCss", () => {
 
   it("falls back to the theme tokens", () => {
     const css = generateLoaderCss(settings());
-    expect(css).toContain("var(--sk-base) 0%");
-    expect(css).toContain("var(--sk-hi) 50%");
+    expect(css).toContain("var(--veilo-base) 0%");
+    expect(css).toContain("var(--veilo-hi) 50%");
   });
 
   it("uses color overrides ahead of the fallback colors", () => {
@@ -132,7 +132,7 @@ describe("generateLoaderCss", () => {
   it("hides float noise in the output", () => {
     // 0.1 + 0.2 is 0.30000000000000004 in floating point.
     const css = generateLoaderCss(settings({ lDur: 0.1, lGap: 0.2 }));
-    expect(css).toContain("animation: sk-sweep 0.3s");
+    expect(css).toContain("animation: veilo-sweep 0.3s");
     expect(css).not.toMatch(/\d\.\d{5,}/);
   });
 
@@ -153,9 +153,9 @@ describe("generateLoaderCss", () => {
 
 describe("generateLoaderCss keyframes name", () => {
   it.each(["shimmer", "wave", "pulse"] as const)("uses the given name for %s", (effect) => {
-    const css = generateLoaderCss(settings({ effect }), { keyframes: "veilo-sk-a1" });
-    expect(css).toContain("animation: veilo-sk-a1 ");
-    expect(css).toContain("@keyframes veilo-sk-a1 {");
+    const css = generateLoaderCss(settings({ effect }), { keyframes: "veilo-skeleton-a1" });
+    expect(css).toContain("animation: veilo-skeleton-a1 ");
+    expect(css).toContain("@keyframes veilo-skeleton-a1 {");
     expect(css).not.toMatch(/sk-(sweep|pulse)/);
   });
 });

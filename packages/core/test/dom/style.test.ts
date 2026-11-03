@@ -48,18 +48,18 @@ describe("addStyle", () => {
 describe("computedValue", () => {
   it("reads inherited custom properties and normal properties, trimmed", () => {
     const parent = document.createElement("div");
-    parent.style.setProperty("--sk-ink", "  #123456 ");
+    parent.style.setProperty("--veilo-ink", "  #123456 ");
     const child = document.createElement("span");
     child.style.color = "rgb(1, 2, 3)";
     parent.append(child);
     document.body.append(parent);
-    expect(computedValue(child, "--sk-ink")).toBe("#123456");
+    expect(computedValue(child, "--veilo-ink")).toBe("#123456");
     expect(computedValue(child, "color")).toBe("rgb(1, 2, 3)");
   });
 
   it("returns an empty string for a custom property that is not set", () => {
     const element = document.createElement("div");
     document.body.append(element);
-    expect(computedValue(element, "--sk-ink")).toBe("");
+    expect(computedValue(element, "--veilo-ink")).toBe("");
   });
 });

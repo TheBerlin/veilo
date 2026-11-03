@@ -50,7 +50,7 @@ export interface RevealTargets {
   image?: HTMLImageElement | HTMLCanvasElement;
   /** Text elements in timeline order, for example heading, description, price, button label. */
   text?: readonly HTMLElement[];
-  /** The button whose background (`--bg-a`) fades in with its label. */
+  /** The button whose background (`--veilo-bg-a`) fades in with its label. */
   button?: HTMLElement;
 }
 
@@ -58,7 +58,7 @@ export interface RevealTargets {
 export interface RevealOptions {
   /** Font family for hex and binary characters. Defaults to IBM Plex Mono. */
   fontFamily?: string;
-  /** Color of dots and characters. Defaults to `--sk-ink` on the image's parent, then its color. */
+  /** Color of dots and characters. Defaults to `--veilo-ink` on the image's parent, then its color. */
   ink?: string;
   /** Time source. Defaults to the browser's; tests pass a fake one. */
   scheduler?: Scheduler;
@@ -248,7 +248,7 @@ export function createReveal(
         }
         ink =
           options.ink ||
-          computedValue(parent ?? image, "--sk-ink") ||
+          computedValue(parent ?? image, "--veilo-ink") ||
           computedValue(parent ?? image, "color");
         const canvas = createCanvasElement(gridSize.width, gridSize.height);
         canvas.setAttribute("aria-hidden", "true");
@@ -268,7 +268,7 @@ export function createReveal(
       layers.add(() => overlay.unmount());
       return overlay;
     });
-    if (button) remember(button, "--bg-a");
+    if (button) remember(button, "--veilo-bg-a");
 
     layers.add(() => {
       mounted = false;

@@ -52,7 +52,7 @@ export interface GridPrepareOptions {
 
 /** Options for {@link drawGridFrame} that can change without preparing again. */
 export interface GridDrawOptions {
-  /** The CSS color of dots and characters, from the theme's `--sk-ink`. */
+  /** The CSS color of dots and characters, from the theme's `--veilo-ink`. */
   ink: string;
 }
 

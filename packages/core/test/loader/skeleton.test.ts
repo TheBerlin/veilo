@@ -54,7 +54,7 @@ describe("createSkeleton", () => {
     const { elements } = card();
     createSkeleton(elements, { effect: "shimmer", lDur: 1, lGap: 0.5 }).start();
     const style = getComputedStyle(elements[1]!);
-    expect(style.animationName).toBe(`veilo-sk-${idOf(elements[1]!)}`);
+    expect(style.animationName).toBe(`veilo-skeleton-${idOf(elements[1]!)}`);
     expect(style.animationDuration).toBe("1.5s");
     expect(style.color).toBe("rgba(0, 0, 0, 0)");
     expect(style.backgroundImage).toContain("linear-gradient");
@@ -66,9 +66,9 @@ describe("createSkeleton", () => {
     expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(221, 229, 230)");
   });
 
-  it("follows --sk-base when the page defines it", () => {
+  it("follows --veilo-base when the page defines it", () => {
     const { region, elements } = card();
-    region.style.setProperty("--sk-base", "rgb(9, 8, 7)");
+    region.style.setProperty("--veilo-base", "rgb(9, 8, 7)");
     createSkeleton(elements, { effect: "pulse" }).start();
     expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(9, 8, 7)");
   });

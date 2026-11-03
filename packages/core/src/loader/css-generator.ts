@@ -11,12 +11,12 @@ import type { Settings } from "../schema/types.ts";
 export interface LoaderCssOptions {
   /** The CSS selector to style. Written to the output as is, so it must be trusted. */
   selector?: string;
-  /** Base color when the settings have no override. Defaults to `var(--sk-base)`. */
+  /** Base color when the settings have no override. Defaults to `var(--veilo-base)`. */
   base?: string;
-  /** Highlight color when the settings have no override. Defaults to `var(--sk-hi)`. */
+  /** Highlight color when the settings have no override. Defaults to `var(--veilo-hi)`. */
   highlight?: string;
   /**
-   * The `@keyframes` name. Defaults to `sk-sweep` or `sk-pulse`. Give each stylesheet on one
+   * The `@keyframes` name. Defaults to `veilo-sweep` or `veilo-pulse`. Give each stylesheet on one
    * page its own name, or the last one's keyframes apply to all. Written as is, so it must be
    * trusted.
    */
@@ -109,20 +109,20 @@ function pulseCss(
  *
  * @param settings - The settings. Only the Loader keys are read.
  * @param options - The selector and fallback colors. For the Export panel, pass the theme's
- * hex values to resolve the colors. Without them the CSS follows `--sk-base` and `--sk-hi`.
+ * hex values to resolve the colors. Without them the CSS follows `--veilo-base` and `--veilo-hi`.
  * @returns A stylesheet with one rule and its keyframes.
  */
 export function generateLoaderCss(settings: Settings, options: LoaderCssOptions = {}): string {
   const { selector = ".skeleton", base, highlight, keyframes: name } = options;
-  const baseColor = settings.baseColor ?? base ?? "var(--sk-base)";
-  const highlightColor = settings.highlightColor ?? highlight ?? "var(--sk-hi)";
+  const baseColor = settings.baseColor ?? base ?? "var(--veilo-base)";
+  const highlightColor = settings.highlightColor ?? highlight ?? "var(--veilo-hi)";
   const easing = `cubic-bezier(${resolveCurve(settings, "l").map(cssNumber).join(", ")})`;
   const iterations = settings.repeat === "loop" ? "infinite" : "1";
 
   const { declarations, keyframes } =
     settings.effect === "pulse"
-      ? pulseCss(settings, baseColor, easing, iterations, name ?? "sk-pulse")
-      : sweepCss(settings, baseColor, highlightColor, easing, iterations, name ?? "sk-sweep");
+      ? pulseCss(settings, baseColor, easing, iterations, name ?? "veilo-pulse")
+      : sweepCss(settings, baseColor, highlightColor, easing, iterations, name ?? "veilo-sweep");
 
   const rule = [
     `${selector} {`,
