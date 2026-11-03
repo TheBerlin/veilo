@@ -202,6 +202,22 @@ describe("grid image effect", () => {
     expect(photo.style.opacity).toBe("0.5");
   });
 
+  it("samples once and draws every frame from the cached grid", async () => {
+    const { photo, reveal } = setup();
+    await reveal.ready;
+    reveal.seek(0.5);
+    const canvas = photo.nextElementSibling as HTMLCanvasElement;
+    const first = inked(canvas);
+    // Paint the photo white. Frames that sampled again would find nothing to draw.
+    const context = photo.getContext("2d")!;
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, photo.width, photo.height);
+    reveal.seek(0.4);
+    reveal.seek(0.5);
+    expect(inked(canvas)).toBe(first);
+    expect(first).toBeGreaterThan(0);
+  });
+
   it("draws in --sk-ink from the photo's wrapper", async () => {
     const { media, photo, reveal } = setup();
     media.style.setProperty("--sk-ink", "rgb(255, 0, 0)");
