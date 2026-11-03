@@ -10,6 +10,7 @@ const BROWSER_TESTS = [
   "test/grid/ramps.test.ts",
   "test/render/**/*.test.ts",
   "test/loader/skeleton.test.ts",
+  "test/controller/reveal.test.ts",
 ];
 
 export default defineProject({

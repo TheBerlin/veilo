@@ -1,7 +1,7 @@
 // Tests for src/dom/canvas.ts. Runs in Chromium (see BROWSER_TESTS in vitest.config.ts).
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { context2d, createCanvas } from "../../src/dom/canvas.ts";
+import { context2d, createCanvas, createCanvasElement } from "../../src/dom/canvas.ts";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -38,5 +38,14 @@ describe("context2d", () => {
     const canvas = new OffscreenCanvas(2, 2);
     canvas.getContext("webgl2");
     expect(() => context2d(canvas)).toThrow("could not create a 2D canvas context");
+  });
+});
+
+describe("createCanvasElement", () => {
+  it("creates a detached canvas element of the given size, even with OffscreenCanvas", () => {
+    const canvas = createCanvasElement(5, 4);
+    expect(canvas).toBeInstanceOf(HTMLCanvasElement);
+    expect([canvas.width, canvas.height]).toEqual([5, 4]);
+    expect(canvas.isConnected).toBe(false);
   });
 });

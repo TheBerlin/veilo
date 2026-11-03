@@ -21,7 +21,17 @@ export type Context2D = CanvasRenderingContext2D | OffscreenCanvasRenderingConte
  */
 export function createCanvas(width: number, height: number): Canvas {
   if (typeof OffscreenCanvas !== "undefined") return new OffscreenCanvas(width, height);
+  return createCanvasElement(width, height);
+}
 
+/**
+ * Creates a `<canvas>` element for showing in the page, which an `OffscreenCanvas` cannot do.
+ *
+ * @param width - Width in pixels.
+ * @param height - Height in pixels.
+ * @returns The new canvas element, not yet attached.
+ */
+export function createCanvasElement(width: number, height: number): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;

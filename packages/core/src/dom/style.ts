@@ -4,6 +4,17 @@
  */
 
 /**
+ * Reads the computed value of a CSS property, including custom properties such as `--sk-ink`.
+ *
+ * @param element - The element to read.
+ * @param property - The property name, in CSS form (`color`, `--sk-ink`).
+ * @returns The trimmed value, or an empty string when it is not set.
+ */
+export function computedValue(element: Element, property: string): string {
+  return getComputedStyle(element).getPropertyValue(property).trim();
+}
+
+/**
  * Adds a `<style>` element with the given CSS.
  *
  * The CSS is written with `textContent`, never parsed as HTML.
