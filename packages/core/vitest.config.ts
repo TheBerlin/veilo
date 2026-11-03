@@ -4,7 +4,11 @@ import shared from "../../vitest.shared.ts";
 
 // Test files whose source needs a real canvas or DOM. They run in headless Chromium; everything
 // else stays in Node. Add a path here when its first browser module lands.
-const BROWSER_TESTS = ["test/dom/**/*.test.ts", "test/grid/sample.test.ts"];
+const BROWSER_TESTS = [
+  "test/dom/**/*.test.ts",
+  "test/grid/sample.test.ts",
+  "test/grid/ramps.test.ts",
+];
 
 export default defineProject({
   test: {
