@@ -53,6 +53,10 @@ pnpm format:check  # report unformatted files without changing them
 - Folders in the same layer stay independent.
 - `src/index.ts` is the only public entry, and nothing inside `src` imports it.
 - Only `src/dom/` may touch `window` or `document`.
+- "State" means the animation: the clock, timers, the sequence and the cached prepared grid live
+  in `controller`. Small handles from lower layers (`createSkeleton`, the `dom` watchers, the
+  cleanup list) may keep their own state, as long as the controller creates and destroys them.
+  Module-level state is never allowed.
 - Every file starts with a short comment naming its purpose and layer.
 
 CI enforces the import and browser rules. Run the same check locally:
