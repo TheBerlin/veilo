@@ -29,6 +29,17 @@ export function lerp(from: number, to: number, t: number): number {
 }
 
 /**
+ * Writes a number for CSS.
+ *
+ * @param value - The number.
+ * @returns The number with at most 4 decimals, which hides float noise such as
+ *   1.4000000000000001. Never written as `-0`.
+ */
+export function cssNumber(value: number): string {
+  return String(Number(value.toFixed(4)));
+}
+
+/**
  * Hermite smoothstep between two edges: 0 at or below `edge0`, 1 at or above `edge1`.
  *
  * @param edge0 - Where the curve starts. Must be below `edge1`.

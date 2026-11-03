@@ -1,7 +1,7 @@
 // Tests for src/math/number.ts, with values worked out by hand from the formulas.
 
 import { describe, expect, it } from "vitest";
-import { clamp, lerp, smoothstep } from "../../src/math/number.ts";
+import { clamp, cssNumber, lerp, smoothstep } from "../../src/math/number.ts";
 
 describe("clamp", () => {
   it("defaults to the range 0 to 1", () => {
@@ -58,5 +58,24 @@ describe("smoothstep", () => {
     expect(smoothstep(0.8, 1, 0.8)).toBe(0);
     expect(smoothstep(0.8, 1, 0.9)).toBeCloseTo(0.5, 10);
     expect(smoothstep(0.8, 1, 1)).toBe(1);
+  });
+});
+
+describe("cssNumber", () => {
+  it("writes whole numbers and short decimals as they are", () => {
+    expect(cssNumber(18)).toBe("18");
+    expect(cssNumber(0.5)).toBe("0.5");
+    expect(cssNumber(-1.25)).toBe("-1.25");
+  });
+
+  it("rounds to 4 decimals, hiding float noise", () => {
+    expect(cssNumber(0.1 + 0.2)).toBe("0.3");
+    expect(cssNumber(1.4000000000000001)).toBe("1.4");
+    expect(cssNumber(1 / 3)).toBe("0.3333");
+  });
+
+  it("never writes -0", () => {
+    expect(cssNumber(-0)).toBe("0");
+    expect(cssNumber(-0.00001)).toBe("0");
   });
 });

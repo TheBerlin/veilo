@@ -4,6 +4,7 @@
  */
 
 import { resolveCurve } from "../math/easing.ts";
+import { cssNumber } from "../math/number.ts";
 import type { Settings } from "../schema/types.ts";
 
 /** Options for {@link generateLoaderCss}. */
@@ -17,14 +18,6 @@ export interface LoaderCssOptions {
 }
 
 const WAVE_NOTE = "/* Set --i on each element: 0, 1, 2... Each one starts later than the last. */";
-
-/**
- * Writes a number for CSS.
- *
- * @param value - The number.
- * @returns The number with at most 4 decimals, which hides float noise such as 1.4000000000000001.
- */
-const cssNumber = (value: number) => String(Number(value.toFixed(4)));
 
 /**
  * Builds the sweep rule and keyframes, used by shimmer and wave.
