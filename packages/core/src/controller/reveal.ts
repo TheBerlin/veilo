@@ -163,6 +163,7 @@ export function createReveal(
   const skeleton = createElementSkeleton(resolved.placeholders, parsed, {
     busy: options.busy ?? resolved.container,
     root: options.root,
+    bars: resolved.bars,
   });
   life.add(() => skeleton.destroy());
 

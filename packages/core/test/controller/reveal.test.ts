@@ -525,6 +525,11 @@ describe("container with slot markup", () => {
     reveal.showLoading();
     expect(card.getAttribute("aria-busy")).toBe("true");
     expect(card.querySelectorAll("[data-veilo-skeleton]")).toHaveLength(5);
+    // Text slots show line bars while loading; the image, button and block stay solid.
+    expect([...card.querySelectorAll("[data-veilo-bars]")].map((e) => e.tagName)).toEqual([
+      "H3",
+      "SPAN",
+    ]);
 
     await reveal.ready;
     reveal.seek(0.5);

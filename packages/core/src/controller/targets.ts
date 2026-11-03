@@ -4,7 +4,7 @@
  * Layer 3. Reads the markup; reports slot problems in development builds.
  */
 
-import { parseLayout } from "../schema/layout.ts";
+import { parseLayout, type SlotHint } from "../schema/layout.ts";
 import type { Settings } from "../schema/types.ts";
 import { warnSlotProblems } from "../slots/dev-warnings.ts";
 import { findSlots } from "../slots/discover.ts";
@@ -25,6 +25,8 @@ export interface ResolvedTargets {
   targets: RevealTargets;
   /** Every element that shows the skeleton, in page order. */
   placeholders: HTMLElement[];
+  /** Text elements that show line bars, with their slot hints. */
+  bars: Map<HTMLElement, Pick<SlotHint, "lines" | "width">>;
   /** The container, when one was given; it is the default busy region. */
   container?: Element;
 }
@@ -44,7 +46,8 @@ export function isContainer(value: RevealTargets | Element): value is Element {
  *
  * With explicit targets, the placeholders are the image, the texts and the button. With a
  * container, the slots are found from `data-veilo-slot` markup: `image`, `text` and `button`
- * slots become the targets, and every slot, `block` ones included, shows the skeleton.
+ * slots become the targets, and every slot, `block` ones included, shows the skeleton. Text
+ * elements show one placeholder bar per line, shaped by their slot's `lines` and `width` hints.
  *
  * @param first - Explicit targets, or the container to search.
  * @param input - A layout or plain settings, as JSON.
@@ -60,7 +63,11 @@ export function resolveTargets(
   if (!isContainer(first)) {
     const { image, text = [], button } = first;
     const listed = [image, ...text, button].filter((e): e is HTMLElement => e !== undefined);
-    return { settings: layout.settings, targets: first, placeholders: [...new Set(listed)] };
+    // Text targets show line bars; the image and button stay solid even when listed as text.
+    const bars = new Map(
+      text.filter((e) => e !== image && e !== button).map((e) => [e, {}] as const),
+    );
+    return { settings: layout.settings, targets: first, placeholders: [...new Set(listed)], bars };
   }
 
   const { slots, problems } = findSlots(first, layout);
@@ -74,6 +81,11 @@ export function resolveTargets(
       button: of("button")[0],
     },
     placeholders: slots.map((slot) => slot.element),
+    bars: new Map(
+      slots
+        .filter((slot) => slot.role === "text")
+        .map((slot) => [slot.element, { lines: slot.hint.lines, width: slot.hint.width }] as const),
+    ),
     container: first,
   };
 }

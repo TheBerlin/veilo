@@ -63,3 +63,20 @@ describe("createSkeleton", () => {
     expect(warn).toHaveBeenCalled();
   });
 });
+
+describe("createSkeleton line bars", () => {
+  it("shapes text slots in a container into bars", () => {
+    const container = markup(CARD);
+    createSkeleton(container, { slots: { title: { role: "text", width: 58 } } }).start();
+    const title = container.querySelector("h3")!;
+    expect(title.hasAttribute("data-veilo-bars")).toBe(true);
+    expect(title.style.getPropertyValue("--veilo-last")).toBe("58%");
+    expect(container.querySelector("img")!.hasAttribute("data-veilo-bars")).toBe(false);
+  });
+
+  it("keeps a plain list solid, since it does not say which elements are text", () => {
+    const container = markup(CARD);
+    createSkeleton([container.querySelector("h3")!], {}).start();
+    expect(container.querySelector("[data-veilo-bars]")).toBeNull();
+  });
+});

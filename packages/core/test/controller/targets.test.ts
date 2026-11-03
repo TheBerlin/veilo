@@ -81,3 +81,28 @@ describe("resolveTargets with a container", () => {
     );
   });
 });
+
+describe("resolveTargets line bars", () => {
+  it("gives text slots bars with their hints, and other roles none", () => {
+    const container = markup(
+      `<img data-veilo-slot="photo"><span data-veilo-slot="badge"></span>` +
+        `<h3 data-veilo-slot="title">T</h3><button data-veilo-slot="buy"><span data-veilo-slot="label">B</span></button>`,
+    );
+    const { bars } = resolveTargets(
+      container,
+      { slots: { badge: { role: "block" }, title: { role: "text", lines: 2, width: 58 } } },
+      false,
+    );
+    const $ = (name: string) => container.querySelector(`[data-veilo-slot="${name}"]`);
+    expect([...bars.keys()]).toEqual([$("title"), $("label")]);
+    expect(bars.get($("title") as HTMLElement)).toEqual({ lines: 2, width: 58 });
+  });
+
+  it("gives explicit text targets bars, except the image and the button", () => {
+    const image = document.createElement("canvas");
+    const title = document.createElement("h3");
+    const button = document.createElement("button");
+    const { bars } = resolveTargets({ image, text: [title, button], button }, {}, false);
+    expect([...bars.keys()]).toEqual([title]);
+  });
+});

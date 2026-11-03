@@ -106,20 +106,28 @@ Slots are the parts of your own markup marked with `data-veilo-slot="name"`. Siz
   "slots": {
     "photo": { "role": "image" },
     "badge": { "role": "block" },
-    "title": { "role": "text" },
+    "title": { "role": "text", "width": 58 },
+    "description": { "role": "text", "lines": 2, "width": 70 },
     "buy": { "role": "button" }
   }
 }
 ```
 
-| Role     | What it does                                                                       |
-| -------- | ---------------------------------------------------------------------------------- |
-| `image`  | The photo (`<img>` or `<canvas>`). Only the first image slot is revealed.          |
-| `text`   | A text element on the text timeline, in page order.                                |
-| `button` | Its background fades in with its label. Only the first button slot is used.        |
-| `block`  | Shows the skeleton but has no reveal effect, for avatars, badges and other shapes. |
+| Role     | What it does                                                                          |
+| -------- | ------------------------------------------------------------------------------------- |
+| `image`  | The photo (`<img>` or `<canvas>`). Only the first image slot is revealed.             |
+| `text`   | A text element on the text timeline, in page order. Its skeleton is one bar per line. |
+| `button` | Its background fades in with its label. Only the first button slot is used.           |
+| `block`  | Shows the skeleton but has no reveal effect, for avatars, badges and other shapes.    |
 
 `createReveal` and `createSkeleton` accept a layout or plain settings. Without a slots map, roles are guessed from the elements. A slot name may appear on several elements, such as repeated rows, and they all get its role.
+
+Text slots show one skeleton bar per line, inset 0.18em from the top and bottom of each line. Two hints shape them; neither changes the element's size while it has content:
+
+| Hint    | What it does                                                                                        |
+| ------- | --------------------------------------------------------------------------------------------------- |
+| `width` | Width of the last line's bar, in percent of the element (1 to 100). The other lines are full width. |
+| `lines` | Lines of height an empty element gets while loading (1 to 20), so it does not collapse.             |
 
 Mismatches never throw; in development builds they print a `Veilo:` warning. A layout slot missing from the markup is skipped, an element the layout does not name gets a guessed role, an `image` role on an element that is not an image becomes a `block`, and later images and buttons become blocks. Development means `process.env.NODE_ENV !== "production"`, which bundlers replace at build time; pass `warnings: false` to turn the warnings off.
 
@@ -193,6 +201,7 @@ Importing the package touches no browser globals, so it is safe in server code. 
 - The photo is sampled as `object-fit: cover`, whatever the image's own `object-fit`.
 - Rise and sharpen moves text with `transform`, which has no effect on `display: inline` elements.
 - A strike-through is not shown on scrambled text until the reveal ends.
+- Line bars use the CSS `lh` unit. Browsers without it show text slots as solid blocks instead.
 
 ## Differences from the specification's API sketch
 

@@ -166,3 +166,65 @@ describe("createElementSkeleton", () => {
     expect(getComputedStyle(line).backgroundColor).toBe("rgb(221, 229, 230)");
   });
 });
+
+describe("createElementSkeleton line bars", () => {
+  /** A paragraph with a fixed font, so one line is exactly 20 px. */
+  function line(text: string) {
+    const element = document.createElement("p");
+    element.textContent = text;
+    element.style.cssText = "font: 16px/20px monospace; width: 200px; margin: 0";
+    document.body.append(element);
+    return element;
+  }
+
+  it("masks a text element into bars, which the browser accepts", () => {
+    const text = line("Lightweight 8K polling mouse with tri-mode wireless");
+    createElementSkeleton([text], {}, { bars: new Map([[text, { width: 70 }]]) }).start();
+    const style = getComputedStyle(text);
+    expect(text.hasAttribute("data-veilo-bars")).toBe(true);
+    expect(text.style.getPropertyValue("--veilo-last")).toBe("70%");
+    expect(style.maskImage).toContain("repeating-linear-gradient");
+    expect(style.maskImage.match(/linear-gradient/g)).toHaveLength(3);
+    expect(style.maskComposite).toBe("intersect, add, add");
+    expect(style.maskOrigin).toBe("content-box, content-box, content-box");
+  });
+
+  it("gives an empty element the hinted number of lines, and only while empty", () => {
+    const empty = line("");
+    const full = line("x");
+    const bars = new Map([
+      [empty, { lines: 3 }],
+      [full, { lines: 3 }],
+    ]);
+    createElementSkeleton([empty, full], {}, { bars }).start();
+    expect(empty.getBoundingClientRect().height).toBe(60);
+    expect(full.getBoundingClientRect().height).toBe(20);
+  });
+
+  it("defaults to one line and full width", () => {
+    const empty = line("");
+    createElementSkeleton([empty], {}, { bars: new Map([[empty, {}]]) }).start();
+    expect(empty.getBoundingClientRect().height).toBe(20);
+    expect(empty.style.getPropertyValue("--veilo-last")).toBe("");
+  });
+
+  it("leaves elements without bars solid", () => {
+    const text = line("x");
+    createElementSkeleton([text], {}).start();
+    expect(text.hasAttribute("data-veilo-bars")).toBe(false);
+    expect(getComputedStyle(text).maskImage).toBe("none");
+  });
+
+  it("restores the element exactly on stop", () => {
+    const text = line("");
+    const before = text.outerHTML;
+    const skeleton = createElementSkeleton(
+      [text],
+      {},
+      { bars: new Map([[text, { lines: 2, width: 40 }]]) },
+    );
+    skeleton.start();
+    skeleton.stop();
+    expect(text.outerHTML).toBe(before);
+  });
+});
