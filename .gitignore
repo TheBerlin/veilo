@@ -32,6 +32,7 @@ yarn-debug.log*
 # Test artifacts
 playwright-report/
 test-results/
+.vitest/
 
 # Editors and OS
 .vscode/*

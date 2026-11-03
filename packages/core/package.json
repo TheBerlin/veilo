@@ -25,5 +25,9 @@
     "generate:schema": "node scripts/generate-schema.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@vitest/browser-playwright": "5.1.0",
+    "playwright": "1.64.1"
   }
 }
