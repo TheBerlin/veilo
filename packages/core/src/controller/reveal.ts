@@ -123,6 +123,17 @@ const TEXT_STYLES = ["opacity", "transform", "filter"];
  * glyph font finishes loading). Playback pauses while the elements are off screen or the tab is
  * hidden. With reduced motion, play() jumps straight to the end.
  *
+ * @example
+ * ```ts
+ * const reveal = createReveal(
+ *   { image: photo, text: [title, price, label], button },
+ *   { imageFx: "dots", textFx: "scramble", rDur: 1.04 },
+ * );
+ * reveal.playSequence();          // loading for `hold` seconds, then the reveal
+ * reveal.on("complete", () => {});
+ * reveal.destroy();               // restores the page exactly
+ * ```
+ *
  * @param targets - The image, text elements and button to animate.
  * @param settings - Settings as plain JSON.
  * @param options - Fonts, colors, time source and accessibility options.

@@ -4,7 +4,18 @@ Veilo (formerly Skeleton Lab) is a visual playground and package family for **sk
 
 Tune an effect with live controls, scrub it frame by frame, and export it as CSS or JSON. The same settings drive a framework-agnostic core that runs in React, Vue, Angular, Svelte, web components, or plain HTML.
 
-> **Status:** early setup (milestone M0). Nothing is published yet and the API will change.
+> **Status:** building the core engine (milestone M1). Nothing is published yet and the API can still change.
+
+## Using the core
+
+`@veilo/core` runs skeleton loaders and reveal animations on real elements in any framework or plain HTML. See its [README](packages/core/README.md) for the API, theming, fonts and accessibility.
+
+```ts
+import { createReveal } from "@veilo/core";
+
+const reveal = createReveal({ image, text: [title, price, label], button }, { imageFx: "dots" });
+reveal.playSequence();
+```
 
 ## Goals
 

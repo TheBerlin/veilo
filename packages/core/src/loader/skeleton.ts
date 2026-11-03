@@ -44,6 +44,13 @@ const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f6fafa)";
  * their size. Elements get `aria-hidden` and `--i` (their index, for the wave delay). With
  * reduced motion the placeholder stays still.
  *
+ * @example
+ * ```ts
+ * const skeleton = createSkeleton([photo, title, price], { effect: "wave" }, { busy: card });
+ * skeleton.start(); // while loading
+ * skeleton.stop();  // when the content is ready
+ * ```
+ *
  * @param elements - The placeholders, in wave order.
  * @param settings - Settings as plain JSON. Validated and clamped; only Loader keys are used.
  * @param options - Busy region, shadow root and fallback colors.
