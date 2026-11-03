@@ -59,8 +59,8 @@ export const rules = [
     { path: folders(...LAYER_2), pathNot: "^src/$1/" },
   ),
 
-  // index.ts is the public entry, so internal code never imports it.
-  forbid("imports-public-entry", {}, { path: "^src/index\\.ts$" }),
+  // index.ts and loader-entry.ts are the public entries, so internal code never imports them.
+  forbid("imports-public-entry", {}, { path: "^src/(index|loader-entry)\\.ts$" }),
 
   // A broken import would otherwise be skipped without a sound.
   forbid("unresolved-import", {}, { couldNotResolve: true }),

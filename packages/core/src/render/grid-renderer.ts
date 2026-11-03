@@ -18,9 +18,7 @@ import { gridRows, sampleGrid, type SampledGrid } from "../grid/sample.ts";
 import { resolveEasing, type EasingFunction } from "../math/easing.ts";
 import type { Settings } from "../schema/types.ts";
 import { effectOpacity, gridProgress } from "../timeline/reveal-timeline.ts";
-
-/** The image effects drawn as a grid of cells. */
-export type GridStyle = "dots" | "hex" | "binary" | "mosaic";
+import { isGridStyle, type GridStyle } from "./grid-style.ts";
 
 /** Everything a grid frame needs, computed once per image and settings change. */
 export interface PreparedGrid {
@@ -56,24 +54,12 @@ export interface GridDrawOptions {
   ink: string;
 }
 
-const GRID_STYLES: readonly string[] = ["dots", "hex", "binary", "mosaic"];
-
 // Dots and characters below this darkness are skipped, so light backgrounds stay empty.
 const MIN_DARKNESS = 0.08;
 // Character size relative to the cell, before the cell's scale.
 const GLYPH_SIZE = 1.15;
 // The smallest dot is 20% of the full radius; darkness grows it to 100%.
 const DOT_BASE = 0.2;
-
-/**
- * Tells whether an image effect is drawn as a grid.
- *
- * @param imageFx - The `imageFx` setting.
- * @returns `true` for `dots`, `hex`, `binary` and `mosaic`.
- */
-export function isGridStyle(imageFx: Settings["imageFx"]): imageFx is GridStyle {
-  return GRID_STYLES.includes(imageFx);
-}
 
 /**
  * Prepares a grid reveal: samples the photo, orders the cells and, for character styles,

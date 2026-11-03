@@ -191,9 +191,19 @@ Hex and binary grids measure and draw their characters in IBM Plex Mono. The pac
 - Skeleton elements get `aria-hidden` while loading, and the `busy` region gets `aria-busy`.
 - Overlays and canvases are absolutely positioned and never change the size of an element.
 
+## Entry points and size
+
+| Import                             | Contents                                                                                                       | Minified + gzip |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------- |
+| `@veilo/core`                      | Everything above                                                                                               | 8.6 KB          |
+| `@veilo/core/loader`               | `generateLoaderCss`, `parseSettings`, `defaultSettings`, `settingsJsonSchema`, `SETTINGS_VERSION`; no DOM code | 2.3 KB          |
+| `@veilo/core/settings.schema.json` | The settings JSON Schema                                                                                       |                 |
+
+The grid effects (`dots`, `hex`, `binary`, `mosaic`) are loaded on demand: `createReveal` imports them only when one is used, and bundlers put them in a separate file of about 1.8 KB. `reveal.ready` waits for it. The package has no side effects on import (`"sideEffects": false`), so unused code is dropped.
+
 ## Server rendering
 
-Importing the package touches no browser globals, so it is safe in server code. `parseSettings`, `parseLayout`, `defaultSettings`, `settingsJsonSchema` and `generateLoaderCss` work anywhere; `createReveal` and `createSkeleton` need a browser.
+Importing either entry touches no browser globals, so both are safe in server code; CI loads every built entry in plain Node to check this. `parseSettings`, `parseLayout`, `defaultSettings`, `settingsJsonSchema` and `generateLoaderCss` work anywhere; `createReveal` and `createSkeleton` need a browser.
 
 ## Known limits
 

@@ -6,11 +6,10 @@ import { cellOrder } from "../../src/grid/order.ts";
 import { cubicBezier, EASING_CURVES } from "../../src/math/easing.ts";
 import {
   drawGridFrame,
-  isGridStyle,
   prepareGridEffect,
-  type GridStyle,
   type PreparedGrid,
 } from "../../src/render/grid-renderer.ts";
+import type { GridStyle } from "../../src/render/grid-style.ts";
 import {
   BINARY_CHARS,
   glyphAt,
@@ -86,22 +85,6 @@ function coverage(context: OffscreenCanvasRenderingContext2D) {
   for (let i = 3; i < data.length; i += 4) sum += data[i] as number;
   return sum / 255;
 }
-
-describe("isGridStyle", () => {
-  it("is true for the four grid effects only", () => {
-    const all: Settings["imageFx"][] = [
-      "dots",
-      "hex",
-      "binary",
-      "mosaic",
-      "blur",
-      "crossfade",
-      "wipe",
-      "zoom",
-    ];
-    expect(all.filter(isGridStyle)).toEqual(["dots", "hex", "binary", "mosaic"]);
-  });
-});
 
 describe("drawGridFrame timeline", () => {
   it("draws nothing at p = 0", () => {

@@ -51,7 +51,10 @@ pnpm format:check  # report unformatted files without changing them
 
 - `schema` and `math` may share types, but not values.
 - Folders in the same layer stay independent.
-- `src/index.ts` is the only public entry, and nothing inside `src` imports it.
+- `src/index.ts` (`@veilo/core`) and `src/loader-entry.ts` (`@veilo/core/loader`) are the only
+  public entries, and nothing inside `src` imports them. The grid renderer is loaded with
+  `import()` so it stays out of the main entry; `pnpm --filter @veilo/core check:entries` checks
+  the built entries in Node.
 - Only `src/dom/` may touch `window` or `document`.
 - "State" means the animation: the clock, timers, the sequence and the cached prepared grid live
   in `controller`. Small handles from lower layers (`createSkeleton`, the `dom` watchers, the

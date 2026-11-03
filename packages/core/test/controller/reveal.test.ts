@@ -100,6 +100,7 @@ describe("play", () => {
     reveal.on("complete", () => completes++);
 
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(1100);
     expect(await done).toBe(true);
@@ -115,10 +116,12 @@ describe("play", () => {
   it("restarts on a second play, and the first one resolves false", async () => {
     const { reveal, time } = setup();
     const first = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(500);
     const second = reveal.play();
     expect(await first).toBe(false);
+    await reveal.ready;
     await flush();
     expect(reveal.progress).toBe(0);
     time.advance(1100);
@@ -128,6 +131,7 @@ describe("play", () => {
   it("jumps straight to the end with reduced motion", async () => {
     const { root, reveal, before, time } = setup({}, { reducedMotion: true });
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     expect(await done).toBe(true);
     expect(reveal.state).toBe("revealed");
@@ -140,6 +144,7 @@ describe("pause, resume and seek", () => {
   it("pauses and resumes where it left off", async () => {
     const { reveal, time } = setup();
     void reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(300);
     reveal.pause();
@@ -153,6 +158,7 @@ describe("pause, resume and seek", () => {
   it("seeks to an exact frame and stops playback", async () => {
     const { reveal, time } = setup();
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(200);
     reveal.seek(0.4);
@@ -168,6 +174,7 @@ describe("pause, resume and seek", () => {
     await reveal.ready;
     void reveal.play();
     reveal.seek(0.4);
+    await reveal.ready;
     await flush();
     time.advance(500);
     expect([reveal.state, reveal.progress]).toEqual(["revealing", 0.4]);
@@ -259,6 +266,7 @@ describe("grid image effect", () => {
     });
     await reveal.ready;
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(1100);
     expect(await done).toBe(true);
@@ -344,6 +352,7 @@ describe("sequence", () => {
     expect(photo.hasAttribute("data-veilo-skeleton")).toBe(true);
 
     time.advance(500);
+    await reveal.ready;
     await flush();
     expect(reveal.state).toBe("revealing");
     expect(photo.hasAttribute("data-veilo-skeleton")).toBe(false);
@@ -365,6 +374,7 @@ describe("sequence", () => {
     const { reveal, time } = setup();
     reveal.playSequence({ loop: true });
     time.advance(500);
+    await reveal.ready;
     await flush();
     time.advance(1000);
     expect(reveal.state).toBe("revealed");
@@ -377,6 +387,7 @@ describe("sequence", () => {
   it("holds the skeleton with showLoading, cancelling playback", async () => {
     const { reveal, time, heading } = setup();
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(300);
     reveal.showLoading();
@@ -399,6 +410,7 @@ describe("visibility", () => {
     place(root, false);
     await new Promise((resolve) => setTimeout(resolve, 100));
     void reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(500);
     expect(reveal.progress).toBe(0);
@@ -413,6 +425,7 @@ describe("visibility", () => {
     const { root, reveal, time } = setup();
     place(root, true);
     void reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(300);
     place(root, false);
@@ -425,6 +438,7 @@ describe("visibility", () => {
     const { root, reveal, time } = setup();
     place(root, true);
     void reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(200);
     reveal.pause();
@@ -442,6 +456,7 @@ describe("destroy", () => {
     const { root, reveal, before, time } = setup();
     const styles = document.head.children.length;
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(400);
     reveal.destroy();
@@ -468,6 +483,7 @@ describe("destroy", () => {
     reveal.showLoading();
     reveal.playSequence();
     time.advance(2000);
+    await reveal.ready;
     await flush();
     expect(root.outerHTML).toBe(before);
   });
@@ -540,6 +556,7 @@ describe("container with slot markup", () => {
     expect(card.querySelector("[data-veilo-slot=badge] > span")).toBeNull();
 
     const done = reveal.play();
+    await reveal.ready;
     await flush();
     time.advance(1100);
     expect(await done).toBe(true);

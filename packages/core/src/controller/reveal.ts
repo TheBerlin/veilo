@@ -13,18 +13,16 @@ import { prefersReducedMotion } from "../dom/reduced-motion.ts";
 import { watchResize } from "../dom/resize.ts";
 import { computedValue } from "../dom/style.ts";
 import { watchVisibility } from "../dom/visibility.ts";
-import { DEFAULT_GLYPH_FONT } from "../grid/ramps.ts";
 import { createElementSkeleton } from "../loader/skeleton.ts";
 import { resolveEasing } from "../math/easing.ts";
 import { coverCrop } from "../math/fit.ts";
 import { clamp, cssNumber } from "../math/number.ts";
 import { applyButtonFrame } from "../render/button-fx.ts";
-import {
-  drawGridFrame,
-  isGridStyle,
-  prepareGridEffect,
-  type PreparedGrid,
-} from "../render/grid-renderer.ts";
+// Types only: the renderer itself, with sampling and glyph ramps, is loaded with import() when a
+// grid effect is used, so bundlers put it in a separate file the other effects never download.
+import type * as GridRenderer from "../render/grid-renderer.ts";
+import type { PreparedGrid } from "../render/grid-renderer.ts";
+import { isGridStyle } from "../render/grid-style.ts";
 import { applyImageFxFrame, imageFxFrame, isImageFxStyle } from "../render/image-fx.ts";
 import {
   applyTextFxFrame,
@@ -143,7 +141,8 @@ export function createReveal(
   const parsed = resolved.settings;
   const scheduler = options.scheduler ?? browserScheduler();
   const reducedMotion = options.reducedMotion ?? prefersReducedMotion();
-  const fontFamily = options.fontFamily ?? DEFAULT_GLYPH_FONT;
+  // Undefined means the renderer's default, IBM Plex Mono.
+  const fontFamily = options.fontFamily;
   const { image, button } = resolved.targets;
   const texts = [...(resolved.targets.text ?? [])];
   const ease = resolveEasing(parsed, "r");
@@ -177,6 +176,7 @@ export function createReveal(
   let token = 0;
   let pending: ((completed: boolean) => void) | undefined;
 
+  let renderer: typeof GridRenderer | undefined;
   let grid: PreparedGrid | undefined;
   let gridSize = { width: 0, height: 0 };
   let mounted = false;
@@ -205,7 +205,7 @@ export function createReveal(
    */
   const prepareGrid = () => {
     grid = undefined;
-    if (!image || !gridStyle) return;
+    if (!image || !gridStyle || !renderer) return;
     const box = image.getBoundingClientRect();
     if (box.width <= 0 || box.height <= 0) return;
     const width = Math.max(MIN_CANVAS_WIDTH, Math.round(box.width * pixelRatio()));
@@ -218,7 +218,7 @@ export function createReveal(
     const context = context2d(photo);
     const crop = coverCrop(sourceWidth, sourceHeight, width, height);
     context.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, width, height);
-    grid = prepareGridEffect(photo, parsed, { fontFamily });
+    grid = renderer.prepareGridEffect(photo, parsed, { fontFamily });
     gridSize = { width, height };
   };
 
@@ -292,8 +292,8 @@ export function createReveal(
       layers.run();
     } else {
       mount();
-      if (image && grid && effectContext) {
-        drawGridFrame(effectContext, grid, { ink }, p);
+      if (image && grid && effectContext && renderer) {
+        renderer.drawGridFrame(effectContext, grid, { ink }, p);
         image.style.opacity = cssNumber(photoOpacity(p));
       } else if (image && isImageFxStyle(parsed.imageFx)) {
         applyImageFxFrame(image, imageFxFrame(parsed.imageFx, parsed.origin, ease, p));
@@ -358,7 +358,12 @@ export function createReveal(
   const ready = (async () => {
     try {
       if (image && gridStyle) {
-        if ("decode" in image) await image.decode();
+        // Loads the grid code while the image decodes, so the split adds no waiting.
+        const [loaded] = await Promise.all([
+          import("../render/grid-renderer.ts"),
+          "decode" in image ? image.decode() : undefined,
+        ]);
+        renderer = loaded;
         if (destroyed) return;
         prepareGrid();
         life.add(
@@ -380,7 +385,7 @@ export function createReveal(
         }
       }
     } catch {
-      // An image that cannot be decoded shows as it is, without the grid effect.
+      // An image that cannot be decoded, or grid code that cannot load, leaves the image as it is.
       grid = undefined;
     } finally {
       isReady = true;

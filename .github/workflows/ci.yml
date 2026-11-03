@@ -35,3 +35,5 @@ jobs:
         run: pnpm --filter @veilo/core exec playwright install --with-deps chromium
       - run: pnpm test
       - run: pnpm build
+      - name: Check built entry points
+        run: pnpm --filter @veilo/core check:entries
