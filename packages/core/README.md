@@ -8,12 +8,14 @@ Everything runs from one flat, versioned settings object (plain JSON). Every fra
 
 ## Quick start
 
+Mark the parts of your component with `data-veilo-slot`, then pass the container:
+
 ```html
 <article class="card">
-  <div class="media"><img class="photo" src="product.png" alt="MCHOSE L7 Pro" /></div>
-  <h3 class="title">MCHOSE L7 Pro</h3>
-  <p class="price">$59.99</p>
-  <button class="buy"><span class="label">Buy now</span></button>
+  <div class="media"><img data-veilo-slot="photo" src="product.png" alt="MCHOSE L7 Pro" /></div>
+  <h3 data-veilo-slot="title">MCHOSE L7 Pro</h3>
+  <p data-veilo-slot="price">$59.99</p>
+  <button data-veilo-slot="buy"><span data-veilo-slot="label">Buy now</span></button>
 </article>
 ```
 
@@ -21,24 +23,26 @@ Everything runs from one flat, versioned settings object (plain JSON). Every fra
 import { createReveal } from "@veilo/core";
 
 const card = document.querySelector<HTMLElement>(".card")!;
-const find = (selector: string) => card.querySelector<HTMLElement>(selector)!;
-
-const reveal = createReveal(
-  {
-    image: card.querySelector<HTMLImageElement>(".photo")!,
-    text: [find(".title"), find(".price"), find(".label")],
-    button: find(".buy"),
-  },
-  { imageFx: "dots", origin: "left", textFx: "scramble", rDur: 1.04 },
-  { busy: card },
-);
+const reveal = createReveal(card, { imageFx: "dots", origin: "left", textFx: "scramble" });
 
 reveal.playSequence(); // skeleton for `hold` seconds, then the reveal
 ```
 
-## `createReveal(targets, settings, options?)`
+Roles are guessed from the elements: `<img>` and `<canvas>` are the image, `<button>` is the button, and the rest is text, revealed in page order. A [layout](#slots-and-the-layout-json) can name the roles instead.
+
+## `createReveal(container | targets, settings, options?)`
 
 Animates an image, text elements and a button. Nothing on the page changes until you call a method, and `destroy()` restores the page exactly as it was.
+
+The first argument is a container with [slot markup](#slots-and-the-layout-json), which is also the default `busy` region, or the elements themselves:
+
+```ts
+const reveal = createReveal(
+  { image: photo, text: [title, price, label], button },
+  { imageFx: "dots" },
+  { busy: card },
+);
+```
 
 **Targets**
 
@@ -52,7 +56,8 @@ Animates an image, text elements and a button. Nothing on the page changes until
 
 | Key             | Default                             | What it does                                                        |
 | --------------- | ----------------------------------- | ------------------------------------------------------------------- |
-| `busy`          | none                                | Gets `aria-busy="true"` while the skeleton shows.                   |
+| `busy`          | the container, if given             | Gets `aria-busy="true"` while the skeleton shows.                   |
+| `warnings`      | on in development builds            | Prints slot mismatches to the console.                              |
 | `ink`           | `--veilo-ink`, then text color      | Color of dots and characters.                                       |
 | `fontFamily`    | `"IBM Plex Mono", monospace`        | Font for hex and binary characters.                                 |
 | `reducedMotion` | the user's `prefers-reduced-motion` | Set `false` to preview effects regardless (as the playground does). |
@@ -76,23 +81,49 @@ Animates an image, text elements and a button. Nothing on the page changes until
 
 The image is sampled once and cached; frames only draw. It is sampled again when it resizes by 2 px or more, or when the glyph font finishes loading. Playback pauses while the elements are off screen or the tab is hidden.
 
-## `createSkeleton(elements, settings, options?)`
+## `createSkeleton(container | elements, settings, options?)`
 
 Shows the loader (shimmer, wave or pulse) on real elements while their content loads.
 
 ```ts
 import { createSkeleton } from "@veilo/core";
 
-const skeleton = createSkeleton(
-  [photo, title, price],
-  { effect: "wave", stagger: 0.12 },
-  { busy: card },
-);
+const skeleton = createSkeleton(card, { effect: "wave", stagger: 0.12 });
 skeleton.start(); // also restarts the animation if it already shows
 skeleton.stop(); // restores the elements exactly
 ```
 
-Text turns transparent, images, canvases and videos hide their picture but keep their size, and each element gets `--i` (its index) for the wave delay. Options: `busy`, `root`, and fallback `base` and `highlight` colors.
+Given a container, every slot in it is a placeholder, in page order; given a list, the elements are the placeholders in that order. Text turns transparent, images, canvases and videos hide their picture but keep their size, and each element gets `--i` (its index) for the wave delay. Options: `busy`, `root`, `warnings`, and fallback `base` and `highlight` colors.
+
+## Slots and the layout JSON
+
+Slots are the parts of your own markup marked with `data-veilo-slot="name"`. Sizes and positions always come from your elements and CSS. A layout pairs the effect settings with a map of slots, so one JSON file describes a whole component:
+
+```json
+{
+  "version": 1,
+  "settings": { "imageFx": "dots", "textFx": "scramble" },
+  "slots": {
+    "photo": { "role": "image" },
+    "badge": { "role": "block" },
+    "title": { "role": "text" },
+    "buy": { "role": "button" }
+  }
+}
+```
+
+| Role     | What it does                                                                       |
+| -------- | ---------------------------------------------------------------------------------- |
+| `image`  | The photo (`<img>` or `<canvas>`). Only the first image slot is revealed.          |
+| `text`   | A text element on the text timeline, in page order.                                |
+| `button` | Its background fades in with its label. Only the first button slot is used.        |
+| `block`  | Shows the skeleton but has no reveal effect, for avatars, badges and other shapes. |
+
+`createReveal` and `createSkeleton` accept a layout or plain settings. Without a slots map, roles are guessed from the elements. A slot name may appear on several elements, such as repeated rows, and they all get its role.
+
+Mismatches never throw; in development builds they print a `Veilo:` warning. A layout slot missing from the markup is skipped, an element the layout does not name gets a guessed role, an `image` role on an element that is not an image becomes a `block`, and later images and buttons become blocks. Development means `process.env.NODE_ENV !== "production"`, which bundlers replace at build time; pass `warnings: false` to turn the warnings off.
+
+`parseLayout(json)` validates a layout the same way `parseSettings` does: invalid fields are dropped and numbers are clamped.
 
 ## Settings
 
@@ -154,7 +185,7 @@ Hex and binary grids measure and draw their characters in IBM Plex Mono. The pac
 
 ## Server rendering
 
-Importing the package touches no browser globals, so it is safe in server code. `parseSettings`, `defaultSettings`, `settingsJsonSchema` and `generateLoaderCss` work anywhere; `createReveal` and `createSkeleton` need a browser.
+Importing the package touches no browser globals, so it is safe in server code. `parseSettings`, `parseLayout`, `defaultSettings`, `settingsJsonSchema` and `generateLoaderCss` work anywhere; `createReveal` and `createSkeleton` need a browser.
 
 ## Known limits
 
@@ -165,9 +196,9 @@ Importing the package touches no browser globals, so it is safe in server code. 
 
 ## Differences from the specification's API sketch
 
-The specification sketches `createReveal(container, { image: {}, text: {}, duration, easing })` and a `presets` export. The current API differs while these are being built:
+The specification sketches `createReveal(container, { image: {}, text: {}, duration, easing })` and a `presets` export. The current API follows it with a container, and differs in these points:
 
-- Targets are passed explicitly. Finding them inside a container from `data-veilo-slot` markup is planned.
+- The container's parts are found from `data-veilo-slot` markup, and explicit targets are accepted too.
 - Settings are the flat object that the playground exports. Grouped `image` and `text` options are an open decision.
 - Presets will come in their own package.
 - `createSkeleton` uses `start()` and `stop()` as sketched, and adds `destroy()`.

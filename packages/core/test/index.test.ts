@@ -5,6 +5,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import * as api from "../src/index.ts";
 import type {
   ColorKey,
+  Layout,
   LoaderCssOptions,
   ParsedSettings,
   Reveal,
@@ -17,16 +18,22 @@ import type {
   Settings,
   Skeleton,
   SkeletonOptions,
+  SlotHint,
+  SlotRole,
 } from "../src/index.ts";
 
 describe("@veilo/core public API", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(api).sort()).toEqual([
+      "LAYOUT_VERSION",
       "SETTINGS_VERSION",
+      "SLOT_ATTRIBUTE",
+      "SLOT_ROLES",
       "createReveal",
       "createSkeleton",
       "defaultSettings",
       "generateLoaderCss",
+      "parseLayout",
       "parseSettings",
       "settingsJsonSchema",
     ]);
@@ -39,15 +46,22 @@ describe("@veilo/core public API", () => {
     expect(api.generateLoaderCss(settings)).toContain("@keyframes veilo-pulse");
     expect(api.defaultSettings().version).toBe(api.SETTINGS_VERSION);
     expect(api.settingsJsonSchema()).toHaveProperty("properties");
+    expect(api.parseLayout({ slots: { a: { role: "text" } } }).slots).toEqual({
+      a: { role: "text" },
+    });
   });
 
   it("exports the types the functions use", () => {
-    expectTypeOf(api.createReveal).parameter(0).toEqualTypeOf<RevealTargets>();
+    expectTypeOf(api.createReveal).parameter(0).toEqualTypeOf<RevealTargets | Element>();
     expectTypeOf(api.createReveal).parameter(2).toEqualTypeOf<RevealOptions | undefined>();
     expectTypeOf(api.createReveal).returns.toEqualTypeOf<Reveal>();
     expectTypeOf<Reveal["state"]>().toEqualTypeOf<RevealState>();
     expectTypeOf<RevealEvents["progress"]>().toEqualTypeOf<[p: number]>();
     expectTypeOf<NonNullable<RevealOptions["scheduler"]>>().toEqualTypeOf<Scheduler>();
+    expectTypeOf(api.createSkeleton).parameter(0).toEqualTypeOf<readonly HTMLElement[] | Element>();
+    expectTypeOf(api.parseLayout).returns.toEqualTypeOf<Layout>();
+    expectTypeOf<Layout["slots"][string]>().toEqualTypeOf<SlotHint>();
+    expectTypeOf<NonNullable<SlotHint["role"]>>().toEqualTypeOf<SlotRole>();
     expectTypeOf(api.createSkeleton).parameter(2).toEqualTypeOf<SkeletonOptions | undefined>();
     expectTypeOf(api.createSkeleton).returns.toEqualTypeOf<Skeleton>();
     expectTypeOf(api.generateLoaderCss).parameter(1).toEqualTypeOf<LoaderCssOptions | undefined>();

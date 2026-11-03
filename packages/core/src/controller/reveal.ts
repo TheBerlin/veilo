@@ -14,7 +14,7 @@ import { watchResize } from "../dom/resize.ts";
 import { computedValue } from "../dom/style.ts";
 import { watchVisibility } from "../dom/visibility.ts";
 import { DEFAULT_GLYPH_FONT } from "../grid/ramps.ts";
-import { createSkeleton } from "../loader/skeleton.ts";
+import { createElementSkeleton } from "../loader/skeleton.ts";
 import { resolveEasing } from "../math/easing.ts";
 import { coverCrop } from "../math/fit.ts";
 import { clamp, cssNumber } from "../math/number.ts";
@@ -32,11 +32,12 @@ import {
   textFxFrame,
   type TextFxFrame,
 } from "../render/text-fx.ts";
-import { parseSettings } from "../schema/validate.ts";
+import { isDevBuild } from "../slots/dev-warnings.ts";
 import { photoOpacity } from "../timeline/reveal-timeline.ts";
 import { createClock } from "./clock.ts";
 import { createEmitter } from "./events.ts";
 import { createSequence } from "./sequence.ts";
+import { resolveTargets, type RevealTargets } from "./targets.ts";
 
 /**
  * What the reveal shows: `idle` before anything ran, `loading` while the skeleton shows,
@@ -44,15 +45,7 @@ import { createSequence } from "./sequence.ts";
  */
 export type RevealState = "idle" | "loading" | "revealing" | "revealed";
 
-/** The elements a reveal animates. Slots will build this object from markup. */
-export interface RevealTargets {
-  /** The photo. Grid effects draw over it; the other image effects style it. */
-  image?: HTMLImageElement | HTMLCanvasElement;
-  /** Text elements in timeline order, for example heading, description, price, button label. */
-  text?: readonly HTMLElement[];
-  /** The button whose background (`--veilo-bg-a`) fades in with its label. */
-  button?: HTMLElement;
-}
+export type { RevealTargets } from "./targets.ts";
 
 /** Options for {@link createReveal}. */
 export interface RevealOptions {
@@ -68,6 +61,8 @@ export interface RevealOptions {
   busy?: Element;
   /** The shadow root the elements live in, for the skeleton stylesheet. */
   root?: ShadowRoot;
+  /** Print slot mismatches to the console. Defaults to on in development builds only. */
+  warnings?: boolean;
 }
 
 /** Events of a reveal and their arguments. */
@@ -140,16 +135,17 @@ const TEXT_STYLES = ["opacity", "transform", "filter"];
  * @returns The reveal.
  */
 export function createReveal(
-  targets: RevealTargets,
+  targets: RevealTargets | Element,
   settings: unknown,
   options: RevealOptions = {},
 ): Reveal {
-  const parsed = parseSettings(settings).settings;
+  const resolved = resolveTargets(targets, settings, options.warnings ?? isDevBuild());
+  const parsed = resolved.settings;
   const scheduler = options.scheduler ?? browserScheduler();
   const reducedMotion = options.reducedMotion ?? prefersReducedMotion();
   const fontFamily = options.fontFamily ?? DEFAULT_GLYPH_FONT;
-  const { image, button } = targets;
-  const texts = [...(targets.text ?? [])];
+  const { image, button } = resolved.targets;
+  const texts = [...(resolved.targets.text ?? [])];
   const ease = resolveEasing(parsed, "r");
   const textConfig = textFxConfig(parsed, Math.max(1, texts.length));
   const gridStyle = image && isGridStyle(parsed.imageFx);
@@ -164,9 +160,8 @@ export function createReveal(
   // Undone at p = 1 and when loading: the effect canvas, overlays and every style a frame wrote.
   const layers: Cleanup = createCleanup();
 
-  const placeholders = [image, ...texts, button].filter((e): e is HTMLElement => e !== undefined);
-  const skeleton = createSkeleton([...new Set(placeholders)], parsed, {
-    busy: options.busy,
+  const skeleton = createElementSkeleton(resolved.placeholders, parsed, {
+    busy: options.busy ?? resolved.container,
     root: options.root,
   });
   life.add(() => skeleton.destroy());

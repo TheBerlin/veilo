@@ -11,6 +11,10 @@ const BROWSER_TESTS = [
   "test/render/**/*.test.ts",
   "test/loader/skeleton.test.ts",
   "test/controller/reveal.test.ts",
+  "test/controller/targets.test.ts",
+  "test/controller/skeleton.test.ts",
+  "test/slots/discover.test.ts",
+  "test/slots/roles.test.ts",
 ];
 
 export default defineProject({

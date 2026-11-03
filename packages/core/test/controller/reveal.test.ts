@@ -505,3 +505,39 @@ describe("authored markup", () => {
     expect(document.body.innerHTML).toBe(before);
   });
 });
+
+describe("container with slot markup", () => {
+  it("reveals the slots it finds and restores the page exactly", async () => {
+    document.body.innerHTML =
+      '<article><span data-veilo-slot="badge">New</span>' +
+      '<div><canvas data-veilo-slot="photo" width="20" height="20" style="width:80px;height:80px"></canvas></div>' +
+      '<h3 data-veilo-slot="title">MCHOSE L7 Pro</h3>' +
+      '<button data-veilo-slot="buy"><span data-veilo-slot="label">Buy</span></button></article>';
+    const card = document.body.firstElementChild as HTMLElement;
+    const before = document.body.innerHTML;
+    const time = fakeScheduler(10);
+    const reveal = createReveal(
+      card,
+      { settings: BASE, slots: { badge: { role: "block" } } },
+      { scheduler: time.scheduler, reducedMotion: false, warnings: false },
+    );
+
+    reveal.showLoading();
+    expect(card.getAttribute("aria-busy")).toBe("true");
+    expect(card.querySelectorAll("[data-veilo-skeleton]")).toHaveLength(5);
+
+    await reveal.ready;
+    reveal.seek(0.5);
+    expect(card.querySelector("canvas + canvas")).not.toBeNull();
+    expect(card.querySelector("h3 > span[aria-hidden]")).not.toBeNull();
+    expect(card.querySelector("button")!.style.getPropertyValue("--veilo-bg-a")).not.toBe("");
+    // A block slot gets the skeleton but no reveal effect.
+    expect(card.querySelector("[data-veilo-slot=badge] > span")).toBeNull();
+
+    const done = reveal.play();
+    await flush();
+    time.advance(1100);
+    expect(await done).toBe(true);
+    expect(document.body.innerHTML).toBe(before);
+  });
+});

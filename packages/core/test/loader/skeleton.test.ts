@@ -1,7 +1,7 @@
 // Tests for src/loader/skeleton.ts. Runs in Chromium (see BROWSER_TESTS in vitest.config.ts).
 
 import { afterEach, describe, expect, it } from "vitest";
-import { createSkeleton } from "../../src/loader/skeleton.ts";
+import { createElementSkeleton } from "../../src/loader/skeleton.ts";
 
 /** Builds a small card: a region with an image and two text lines. */
 function card() {
@@ -29,18 +29,18 @@ afterEach(() => {
   }
 });
 
-describe("createSkeleton", () => {
+describe("createElementSkeleton", () => {
   it("does nothing until started", () => {
     const { region, elements } = card();
     const before = region.outerHTML;
-    const skeleton = createSkeleton(elements, {});
+    const skeleton = createElementSkeleton(elements, {});
     expect(skeleton.active).toBe(false);
     expect(region.outerHTML).toBe(before);
   });
 
   it("marks every element with one id, its index, and aria-hidden", () => {
     const { elements } = card();
-    createSkeleton(elements, {}).start();
+    createElementSkeleton(elements, {}).start();
     const id = idOf(elements[0]!);
     expect(id).toMatch(/^[a-z0-9]+$/);
     elements.forEach((element, index) => {
@@ -52,7 +52,7 @@ describe("createSkeleton", () => {
 
   it("runs the generated animation with its own keyframes", () => {
     const { elements } = card();
-    createSkeleton(elements, { effect: "shimmer", lDur: 1, lGap: 0.5 }).start();
+    createElementSkeleton(elements, { effect: "shimmer", lDur: 1, lGap: 0.5 }).start();
     const style = getComputedStyle(elements[1]!);
     expect(style.animationName).toBe(`veilo-skeleton-${idOf(elements[1]!)}`);
     expect(style.animationDuration).toBe("1.5s");
@@ -62,27 +62,27 @@ describe("createSkeleton", () => {
 
   it("falls back to the light theme colors when the page defines none", () => {
     const { elements } = card();
-    createSkeleton(elements, { effect: "pulse" }).start();
+    createElementSkeleton(elements, { effect: "pulse" }).start();
     expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(221, 229, 230)");
   });
 
   it("follows --veilo-base when the page defines it", () => {
     const { region, elements } = card();
     region.style.setProperty("--veilo-base", "rgb(9, 8, 7)");
-    createSkeleton(elements, { effect: "pulse" }).start();
+    createElementSkeleton(elements, { effect: "pulse" }).start();
     expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(9, 8, 7)");
   });
 
   it("hides the picture of images, canvases and videos", () => {
     const { elements } = card();
-    createSkeleton(elements, {}).start();
+    createElementSkeleton(elements, {}).start();
     expect(getComputedStyle(elements[0]!).objectPosition).toBe("-99999px 0px");
     expect(getComputedStyle(elements[1]!).objectPosition).toBe("50% 50%");
   });
 
   it("stops the animation under reduced motion", () => {
     const { elements } = card();
-    createSkeleton(elements, {}).start();
+    createElementSkeleton(elements, {}).start();
     const sheet = [...document.styleSheets].at(-1)!;
     const media = [...sheet.cssRules].find((rule) => rule instanceof CSSMediaRule) as CSSMediaRule;
     expect(media.conditionText).toBe("(prefers-reduced-motion: reduce)");
@@ -93,7 +93,7 @@ describe("createSkeleton", () => {
 
   it("sets aria-busy on the busy region", () => {
     const { region, elements } = card();
-    const skeleton = createSkeleton(elements, {}, { busy: region });
+    const skeleton = createElementSkeleton(elements, {}, { busy: region });
     skeleton.start();
     expect(region.getAttribute("aria-busy")).toBe("true");
     skeleton.stop();
@@ -105,7 +105,7 @@ describe("createSkeleton", () => {
     elements[1]!.setAttribute("aria-hidden", "false");
     const before = region.outerHTML;
     const styles = document.head.children.length;
-    const skeleton = createSkeleton(elements, {}, { busy: region });
+    const skeleton = createElementSkeleton(elements, {}, { busy: region });
     skeleton.start();
     skeleton.stop();
     expect(region.outerHTML).toBe(before);
@@ -115,7 +115,7 @@ describe("createSkeleton", () => {
 
   it("restarts the animation on a second start, with new keyframes", () => {
     const { elements } = card();
-    const skeleton = createSkeleton(elements, {});
+    const skeleton = createElementSkeleton(elements, {});
     skeleton.start();
     const first = idOf(elements[0]!);
     const styles = document.head.children.length;
@@ -127,8 +127,8 @@ describe("createSkeleton", () => {
   it("keeps two skeletons with different settings apart", () => {
     const one = card();
     const two = card();
-    createSkeleton(one.elements, { effect: "shimmer", lDur: 1, lGap: 0 }).start();
-    createSkeleton(two.elements, { effect: "pulse", lDur: 3 }).start();
+    createElementSkeleton(one.elements, { effect: "shimmer", lDur: 1, lGap: 0 }).start();
+    createElementSkeleton(two.elements, { effect: "pulse", lDur: 3 }).start();
     const a = getComputedStyle(one.elements[1]!);
     const b = getComputedStyle(two.elements[1]!);
     expect(a.animationName).not.toBe(b.animationName);
@@ -137,7 +137,7 @@ describe("createSkeleton", () => {
 
   it("validates and clamps the settings", () => {
     const { elements } = card();
-    createSkeleton(elements, { effect: "pulse", lDur: 99, radius: "big" }).start();
+    createElementSkeleton(elements, { effect: "pulse", lDur: 99, radius: "big" }).start();
     const style = getComputedStyle(elements[1]!);
     expect(style.animationDuration).toBe("4s");
     expect(style.borderTopLeftRadius).toBe("6px");
@@ -146,7 +146,7 @@ describe("createSkeleton", () => {
   it("does nothing after destroy", () => {
     const { region, elements } = card();
     const before = region.outerHTML;
-    const skeleton = createSkeleton(elements, {});
+    const skeleton = createElementSkeleton(elements, {});
     skeleton.start();
     skeleton.destroy();
     skeleton.start();
@@ -161,7 +161,7 @@ describe("createSkeleton", () => {
     const line = document.createElement("p");
     line.textContent = "x";
     root.append(line);
-    createSkeleton([line], { effect: "pulse" }, { root }).start();
+    createElementSkeleton([line], { effect: "pulse" }, { root }).start();
     expect(root.querySelector("style")).not.toBeNull();
     expect(getComputedStyle(line).backgroundColor).toBe("rgb(221, 229, 230)");
   });

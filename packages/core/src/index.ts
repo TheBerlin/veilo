@@ -18,8 +18,13 @@ export type {
 export type { Scheduler } from "./dom/env.ts";
 
 // Skeleton: the loader on real elements.
-export { createSkeleton } from "./loader/skeleton.ts";
-export type { Skeleton, SkeletonOptions } from "./loader/skeleton.ts";
+export { createSkeleton } from "./controller/skeleton.ts";
+export type { Skeleton, SkeletonOptions } from "./controller/skeleton.ts";
+
+// Layout: settings plus the slots map for data-veilo-slot markup.
+export { LAYOUT_VERSION, parseLayout, SLOT_ROLES } from "./schema/layout.ts";
+export type { Layout, SlotHint, SlotRole } from "./schema/layout.ts";
+export { SLOT_ATTRIBUTE } from "./slots/discover.ts";
 
 // Loader CSS: the shimmer, wave or pulse stylesheet for a set of settings.
 export { generateLoaderCss } from "./loader/css-generator.ts";

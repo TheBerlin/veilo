@@ -8,8 +8,8 @@ import { addStyle } from "../dom/style.ts";
 import { parseSettings } from "../schema/validate.ts";
 import { generateLoaderCss } from "./css-generator.ts";
 
-/** Options for {@link createSkeleton}. */
-export interface SkeletonOptions {
+/** Options for {@link createElementSkeleton}. */
+export interface ElementSkeletonOptions {
   /** The region that is loading. It gets `aria-busy="true"` while the skeleton shows. */
   busy?: Element;
   /** Where to add the stylesheet when the elements live in a shadow root. */
@@ -46,7 +46,7 @@ const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f6fafa)";
  *
  * @example
  * ```ts
- * const skeleton = createSkeleton([photo, title, price], { effect: "wave" }, { busy: card });
+ * const skeleton = createElementSkeleton([photo, title, price], { effect: "wave" }, { busy: card });
  * skeleton.start(); // while loading
  * skeleton.stop();  // when the content is ready
  * ```
@@ -56,10 +56,10 @@ const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f6fafa)";
  * @param options - Busy region, shadow root and fallback colors.
  * @returns The skeleton, not yet showing.
  */
-export function createSkeleton(
+export function createElementSkeleton(
   elements: readonly HTMLElement[],
   settings: unknown,
-  options: SkeletonOptions = {},
+  options: ElementSkeletonOptions = {},
 ): Skeleton {
   const parsed = parseSettings(settings).settings;
   const cleanup = createCleanup();
