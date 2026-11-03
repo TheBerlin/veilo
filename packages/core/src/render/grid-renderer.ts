@@ -1,7 +1,5 @@
-/**
- * grid-renderer.ts: draws one frame of the dots, hex, binary and mosaic reveals.
- * Layer 2. Draws on a canvas it is given; no timers and no state between frames.
- */
+// grid-renderer.ts: draws one frame of the dots, hex, binary and mosaic reveals.
+// Layer 2. Draws on a canvas it is given; no timers and no state between frames.
 
 import type { Canvas, Context2D } from "../dom/canvas.ts";
 import { cellAlpha, cellProgress, cellScale } from "../grid/cell-timeline.ts";

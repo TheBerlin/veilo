@@ -1,7 +1,5 @@
-/**
- * number.ts: small numeric helpers shared by the timelines and renderers.
- * Layer 0 (pure). Must not import DOM code.
- */
+// number.ts: small numeric helpers shared by the timelines and renderers.
+// Layer 0 (pure). Must not import DOM code.
 
 /**
  * Limits a value to a range.

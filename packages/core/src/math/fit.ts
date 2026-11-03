@@ -1,7 +1,5 @@
-/**
- * fit.ts: the part of an image to draw so it covers a box, like CSS `object-fit: cover`.
- * Layer 0 (pure). Must not import DOM code.
- */
+// fit.ts: the part of an image to draw so it covers a box, like CSS `object-fit: cover`.
+// Layer 0 (pure). Must not import DOM code.
 
 /** A rectangle in source pixels. */
 export interface Crop {

@@ -1,7 +1,5 @@
-/**
- * overlay.ts: covers a text element with an aria-hidden overlay for scramble and typewriter.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// overlay.ts: covers a text element with an aria-hidden overlay for scramble and typewriter.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 import { createCleanup } from "./cleanup.ts";
 

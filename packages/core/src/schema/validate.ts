@@ -1,7 +1,5 @@
-/**
- * validate.ts: checks and clamps untrusted settings input.
- * Layer 0 (pure). Must not import DOM code.
- */
+// validate.ts: checks and clamps untrusted settings input.
+// Layer 0 (pure). Must not import DOM code.
 
 import { defaultSettings } from "./defaults.ts";
 import {

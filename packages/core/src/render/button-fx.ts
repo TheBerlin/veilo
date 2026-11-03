@@ -1,7 +1,5 @@
-/**
- * button-fx.ts: fades the button background in with its label.
- * Layer 2. Writes one custom property on the element it is given.
- */
+// button-fx.ts: fades the button background in with its label.
+// Layer 2. Writes one custom property on the element it is given.
 
 import { clamp, cssNumber } from "../math/number.ts";
 

@@ -1,7 +1,5 @@
-/**
- * sample.ts: downscales the photo into grid cells with a color and a darkness each.
- * Layer 1 (needs a canvas). One of the two grid files allowed to use dom/.
- */
+// sample.ts: downscales the photo into grid cells with a color and a darkness each.
+// Layer 1 (needs a canvas). One of the two grid files allowed to use dom/.
 
 import { context2d, createCanvas, type Canvas } from "../dom/canvas.ts";
 

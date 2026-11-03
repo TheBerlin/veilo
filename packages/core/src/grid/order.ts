@@ -1,7 +1,5 @@
-/**
- * order.ts: when each grid cell starts, from the spec's seven origins.
- * Layer 1 (pure). Must not import DOM code.
- */
+// order.ts: when each grid cell starts, from the spec's seven origins.
+// Layer 1 (pure). Must not import DOM code.
 
 import { clamp } from "../math/number.ts";
 import { createRandom, DEFAULT_SEED, type RandomGenerator } from "../math/random.ts";

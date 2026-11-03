@@ -1,7 +1,5 @@
-/**
- * discover.ts: finds the `data-veilo-slot` elements in a container and gives each its role.
- * Layer 2. Reads the container it is given; changes nothing.
- */
+// discover.ts: finds the `data-veilo-slot` elements in a container and gives each its role.
+// Layer 2. Reads the container it is given; changes nothing.
 
 import type { Layout, SlotHint, SlotRole } from "../schema/layout.ts";
 import { canBeImage, guessRole } from "./roles.ts";

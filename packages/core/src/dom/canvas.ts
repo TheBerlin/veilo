@@ -1,7 +1,5 @@
-/**
- * canvas.ts: creates drawing surfaces for sampling, ramps and rendering.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// canvas.ts: creates drawing surfaces for sampling, ramps and rendering.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 /** A canvas the engine draws on: an element in the page, or an offscreen one. */
 export type Canvas = HTMLCanvasElement | OffscreenCanvas;

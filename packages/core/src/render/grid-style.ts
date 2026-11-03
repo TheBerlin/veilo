@@ -1,8 +1,6 @@
-/**
- * grid-style.ts: tells grid effects from the others, without loading the grid renderer.
- * Layer 2 (pure). Kept apart so the main entry can check this while the renderer, with its
- * sampling and glyph ramps, is loaded only when a grid effect is used.
- */
+// grid-style.ts: tells grid effects from the others, without loading the grid renderer.
+// Layer 2 (pure). Kept apart so the main entry can check this while the renderer, with its
+// sampling and glyph ramps, is loaded only when a grid effect is used.
 
 import type { Settings } from "../schema/types.ts";
 

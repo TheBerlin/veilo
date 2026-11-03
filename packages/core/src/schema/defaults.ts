@@ -1,7 +1,5 @@
-/**
- * defaults.ts: builds the default settings from the table.
- * Layer 0 (pure). Must not import DOM code.
- */
+// defaults.ts: builds the default settings from the table.
+// Layer 0 (pure). Must not import DOM code.
 
 import { SETTING_KEYS, SETTINGS_SPEC } from "./ranges.ts";
 import type { Settings } from "./types.ts";

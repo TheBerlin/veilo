@@ -1,7 +1,5 @@
-/**
- * reveal-timeline.ts: splits reveal progress into the grid phase and the fade to the photo.
- * Layer 1 (pure). Must not import DOM code.
- */
+// reveal-timeline.ts: splits reveal progress into the grid phase and the fade to the photo.
+// Layer 1 (pure). Must not import DOM code.
 
 import { clamp, smoothstep } from "../math/number.ts";
 

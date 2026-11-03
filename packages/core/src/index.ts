@@ -1,8 +1,6 @@
-/**
- * index.ts: the public API. The only entry point; everything else is internal, so it can change
- * without breaking users. Adding or removing an export here is an API change: update the README
- * and test/index.test.ts with it.
- */
+// index.ts: the public API, `@veilo/core`. One of the two public entries, with loader-entry.ts;
+// everything else is internal, so it can change without breaking users. Adding or removing an
+// export here is an API change: update the README and test/index.test.ts with it.
 
 // Reveal: image, text and button reveal with loading, playback and cleanup.
 export { createReveal } from "./controller/reveal.ts";

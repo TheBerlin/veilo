@@ -1,8 +1,6 @@
-/**
- * targets.ts: turns either explicit targets or a container with slot markup into the elements a
- * reveal or skeleton animates.
- * Layer 3. Reads the markup; reports slot problems in development builds.
- */
+// targets.ts: turns either explicit targets or a container with slot markup into the elements a
+// reveal or skeleton animates.
+// Layer 3. Reads the markup; reports slot problems in development builds.
 
 import { parseLayout, type SlotHint } from "../schema/layout.ts";
 import type { Settings } from "../schema/types.ts";

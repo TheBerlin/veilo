@@ -1,7 +1,5 @@
-/**
- * dev-warnings.ts: reports slot mismatches in development builds only.
- * Layer 2. Writes to the console; no other side effects.
- */
+// dev-warnings.ts: reports slot mismatches in development builds only.
+// Layer 2. Writes to the console; no other side effects.
 
 // Declared here instead of depending on Node's types: only `process.env.NODE_ENV` is read.
 declare const process: { env: { NODE_ENV?: string } };

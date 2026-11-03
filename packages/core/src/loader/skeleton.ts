@@ -1,7 +1,5 @@
-/**
- * skeleton.ts: shows the loader on real elements while their content loads.
- * Layer 2. Adds one stylesheet and a few attributes, all undone by stop().
- */
+// skeleton.ts: shows the loader on real elements while their content loads.
+// Layer 2. Adds one stylesheet and a few attributes, all undone by stop().
 
 import { createCleanup } from "../dom/cleanup.ts";
 import { addStyle } from "../dom/style.ts";

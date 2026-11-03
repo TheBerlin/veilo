@@ -1,7 +1,5 @@
-/**
- * json-schema.ts: builds the JSON Schema for settings files from the table.
- * Layer 0 (pure). Must not import DOM code.
- */
+// json-schema.ts: builds the JSON Schema for settings files from the table.
+// Layer 0 (pure). Must not import DOM code.
 
 import { COLOR_KEYS, COLOR_PATTERN, SETTINGS_SPEC } from "./ranges.ts";
 import { SETTINGS_VERSION } from "./version.ts";

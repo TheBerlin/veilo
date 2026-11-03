@@ -1,7 +1,5 @@
-/**
- * ranges.ts: the settings table, with every default, range and option in one place.
- * Layer 0 (pure). Must not import DOM code.
- */
+// ranges.ts: the settings table, with every default, range and option in one place.
+// Layer 0 (pure). Must not import DOM code.
 
 /** Easing preset keys shared by the loader and the reveal (spec: Easing presets). */
 export const EASING_KEYS = ["out", "outSoft", "inOut", "in", "linear", "back", "custom"] as const;

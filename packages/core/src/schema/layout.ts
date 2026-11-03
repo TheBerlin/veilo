@@ -1,7 +1,5 @@
-/**
- * layout.ts: the layout JSON, which pairs effect settings with a map of slots in the markup.
- * Layer 0 (pure). Must not import DOM code.
- */
+// layout.ts: the layout JSON, which pairs effect settings with a map of slots in the markup.
+// Layer 0 (pure). Must not import DOM code.
 
 import type { Settings } from "./types.ts";
 import { parseSettings } from "./validate.ts";

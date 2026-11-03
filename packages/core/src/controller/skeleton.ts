@@ -1,8 +1,6 @@
-/**
- * skeleton.ts: createSkeleton, the public loader for a list of elements or a container with
- * slot markup.
- * Layer 3. Finds the slots, then hands the elements to the loader in loader/skeleton.ts.
- */
+// skeleton.ts: createSkeleton, the public loader for a list of elements or a container with
+// slot markup.
+// Layer 3. Finds the slots, then hands the elements to the loader in loader/skeleton.ts.
 
 import {
   createElementSkeleton,

@@ -1,7 +1,5 @@
-/**
- * reduced-motion.ts: reads the user's reduced motion preference.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// reduced-motion.ts: reads the user's reduced motion preference.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 const QUERY = "(prefers-reduced-motion: reduce)";
 

@@ -1,9 +1,7 @@
-/**
- * cell-timeline.ts: progress, scale and alpha of one grid cell in a frame.
- * Layer 1 (pure). Must not import DOM code.
- *
- * These run for every cell on every frame, so they return plain numbers and allocate nothing.
- */
+// cell-timeline.ts: progress, scale and alpha of one grid cell in a frame.
+// Layer 1 (pure). Must not import DOM code.
+//
+// These run for every cell on every frame, so they return plain numbers and allocate nothing.
 
 import type { EasingFunction } from "../math/easing.ts";
 import { clamp, lerp } from "../math/number.ts";

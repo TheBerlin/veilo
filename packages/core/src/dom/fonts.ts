@@ -1,7 +1,5 @@
-/**
- * fonts.ts: waits for web fonts, so glyph measurements can be redone with the real font.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// fonts.ts: waits for web fonts, so glyph measurements can be redone with the real font.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 /**
  * Asks the browser to load a web font and waits until it is ready.

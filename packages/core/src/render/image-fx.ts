@@ -1,7 +1,5 @@
-/**
- * image-fx.ts: the photo reveals without a grid (crossfade, blur-up, zoom in and wipe).
- * Layer 2. Works with CSS on the photo element; no canvas, timers or state between frames.
- */
+// image-fx.ts: the photo reveals without a grid (crossfade, blur-up, zoom in and wipe).
+// Layer 2. Works with CSS on the photo element; no canvas, timers or state between frames.
 
 import type { EasingFunction } from "../math/easing.ts";
 import { clamp, cssNumber } from "../math/number.ts";

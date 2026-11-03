@@ -1,7 +1,5 @@
-/**
- * cleanup.ts: records every change made to the page so it can be undone in one call.
- * Layer 1. Uses only the elements it is given, no browser globals.
- */
+// cleanup.ts: records every change made to the page so it can be undone in one call.
+// Layer 1. Uses only the elements it is given, no browser globals.
 
 /** A list of undo steps, run in reverse order. */
 export interface Cleanup {

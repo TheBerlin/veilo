@@ -1,7 +1,5 @@
-/**
- * types.ts: TypeScript types derived from the settings table.
- * Layer 0 (pure). Must not import DOM code.
- */
+// types.ts: TypeScript types derived from the settings table.
+// Layer 0 (pure). Must not import DOM code.
 
 import type { COLOR_KEYS, SETTINGS_SPEC } from "./ranges.ts";
 import type { SETTINGS_VERSION } from "./version.ts";

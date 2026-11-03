@@ -60,7 +60,9 @@ pnpm format:check  # report unformatted files without changing them
   in `controller`. Small handles from lower layers (`createSkeleton`, the `dom` watchers, the
   cleanup list) may keep their own state, as long as the controller creates and destroys them.
   Module-level state is never allowed.
-- Every file starts with a short comment naming its purpose and layer.
+- Every file starts with a short `//` comment naming its purpose and layer. Use `//`, not `/** */`:
+  a doc comment at the top of a file can end up in the published type declarations. TSDoc
+  (`/** */`) is for exports.
 
 CI enforces the import and browser rules. Run the same check locally:
 

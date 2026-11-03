@@ -1,7 +1,5 @@
-/**
- * random.ts: seeded random generator and deterministic hash, so frames are repeatable.
- * Layer 0 (pure). Must not import DOM code.
- */
+// random.ts: seeded random generator and deterministic hash, so frames are repeatable.
+// Layer 0 (pure). Must not import DOM code.
 
 /** The spec's seed for cell order, which makes every run identical. */
 export const DEFAULT_SEED = 7;

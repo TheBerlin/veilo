@@ -1,7 +1,5 @@
-/**
- * css-generator.ts: turns the Loader settings into plain CSS.
- * Layer 2 (pure). Touches no DOM or canvas, so it also runs on a server and at build time.
- */
+// css-generator.ts: turns the Loader settings into plain CSS.
+// Layer 2 (pure). Touches no DOM or canvas, so it also runs on a server and at build time.
 
 import { resolveCurve } from "../math/easing.ts";
 import { cssNumber } from "../math/number.ts";

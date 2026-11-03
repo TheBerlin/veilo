@@ -1,8 +1,6 @@
-/**
- * sequence.ts: the spec's sequence: loading for `hold` seconds, then the reveal, then an
- * optional loop that restarts 900 ms after the reveal ends.
- * Layer 3. Time comes from the scheduler it is given.
- */
+// sequence.ts: the spec's sequence: loading for `hold` seconds, then the reveal, then an
+// optional loop that restarts 900 ms after the reveal ends.
+// Layer 3. Time comes from the scheduler it is given.
 
 import type { Scheduler } from "../dom/env.ts";
 

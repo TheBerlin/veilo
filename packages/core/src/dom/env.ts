@@ -1,10 +1,8 @@
-/**
- * env.ts: time, animation frames and pixel ratio, behind one small interface.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- *
- * The controller takes a {@link Scheduler} instead of calling requestAnimationFrame and
- * setTimeout itself, so tests can drive time by hand.
- */
+// env.ts: time, animation frames and pixel ratio, behind one small interface.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
+//
+// The controller takes a {@link Scheduler} instead of calling requestAnimationFrame and
+// setTimeout itself, so tests can drive time by hand.
 
 /** The time sources the controller uses. All times are in milliseconds. */
 export interface Scheduler {

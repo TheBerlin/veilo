@@ -1,7 +1,5 @@
-/**
- * style.ts: adds a stylesheet to the page and removes it again.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// style.ts: adds a stylesheet to the page and removes it again.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 /**
  * Reads the computed value of a CSS property, including custom properties such as `--veilo-ink`.

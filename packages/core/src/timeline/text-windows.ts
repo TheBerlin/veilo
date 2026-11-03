@@ -1,7 +1,5 @@
-/**
- * text-windows.ts: when each text element animates during a reveal.
- * Layer 1 (pure). Must not import DOM code.
- */
+// text-windows.ts: when each text element animates during a reveal.
+// Layer 1 (pure). Must not import DOM code.
 
 import { clamp } from "../math/number.ts";
 

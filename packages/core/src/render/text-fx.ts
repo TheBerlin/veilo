@@ -1,7 +1,5 @@
-/**
- * text-fx.ts: the card text reveals (scramble, typewriter, rise and sharpen, fade).
- * Layer 2. Writes text and inline styles on elements it is given; no timers.
- */
+// text-fx.ts: the card text reveals (scramble, typewriter, rise and sharpen, fade).
+// Layer 2. Writes text and inline styles on elements it is given; no timers.
 
 import type { TextOverlay } from "../dom/overlay.ts";
 import { resolveEasing, type EasingFunction } from "../math/easing.ts";

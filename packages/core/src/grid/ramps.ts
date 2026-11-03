@@ -1,7 +1,5 @@
-/**
- * ramps.ts: measures how much ink each glyph uses and maps darkness to the closest glyph.
- * Layer 1 (needs a canvas). One of the two grid files allowed to use dom/.
- */
+// ramps.ts: measures how much ink each glyph uses and maps darkness to the closest glyph.
+// Layer 1 (needs a canvas). One of the two grid files allowed to use dom/.
 
 import { context2d, createCanvas } from "../dom/canvas.ts";
 import { clamp } from "../math/number.ts";

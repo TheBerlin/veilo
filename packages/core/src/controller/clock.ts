@@ -1,7 +1,5 @@
-/**
- * clock.ts: turns elapsed time into reveal progress, with pause, resume and seek.
- * Layer 3. Time comes from the scheduler it is given, so tests can drive it by hand.
- */
+// clock.ts: turns elapsed time into reveal progress, with pause, resume and seek.
+// Layer 3. Time comes from the scheduler it is given, so tests can drive it by hand.
 
 import type { Scheduler } from "../dom/env.ts";
 import { clamp } from "../math/number.ts";

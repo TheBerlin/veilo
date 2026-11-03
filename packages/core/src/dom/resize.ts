@@ -1,7 +1,5 @@
-/**
- * resize.ts: reports when an element changes size, so the grid can be sampled again.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// resize.ts: reports when an element changes size, so the grid can be sampled again.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 /**
  * Watches an element's border box size.

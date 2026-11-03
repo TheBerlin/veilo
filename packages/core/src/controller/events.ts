@@ -1,7 +1,5 @@
-/**
- * events.ts: a small typed event emitter for the controller's progress, state and complete.
- * Layer 3. No browser access.
- */
+// events.ts: a small typed event emitter for the controller's progress, state and complete.
+// Layer 3. No browser access.
 
 /** Event names mapped to their listener arguments, such as `{ progress: [p: number] }`. */
 export type EventMap = Record<string, unknown[]>;

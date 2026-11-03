@@ -1,8 +1,6 @@
-/**
- * reveal.ts: createReveal, which plays the image, text and button reveal on real elements.
- * Layer 3. The only stateful layer: owns the clock, the sequence, the skeleton, the effect
- * canvas, the text overlays and every observer, and undoes all of them on destroy().
- */
+// reveal.ts: createReveal, which plays the image, text and button reveal on real elements.
+// Layer 3. The only stateful layer: owns the clock, the sequence, the skeleton, the effect
+// canvas, the text overlays and every observer, and undoes all of them on destroy().
 
 import { context2d, createCanvas, createCanvasElement, type Context2D } from "../dom/canvas.ts";
 import { createCleanup, type Cleanup } from "../dom/cleanup.ts";

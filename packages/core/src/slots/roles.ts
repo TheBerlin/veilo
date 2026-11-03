@@ -1,7 +1,5 @@
-/**
- * roles.ts: which role an element can play, and the guess when the layout names none.
- * Layer 2. Reads only the element it is given.
- */
+// roles.ts: which role an element can play, and the guess when the layout names none.
+// Layer 2. Reads only the element it is given.
 
 import type { SlotRole } from "../schema/layout.ts";
 

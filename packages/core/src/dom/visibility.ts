@@ -1,7 +1,5 @@
-/**
- * visibility.ts: reports when an element can be seen, so animations pause off-screen.
- * Layer 1 (browser). Touches browser globals only when called, never at import time.
- */
+// visibility.ts: reports when an element can be seen, so animations pause off-screen.
+// Layer 1 (browser). Touches browser globals only when called, never at import time.
 
 /**
  * Watches whether an element is on screen and its tab is showing.
