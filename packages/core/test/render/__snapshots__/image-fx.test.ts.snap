@@ -1,0 +1,351 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`frames at fixed progress (snapshots) > blur 1`] = `
+{
+  "p=0": {
+    "clipPath": "",
+    "filter": "blur(18px)",
+    "opacity": "0",
+    "transform": "scale(1.06)",
+  },
+  "p=0.25": {
+    "clipPath": "",
+    "filter": "blur(7.6078px)",
+    "opacity": "0.5773",
+    "transform": "scale(1.0254)",
+  },
+  "p=0.5": {
+    "clipPath": "",
+    "filter": "blur(2.3004px)",
+    "opacity": "0.8722",
+    "transform": "scale(1.0077)",
+  },
+  "p=0.75": {
+    "clipPath": "",
+    "filter": "blur(0.2991px)",
+    "opacity": "0.9834",
+    "transform": "scale(1.001)",
+  },
+  "p=1": {
+    "clipPath": "",
+    "filter": "blur(0px)",
+    "opacity": "1",
+    "transform": "scale(1)",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > crossfade 1`] = `
+{
+  "p=0": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.5773",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.8722",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.9834",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "1",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from bottom 1`] = `
+{
+  "p=0": {
+    "clipPath": "inset(100% 0 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "inset(42.2658% 0 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "inset(12.7798% 0 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "inset(1.6616% 0 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "inset(0% 0 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from center 1`] = `
+{
+  "p=0": {
+    "clipPath": "circle(0% at 50% 50%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "circle(43.3006% at 50% 50%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "circle(65.4151% at 50% 50%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "circle(73.7538% at 50% 50%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "circle(75% at 50% 50%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from diagonal 1`] = `
+{
+  "p=0": {
+    "clipPath": "polygon(0 0, 0% 0, 0 0%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "polygon(0 0, 115.4684% 0, 0 115.4684%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "polygon(0 0, 174.4403% 0, 0 174.4403%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "polygon(0 0, 196.6768% 0, 0 196.6768%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "polygon(0 0, 200% 0, 0 200%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from left 1`] = `
+{
+  "p=0": {
+    "clipPath": "inset(0 100% 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "inset(0 42.2658% 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "inset(0 12.7798% 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "inset(0 1.6616% 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "inset(0 0% 0 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from random 1`] = `
+{
+  "p=0": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.5773",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.8722",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.9834",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "1",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from right 1`] = `
+{
+  "p=0": {
+    "clipPath": "inset(0 0 0 100%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "inset(0 0 0 42.2658%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "inset(0 0 0 12.7798%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "inset(0 0 0 1.6616%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "inset(0 0 0 0%)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > wipe from top 1`] = `
+{
+  "p=0": {
+    "clipPath": "inset(0 0 100% 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.25": {
+    "clipPath": "inset(0 0 42.2658% 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.5": {
+    "clipPath": "inset(0 0 12.7798% 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=0.75": {
+    "clipPath": "inset(0 0 1.6616% 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+  "p=1": {
+    "clipPath": "inset(0 0 0% 0)",
+    "filter": "",
+    "opacity": "",
+    "transform": "",
+  },
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > zoom 1`] = `
+{
+  "p=0": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0",
+    "transform": "scale(1.35)",
+  },
+  "p=0.25": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.5773",
+    "transform": "scale(1.1479)",
+  },
+  "p=0.5": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.8722",
+    "transform": "scale(1.0447)",
+  },
+  "p=0.75": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "0.9834",
+    "transform": "scale(1.0058)",
+  },
+  "p=1": {
+    "clipPath": "",
+    "filter": "",
+    "opacity": "1",
+    "transform": "scale(1)",
+  },
+}
+`;

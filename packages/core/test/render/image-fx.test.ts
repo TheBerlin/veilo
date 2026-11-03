@@ -2,7 +2,7 @@
 // Runs in Chromium (see BROWSER_TESTS in vitest.config.ts), so the CSS is checked by a real parser.
 
 import { afterEach, describe, expect, it } from "vitest";
-import type { EasingFunction } from "../../src/math/easing.ts";
+import { cubicBezier, EASING_CURVES, type EasingFunction } from "../../src/math/easing.ts";
 import {
   applyImageFxFrame,
   imageFxFrame,
@@ -283,5 +283,22 @@ describe("applyImageFxFrame", () => {
     ] as const) {
       expect(document.elementFromPoint(x, y), `(${x}, ${y})`).toBe(element);
     }
+  });
+});
+
+describe("frames at fixed progress (snapshots)", () => {
+  // Locks every frame at p = 0, 0.25, 0.5, 0.75 and 1 with the spec's default reveal easing, so
+  // an unintended change shows up as a snapshot diff. Update with `vitest -u` when it is meant.
+  const P = [0, 0.25, 0.5, 0.75, 1];
+  const outSoft = cubicBezier(...EASING_CURVES.outSoft);
+  const frames = (fx: ImageFxStyle, origin: Origin) =>
+    Object.fromEntries(P.map((p) => [`p=${p}`, imageFxFrame(fx, origin, outSoft, p)]));
+
+  it.each(["crossfade", "blur", "zoom"] as const)("%s", (fx) => {
+    expect(frames(fx, "left")).toMatchSnapshot();
+  });
+
+  it.each(ORIGINS)("wipe from %s", (origin) => {
+    expect(frames("wipe", origin)).toMatchSnapshot();
   });
 });

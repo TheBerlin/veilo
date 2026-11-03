@@ -3,7 +3,7 @@
 
 import { afterEach, describe, expect, it } from "vitest";
 import { mountTextOverlay } from "../../src/dom/overlay.ts";
-import type { EasingFunction } from "../../src/math/easing.ts";
+import { cubicBezier, EASING_CURVES, type EasingFunction } from "../../src/math/easing.ts";
 import {
   applyTextFxFrame,
   SCRAMBLE_CHARSETS,
@@ -291,5 +291,33 @@ describe("applyTextFxFrame", () => {
       "",
       "",
     ]);
+  });
+});
+
+describe("frames at fixed progress (snapshots)", () => {
+  // Locks every element's frame at p = 0, 0.25, 0.5, 0.75 and 1 with the spec's default reveal
+  // easing and duration, so an unintended change shows up as a snapshot diff. Update with
+  // `vitest -u` when it is meant.
+  const P = [0, 0.25, 0.5, 0.75, 1];
+  const texts = ["MCHOSE L7 Pro", "Lightweight 8K polling mouse with", "$59.99"];
+
+  it.each([
+    ["scramble, dots, by character", { textFx: "scramble", charset: "dots", unit: "char" }],
+    ["scramble, hex, by word", { textFx: "scramble", charset: "hex", unit: "word" }],
+    ["typewriter", { textFx: "typewriter" }],
+    ["rise", { textFx: "rise" }],
+    ["fade", { textFx: "fade" }],
+  ] as const)("%s", (_name, set) => {
+    const cfg = config({
+      ...set,
+      charset: Array.from(SCRAMBLE_CHARSETS["charset" in set ? set.charset : "dots"]),
+      ease: cubicBezier(...EASING_CURVES.outSoft),
+      rDur: 1.04,
+      count: texts.length,
+    });
+    const frames = Object.fromEntries(
+      P.map((p) => [`p=${p}`, texts.map((text, i) => textFxFrame(cfg, text, i, p))]),
+    );
+    expect(frames).toMatchSnapshot();
   });
 });

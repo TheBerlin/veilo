@@ -2,7 +2,8 @@
 // Runs in Chromium (see BROWSER_TESTS in vitest.config.ts), and checks drawn pixels.
 
 import { describe, expect, it } from "vitest";
-import { cubicBezier } from "../../src/math/easing.ts";
+import { cellOrder } from "../../src/grid/order.ts";
+import { cubicBezier, EASING_CURVES } from "../../src/math/easing.ts";
 import {
   drawGridFrame,
   isGridStyle,
@@ -10,9 +11,16 @@ import {
   type GridStyle,
   type PreparedGrid,
 } from "../../src/render/grid-renderer.ts";
-import { glyphAt, HEX_CHARS, measureRamp } from "../../src/grid/ramps.ts";
+import {
+  BINARY_CHARS,
+  glyphAt,
+  HEX_CHARS,
+  measureRamp,
+  rampFromInk,
+} from "../../src/grid/ramps.ts";
 import { defaultSettings } from "../../src/schema/defaults.ts";
 import type { Settings } from "../../src/schema/types.ts";
+import { recordingContext } from "../support/recording-context.ts";
 
 const INK = { ink: "rgb(0, 0, 255)" };
 const linear = cubicBezier(0, 0, 1, 1);
@@ -315,5 +323,45 @@ describe("prepareGridEffect", () => {
 
   it("rejects image effects that are not grids", () => {
     expect(() => prepareGridEffect(photo(), settings({ imageFx: "blur" }))).toThrow(RangeError);
+  });
+});
+
+describe("frames at fixed progress (snapshots)", () => {
+  // Locks every grid frame at p = 0, 0.25, 0.5, 0.75 and 1, so an unintended change to the
+  // drawing shows up as a snapshot diff. Draw calls are recorded instead of pixels, so the
+  // snapshots are the same on every operating system. Update with `vitest -u` when a change is
+  // meant.
+  const P = [0, 0.25, 0.5, 0.75, 1];
+  const cols = 6;
+  const rows = 4;
+  // Darkness rises left to right and top to bottom, so every cell differs.
+  const darkness = Array.from(
+    { length: cols * rows },
+    (_d, i) => ((i % cols) / (cols - 1)) * 0.7 + (Math.floor(i / cols) / (rows - 1)) * 0.3,
+  );
+  // Ink grows with each character's position, so glyph choice does not depend on fonts.
+  const ramp = (chars: string) =>
+    rampFromInk(
+      chars,
+      Float64Array.from(chars, (_c, i) => i + 1),
+      "40px test",
+    );
+
+  it.each(["dots", "hex", "binary", "mosaic"] as const)("%s", (style) => {
+    const grid = prepared(style, cols, rows, darkness, {
+      order: cellOrder(cols, rows, "center"),
+      spread: 0.6,
+      startScale: 2.5,
+      ease: cubicBezier(...EASING_CURVES.outSoft),
+      ramp: style === "hex" ? ramp(HEX_CHARS) : style === "binary" ? ramp(BINARY_CHARS) : undefined,
+    });
+    const frames = Object.fromEntries(
+      P.map((p) => {
+        const { context, log } = recordingContext(120, 80);
+        drawGridFrame(context, grid, INK, p);
+        return [`p=${p}`, log];
+      }),
+    );
+    expect(frames).toMatchSnapshot();
   });
 });

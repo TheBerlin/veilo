@@ -1,0 +1,601 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`frames at fixed progress (snapshots) > fade 1`] = `
+{
+  "p=0": [
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "",
+    },
+  ],
+  "p=0.25": [
+    {
+      "eased": 0.8349213456198276,
+      "filter": "",
+      "opacity": "0.8349",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0.4525612065629474,
+      "filter": "",
+      "opacity": "0.4526",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "",
+    },
+  ],
+  "p=0.5": [
+    {
+      "eased": 0.9991717131119676,
+      "filter": "",
+      "opacity": "0.9992",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0.9498969366284987,
+      "filter": "",
+      "opacity": "0.9499",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0.740023507738011,
+      "filter": "",
+      "opacity": "0.74",
+      "overlay": null,
+      "transform": "",
+    },
+  ],
+  "p=0.75": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 0.993516053004992,
+      "filter": "",
+      "opacity": "0.9935",
+      "overlay": null,
+      "transform": "",
+    },
+  ],
+  "p=1": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "",
+    },
+  ],
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > rise 1`] = `
+{
+  "p=0": [
+    {
+      "eased": 0,
+      "filter": "blur(3px)",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "translateY(10px)",
+    },
+    {
+      "eased": 0,
+      "filter": "blur(3px)",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "translateY(10px)",
+    },
+    {
+      "eased": 0,
+      "filter": "blur(3px)",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "translateY(10px)",
+    },
+  ],
+  "p=0.25": [
+    {
+      "eased": 0.8349213456198276,
+      "filter": "blur(0.4952px)",
+      "opacity": "0.8349",
+      "overlay": null,
+      "transform": "translateY(1.6508px)",
+    },
+    {
+      "eased": 0.4525612065629474,
+      "filter": "blur(1.6423px)",
+      "opacity": "0.4526",
+      "overlay": null,
+      "transform": "translateY(5.4744px)",
+    },
+    {
+      "eased": 0,
+      "filter": "blur(3px)",
+      "opacity": "0",
+      "overlay": null,
+      "transform": "translateY(10px)",
+    },
+  ],
+  "p=0.5": [
+    {
+      "eased": 0.9991717131119676,
+      "filter": "blur(0.0025px)",
+      "opacity": "0.9992",
+      "overlay": null,
+      "transform": "translateY(0.0083px)",
+    },
+    {
+      "eased": 0.9498969366284987,
+      "filter": "blur(0.1503px)",
+      "opacity": "0.9499",
+      "overlay": null,
+      "transform": "translateY(0.501px)",
+    },
+    {
+      "eased": 0.740023507738011,
+      "filter": "blur(0.7799px)",
+      "opacity": "0.74",
+      "overlay": null,
+      "transform": "translateY(2.5998px)",
+    },
+  ],
+  "p=0.75": [
+    {
+      "eased": 1,
+      "filter": "blur(0px)",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "translateY(0px)",
+    },
+    {
+      "eased": 1,
+      "filter": "blur(0px)",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "translateY(0px)",
+    },
+    {
+      "eased": 0.993516053004992,
+      "filter": "blur(0.0195px)",
+      "opacity": "0.9935",
+      "overlay": null,
+      "transform": "translateY(0.0648px)",
+    },
+  ],
+  "p=1": [
+    {
+      "eased": 1,
+      "filter": "blur(0px)",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "translateY(0px)",
+    },
+    {
+      "eased": 1,
+      "filter": "blur(0px)",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "translateY(0px)",
+    },
+    {
+      "eased": 1,
+      "filter": "blur(0px)",
+      "opacity": "1",
+      "overlay": null,
+      "transform": "translateY(0px)",
+    },
+  ],
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > scramble, dots, by character 1`] = `
+{
+  "p=0": [
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "•●∙·•● •· •∙∙",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "•·•●·●∙●●∙• •∙ ∙∙●•··• ●·∙∙● •••●",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "•∙···•",
+      "transform": "",
+    },
+  ],
+  "p=0.25": [
+    {
+      "eased": 0.8349213456198276,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 P∙·",
+      "transform": "",
+    },
+    {
+      "eased": 0.4525612065629474,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K •●·•●●∙ ··∙●· •●●•",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "●∙∙●●·",
+      "transform": "",
+    },
+  ],
+  "p=0.5": [
+    {
+      "eased": 0.9991717131119676,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pr●",
+      "transform": "",
+    },
+    {
+      "eased": 0.9498969366284987,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse wi●•",
+      "transform": "",
+    },
+    {
+      "eased": 0.740023507738011,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.●·",
+      "transform": "",
+    },
+  ],
+  "p=0.75": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse with",
+      "transform": "",
+    },
+    {
+      "eased": 0.993516053004992,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.9•",
+      "transform": "",
+    },
+  ],
+  "p=1": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse with",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.99",
+      "transform": "",
+    },
+  ],
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > scramble, hex, by word 1`] = `
+{
+  "p=0": [
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "74B.73 6- 5EC",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "8F51.0B12B7 8C AA35F_6 1-CC0 6593",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "5D-.~7",
+      "transform": "",
+    },
+  ],
+  "p=0.25": [
+    {
+      "eased": 0.8349213456198276,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 BD_",
+      "transform": "",
+    },
+    {
+      "eased": 0.4525612065629474,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K 82~633D _~A0~ 5217",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "2DE34~",
+      "transform": "",
+    },
+  ],
+  "p=0.5": [
+    {
+      "eased": 0.9991717131119676,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 5A1",
+      "transform": "",
+    },
+    {
+      "eased": 0.9498969366284987,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse AA05",
+      "transform": "",
+    },
+    {
+      "eased": 0.740023507738011,
+      "filter": "",
+      "opacity": "",
+      "overlay": "E5.-4F",
+      "transform": "",
+    },
+  ],
+  "p=0.75": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse with",
+      "transform": "",
+    },
+    {
+      "eased": 0.993516053004992,
+      "filter": "",
+      "opacity": "",
+      "overlay": "9.6208",
+      "transform": "",
+    },
+  ],
+  "p=1": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse with",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.99",
+      "transform": "",
+    },
+  ],
+}
+`;
+
+exports[`frames at fixed progress (snapshots) > typewriter 1`] = `
+{
+  "p=0": [
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "",
+      "transform": "",
+    },
+  ],
+  "p=0.25": [
+    {
+      "eased": 0.8349213456198276,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 P▍",
+      "transform": "",
+    },
+    {
+      "eased": 0.4525612065629474,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K ▍",
+      "transform": "",
+    },
+    {
+      "eased": 0,
+      "filter": "",
+      "opacity": "",
+      "overlay": "",
+      "transform": "",
+    },
+  ],
+  "p=0.5": [
+    {
+      "eased": 0.9991717131119676,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro▍",
+      "transform": "",
+    },
+    {
+      "eased": 0.9498969366284987,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse wi▍",
+      "transform": "",
+    },
+    {
+      "eased": 0.740023507738011,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.▍",
+      "transform": "",
+    },
+  ],
+  "p=0.75": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse with",
+      "transform": "",
+    },
+    {
+      "eased": 0.993516053004992,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.99▍",
+      "transform": "",
+    },
+  ],
+  "p=1": [
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "MCHOSE L7 Pro",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "Lightweight 8K polling mouse with",
+      "transform": "",
+    },
+    {
+      "eased": 1,
+      "filter": "",
+      "opacity": "",
+      "overlay": "$59.99",
+      "transform": "",
+    },
+  ],
+}
+`;
