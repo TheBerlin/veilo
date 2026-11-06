@@ -20,6 +20,11 @@ export interface SettingsState {
   /** The current settings. Plain JSON, ready to export or share. */
   settings: Settings;
   /**
+   * Counts `load` calls. Loading plays the full sequence even when it changes only Reveal keys,
+   * so the stage watches this as well as the settings.
+   */
+  loads: number;
+  /**
    * Changes one setting. Numbers are clamped; a value of the wrong type or an unknown option is
    * ignored.
    */
@@ -82,12 +87,13 @@ function withSettings(
 export function createSettingsStore(initial?: unknown): SettingsStore {
   return createStore<SettingsState>()((setState) => ({
     settings: initial === undefined ? defaultSettings() : parseSettings(initial).settings,
+    loads: 0,
     set: (key, value) =>
       setState((state) => withSettings(state, merge(state.settings, { [key]: value }))),
     setMany: (values) => setState((state) => withSettings(state, merge(state.settings, values))),
     load: (input) => {
       const { settings, applied } = parseSettings(input);
-      setState({ settings });
+      setState((state) => ({ settings, loads: state.loads + 1 }));
       return applied;
     },
     reset: () => setState({ settings: defaultSettings() }),

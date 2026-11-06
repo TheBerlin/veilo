@@ -43,3 +43,11 @@
   font: var(--veilo-type-label-sm);
   letter-spacing: var(--veilo-type-label-sm-tracking);
 }
+
+/* Result of Apply settings. Always rendered (a hidden live region may not be announced). */
+.message {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}

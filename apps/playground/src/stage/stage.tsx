@@ -79,6 +79,7 @@ export function Stage(props: StageProps) {
   // Collect the keys changed within one frame, then rebuild the card once.
   useEffect(() => {
     let changed = new Set<string>();
+    let loaded = false;
     let frame = 0;
     const unsubscribe = store.subscribe((next, previous) => {
       const keys = new Set([...Object.keys(next.settings), ...Object.keys(previous.settings)]);
@@ -87,10 +88,13 @@ export function Stage(props: StageProps) {
           changed.add(key);
         }
       }
-      if (frame || changed.size === 0) return;
+      // A load plays the full sequence (spec 1.6), whatever it changed.
+      if (next.loads !== previous.loads) loaded = true;
+      if (frame || (changed.size === 0 && !loaded)) return;
       frame = requestAnimationFrame(() => {
-        const start = startAfterChange(changed);
+        const start = loaded ? "sequence" : startAfterChange(changed);
         changed = new Set();
+        loaded = false;
         frame = 0;
         setPhoto((current) => ({ ...current, key: current.key + 1, start }));
       });

@@ -61,6 +61,8 @@ describe("createSettingsStore", () => {
     expect(applied.sort()).toEqual(["effect", "stagger"]);
     // Load replaces everything: the earlier radius change is gone.
     expect(store.getState().settings.radius).toBe(defaultSettings().radius);
+    // Counted, so the stage can play the full sequence.
+    expect(store.getState().loads).toBe(1);
   });
 
   it("resets to the defaults", () => {
