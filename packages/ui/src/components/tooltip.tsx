@@ -29,7 +29,8 @@ export interface TooltipProps {
  * @param props - The hint, the trigger element and the side.
  * @returns The trigger, plus the hint in a portal while open.
  */
-export function Tooltip({ content, children, side = "top" }: TooltipProps) {
+export function Tooltip(props: TooltipProps) {
+  const { content, children, side = "top" } = props;
   return (
     <TooltipPrimitive.Root>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>

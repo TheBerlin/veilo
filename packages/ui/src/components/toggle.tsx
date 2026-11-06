@@ -25,7 +25,8 @@ export interface ToggleProps {
  * @param props - The label, the state and its change handler.
  * @returns The labelled switch.
  */
-export function Toggle({ label, checked, onCheckedChange, disabled, className }: ToggleProps) {
+export function Toggle(props: ToggleProps) {
+  const { label, checked, onCheckedChange, disabled, className } = props;
   const id = useId();
   return (
     <span className={[styles.field, className].filter(Boolean).join(" ")}>

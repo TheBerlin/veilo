@@ -50,7 +50,8 @@ export interface ChipGroupProps {
  * @param props - The value, the change handler, a label and the items.
  * @returns The group element.
  */
-export function ChipGroup({ value, onValueChange, className, ...rest }: ChipGroupProps) {
+export function ChipGroup(props: ChipGroupProps) {
+  const { value, onValueChange, className, ...rest } = props;
   return (
     <ToggleGroupPrimitive.Root
       type="single"
