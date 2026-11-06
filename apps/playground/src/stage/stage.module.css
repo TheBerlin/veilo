@@ -1,0 +1,16 @@
+/* Stage: the card centered on the decorative dot grid (grid-dot dots on a 16 px pitch). */
+.stage {
+  display: grid;
+  place-items: center;
+  min-height: calc(var(--veilo-size-test-card) * 1.75);
+  padding: var(--veilo-space-4) var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-xl);
+  background-color: var(--veilo-bg);
+  background-image: radial-gradient(
+    circle,
+    var(--veilo-grid-dot) var(--veilo-size-grid-dot),
+    transparent var(--veilo-size-grid-dot)
+  );
+  background-size: var(--veilo-space-2) var(--veilo-space-2);
+}

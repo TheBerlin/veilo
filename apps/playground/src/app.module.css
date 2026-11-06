@@ -1,10 +1,13 @@
-/* App shell: the page background and text; screens fill it in later tasks. */
+/* App shell: the page background and text, with the sections stacked. */
 :global(body) {
   margin: 0;
   background: var(--veilo-bg);
 }
 
 .app {
+  display: grid;
+  gap: var(--veilo-space-4);
+  align-content: start;
   min-height: 100vh;
   padding: var(--veilo-space-4) max(var(--veilo-space-2), env(safe-area-inset-left));
   color: var(--veilo-text);

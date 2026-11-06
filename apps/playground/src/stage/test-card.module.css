@@ -1,0 +1,84 @@
+/* Card: fixed width (spec 1.2), a card surface; 16 px padding gives the large radius. */
+.card {
+  display: grid;
+  gap: var(--veilo-space-1);
+  box-sizing: border-box;
+  width: var(--veilo-size-test-card);
+  max-width: 100%;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+  color: var(--veilo-text);
+  box-shadow: var(--veilo-shadow-soft);
+  cursor: pointer;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+/* Image area: square; media inside a card uses the base radius. */
+.image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--veilo-radius-base);
+}
+
+/* Text parts are blocks, so rise and other transforms apply to them. */
+.heading {
+  display: block;
+  margin: var(--veilo-space-1) 0 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.line {
+  display: block;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+.prices {
+  display: flex;
+  align-items: baseline;
+  gap: var(--veilo-space-1);
+}
+
+/* The two prices take 28% and 20% of the row, the bar widths of spec 1.2, so their bars
+   fill them. */
+.price {
+  flex: 0 0 28%;
+  font: var(--veilo-type-label);
+}
+
+.oldPrice {
+  flex: 0 0 20%;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  text-decoration: line-through;
+}
+
+/* Button: full width, the accent fill; its background fades in with its label. */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--veilo-size-test-card-button);
+  margin-top: var(--veilo-space-1);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label);
+}
+
+.label {
+  /* Fills the button, so its skeleton bar blends into the button's own bar. */
+  display: block;
+  width: 100%;
+  text-align: center;
+}
