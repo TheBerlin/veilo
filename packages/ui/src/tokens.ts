@@ -21,7 +21,7 @@ export const COLORS = {
   border: { dark: "#2a2a2a", light: "#c9c9c9" },
   "border-strong": { dark: "#6b6b6b", light: "#767676" },
   text: { dark: "#eeeeee", light: "#141414" },
-  "text-muted": { dark: "#a0a0a0", light: "#5c5c5c" },
+  "text-muted": { dark: "#a0a0a0", light: "#595959" },
   accent: { dark: "#f1f1f1", light: "#030303" },
   "on-accent": { dark: "#030303", light: "#f1f1f1" },
   base: { dark: "#171717", light: "#dcdcdc" },

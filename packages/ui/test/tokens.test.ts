@@ -61,8 +61,8 @@ describe("colors", () => {
     for (const surface of SURFACES) {
       const ground = COLORS[surface][theme];
       expect(contrast(COLORS.text[theme], ground)).toBeGreaterThanOrEqual(4.5);
-      // WCAG AA. The design system file claims 4.9, but light text-muted on secondary is 4.88.
-      expect(contrast(COLORS["text-muted"][theme], ground)).toBeGreaterThanOrEqual(4.5);
+      // The design system's promise, above WCAG AA's 4.5.
+      expect(contrast(COLORS["text-muted"][theme], ground)).toBeGreaterThanOrEqual(4.9);
       expect(contrast(COLORS["border-strong"][theme], ground)).toBeGreaterThanOrEqual(3);
       expect(contrast(COLORS.danger[theme], ground)).toBeGreaterThanOrEqual(4.5);
     }
