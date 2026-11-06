@@ -53,6 +53,20 @@ describe("CodeBlock", () => {
     expect(pre.tabIndex).toBe(0);
   });
 
+  it("stays as wide as its grid cell instead of growing to its longest line", () => {
+    render(
+      <div style={{ display: "grid", width: 240 }}>
+        <CodeBlock code={"x".repeat(200)} />
+      </div>,
+    );
+    const pre = screen.getByText("x".repeat(200)).parentElement as HTMLElement;
+    const block = pre.parentElement as HTMLElement;
+    expect(block.getBoundingClientRect().width).toBeLessThanOrEqual(240);
+    expect(
+      screen.getByRole("button", { name: "Copy" }).getBoundingClientRect().right,
+    ).toBeLessThanOrEqual(240 + 1);
+  });
+
   it("uses the medium radius and the focus ring on the copy button", async () => {
     const user = userEvent.setup();
     render(<CodeBlock code={COMMAND} />);

@@ -4,6 +4,8 @@
   display: flex;
   align-items: flex-start;
   gap: var(--veilo-space-2);
+  /* Inside a grid or flex parent, never grow wider than it; the code scrolls instead. */
+  min-width: 0;
   padding: var(--veilo-space-1) var(--veilo-space-1) var(--veilo-space-1) var(--veilo-space-2);
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-md);
