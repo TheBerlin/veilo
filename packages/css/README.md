@@ -40,6 +40,37 @@ The stylesheet does not switch colors with the system theme, because a page's ow
 }
 ```
 
+## Accessibility
+
+The stylesheet only paints. What a screen reader hears comes from your markup, so add these yourself (`createSkeleton` in `@veilo/core` sets them for you).
+
+**Mark the loading region busy.** Put `aria-busy="true"` on the element that holds the content being loaded, and remove it (or set `"false"`) when the real content is in. Screen readers then wait instead of reading a half-loaded region.
+
+**Hide the placeholders.** Skeleton bars carry no information, so give each one `aria-hidden="true"`. Without it, a screen reader may announce empty groups or stray text.
+
+```html
+<section aria-busy="true" aria-label="Product">
+  <div class="veilo veilo-wave" aria-hidden="true" style="--i: 0; height: 160px"></div>
+  <div class="veilo veilo-wave" aria-hidden="true" style="--i: 1; height: 20px"></div>
+  <div class="veilo veilo-wave" aria-hidden="true" style="--i: 2; height: 20px; width: 60%"></div>
+</section>
+```
+
+When the content arrives, replace the placeholders and drop `aria-busy` in the same update. If loading can take long, add a short visible or visually hidden status text such as "Loading product" in a `role="status"` element, as the bars themselves say nothing.
+
+**Reduced motion is built in.** Under `prefers-reduced-motion: reduce` every effect class stops and shows a still base-color placeholder. Nothing to add.
+
+**Contrast.** Placeholders are meant to be quiet. The default colors are low contrast against the Veilo backgrounds (WCAG contrast ratios):
+
+| Pair                        | Light (`#dcdcdc`, `#f7f7f7`) | Dark (`#171717`, `#262626`) |
+| --------------------------- | ---------------------------- | --------------------------- |
+| Base on page (`bg`)         | 1.21 on `#f1f1f1`            | 1.15 on `#030303`           |
+| Base on card                | 1.11 on `#e7e7e7`            | 1.08 on `#0d0d0d`           |
+| Base on white               | 1.37                         |                             |
+| Highlight band against base | 1.28                         | 1.18                        |
+
+WCAG's 3:1 for non-text contrast covers graphics needed to understand the content. Hidden placeholders are not such graphics, so these values are allowed, but they can look faint, most of all on a card in dark mode. If the bars are hard to see on your background, darken `--veilo-base` in light themes or lighten it in dark themes, and keep `--veilo-hi` a step beyond it so the sweep stays visible.
+
 ## Generate the CSS
 
 ```ts
