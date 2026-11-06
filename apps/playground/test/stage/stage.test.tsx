@@ -63,8 +63,12 @@ describe("Stage image source", () => {
     const first = card();
     clock.advance(10_000);
     await userEvent.click(screen.getByRole("button", { name: /Sample/ }));
-    await waitFor(() => expect(card()).not.toBe(first));
-    expect(card().getAttribute("aria-busy")).toBe("true");
+    // The new card's reveal starts in a passive effect, which may run after the commit, since
+    // the load resolves outside act.
+    await waitFor(() => {
+      expect(card()).not.toBe(first);
+      expect(card().getAttribute("aria-busy")).toBe("true");
+    });
     expect(screen.getByRole("button", { name: /Sample/ }).getAttribute("aria-pressed")).toBe(
       "true",
     );
