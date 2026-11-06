@@ -1,60 +1,64 @@
 # Veilo
 
-Veilo (formerly Skeleton Lab) is a visual playground and package family for **skeleton loaders** (the placeholder shown while content loads) and **reveal animations** (the transition from placeholder to real content).
+Veilo is a free, open-source playground and package family for **skeleton loaders** (the placeholder shown while content loads) and **reveal animations** (the transition from placeholder to real content, for images and text).
 
-Tune an effect with live controls, scrub it frame by frame, and export it as CSS or JSON. The same settings drive a framework-agnostic core that runs in React, Vue, Angular, Svelte, web components, or plain HTML.
+Tune an effect with live controls, scrub it frame by frame, and export it as CSS or JSON. The same settings object drives a framework-agnostic engine that runs in plain HTML or any framework.
 
-> **Status:** building the core engine (milestone M1). Nothing is published yet and the API can still change.
+> **Status:** early development, version 0.2.0. The core engine and the CSS loaders are done; the playground is being built (milestone M3). Nothing is published to npm yet, and the API can still change before 1.0.
 
-## Using the core
+## What it does
 
-`@veilo/core` runs skeleton loaders and reveal animations on real elements in any framework or plain HTML. See its [README](packages/core/README.md) for the API, theming, fonts and accessibility.
+- **Skeleton loaders:** shimmer, wave and pulse, from CSS alone or driven by JavaScript.
+- **Image reveals:** dot, hex, binary and mosaic grids sampled from the real photo, plus crossfade, blur-up, zoom and wipe.
+- **Text reveals:** scramble, typewriter, rise and fade, with a fading button background.
+- **Plain JSON settings:** one versioned settings object, validated by a JSON Schema, shared by the playground, the exports and the packages.
+- **Accessible defaults:** respects `prefers-reduced-motion`, works with server rendering, and never shifts layout.
+
+## Packages
+
+| Package       | Status      | Purpose                                                                                                           |
+| ------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| `@veilo/core` | 0.2.0       | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md)) |
+| `@veilo/css`  | 0.2.0       | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                       |
+| `@veilo/ui`   | internal    | Design tokens and React components for the playground and website (never published)                               |
+| `playground`  | in progress | The online tool: test card, image source and transport bar so far                                                 |
+| Planned       | —           | `presets`, `element` (web components), `react`, `vue`, `svelte`, `angular`, docs and website                      |
 
 ```ts
 import { createReveal } from "@veilo/core";
 
-const reveal = createReveal({ image, text: [title, price, label], button }, { imageFx: "dots" });
+const reveal = createReveal(document.querySelector(".card"), { imageFx: "dots" });
 reveal.playSequence();
 ```
 
-## Goals
+## How it is built
 
-1. **Design** an effect visually with no code.
-2. **Preview** it on your own content.
-3. **Export** it as code for any framework, or install it as a package.
-4. **Share** it by link.
+- **Language and repo:** TypeScript (strict), a pnpm workspace with Turborepo.
+- **Core:** framework-agnostic TypeScript with no dependencies; canvas and CSS rendering. Every frame is a pure function of progress `p` (0 to 1), so scrubbing and tests are exact.
+- **Playground:** Vite, React 18, Zustand, Radix UI and CSS Modules on Veilo design tokens.
+- **Builds and tests:** tsdown (ESM, CommonJS and types), Vitest in Node and headless Chromium, Testing Library, lightningcss checks.
+- **Release:** Changesets (one shared version for all packages), Conventional Commits, GitHub Actions CI. Hosting on Vercel is planned.
 
-## Design principles
-
-- One framework-agnostic core; every framework package is a thin wrapper.
-- Settings are plain, versioned JSON validated by a single schema.
-- Every frame is a pure function of progress `p` (0 to 1), which makes scrubbing and screenshot tests stable.
-- Loaders work with CSS alone, with no JavaScript at runtime.
-- Respect `prefers-reduced-motion`, work with server rendering, and never shift layout.
-
-## Planned packages
-
-| Package                             | Purpose                                                                                 |
-| ----------------------------------- | --------------------------------------------------------------------------------------- |
-| `core`                              | Effects engine: settings schema, easing, grid sampling, renderers, timeline, controller |
-| `css`                               | CSS-only loaders (shimmer, wave, pulse)                                                 |
-| `presets`                           | Preset library as typed JSON, with schema and migrations                                |
-| `element`                           | Web components built on core                                                            |
-| `react`, `vue`, `svelte`, `angular` | Thin framework wrappers                                                                 |
-
-## Planned repository layout
+## Repository layout
 
 ```
-veilo/
-├─ apps/
-│  ├─ playground/
-│  └─ docs/
-├─ packages/
-│  ├─ core/  css/  presets/  element/
-│  └─ react/  vue/  svelte/  angular/
-├─ examples/
-└─ .changeset/
+apps/       playground (docs and website later)
+packages/   core, css, ui
+examples/   css-demo
+tools/      layer-check, lint (internal)
+docs/       SPEC.md, the product specification
 ```
+
+## Development
+
+```powershell
+pnpm install
+pnpm --filter playground dev     # run the playground
+pnpm test                        # all tests
+pnpm lint; pnpm typecheck; pnpm build
+```
+
+Browser tests need Chromium once per machine: `pnpm --filter @veilo/core exec playwright install chromium`.
 
 ## Contributing
 
