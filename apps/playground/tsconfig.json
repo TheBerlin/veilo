@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // React's automatic JSX runtime; Vite's client types cover CSS and CSS Module imports.
+  "compilerOptions": { "jsx": "react-jsx", "types": ["vite/client"] },
+  "include": ["src", "test"]
+}
