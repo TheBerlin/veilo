@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./skeleton.css"
+  ],
   "exports": {
     ".": {
       "import": {
@@ -14,17 +16,23 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    }
+    },
+    "./skeleton.css": "./skeleton.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "skeleton.css"
   ],
   "scripts": {
     "build": "tsdown",
+    "generate:stylesheet": "node scripts/generate-stylesheet.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p ."
   },
   "dependencies": {
     "@veilo/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6"
   }
 }

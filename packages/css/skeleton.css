@@ -1,0 +1,51 @@
+/* @veilo/css skeleton.css. Generated from the core loader generator with default settings;
+   do not edit. Restyle with --veilo-base, --veilo-hi and --veilo-radius. */
+
+.veilo {
+  color: transparent;
+  border-radius: var(--veilo-radius, 6px);
+  background: var(--veilo-base, #dcdcdc);
+}
+
+.veilo.veilo-shimmer {
+  color: transparent;
+  border-radius: var(--veilo-radius, 6px);
+  background: linear-gradient(100deg, var(--veilo-base, #dcdcdc) 0%, var(--veilo-base, #dcdcdc) 35%, var(--veilo-hi, #f7f7f7) 50%, var(--veilo-base, #dcdcdc) 65%, var(--veilo-base, #dcdcdc) 100%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  animation: veilo-shimmer 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0s infinite both;
+}
+
+@keyframes veilo-shimmer {
+  0% { background-position: 100% 0; }
+  85.7143% { background-position: 0% 0; }
+  100% { background-position: 0% 0; }
+}
+
+/* Set --i on each element: 0, 1, 2... Each one starts later than the last. */
+.veilo.veilo-wave {
+  color: transparent;
+  border-radius: var(--veilo-radius, 6px);
+  background: linear-gradient(100deg, var(--veilo-base, #dcdcdc) 0%, var(--veilo-base, #dcdcdc) 35%, var(--veilo-hi, #f7f7f7) 50%, var(--veilo-base, #dcdcdc) 65%, var(--veilo-base, #dcdcdc) 100%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  animation: veilo-wave 1.4s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 0.12s) infinite both;
+}
+
+@keyframes veilo-wave {
+  0% { background-position: 100% 0; }
+  85.7143% { background-position: 0% 0; }
+  100% { background-position: 0% 0; }
+}
+
+.veilo.veilo-pulse {
+  color: transparent;
+  border-radius: var(--veilo-radius, 6px);
+  background: var(--veilo-base, #dcdcdc);
+  animation: veilo-pulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+}
+
+@keyframes veilo-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

@@ -1,4 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
+  // Node types for the tests and the generate script, which read and write skeleton.css.
+  "compilerOptions": { "types": ["node"] },
   "include": ["src", "test"]
 }
