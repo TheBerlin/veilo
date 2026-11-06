@@ -14,6 +14,11 @@ export interface LoaderCssOptions {
   /** Highlight color when the settings have no override. Defaults to `var(--veilo-hi)`. */
   highlight?: string;
   /**
+   * The `border-radius` value, such as `var(--veilo-radius, 6px)`. Defaults to the `radius`
+   * setting in px. Written as is, so it must be trusted.
+   */
+  radius?: string;
+  /**
    * The `@keyframes` name. Defaults to `veilo-sweep` or `veilo-pulse`. Give each stylesheet on one
    * page its own name, or the last one's keyframes apply to all. Written as is, so it must be
    * trusted.
@@ -111,7 +116,7 @@ function pulseCss(
  * @returns A stylesheet with one rule and its keyframes.
  */
 export function generateLoaderCss(settings: Settings, options: LoaderCssOptions = {}): string {
-  const { selector = ".skeleton", base, highlight, keyframes: name } = options;
+  const { selector = ".skeleton", base, highlight, radius, keyframes: name } = options;
   const baseColor = settings.baseColor ?? base ?? "var(--veilo-base)";
   const highlightColor = settings.highlightColor ?? highlight ?? "var(--veilo-hi)";
   const easing = `cubic-bezier(${resolveCurve(settings, "l").map(cssNumber).join(", ")})`;
@@ -125,7 +130,7 @@ export function generateLoaderCss(settings: Settings, options: LoaderCssOptions 
   const rule = [
     `${selector} {`,
     "  color: transparent;",
-    `  border-radius: ${cssNumber(settings.radius)}px;`,
+    `  border-radius: ${radius ?? `${cssNumber(settings.radius)}px`};`,
     ...declarations.map((line) => `  ${line}`),
     "}",
   ];

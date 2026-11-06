@@ -123,6 +123,14 @@ describe("generateLoaderCss", () => {
     expect(css).not.toContain(THEME.base);
   });
 
+  it("uses a radius value given as an option instead of the setting", () => {
+    const css = generateLoaderCss(settings({ radius: 12 }), {
+      radius: "var(--veilo-radius, 12px)",
+    });
+    expect(css).toContain("  border-radius: var(--veilo-radius, 12px);");
+    expect(css.match(/border-radius/g)).toHaveLength(1);
+  });
+
   it("uses a custom selector", () => {
     expect(generateLoaderCss(settings(), { selector: ".card::before" })).toMatch(
       /^\.card::before \{/,

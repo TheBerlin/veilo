@@ -163,7 +163,7 @@ import { generateLoaderCss } from "@veilo/core";
 const css = generateLoaderCss(settings, { selector: ".skeleton" });
 ```
 
-Options: `selector` (default `.skeleton`), fallback `base` and `highlight` colors, and `keyframes` (the animation name; give each stylesheet on one page its own).
+Options: `selector` (default `.skeleton`), fallback `base` and `highlight` colors, `radius` (a CSS value for `border-radius`, such as `var(--veilo-radius, 6px)`; default the `radius` setting in px), and `keyframes` (the animation name; give each stylesheet on one page its own).
 
 ## Theming
 
