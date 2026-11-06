@@ -33,5 +33,7 @@ export { Select } from "./components/select.tsx";
 export type { SelectOption, SelectProps } from "./components/select.tsx";
 export { Slider } from "./components/slider.tsx";
 export type { SliderProps } from "./components/slider.tsx";
+export { TextArea } from "./components/text-area.tsx";
+export type { TextAreaProps } from "./components/text-area.tsx";
 export { CodeBlock, COPIED_MS } from "./components/code-block.tsx";
 export type { CodeBlockProps } from "./components/code-block.tsx";
