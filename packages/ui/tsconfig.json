@@ -2,5 +2,5 @@
   "extends": "../../tsconfig.base.json",
   // React's automatic JSX runtime. Node types for the tests and the generate script.
   "compilerOptions": { "jsx": "react-jsx", "types": ["node"] },
-  "include": ["src", "test"]
+  "include": ["src", "test", "preview"]
 }

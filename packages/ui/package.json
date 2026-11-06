@@ -12,6 +12,7 @@
     "./tokens.css": "./tokens.css"
   },
   "scripts": {
+    "dev": "vite",
     "generate:tokens": "node scripts/generate-tokens.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p ."

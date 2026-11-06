@@ -1,0 +1,72 @@
+/* Preview page: one column of labelled sections on the page background. */
+:global(body) {
+  margin: 0;
+  background: var(--veilo-bg);
+}
+
+.page {
+  min-height: 100vh;
+  margin: 0;
+  padding: var(--veilo-space-4) max(var(--veilo-space-2), env(safe-area-inset-left));
+  background: var(--veilo-bg);
+  color: var(--veilo-text);
+  font: var(--veilo-type-body);
+}
+
+.column {
+  display: grid;
+  gap: var(--veilo-space-4);
+  max-width: calc(var(--veilo-space-16) * 6);
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2);
+}
+
+.title {
+  margin: 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+/* Section: a card with a caption-sized heading. */
+.section {
+  display: grid;
+  gap: var(--veilo-space-2);
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+}
+
+.heading {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--veilo-space-16) * 2), 1fr));
+  gap: var(--veilo-space-2);
+}
+
+.icon {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
