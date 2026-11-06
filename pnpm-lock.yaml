@@ -53,6 +53,12 @@ importers:
         specifier: 1.64.1
         version: 1.64.1
 
+  packages/css:
+    dependencies:
+      '@veilo/core':
+        specifier: workspace:*
+        version: link:../core
+
   tools/layer-check:
     devDependencies:
       dependency-cruiser:
