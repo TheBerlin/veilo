@@ -1,0 +1,133 @@
+/* Veilo design tokens. Generated from packages/ui/src/tokens.ts; do not edit.
+   Run `pnpm --filter @veilo/ui generate:tokens` after changing the table. */
+
+:root {
+  --veilo-bg: #030303;
+  --veilo-card: #0d0d0d;
+  --veilo-secondary: #171717;
+  --veilo-border: #2a2a2a;
+  --veilo-border-strong: #6b6b6b;
+  --veilo-text: #eeeeee;
+  --veilo-text-muted: #a0a0a0;
+  --veilo-accent: #f1f1f1;
+  --veilo-on-accent: #030303;
+  --veilo-base: #171717;
+  --veilo-hi: #262626;
+  --veilo-grid-dot: #3a3a3a;
+  --veilo-danger: #e5857f;
+  --veilo-success: #7fc8a0;
+  --veilo-info: #93a3f5;
+  --veilo-warning: #e6b450;
+  --veilo-info-soft: #93a3f524;
+  --veilo-success-soft: #7fc8a024;
+  --veilo-warning-soft: #e6b45024;
+  --veilo-danger-soft: #e5857f24;
+  color-scheme: dark;
+
+  --veilo-font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --veilo-font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --veilo-type-h1: 700 56px/60px var(--veilo-font-sans);
+  --veilo-type-h1-tracking: -0.02em;
+  --veilo-type-h2: 700 40px/46px var(--veilo-font-sans);
+  --veilo-type-h2-tracking: -0.015em;
+  --veilo-type-h3: 700 28px/34px var(--veilo-font-sans);
+  --veilo-type-h3-tracking: -0.01em;
+  --veilo-type-body-lg: 400 20px/30px var(--veilo-font-sans);
+  --veilo-type-body-lg-tracking: normal;
+  --veilo-type-body: 400 16px/24px var(--veilo-font-sans);
+  --veilo-type-body-tracking: normal;
+  --veilo-type-label: 500 16px/24px var(--veilo-font-sans);
+  --veilo-type-label-tracking: normal;
+  --veilo-type-caption: 400 14px/20px var(--veilo-font-sans);
+  --veilo-type-caption-tracking: normal;
+  --veilo-type-code: 400 14px/22px var(--veilo-font-mono);
+  --veilo-type-code-tracking: normal;
+  --veilo-space-0-5: 4px;
+  --veilo-space-1: 8px;
+  --veilo-space-1-5: 12px;
+  --veilo-space-2: 16px;
+  --veilo-space-2-5: 20px;
+  --veilo-space-3: 24px;
+  --veilo-space-4: 32px;
+  --veilo-space-8: 64px;
+  --veilo-space-16: 128px;
+  --veilo-radius-base: 8px;
+  --veilo-radius-md: 16px;
+  --veilo-radius-lg: 24px;
+  --veilo-radius-xl: 40px;
+  --veilo-radius-pill: 999px;
+  --veilo-radius: var(--veilo-radius-base);
+  --veilo-shadow-soft: 0 4px 64px 0 rgba(0, 0, 0, 0.1);
+  --veilo-duration-fast: 150ms;
+  --veilo-duration-base: 250ms;
+  --veilo-duration-slow: 400ms;
+  --veilo-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --veilo-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --veilo-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --veilo-grid-desktop-width: 1440px;
+  --veilo-grid-desktop-columns: 12;
+  --veilo-grid-desktop-gutter: 20px;
+  --veilo-grid-desktop-margin: 120px;
+  --veilo-grid-mobile-width: 375px;
+  --veilo-grid-mobile-columns: 4;
+  --veilo-grid-mobile-gutter: 8px;
+  --veilo-grid-mobile-margin: 20px;
+}
+
+:root[data-theme="light"] {
+  --veilo-bg: #f1f1f1;
+  --veilo-card: #e7e7e7;
+  --veilo-secondary: #dcdcdc;
+  --veilo-border: #c9c9c9;
+  --veilo-border-strong: #767676;
+  --veilo-text: #141414;
+  --veilo-text-muted: #5c5c5c;
+  --veilo-accent: #030303;
+  --veilo-on-accent: #f1f1f1;
+  --veilo-base: #dcdcdc;
+  --veilo-hi: #f7f7f7;
+  --veilo-grid-dot: #b8b8b8;
+  --veilo-danger: #b3261e;
+  --veilo-success: #1f6b45;
+  --veilo-info: #3b4bbf;
+  --veilo-warning: #8a5a00;
+  --veilo-info-soft: #3b4bbf1a;
+  --veilo-success-soft: #1f6b451a;
+  --veilo-warning-soft: #8a5a001a;
+  --veilo-danger-soft: #b3261e1a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --veilo-bg: #f1f1f1;
+    --veilo-card: #e7e7e7;
+    --veilo-secondary: #dcdcdc;
+    --veilo-border: #c9c9c9;
+    --veilo-border-strong: #767676;
+    --veilo-text: #141414;
+    --veilo-text-muted: #5c5c5c;
+    --veilo-accent: #030303;
+    --veilo-on-accent: #f1f1f1;
+    --veilo-base: #dcdcdc;
+    --veilo-hi: #f7f7f7;
+    --veilo-grid-dot: #b8b8b8;
+    --veilo-danger: #b3261e;
+    --veilo-success: #1f6b45;
+    --veilo-info: #3b4bbf;
+    --veilo-warning: #8a5a00;
+    --veilo-info-soft: #3b4bbf1a;
+    --veilo-success-soft: #1f6b451a;
+    --veilo-warning-soft: #8a5a001a;
+    --veilo-danger-soft: #b3261e1a;
+    color-scheme: light;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --veilo-duration-fast: 0ms;
+    --veilo-duration-base: 0ms;
+    --veilo-duration-slow: 0ms;
+  }
+}

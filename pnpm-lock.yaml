@@ -72,6 +72,12 @@ importers:
         specifier: ^1.33.0
         version: 1.33.0
 
+  packages/ui:
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.6
+        version: 26.6.6
+
   tools/layer-check:
     devDependencies:
       dependency-cruiser:

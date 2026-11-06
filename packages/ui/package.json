@@ -1,0 +1,22 @@
+{
+  "name": "@veilo/ui",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Internal design system for the Veilo playground and website. Never published.",
+  "type": "module",
+  "sideEffects": [
+    "./tokens.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./tokens.css"
+  },
+  "scripts": {
+    "generate:tokens": "node scripts/generate-tokens.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6"
+  }
+}

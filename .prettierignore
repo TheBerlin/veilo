@@ -3,3 +3,4 @@ CLAUDE.local.md
 docs/SPEC.md
 packages/core/settings.schema.json
 packages/css/skeleton.css
+packages/ui/tokens.css
