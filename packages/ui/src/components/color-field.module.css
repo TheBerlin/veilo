@@ -1,0 +1,67 @@
+/* Color field: a swatch picker and a hex text box side by side. */
+.row {
+  display: flex;
+  gap: var(--veilo-space-1);
+}
+
+/* Swatch: the native color picker shown as a square in the control outline. */
+.swatch {
+  flex: none;
+  width: var(--veilo-size-control-sm);
+  height: var(--veilo-size-control-sm);
+  padding: var(--veilo-space-0-5);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-bg);
+  cursor: pointer;
+}
+
+.swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+/* Separate rules: a browser drops a whole selector list that holds another engine's
+   pseudo-element. */
+.swatch::-webkit-color-swatch {
+  border: 0;
+  border-radius: var(--veilo-space-0-5);
+}
+
+.swatch::-moz-color-swatch {
+  border: 0;
+  border-radius: var(--veilo-space-0-5);
+}
+
+/* Hex box: monospace, so the digits line up. */
+.text {
+  min-width: 0;
+  flex: 1;
+  height: var(--veilo-size-control-sm);
+  padding: 0 var(--veilo-space-1);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-bg);
+  color: var(--veilo-text);
+  font: var(--veilo-type-code);
+}
+
+.text[aria-invalid="true"] {
+  border-color: var(--veilo-danger);
+}
+
+.swatch:hover:not(:disabled),
+.text:hover:not(:disabled, [aria-invalid="true"]) {
+  border-color: var(--veilo-accent);
+}
+
+.swatch:focus-visible,
+.text:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+.swatch:disabled,
+.text:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

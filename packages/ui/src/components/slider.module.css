@@ -1,0 +1,51 @@
+/* Slider track: a thin strong line; the part up to the thumb is the accent. */
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--veilo-size-icon-md);
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.root[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.track {
+  position: relative;
+  flex-grow: 1;
+  height: var(--veilo-space-0-5);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-border-strong);
+  overflow: hidden;
+}
+
+.range {
+  position: absolute;
+  height: 100%;
+  background: var(--veilo-accent);
+}
+
+/* Thumb: an accent disc with a ring in the page color, so it stands off the track. */
+.thumb {
+  display: block;
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+  border: 2px solid var(--veilo-bg);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-accent);
+  transition: transform var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.thumb:hover {
+  transform: scale(1.1);
+}
+
+.thumb:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}

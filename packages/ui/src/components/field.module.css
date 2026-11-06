@@ -1,0 +1,38 @@
+/* Field: a label above its control, shared by Slider, Select and Color field. */
+.field {
+  display: grid;
+  gap: var(--veilo-space-1);
+  min-width: 0;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--veilo-space-1);
+  color: var(--veilo-text);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}
+
+/* The current value, next to the label. */
+.value {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+/* End values or a hint under the control. */
+.hint {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--veilo-space-1);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* A problem with the entered value, always in words as well as color. */
+.error {
+  color: var(--veilo-danger);
+  font: var(--veilo-type-caption);
+}
