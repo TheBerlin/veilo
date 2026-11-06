@@ -4,5 +4,8 @@
   "description": "Plain HTML page that shows the @veilo/css loaders. Open index.html in a browser.",
   "dependencies": {
     "@veilo/css": "workspace:*"
+  },
+  "scripts": {
+    "test": "node check.mjs"
   }
 }
