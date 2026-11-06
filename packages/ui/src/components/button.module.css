@@ -1,0 +1,122 @@
+/* Button: shared shape, label and motion. Radius is the control base. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--veilo-space-1);
+  height: var(--veilo-size-control-md);
+  padding: 0 var(--veilo-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--veilo-radius-base);
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    opacity var(--veilo-duration-fast) var(--veilo-ease-out),
+    border-color var(--veilo-duration-fast) var(--veilo-ease-out),
+    background-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.button svg {
+  flex: none;
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+}
+
+/* States: focus ring, press, disabled. */
+.button:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+.button:active:not(:disabled, [aria-disabled="true"]) {
+  transform: translateY(1px);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Variants: the one solid accent fill, an outlined secondary, a bare ghost. */
+.primary {
+  background: var(--veilo-accent);
+  border-color: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+}
+
+.primary:hover:not(:disabled, [aria-disabled="true"]) {
+  opacity: 0.88;
+}
+
+.secondary {
+  background: var(--veilo-secondary);
+  border-color: var(--veilo-border-strong);
+  color: var(--veilo-text);
+}
+
+.secondary:hover:not(:disabled, [aria-disabled="true"]) {
+  border-color: var(--veilo-accent);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--veilo-text);
+}
+
+.ghost:hover:not(:disabled, [aria-disabled="true"]) {
+  background: var(--veilo-secondary);
+}
+
+/* Sizes: small and large; medium is the base rule. */
+.sm {
+  height: var(--veilo-size-control-sm);
+  padding: 0 var(--veilo-space-2);
+  font: var(--veilo-type-label-sm);
+}
+
+.sm svg {
+  width: var(--veilo-size-icon-sm);
+  height: var(--veilo-size-icon-sm);
+}
+
+.lg {
+  height: var(--veilo-size-control-lg);
+  padding: 0 var(--veilo-space-4);
+}
+
+.lg svg {
+  width: var(--veilo-size-icon-lg);
+  height: var(--veilo-size-icon-lg);
+}
+
+/* Icon and label: less padding on the icon side. */
+.withIcon {
+  padding-left: var(--veilo-space-2-5);
+}
+
+.withIcon.sm {
+  padding-left: var(--veilo-space-1-5);
+  gap: var(--veilo-space-0-5);
+}
+
+.withIcon.lg {
+  padding-left: var(--veilo-space-3);
+}
+
+/* Icon only: a square as tall as the size. */
+.iconOnly {
+  width: var(--veilo-size-control-md);
+  padding: 0;
+}
+
+.iconOnly.sm {
+  width: var(--veilo-size-control-sm);
+}
+
+.iconOnly.lg {
+  width: var(--veilo-size-control-lg);
+}
