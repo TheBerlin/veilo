@@ -1,0 +1,112 @@
+<!doctype html>
+<!-- Plain HTML demo for @veilo/css: every class of skeleton.css on a light and a dark card.
+     No build step. Run `pnpm install` once, then open this file in a browser. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Veilo CSS loaders</title>
+    <link rel="stylesheet" href="node_modules/@veilo/css/skeleton.css" />
+    <style>
+      /* Page: the design system's light and dark backgrounds, one theme per column. */
+      body {
+        margin: 0;
+        padding: 16px;
+        font:
+          16px/24px system-ui,
+          sans-serif;
+        background: #f1f1f1;
+        color: #141414;
+      }
+      .themes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+      }
+      .theme {
+        padding: 16px;
+        border-radius: 24px;
+        background: #f1f1f1;
+        color: #141414;
+      }
+      /* Dark theme: the README's dark values for the skeleton properties. */
+      .theme[data-theme="dark"] {
+        background: #030303;
+        color: #eeeeee;
+        --veilo-base: #171717;
+        --veilo-hi: #262626;
+      }
+
+      /* Card: one placeholder card per effect. */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .card {
+        display: grid;
+        gap: 8px;
+        padding: 16px;
+        border-radius: 24px;
+        background: #e7e7e7;
+      }
+      [data-theme="dark"] .card {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+      }
+      .card h2 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+      }
+      .media {
+        aspect-ratio: 4 / 3;
+      }
+      .line {
+        height: 16px;
+      }
+      .short {
+        width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="themes">
+      <section class="theme" data-theme="light" aria-label="Light theme">
+        <div class="cards"></div>
+      </section>
+      <section class="theme" data-theme="dark" aria-label="Dark theme">
+        <div class="cards"></div>
+      </section>
+    </div>
+    <template id="card">
+      <article class="card" aria-busy="true">
+        <h2></h2>
+        <div class="veilo media" aria-hidden="true" style="--i: 0"></div>
+        <div class="veilo line" aria-hidden="true" style="--i: 1"></div>
+        <div class="veilo line short" aria-hidden="true" style="--i: 2"></div>
+      </article>
+    </template>
+    <script>
+      // Fills both themes with one card per class, so the markup above is written once.
+      const effects = [
+        ["veilo-shimmer", "Shimmer"],
+        ["veilo-wave", "Wave"],
+        ["veilo-pulse", "Pulse"],
+        ["", "Still (veilo only)"],
+      ];
+      const template = document.getElementById("card");
+      for (const cards of document.querySelectorAll(".cards")) {
+        for (const [effectClass, label] of effects) {
+          const card = template.content.cloneNode(true);
+          card.querySelector("h2").textContent = label;
+          if (effectClass) {
+            for (const bar of card.querySelectorAll(".veilo")) bar.classList.add(effectClass);
+          }
+          cards.append(card);
+        }
+      }
+    </script>
+  </body>
+</html>

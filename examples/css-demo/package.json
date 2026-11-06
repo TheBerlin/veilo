@@ -1,0 +1,8 @@
+{
+  "name": "example-css-demo",
+  "private": true,
+  "description": "Plain HTML page that shows the @veilo/css loaders. Open index.html in a browser.",
+  "dependencies": {
+    "@veilo/css": "workspace:*"
+  }
+}
