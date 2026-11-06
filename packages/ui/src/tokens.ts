@@ -94,6 +94,11 @@ export const SIZES = {
   "size-icon-sm": 16,
   "size-icon-md": 20,
   "size-icon-lg": 24,
+  // The playground's test card (spec 1.2): fixed width and its button height.
+  "size-test-card": 320,
+  "size-test-card-button": 42,
+  // Dots of the decorative dot grid; the pitch is space-2.
+  "size-grid-dot": 1.5,
 } as const;
 
 /** The one base radius in px: every element that holds no other element. */
