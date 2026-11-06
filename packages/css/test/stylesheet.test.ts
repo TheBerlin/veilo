@@ -3,12 +3,17 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { STYLESHEET_EFFECTS, buildStylesheet } from "../src/stylesheet.ts";
+import { cssProblems } from "./support/parse-css.ts";
 
 const committed = readFileSync(new URL("../skeleton.css", import.meta.url), "utf8");
 
 describe("skeleton.css", () => {
   it("is up to date; run `pnpm --filter @veilo/css generate:stylesheet` if not", () => {
     expect(committed).toBe(buildStylesheet());
+  });
+
+  it("parses cleanly", () => {
+    expect(cssProblems(committed)).toEqual([]);
   });
 
   it("has a still placeholder for the plain class", () => {

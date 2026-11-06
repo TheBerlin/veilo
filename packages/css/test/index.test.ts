@@ -4,6 +4,7 @@ import * as core from "@veilo/core/loader";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import * as api from "../src/index.ts";
 import type { LoaderCssOptions, Settings } from "../src/index.ts";
+import { cssProblems } from "./support/parse-css.ts";
 
 describe("@veilo/css public API", () => {
   it("exports exactly these values; changing the list is an API change", () => {
@@ -30,4 +31,24 @@ describe("@veilo/css public API", () => {
     expectTypeOf(api.generateLoaderCss).parameter(0).toEqualTypeOf<Settings>();
     expectTypeOf(api.generateLoaderCss).parameter(1).toEqualTypeOf<LoaderCssOptions | undefined>();
   });
+
+  // Every effect with both repeat modes, the easing presets and a custom curve, with and
+  // without color overrides: the generator's output must always be valid CSS.
+  const effects = ["shimmer", "wave", "pulse"] as const;
+  const variants = [
+    {},
+    { repeat: "once" },
+    { lEase: "inOut", angle: 0, lWidth: 60, lGap: 0 },
+    { lEase: "custom", lx1: 0.1, ly1: 0.9, lx2: 0.2, ly2: 1 },
+    { baseColor: "#27373c", highlightColor: "#3d5259", radius: 0 },
+  ];
+  it.each(effects.flatMap((effect) => variants.map((variant) => ({ effect, ...variant }))))(
+    "generates CSS that parses cleanly for %o",
+    (input) => {
+      const { settings } = api.parseSettings(input);
+      expect(cssProblems(api.generateLoaderCss(settings))).toEqual([]);
+      const hex = { base: "#dcdcdc", highlight: "#f7f7f7", selector: ".card > .bar" };
+      expect(cssProblems(api.generateLoaderCss(settings, hex))).toEqual([]);
+    },
+  );
 });
