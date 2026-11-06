@@ -97,6 +97,8 @@ export const SIZES = {
   // The playground's test card (spec 1.2): fixed width and its button height.
   "size-test-card": 320,
   "size-test-card-button": 42,
+  // The playground's control panel, at most this wide (spec 1.1).
+  "size-panel": 380,
   // Dots of the decorative dot grid; the pitch is space-2.
   "size-grid-dot": 1.5,
 } as const;
