@@ -22,6 +22,10 @@
   100% { background-position: 0% 0; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .veilo.veilo-shimmer { animation: none; }
+}
+
 /* Set --i on each element: 0, 1, 2... Each one starts later than the last. */
 .veilo.veilo-wave {
   color: transparent;
@@ -38,6 +42,10 @@
   100% { background-position: 0% 0; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .veilo.veilo-wave { animation: none; }
+}
+
 .veilo.veilo-pulse {
   color: transparent;
   border-radius: var(--veilo-radius, 6px);
@@ -48,4 +56,8 @@
 @keyframes veilo-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veilo.veilo-pulse { animation: none; }
 }

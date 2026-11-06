@@ -132,7 +132,6 @@ export function createElementSkeleton(
         `${selector} { color: transparent !important; }`,
         // Moves the picture out of the box, so the placeholder background shows instead.
         `${selector}:is(img, canvas, video) { object-position: -99999px 0; }`,
-        `@media (prefers-reduced-motion: reduce) {\n  ${selector} { animation: none; }\n}`,
         barsCss(selector),
         "",
       ].join("\n");

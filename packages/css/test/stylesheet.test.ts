@@ -21,6 +21,12 @@ describe("skeleton.css", () => {
     expect(committed).toMatch(new RegExp(`animation: veilo-${effect} `));
   });
 
+  it.each(STYLESHEET_EFFECTS)("stops %s under reduced motion", (effect) => {
+    expect(committed).toContain(
+      `@media (prefers-reduced-motion: reduce) {\n  .veilo.veilo-${effect} { animation: none; }\n}`,
+    );
+  });
+
   it("reads colors and radius from custom properties with fallbacks", () => {
     expect(committed).toContain("var(--veilo-base, #dcdcdc)");
     expect(committed).toContain("var(--veilo-hi, #f7f7f7)");

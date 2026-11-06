@@ -113,7 +113,7 @@ function pulseCss(
  * @param settings - The settings. Only the Loader keys are read.
  * @param options - The selector and fallback colors. For the Export panel, pass the theme's
  * hex values to resolve the colors. Without them the CSS follows `--veilo-base` and `--veilo-hi`.
- * @returns A stylesheet with one rule and its keyframes.
+ * @returns A stylesheet with one rule, its keyframes and a reduced-motion rule that stops it.
  */
 export function generateLoaderCss(settings: Settings, options: LoaderCssOptions = {}): string {
   const { selector = ".skeleton", base, highlight, radius, keyframes: name } = options;
@@ -135,5 +135,13 @@ export function generateLoaderCss(settings: Settings, options: LoaderCssOptions 
     "}",
   ];
   const note = settings.effect === "wave" ? [WAVE_NOTE] : [];
-  return [...note, ...rule, "", ...keyframes, ""].join("\n");
+  // Spec 3.7: under reduced motion the element stays a still base-color placeholder. Without
+  // the animation, the sweep rests at background-position 100% 0, which shows only the base
+  // color, and pulse stays at full opacity.
+  const reducedMotion = [
+    "@media (prefers-reduced-motion: reduce) {",
+    `  ${selector} { animation: none; }`,
+    "}",
+  ];
+  return [...note, ...rule, "", ...keyframes, "", ...reducedMotion, ""].join("\n");
 }

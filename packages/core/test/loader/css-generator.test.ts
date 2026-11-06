@@ -25,6 +25,10 @@ describe("generateLoaderCss", () => {
   85.7143% { background-position: 0% 0; }
   100% { background-position: 0% 0; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
 `);
   });
 
@@ -44,8 +48,23 @@ describe("generateLoaderCss", () => {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
 `);
   });
+
+  it.each(["shimmer", "wave", "pulse"])(
+    "stops %s under reduced motion, for the given selector, after the keyframes",
+    (effect) => {
+      const css = generateLoaderCss(settings({ effect }), { selector: ".card .bar" });
+      expect(css).toContain(
+        "@media (prefers-reduced-motion: reduce) {\n  .card .bar { animation: none; }\n}\n",
+      );
+      expect(css.indexOf("@media")).toBeGreaterThan(css.indexOf("@keyframes"));
+    },
+  );
 
   it("adds the wave delay and a note about --i", () => {
     const css = generateLoaderCss(settings({ effect: "wave", stagger: 0.12 }));
