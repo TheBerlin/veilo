@@ -19,3 +19,19 @@
   font: var(--veilo-type-h3);
   letter-spacing: var(--veilo-type-h3-tracking);
 }
+
+/* Workspace: stage and panel side by side, one column on narrow screens. The full layout
+   (sticky stage, fixed panel width) comes with the Layout task. */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--veilo-size-panel));
+  gap: var(--veilo-space-2);
+  align-items: start;
+}
+
+/* Custom properties do not work in media queries; 900 px is the spec's breakpoint. */
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -6,7 +6,7 @@ import { useEffect, useLayoutEffect, useRef, type DragEvent, type KeyboardEvent 
 import { drawImageCover, type CardImage } from "./image-source.ts";
 import { drawPlaceholderImage } from "./placeholder-image.ts";
 import styles from "./test-card.module.css";
-import { useReveal } from "./use-reveal.ts";
+import { useReveal, type RevealStart } from "./use-reveal.ts";
 
 /**
  * The card's slots and skeleton bar widths (spec 1.2). The image and the button are full width.
@@ -35,6 +35,8 @@ export interface TestCardProps {
   image?: CardImage | null;
   /** Called with a file dropped on the image area. */
   onImageDrop?: (file: File) => void;
+  /** How the reveal starts at mount. Defaults to the full sequence. */
+  start?: RevealStart;
   /** Whether sequences loop: the first one (read at mount) and replays by click or key. */
   loop?: boolean;
   /** Receives the live reveal after mount and `null` after unmount. */
@@ -50,7 +52,8 @@ const REDRAW_THRESHOLD = 2;
  * to `onImageDrop`. Side effects: draws the photo (again when its width changes by 2 px or more)
  * and runs a reveal on the card while mounted.
  *
- * @param props - The settings, reveal options, photo, drop handler, loop flag and reveal callback.
+ * @param props - The settings, reveal options, photo, drop handler, start, loop flag and reveal
+ *   callback.
  * @returns The card.
  */
 export function TestCard(props: TestCardProps) {
@@ -87,7 +90,7 @@ export function TestCard(props: TestCardProps) {
     card,
     { version: 1, settings: props.settings, slots: CARD_SLOTS },
     props.revealOptions,
-    { loop: props.loop, onReveal: props.onReveal },
+    { start: props.start, loop: props.loop, onReveal: props.onReveal },
   );
 
   const replay = () => reveal.current?.playSequence({ loop: props.loop ?? false });

@@ -26,6 +26,17 @@ function renderStage() {
 }
 
 /**
+ * Moves the fake clock in 100 ms steps, with real waits for `ready`, until a condition holds.
+ *
+ * @param clock - The fake clock.
+ * @param done - The condition.
+ */
+async function runUntil(clock: ReturnType<typeof fakeScheduler>, done: () => boolean) {
+  for (let step = 0; step < 200 && !done(); step++) await run(clock, 100);
+  expect(done()).toBe(true);
+}
+
+/**
  * Moves the fake clock in small steps with real waits, so `ready` (real async) can settle.
  *
  * @param clock - The fake clock.
@@ -54,15 +65,14 @@ describe("TransportBar", () => {
   it("shows Loading, then Revealed with the full time after the sequence", async () => {
     const { status, clock } = renderStage();
     await waitFor(() => expect(status()).toBe("Loading"));
-    await run(clock, (settings.hold + settings.rDur) * 1000 + 1500);
-    await waitFor(() => expect(status()).toBe("Revealed"));
+    await runUntil(clock, () => status() === "Revealed");
     const total = settings.rDur.toFixed(2);
     expect(screen.getByText(`${total} / ${total} s`)).toBeTruthy();
   });
 
   it("Loading state holds the skeleton; Replay reveal plays without it", async () => {
     const { card, status, clock } = renderStage();
-    await run(clock, (settings.hold + settings.rDur) * 1000 + 1500);
+    await runUntil(clock, () => status() === "Revealed");
     await userEvent.click(screen.getByRole("button", { name: "Loading state" }));
     expect(card().getAttribute("aria-busy")).toBe("true");
     expect(status()).toBe("Loading");
@@ -89,7 +99,7 @@ describe("TransportBar", () => {
 
   it("Play sequence restarts from Loading, and Loop repeats the sequence", async () => {
     const { status, clock } = renderStage();
-    await run(clock, (settings.hold + settings.rDur) * 1000 + 1500);
+    await runUntil(clock, () => status() === "Revealed");
     await userEvent.click(screen.getByRole("switch", { name: "Loop" }));
     expect(status()).toBe("Loading");
     await run(clock, (settings.hold + settings.rDur) * 1000 + 600);

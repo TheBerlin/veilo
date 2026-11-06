@@ -3,9 +3,9 @@ import { playwright } from "@vitest/browser-playwright";
 import { configDefaults, defineProject, mergeConfig } from "vitest/config";
 import shared from "../../vitest.shared.ts";
 
-// Stage tests need a real DOM, canvas and CSS, so they run in headless Chromium. State tests are
+// Stage and panel tests need a real DOM, canvas and CSS, so they run in headless Chromium. State tests are
 // plain data and stay in Node.
-const BROWSER_TESTS = ["test/stage/**/*.test.tsx"];
+const BROWSER_TESTS = ["test/stage/**/*.test.tsx", "test/panel/**/*.test.tsx"];
 
 export default defineProject({
   plugins: [react()],

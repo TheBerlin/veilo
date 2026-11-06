@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./app.module.css";
+import { Panel } from "./panel/panel.tsx";
 import { Stage } from "./stage/stage.tsx";
 import { createSettingsStore } from "./state/settings-store.ts";
 
@@ -16,7 +17,10 @@ export function App() {
   return (
     <main className={styles.app}>
       <h1 className={styles.title}>Veilo playground</h1>
-      <Stage store={store} />
+      <div className={styles.workspace}>
+        <Stage store={store} />
+        <Panel store={store} />
+      </div>
     </main>
   );
 }

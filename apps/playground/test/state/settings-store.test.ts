@@ -94,4 +94,16 @@ describe("createSettingsStore", () => {
     a.getState().set("effect", "pulse");
     expect(b.getState().settings.effect).toBe(defaultSettings().effect);
   });
+
+  it("removes the custom colors, and stays asleep when there are none", () => {
+    const store = createSettingsStore();
+    const listener = vi.fn();
+    store.subscribe(listener);
+    store.getState().resetColors();
+    expect(listener).not.toHaveBeenCalled();
+    store.getState().setMany({ baseColor: "#112233", highlightColor: "#445566" });
+    store.getState().resetColors();
+    expect(store.getState().settings).toEqual(defaultSettings());
+    expect("baseColor" in store.getState().settings).toBe(false);
+  });
 });

@@ -1,0 +1,45 @@
+/* Panel: a card surface beside the stage. */
+.panel {
+  box-sizing: border-box;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+}
+
+/* Tab content: the groups stacked. */
+.content {
+  display: grid;
+  gap: var(--veilo-space-3);
+  padding-top: var(--veilo-space-2);
+}
+
+/* Group: a titled stack of controls, without the browser's fieldset frame. */
+.group {
+  display: grid;
+  gap: var(--veilo-space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: var(--veilo-space-1);
+  padding: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}
+
+/* Choice: a label above its chips. */
+.choice {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.choiceLabel {
+  color: var(--veilo-text);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}

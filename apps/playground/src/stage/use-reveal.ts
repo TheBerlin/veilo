@@ -4,8 +4,16 @@
 import { createReveal, type Layout, type Reveal, type RevealOptions } from "@veilo/core";
 import { useEffect, useRef, type RefObject } from "react";
 
-/** How {@link useReveal} starts the first sequence, and who gets the reveal. */
+/**
+ * How a new reveal starts: the full sequence, the Loading view only (after a Loader change), or
+ * the reveal from `p = 0` without loading (after a Reveal change), as in spec 1.4.
+ */
+export type RevealStart = "sequence" | "loading" | "reveal";
+
+/** How {@link useReveal} starts the reveal, and who gets it. */
 export interface RevealSequence {
+  /** How the reveal starts. Defaults to the full sequence. */
+  start?: RevealStart;
   /** Whether the first sequence loops. */
   loop?: boolean;
   /** Receives the reveal after it is created and `null` after it is destroyed. */
@@ -42,7 +50,9 @@ export function useReveal(
     const instance = createReveal(target, startLayout, { reducedMotion: false, ...startOptions });
     reveal.current = instance;
     start?.onReveal?.(instance);
-    instance.playSequence({ loop: start?.loop ?? false });
+    if (start?.start === "loading") instance.showLoading();
+    else if (start?.start === "reveal") void instance.play();
+    else instance.playSequence({ loop: start?.loop ?? false });
     return () => {
       instance.destroy();
       if (reveal.current === instance) reveal.current = null;
