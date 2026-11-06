@@ -33,7 +33,7 @@ export default tseslint.config(
 
   // Rule 4: every export in package source documents its purpose, parameters and result.
   {
-    files: ["packages/*/src/**/*.{ts,tsx}"],
+    files: ["{packages,apps}/*/src/**/*.{ts,tsx}"],
     plugins: { jsdoc },
     rules: {
       "jsdoc/require-jsdoc": [
