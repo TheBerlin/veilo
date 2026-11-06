@@ -65,6 +65,8 @@ export const TYPE = {
   "body-lg": { family: "sans", size: 20, lineHeight: 30, weight: 400, tracking: 0 },
   body: { family: "sans", size: 16, lineHeight: 24, weight: 400, tracking: 0 },
   label: { family: "sans", size: 16, lineHeight: 24, weight: 500, tracking: 0 },
+  // Labels of small buttons, chips, tabs inside controls and form fields.
+  "label-sm": { family: "sans", size: 14, lineHeight: 20, weight: 500, tracking: 0 },
   caption: { family: "sans", size: 14, lineHeight: 20, weight: 400, tracking: 0 },
   code: { family: "mono", size: 14, lineHeight: 22, weight: 400, tracking: 0 },
 } as const satisfies Record<string, TypeStyle>;
@@ -80,6 +82,18 @@ export const SPACE = {
   "space-4": 32,
   "space-8": 64,
   "space-16": 128,
+} as const;
+
+/** Component sizes in px: control heights from the design system's component specs, and icons. */
+export const SIZES = {
+  "size-control-sm": 32,
+  "size-control-md": 44,
+  "size-control-lg": 52,
+  "size-chip": 36,
+  "size-tab": 40,
+  "size-icon-sm": 16,
+  "size-icon-md": 20,
+  "size-icon-lg": 24,
 } as const;
 
 /** The one base radius in px: every element that holds no other element. */

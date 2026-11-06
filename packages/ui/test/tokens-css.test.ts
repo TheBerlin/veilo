@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 // The strict CSS checker from @veilo/css's tests, so both packages check CSS the same way.
 import { cssProblems } from "../../css/test/support/parse-css.ts";
 import { buildTokensCss } from "../src/tokens-css.ts";
-import { COLORS, DURATIONS, RADIUS, SPACE, TYPE } from "../src/tokens.ts";
+import { COLORS, DURATIONS, RADIUS, SIZES, SPACE, TYPE } from "../src/tokens.ts";
 
 const committed = readFileSync(new URL("../tokens.css", import.meta.url), "utf8");
 
@@ -33,6 +33,7 @@ describe("tokens.css", () => {
     const names = [
       ...Object.keys(COLORS),
       ...Object.keys(SPACE),
+      ...Object.keys(SIZES),
       ...Object.keys(RADIUS),
       ...Object.keys(DURATIONS),
       ...Object.keys(TYPE).map((name) => `type-${name}`),

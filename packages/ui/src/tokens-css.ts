@@ -9,6 +9,7 @@ import {
   GRID,
   RADIUS,
   SHADOW_SOFT,
+  SIZES,
   SPACE,
   TYPE,
   type ThemedColor,
@@ -46,6 +47,7 @@ function staticLines(): string[] {
       [`type-${name}-tracking`, s.tracking === 0 ? "normal" : `${s.tracking}em`],
     ]),
     ...Object.entries(SPACE).map(([name, px]): [string, string] => [name, `${px}px`]),
+    ...Object.entries(SIZES).map(([name, px]): [string, string] => [name, `${px}px`]),
     ...Object.entries(RADIUS).map(([name, px]): [string, string] => [name, `${px}px`]),
     // Skeletons from @veilo/css follow the control radius on the site.
     ["radius", `var(${TOKEN_PREFIX}radius-base)`],

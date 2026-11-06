@@ -38,6 +38,8 @@
   --veilo-type-body-tracking: normal;
   --veilo-type-label: 500 16px/24px var(--veilo-font-sans);
   --veilo-type-label-tracking: normal;
+  --veilo-type-label-sm: 500 14px/20px var(--veilo-font-sans);
+  --veilo-type-label-sm-tracking: normal;
   --veilo-type-caption: 400 14px/20px var(--veilo-font-sans);
   --veilo-type-caption-tracking: normal;
   --veilo-type-code: 400 14px/22px var(--veilo-font-mono);
@@ -51,6 +53,14 @@
   --veilo-space-4: 32px;
   --veilo-space-8: 64px;
   --veilo-space-16: 128px;
+  --veilo-size-control-sm: 32px;
+  --veilo-size-control-md: 44px;
+  --veilo-size-control-lg: 52px;
+  --veilo-size-chip: 36px;
+  --veilo-size-tab: 40px;
+  --veilo-size-icon-sm: 16px;
+  --veilo-size-icon-md: 20px;
+  --veilo-size-icon-lg: 24px;
   --veilo-radius-base: 8px;
   --veilo-radius-md: 16px;
   --veilo-radius-lg: 24px;
