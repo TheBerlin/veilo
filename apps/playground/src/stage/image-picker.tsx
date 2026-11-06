@@ -38,7 +38,7 @@ export function ImagePicker(props: ImagePickerProps) {
 
   return (
     <div className={styles.picker}>
-      <div className={styles.row} role="group" aria-label="Sample images">
+      <div className={styles.row} role="group" aria-label="Image">
         {SAMPLE_IMAGES.map((sample) => (
           <button
             key={sample.id}

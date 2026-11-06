@@ -1,7 +1,7 @@
 // test-card.tsx: the fixed product card the playground animates (spec 1.2), with its slot
 // markup and layout hints.
 
-import type { Layout, RevealOptions, Settings } from "@veilo/core";
+import type { Layout, Reveal, RevealOptions, Settings } from "@veilo/core";
 import { useEffect, useLayoutEffect, useRef, type DragEvent, type KeyboardEvent } from "react";
 import { drawImageCover, type CardImage } from "./image-source.ts";
 import { drawPlaceholderImage } from "./placeholder-image.ts";
@@ -35,6 +35,10 @@ export interface TestCardProps {
   image?: CardImage | null;
   /** Called with a file dropped on the image area. */
   onImageDrop?: (file: File) => void;
+  /** Whether sequences loop: the first one (read at mount) and replays by click or key. */
+  loop?: boolean;
+  /** Receives the live reveal after mount and `null` after unmount. */
+  onReveal?: (reveal: Reveal | null) => void;
 }
 
 /** Width changes smaller than this (CSS px) do not redraw the photo. */
@@ -46,7 +50,7 @@ const REDRAW_THRESHOLD = 2;
  * to `onImageDrop`. Side effects: draws the photo (again when its width changes by 2 px or more)
  * and runs a reveal on the card while mounted.
  *
- * @param props - The settings, reveal options, photo and drop handler.
+ * @param props - The settings, reveal options, photo, drop handler, loop flag and reveal callback.
  * @returns The card.
  */
 export function TestCard(props: TestCardProps) {
@@ -83,9 +87,10 @@ export function TestCard(props: TestCardProps) {
     card,
     { version: 1, settings: props.settings, slots: CARD_SLOTS },
     props.revealOptions,
+    { loop: props.loop, onReveal: props.onReveal },
   );
 
-  const replay = () => reveal.current?.playSequence();
+  const replay = () => reveal.current?.playSequence({ loop: props.loop ?? false });
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     // Space would scroll the page otherwise.

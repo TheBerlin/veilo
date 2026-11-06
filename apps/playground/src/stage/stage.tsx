@@ -1,9 +1,9 @@
-// stage.tsx: the area that shows the test card on the dotted background, with the image
-// controls under it.
+// stage.tsx: the area that shows the test card on the dotted background, with the transport
+// bar (playback and image tools) under it.
 
-import type { RevealOptions } from "@veilo/core";
+import type { Reveal, RevealOptions } from "@veilo/core";
 import { useRef, useState } from "react";
-import type { SettingsStore } from "../state/settings-store.ts";
+import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import { ImagePicker } from "./image-picker.tsx";
 import {
   loadImageFile,
@@ -14,6 +14,7 @@ import {
 } from "./image-source.ts";
 import styles from "./stage.module.css";
 import { TestCard } from "./test-card.tsx";
+import { TransportBar } from "./transport-bar.tsx";
 
 /** Props of {@link Stage}. */
 export interface StageProps {
@@ -32,15 +33,18 @@ interface PhotoState {
 }
 
 /**
- * The stage: the test card centered on the dot grid, and the image picker. Side effects:
- * decodes chosen images.
+ * The stage: the test card centered on the dot grid, and the transport bar with the image
+ * picker. Side effects: decodes chosen images.
  *
  * @param props - The store and reveal options.
- * @returns The stage section.
+ * @returns The stage section and the transport bar.
  */
 export function Stage(props: StageProps) {
   const [photo, setPhoto] = useState<PhotoState>({ key: 0, image: null, sample: null });
   const [error, setError] = useState<string | null>(null);
+  const [reveal, setReveal] = useState<Reveal | null>(null);
+  const [loop, setLoop] = useState(false);
+  const duration = useSetting(props.store, "rDur");
   // Only the latest request may win when loads overlap.
   const request = useRef(0);
 
@@ -66,21 +70,27 @@ export function Stage(props: StageProps) {
   const onReset = () => show(Promise.resolve(null), null);
 
   return (
-    <section className={styles.stage} aria-label="Preview">
-      <TestCard
-        key={photo.key}
-        settings={props.store.getState().settings}
-        revealOptions={props.revealOptions}
-        image={photo.image}
-        onImageDrop={onFile}
-      />
-      <ImagePicker
-        selectedSample={photo.sample}
-        error={error}
-        onSample={onSample}
-        onFile={onFile}
-        onReset={onReset}
-      />
-    </section>
+    <div className={styles.column}>
+      <section className={styles.stage} aria-label="Preview">
+        <TestCard
+          key={photo.key}
+          settings={props.store.getState().settings}
+          revealOptions={props.revealOptions}
+          image={photo.image}
+          onImageDrop={onFile}
+          loop={loop}
+          onReveal={setReveal}
+        />
+      </section>
+      <TransportBar reveal={reveal} duration={duration} loop={loop} onLoopChange={setLoop}>
+        <ImagePicker
+          selectedSample={photo.sample}
+          error={error}
+          onSample={onSample}
+          onFile={onFile}
+          onReset={onReset}
+        />
+      </TransportBar>
+    </div>
   );
 }

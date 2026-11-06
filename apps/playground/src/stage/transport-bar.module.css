@@ -1,0 +1,35 @@
+/* Bar: a card-surface strip under the stage; rows of controls around the full-width scrubber. */
+.bar {
+  display: grid;
+  gap: var(--veilo-space-2);
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-1-5);
+}
+
+.scrubber {
+  width: 100%;
+}
+
+/* Readout and label: monospace digits, so the numbers do not jitter while playing. */
+.readout,
+.state {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  letter-spacing: var(--veilo-type-code-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The label sits after the readout; the extra tools are pushed to the end of the row. */
+.state {
+  margin-right: auto;
+  color: var(--veilo-text);
+}

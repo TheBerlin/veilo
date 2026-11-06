@@ -1,4 +1,10 @@
-/* Stage: the card and its image controls centered on the decorative dot grid (grid-dot dots on a 16 px pitch). */
+/* Column: the stage with the transport bar under it. */
+.column {
+  display: grid;
+  gap: var(--veilo-space-2);
+}
+
+/* Stage: the card centered on the decorative dot grid (grid-dot dots on a 16 px pitch). */
 .stage {
   display: grid;
   place-content: center;

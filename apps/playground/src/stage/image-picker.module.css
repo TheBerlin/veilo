@@ -1,8 +1,6 @@
 /* Picker: one wrapping row of controls with the error line below. */
 .picker {
   display: grid;
-  gap: var(--veilo-space-1);
-  justify-items: center;
 }
 
 .row {
@@ -46,11 +44,14 @@
   display: none;
 }
 
-/* Error line: always present, so announcing a message does not shift the layout. */
+/* Error line: always in the page, so screen readers announce it; no height while empty. */
 .error {
-  min-height: 1lh;
   margin: 0;
   color: var(--veilo-danger);
   font: var(--veilo-type-caption);
   letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+.error:not(:empty) {
+  margin-top: var(--veilo-space-1);
 }
