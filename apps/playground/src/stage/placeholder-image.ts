@@ -1,10 +1,7 @@
-// placeholder-image.ts: a temporary photo for the test card until the Image source task draws
-// the real default mouse. A dark rounded shape on a light gradient, so the dot and character
-// grids have strong contrast to sample.
+// placeholder-image.ts: the test card's default photo, drawn in code. A dark rounded shape on a
+// light gradient, so the dot and character grids have strong contrast to sample.
 
-/** The spec caps the canvas pixel ratio at 2 and keeps at least 160 px. */
-const MAX_PIXEL_RATIO = 2;
-const MIN_SIZE = 160;
+import { sizeSquareCanvas } from "./image-source.ts";
 
 /**
  * Sizes a square canvas to its CSS width times the pixel ratio and draws the placeholder.
@@ -14,10 +11,7 @@ const MIN_SIZE = 160;
  * @param pixelRatio - The device pixel ratio, capped at 2.
  */
 export function drawPlaceholderImage(canvas: HTMLCanvasElement, pixelRatio: number): void {
-  const ratio = Math.min(Math.max(pixelRatio, 1), MAX_PIXEL_RATIO);
-  const size = Math.max(Math.round(canvas.clientWidth * ratio), MIN_SIZE);
-  canvas.width = size;
-  canvas.height = size;
+  const size = sizeSquareCanvas(canvas, pixelRatio);
   const context = canvas.getContext("2d");
   if (!context) return;
 

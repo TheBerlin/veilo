@@ -1,7 +1,9 @@
-/* Stage: the card centered on the decorative dot grid (grid-dot dots on a 16 px pitch). */
+/* Stage: the card and its image controls centered on the decorative dot grid (grid-dot dots on a 16 px pitch). */
 .stage {
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
+  gap: var(--veilo-space-3);
   min-height: calc(var(--veilo-size-test-card) * 1.75);
   padding: var(--veilo-space-4) var(--veilo-space-2);
   border: 1px solid var(--veilo-border);

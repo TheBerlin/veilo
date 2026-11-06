@@ -2,7 +2,8 @@
 // markup and layout hints.
 
 import type { Layout, RevealOptions, Settings } from "@veilo/core";
-import { useLayoutEffect, useRef, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, type DragEvent, type KeyboardEvent } from "react";
+import { drawImageCover, type CardImage } from "./image-source.ts";
 import { drawPlaceholderImage } from "./placeholder-image.ts";
 import styles from "./test-card.module.css";
 import { useReveal } from "./use-reveal.ts";
@@ -30,23 +31,52 @@ export interface TestCardProps {
   settings: Settings;
   /** Reveal options, such as a test scheduler. */
   revealOptions?: RevealOptions;
+  /** The photo; the drawn placeholder when absent. Read at mount: change the card's key. */
+  image?: CardImage | null;
+  /** Called with a file dropped on the image area. */
+  onImageDrop?: (file: File) => void;
 }
+
+/** Width changes smaller than this (CSS px) do not redraw the photo. */
+const REDRAW_THRESHOLD = 2;
 
 /**
  * The test card: image, heading, two description lines, price, old price and button, in that
- * order. Click, Enter or Space replays the full sequence. Side effects: draws the placeholder
- * image and runs a reveal on the card while mounted.
+ * order. Click, Enter or Space replays the full sequence; a file dropped on the image area goes
+ * to `onImageDrop`. Side effects: draws the photo (again when its width changes by 2 px or more)
+ * and runs a reveal on the card while mounted.
  *
- * @param props - The settings and reveal options.
+ * @param props - The settings, reveal options, photo and drop handler.
  * @returns The card.
  */
 export function TestCard(props: TestCardProps) {
   const card = useRef<HTMLElement>(null);
   const photo = useRef<HTMLCanvasElement>(null);
 
+  // Read at mount, like the reveal: a new image comes with a new key, so a fresh card.
+  const image = useRef(props.image ?? null);
+  const draw = (canvas: HTMLCanvasElement) => {
+    if (image.current) drawImageCover(canvas, image.current, window.devicePixelRatio);
+    else drawPlaceholderImage(canvas, window.devicePixelRatio);
+  };
+
   // A layout effect runs before the reveal's effect, so the image is drawn before it is sampled.
   useLayoutEffect(() => {
-    if (photo.current) drawPlaceholderImage(photo.current, window.devicePixelRatio);
+    if (photo.current) draw(photo.current);
+  }, []);
+
+  // Redraw at the new size when the card's width changes noticeably.
+  useEffect(() => {
+    const canvas = photo.current;
+    if (!canvas) return;
+    let drawnWidth = canvas.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (Math.abs(canvas.clientWidth - drawnWidth) < REDRAW_THRESHOLD) return;
+      drawnWidth = canvas.clientWidth;
+      draw(canvas);
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
   }, []);
 
   const reveal = useReveal(
@@ -62,6 +92,13 @@ export function TestCard(props: TestCardProps) {
     event.preventDefault();
     replay();
   };
+  // The browser opens a dropped file unless dragover and drop are cancelled.
+  const onDragOver = (event: DragEvent) => event.preventDefault();
+  const onDrop = (event: DragEvent) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) props.onImageDrop?.(file);
+  };
 
   return (
     <article
@@ -73,7 +110,14 @@ export function TestCard(props: TestCardProps) {
       onClick={replay}
       onKeyDown={onKeyDown}
     >
-      <canvas ref={photo} className={styles.image} data-veilo-slot="photo" aria-hidden="true" />
+      <canvas
+        ref={photo}
+        className={styles.image}
+        data-veilo-slot="photo"
+        aria-hidden="true"
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+      />
       <h2 className={styles.heading} data-veilo-slot="heading">
         MCHOSE L7 Pro
       </h2>
