@@ -1,0 +1,44 @@
+/* Tab bar: a raised card bar; 8 px of padding around 8 px tabs gives the medium radius. */
+.list {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--veilo-space-1);
+  padding: var(--veilo-space-1);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-md);
+  background: var(--veilo-card);
+  box-shadow: var(--veilo-shadow-soft);
+}
+
+/* Tab: muted until selected; the fill, not only the color, marks the selected tab. */
+.trigger {
+  height: var(--veilo-size-tab);
+  padding: 0 var(--veilo-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--veilo-radius-base);
+  background: transparent;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+  cursor: pointer;
+  transition:
+    color var(--veilo-duration-fast) var(--veilo-ease-out),
+    background-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.trigger:hover {
+  color: var(--veilo-text);
+}
+
+.trigger[data-state="active"] {
+  border-color: var(--veilo-border);
+  background: var(--veilo-secondary);
+  color: var(--veilo-text);
+}
+
+/* Focus ring on tabs and on the panel, which is focusable for keyboard users. */
+.trigger:focus-visible,
+.content:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}

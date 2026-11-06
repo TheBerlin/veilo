@@ -9,6 +9,10 @@ import { afterEach, beforeEach } from "vitest";
 // in the tests do not depend on the machine; a test that needs light sets it itself.
 beforeEach(() => {
   document.documentElement.dataset.theme = "dark";
+  // Instant transitions, as under reduced motion, so styles can be read right after a change.
+  for (const name of ["fast", "base", "slow"]) {
+    document.documentElement.style.setProperty(`--veilo-duration-${name}`, "0ms");
+  }
 });
 
 // Testing Library only cleans up on its own when test globals are on, which they are not here.

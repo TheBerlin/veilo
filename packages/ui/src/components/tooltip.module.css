@@ -1,0 +1,23 @@
+/* Tooltip: a small raised card with caption text, faded in over the base duration. */
+.content {
+  max-width: calc(var(--veilo-space-16) * 2);
+  padding: var(--veilo-space-0-5) var(--veilo-space-1);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-card);
+  box-shadow: var(--veilo-shadow-soft);
+  color: var(--veilo-text);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+  animation: enter var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+/* Enter: opacity only, so nothing moves; reduced motion makes the duration 0. */
+@keyframes enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

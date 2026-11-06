@@ -1,0 +1,64 @@
+/* Toggle: a switch and its label on one line. */
+.field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--veilo-space-1);
+  color: var(--veilo-text);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}
+
+/* Track: as tall as a medium icon; the thumb travels one small icon width. */
+.switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  box-sizing: border-box;
+  width: calc(var(--veilo-size-icon-sm) * 2 + var(--veilo-space-0-5));
+  height: var(--veilo-size-icon-md);
+  padding: 0 1px;
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--veilo-duration-fast) var(--veilo-ease-out),
+    border-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.switch:hover:not(:disabled) {
+  border-color: var(--veilo-accent);
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+.switch:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.switch[data-state="checked"] {
+  background: var(--veilo-accent);
+  border-color: var(--veilo-accent);
+}
+
+/* Thumb: muted when off, on-accent when on, moved with transform only. */
+.thumb {
+  display: block;
+  width: var(--veilo-size-icon-sm);
+  height: var(--veilo-size-icon-sm);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-text-muted);
+  transition:
+    transform var(--veilo-duration-fast) var(--veilo-ease-out),
+    background-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.thumb[data-state="checked"] {
+  transform: translateX(var(--veilo-size-icon-sm));
+  background: var(--veilo-on-accent);
+}
