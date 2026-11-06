@@ -29,11 +29,11 @@ export default tseslint.config(
   { files: ["**/*.{mjs,cjs}"], languageOptions: { globals: globals.node } },
 
   // Every doc comment in TypeScript must be valid TSDoc.
-  { files: ["**/*.ts"], plugins: { tsdoc }, rules: { "tsdoc/syntax": "error" } },
+  { files: ["**/*.{ts,tsx}"], plugins: { tsdoc }, rules: { "tsdoc/syntax": "error" } },
 
   // Rule 4: every export in package source documents its purpose, parameters and result.
   {
-    files: ["packages/*/src/**/*.ts"],
+    files: ["packages/*/src/**/*.{ts,tsx}"],
     plugins: { jsdoc },
     rules: {
       "jsdoc/require-jsdoc": [
