@@ -169,8 +169,8 @@ Options: `selector` (default `.skeleton`), fallback `base` and `highlight` color
 
 | Custom property | Used for                                                                                       |
 | --------------- | ---------------------------------------------------------------------------------------------- |
-| `--veilo-base`  | Skeleton base color (default `#dde5e6`)                                                        |
-| `--veilo-hi`    | Skeleton highlight color (default `#f6fafa`)                                                   |
+| `--veilo-base`  | Skeleton base color (default `#dcdcdc`; the Veilo dark theme uses `#171717`)                   |
+| `--veilo-hi`    | Skeleton highlight color (default `#f7f7f7`; the Veilo dark theme uses `#262626`)              |
 | `--veilo-ink`   | Dots and characters of the grid effects                                                        |
 | `--veilo-bg-a`  | Set on the button during a reveal; use it in the button's background to fade it with its label |
 

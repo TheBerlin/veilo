@@ -36,9 +36,9 @@ export interface Skeleton {
   destroy(): void;
 }
 
-// The spec's light theme colors, used when the page defines no --veilo-base or --veilo-hi.
-const DEFAULT_BASE = "var(--veilo-base, #dde5e6)";
-const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f6fafa)";
+// The Veilo design system's light skeleton colors, used when the page defines no --veilo-base or --veilo-hi.
+const DEFAULT_BASE = "var(--veilo-base, #dcdcdc)";
+const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f7f7f7)";
 
 /**
  * Shapes text placeholders into one bar per line.

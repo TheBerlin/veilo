@@ -63,7 +63,7 @@ describe("createElementSkeleton", () => {
   it("falls back to the light theme colors when the page defines none", () => {
     const { elements } = card();
     createElementSkeleton(elements, { effect: "pulse" }).start();
-    expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(221, 229, 230)");
+    expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(220, 220, 220)");
   });
 
   it("follows --veilo-base when the page defines it", () => {
@@ -163,7 +163,7 @@ describe("createElementSkeleton", () => {
     root.append(line);
     createElementSkeleton([line], { effect: "pulse" }, { root }).start();
     expect(root.querySelector("style")).not.toBeNull();
-    expect(getComputedStyle(line).backgroundColor).toBe("rgb(221, 229, 230)");
+    expect(getComputedStyle(line).backgroundColor).toBe("rgb(220, 220, 220)");
   });
 });
 
