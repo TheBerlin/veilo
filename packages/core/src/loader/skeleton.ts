@@ -4,6 +4,7 @@
 import { createCleanup } from "../dom/cleanup.ts";
 import { addStyle } from "../dom/style.ts";
 import type { SlotHint } from "../schema/layout.ts";
+import { cssNumber } from "../math/number.ts";
 import { parseSettings } from "../schema/validate.ts";
 import { generateLoaderCss } from "./css-generator.ts";
 
@@ -40,34 +41,78 @@ export interface Skeleton {
 const DEFAULT_BASE = "var(--veilo-base, #dcdcdc)";
 const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f7f7f7)";
 
+/** Where a bar's mask layers sit: their vertical position and repeat. */
+interface BarPlacement {
+  /** Vertical position, such as `0` or `100%`. */
+  y: string;
+  /** `repeat-y` for every line, `no-repeat` for one. */
+  repeat: string;
+}
+
 /**
- * Shapes text placeholders into one bar per line.
+ * One rounded bar per line of text, as mask layers: four corner circles and two bands (one
+ * between the top and bottom corners at full width, one between the left and right corners at
+ * full bar height). Each layer is `width` wide and one line tall.
  *
- * The mask keeps horizontal stripes one line tall, inset by 0.18em top and bottom as in the
- * spec's card, intersected with the text's shape: every line full width except the last, which is
- * `--veilo-last` wide. It sits in the content box, so padding stays empty. An empty element is
- * given `--veilo-lines` lines of height, so it does not collapse while its text is missing.
- * Browsers without the `lh` unit drop the mask and show a solid block instead.
+ * @param width - The bar width, such as `100%` or `var(--veilo-last, 100%)`.
+ * @param place - Position and repeat: every line from the top, or only the bottom line.
+ * @returns Six mask layers.
+ */
+function roundedBarLayers(width: string, place: BarPlacement): string[] {
+  const r = "var(--veilo-bar-r)";
+  const top = "var(--veilo-bar-top)";
+  const bottom = "var(--veilo-bar-bottom)";
+  const tile = (x: string, w: string) => `${x} ${place.y} / ${w} 1lh ${place.repeat}`;
+  // The circle edge fades over half a pixel, so the corners are smooth.
+  const corner = (x: string, y: string) =>
+    `radial-gradient(circle ${r} at ${x} ${y}, #000 calc(100% - 0.5px), transparent 100%) ${tile("0", width)}`;
+  return [
+    corner(r, top),
+    corner(`calc(100% - ${r})`, top),
+    corner(r, bottom),
+    corner(`calc(100% - ${r})`, bottom),
+    // Full width, between the top and bottom corners.
+    `linear-gradient(transparent 0 ${top}, #000 0 ${bottom}, transparent 0) ${tile("0", width)}`,
+    // Full bar height (inset 0.18em), between the left and right corners.
+    `linear-gradient(transparent 0 0.18em, #000 0 calc(1lh - 0.18em), transparent 0) ${tile(r, `calc(${width} - 2 * ${r})`)}`,
+  ];
+}
+
+/**
+ * Shapes text placeholders into one rounded bar per line.
+ *
+ * Every line is a bar inset by 0.18em top and bottom, as in the spec's card, with its corners
+ * rounded by `radius` (at most half the bar height). All lines are full width except the last,
+ * which is `--veilo-last` wide and rounded at its own end. The mask sits in the content box, so
+ * padding stays empty. An empty element is given `--veilo-lines` lines of height, so it does not
+ * collapse while its text is missing. Browsers without the `lh` unit drop the mask and show a
+ * solid block instead.
  *
  * @param selector - The skeleton's selector.
+ * @param radius - The corner radius, a CSS length.
  * @returns The CSS rules.
  */
-function barsCss(selector: string): string {
+function barsCss(selector: string, radius: string): string {
   const bars = `${selector}[data-veilo-bars]`;
+  const last = roundedBarLayers("var(--veilo-last, 100%)", { y: "100%", repeat: "no-repeat" });
+  const lines = roundedBarLayers("100%", { y: "0", repeat: "repeat-y" });
+  // Layers are listed top first, and each is composited with everything below it: the line bars
+  // are joined, cut to all lines but the last, and then the last line's bar is added.
   const layers = [
-    // One stripe per line, inset 0.18em at the top and bottom.
-    "repeating-linear-gradient(transparent 0 0.18em, #000 0 calc(1lh - 0.18em), transparent 0 1lh)",
-    // All lines but the last, full width.
-    "linear-gradient(#000 0 0) 0 0 / 100% calc(100% - 1lh) no-repeat",
-    // The last line, --veilo-last wide.
-    "linear-gradient(#000 0 0) 0 100% / var(--veilo-last, 100%) 1lh no-repeat",
-  ].join(", ");
+    ...last,
+    // All lines but the last. Full size and transparent at the bottom, because a layer of zero
+    // height (a one-line element) is skipped instead of hiding everything below it.
+    "linear-gradient(#000 calc(100% - 1lh), transparent 0)",
+    ...lines,
+  ];
+  const composite = [...last.map(() => "add"), "intersect", ...lines.map(() => "add")];
   return [
     `${bars} {`,
-    `  mask: ${layers};`,
-    // The stripes keep only what overlaps the two text-shape layers, which add up. One value per
-    // layer; the bottom layer's is never used.
-    "  mask-composite: intersect, add, add;",
+    `  --veilo-bar-r: min(${radius}, calc((1lh - 0.36em) / 2));`,
+    "  --veilo-bar-top: calc(0.18em + var(--veilo-bar-r));",
+    "  --veilo-bar-bottom: calc(1lh - 0.18em - var(--veilo-bar-r));",
+    `  mask: ${layers.join(", ")};`,
+    `  mask-composite: ${composite.join(", ")};`,
     "  mask-origin: content-box;",
     "}",
     `${bars}:empty { min-height: calc(var(--veilo-lines, 1) * 1lh); }`,
@@ -132,7 +177,7 @@ export function createElementSkeleton(
         `${selector} { color: transparent !important; }`,
         // Moves the picture out of the box, so the placeholder background shows instead.
         `${selector}:is(img, canvas, video) { object-position: -99999px 0; }`,
-        barsCss(selector),
+        barsCss(selector, `${cssNumber(parsed.radius)}px`),
         "",
       ].join("\n");
 

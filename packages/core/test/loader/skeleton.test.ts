@@ -1,6 +1,7 @@
 // Tests for src/loader/skeleton.ts. Runs in Chromium (see BROWSER_TESTS in vitest.config.ts).
 
 import { afterEach, describe, expect, it } from "vitest";
+import { page } from "vitest/browser";
 import { createElementSkeleton } from "../../src/loader/skeleton.ts";
 
 /** Builds a small card: a region with an image and two text lines. */
@@ -167,6 +168,26 @@ describe("createElementSkeleton", () => {
   });
 });
 
+/**
+ * Screenshots an element and reads its pixels.
+ *
+ * @param element - The element.
+ * @returns The brightness (0 to 255, red channel) at a CSS pixel position.
+ */
+async function screenshotPixels(element: HTMLElement) {
+  // Without saving, the screenshot comes back as a base64 PNG.
+  const base64 = await page.screenshot({ element, save: false });
+  const image = new Image();
+  image.src = `data:image/png;base64,${base64}`;
+  await image.decode();
+  const canvas = new OffscreenCanvas(image.width, image.height);
+  const context = canvas.getContext("2d")!;
+  context.drawImage(image, 0, 0);
+  const scale = image.width / element.getBoundingClientRect().width;
+  return (x: number, y: number) =>
+    context.getImageData(Math.round(x * scale), Math.round(y * scale), 1, 1).data[0]!;
+}
+
 describe("createElementSkeleton line bars", () => {
   /** A paragraph with a fixed font, so one line is exactly 20 px. */
   function line(text: string) {
@@ -183,10 +204,64 @@ describe("createElementSkeleton line bars", () => {
     const style = getComputedStyle(text);
     expect(text.hasAttribute("data-veilo-bars")).toBe(true);
     expect(text.style.getPropertyValue("--veilo-last")).toBe("70%");
-    expect(style.maskImage).toContain("repeating-linear-gradient");
-    expect(style.maskImage.match(/linear-gradient/g)).toHaveLength(3);
-    expect(style.maskComposite).toBe("intersect, add, add");
-    expect(style.maskOrigin).toBe("content-box, content-box, content-box");
+    // Two rounded bars of six layers each (last line, other lines) and the region between them.
+    expect(style.maskImage.match(/radial-gradient/g)).toHaveLength(8);
+    expect(style.maskImage.match(/linear-gradient/g)).toHaveLength(5);
+    expect(style.maskComposite).toBe(
+      [
+        "add",
+        "add",
+        "add",
+        "add",
+        "add",
+        "add",
+        "intersect",
+        "add",
+        "add",
+        "add",
+        "add",
+        "add",
+        "add",
+      ].join(", "),
+    );
+    expect(style.maskOrigin.split(", ")).toHaveLength(13);
+  });
+
+  it("rounds every corner of every line by the radius setting", async () => {
+    // Two lines of solid black bars on white, 20 px tall with 0.18em (2.88 px) insets.
+    document.body.style.background = "#ffffff";
+    const text = line("xxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxx xxxxx");
+    text.style.height = "40px";
+    text.style.overflow = "hidden";
+    const black = { baseColor: "#000000", highlightColor: "#000000", radius: 6 };
+    createElementSkeleton([text], black, { bars: new Map([[text, { width: 50 }]]) }).start();
+    const pixels = await screenshotPixels(text);
+    const dark = (x: number, y: number) => pixels(x, y) < 128;
+    // Inside the bars.
+    expect(dark(100, 10)).toBe(true);
+    expect(dark(50, 30)).toBe(true);
+    // The corners of the first line, and of the second line's start (square before the fix).
+    expect(dark(0, 3)).toBe(false);
+    expect(dark(199, 3)).toBe(false);
+    expect(dark(0, 16)).toBe(false);
+    expect(dark(0, 23)).toBe(false);
+    expect(dark(0, 36)).toBe(false);
+    // The last line is half width and rounded at its own end.
+    expect(dark(99, 23)).toBe(false);
+    expect(dark(90, 30)).toBe(true);
+    expect(dark(120, 30)).toBe(false);
+    document.body.style.background = "";
+  });
+
+  it("gives a one-line element its hinted width", async () => {
+    document.body.style.background = "#ffffff";
+    const text = line("xxxx");
+    const black = { baseColor: "#000000", highlightColor: "#000000" };
+    createElementSkeleton([text], black, { bars: new Map([[text, { width: 50 }]]) }).start();
+    const pixels = await screenshotPixels(text);
+    expect(pixels(50, 10)).toBeLessThan(128);
+    expect(pixels(150, 10)).toBeGreaterThan(128);
+    document.body.style.background = "";
   });
 
   it("gives an empty element the hinted number of lines, and only while empty", () => {
