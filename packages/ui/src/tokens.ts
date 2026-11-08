@@ -57,10 +57,13 @@ export interface TypeStyle {
   readonly tracking: number;
 }
 
-/** Type scale. On the 375 px layout, apps use 40 px for `h1` and 32 px for `h2`. */
+/** Type scale. On the 375 px layout, use `h1-mobile` and `h2-mobile` in place of `h1` and `h2`. */
 export const TYPE = {
   h1: { family: "sans", size: 56, lineHeight: 60, weight: 700, tracking: -0.02 },
   h2: { family: "sans", size: 40, lineHeight: 46, weight: 700, tracking: -0.015 },
+  // The 375 px layout's headings: same weight and tracking, smaller size.
+  "h1-mobile": { family: "sans", size: 40, lineHeight: 46, weight: 700, tracking: -0.02 },
+  "h2-mobile": { family: "sans", size: 32, lineHeight: 38, weight: 700, tracking: -0.015 },
   h3: { family: "sans", size: 28, lineHeight: 34, weight: 700, tracking: -0.01 },
   "body-lg": { family: "sans", size: 20, lineHeight: 30, weight: 400, tracking: 0 },
   body: { family: "sans", size: 16, lineHeight: 24, weight: 400, tracking: 0 },
@@ -91,6 +94,7 @@ export const SIZES = {
   "size-control-lg": 52,
   "size-chip": 36,
   "size-tab": 40,
+  "size-badge": 24,
   "size-icon-sm": 16,
   "size-icon-md": 20,
   "size-icon-lg": 24,

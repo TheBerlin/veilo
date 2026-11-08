@@ -30,6 +30,10 @@
   --veilo-type-h1-tracking: -0.02em;
   --veilo-type-h2: 700 40px/46px var(--veilo-font-sans);
   --veilo-type-h2-tracking: -0.015em;
+  --veilo-type-h1-mobile: 700 40px/46px var(--veilo-font-sans);
+  --veilo-type-h1-mobile-tracking: -0.02em;
+  --veilo-type-h2-mobile: 700 32px/38px var(--veilo-font-sans);
+  --veilo-type-h2-mobile-tracking: -0.015em;
   --veilo-type-h3: 700 28px/34px var(--veilo-font-sans);
   --veilo-type-h3-tracking: -0.01em;
   --veilo-type-body-lg: 400 20px/30px var(--veilo-font-sans);
@@ -58,6 +62,7 @@
   --veilo-size-control-lg: 52px;
   --veilo-size-chip: 36px;
   --veilo-size-tab: 40px;
+  --veilo-size-badge: 24px;
   --veilo-size-icon-sm: 16px;
   --veilo-size-icon-md: 20px;
   --veilo-size-icon-lg: 24px;
