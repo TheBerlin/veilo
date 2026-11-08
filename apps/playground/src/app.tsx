@@ -1,5 +1,6 @@
 // app.tsx: the playground's root component. Owns the one settings store.
 
+import { DotGridBackground } from "@veilo/ui";
 import { useState } from "react";
 import styles from "./app.module.css";
 import { PresetChips } from "./header/preset-chips.tsx";
@@ -18,6 +19,8 @@ export function App() {
   const [store] = useState(() => createSettingsStore());
   return (
     <main className={styles.app}>
+      {/* Decorative animated background behind the whole page. */}
+      <DotGridBackground />
       <header className={styles.header}>
         <div className={styles.titleRow}>
           <h1 className={styles.title}>Veilo playground</h1>
