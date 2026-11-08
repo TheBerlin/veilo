@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Chip, ChipGroup, ChipGroupItem } from "../../src/components/chip.tsx";
+import { Tabs, TabsList, TabsTrigger } from "../../src/components/tabs.tsx";
 
 /** A controlled group of three effects, as the playground uses it. */
 function Effects({ onChange = () => {} }: { onChange?: (value: string) => void }) {
@@ -72,5 +73,36 @@ describe("ChipGroup", () => {
     await userEvent.click(screen.getByText("Shimmer"));
     expect(onChange).not.toHaveBeenCalled();
     expect(screen.getByText("Shimmer").ariaChecked).toBe("true");
+  });
+
+  it("segmented: sits in the tab bar's container, with tab-like chips", () => {
+    const props = ["padding", "border", "border-radius", "background-color", "box-shadow"];
+    render(
+      <>
+        <ChipGroup aria-label="Theme" value="light" onValueChange={() => {}} variant="segmented">
+          <ChipGroupItem value="light">Light</ChipGroupItem>
+          <ChipGroupItem value="dark">Dark</ChipGroupItem>
+        </ChipGroup>
+        <Tabs value="a">
+          <TabsList aria-label="Bar">
+            <TabsTrigger value="a">A</TabsTrigger>
+            <TabsTrigger value="b">B</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </>,
+    );
+    const style = (element: Element, names: string[]) => {
+      const computed = getComputedStyle(element);
+      return names.map((name) => computed.getPropertyValue(name));
+    };
+    const group = screen.getByRole("radiogroup", { name: "Theme" });
+    expect(style(group, props)).toEqual(style(screen.getByRole("tablist"), props));
+    const item = ["border-color", "background-color", "color"];
+    expect(style(screen.getByRole("radio", { name: "Light" }), item)).toEqual(
+      style(screen.getByRole("tab", { name: "A" }), item),
+    );
+    expect(style(screen.getByRole("radio", { name: "Dark" }), item)).toEqual(
+      style(screen.getByRole("tab", { name: "B" }), item),
+    );
   });
 });

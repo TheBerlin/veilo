@@ -41,6 +41,11 @@ export interface ChipGroupProps {
   disabled?: boolean;
   /** Extra class for the group. */
   className?: string;
+  /**
+   * `chips` (default): separate outlined chips. `segmented`: the chips sit in one raised bar, like
+   * the tab bar, for small settings such as the theme.
+   */
+  variant?: "chips" | "segmented";
 }
 
 /**
@@ -51,7 +56,7 @@ export interface ChipGroupProps {
  * @returns The group element.
  */
 export function ChipGroup(props: ChipGroupProps) {
-  const { value, onValueChange, className, ...rest } = props;
+  const { value, onValueChange, className, variant = "chips", ...rest } = props;
   return (
     <ToggleGroupPrimitive.Root
       type="single"
@@ -60,7 +65,9 @@ export function ChipGroup(props: ChipGroupProps) {
       onValueChange={(next) => {
         if (next) onValueChange(next);
       }}
-      className={[styles.group, className].filter(Boolean).join(" ")}
+      className={[styles.group, variant === "segmented" && styles.segmented, className]
+        .filter(Boolean)
+        .join(" ")}
       {...rest}
     />
   );

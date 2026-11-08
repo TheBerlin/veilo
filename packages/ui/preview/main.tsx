@@ -101,6 +101,16 @@ function Preview() {
                 <ChipGroupItem value="wave">Wave</ChipGroupItem>
                 <ChipGroupItem value="pulse">Pulse</ChipGroupItem>
               </ChipGroup>
+              <ChipGroup
+                aria-label="Effect, segmented"
+                value={effect}
+                onValueChange={setEffect}
+                variant="segmented"
+              >
+                <ChipGroupItem value="shimmer">Shimmer</ChipGroupItem>
+                <ChipGroupItem value="wave">Wave</ChipGroupItem>
+                <ChipGroupItem value="pulse">Pulse</ChipGroupItem>
+              </ChipGroup>
               <Chip pressed={chip} onPressedChange={setChip}>
                 Toggle chip
               </Chip>

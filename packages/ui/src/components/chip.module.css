@@ -43,3 +43,31 @@
   flex-wrap: wrap;
   gap: var(--veilo-space-1);
 }
+
+/* Segmented group: the tab bar's raised container, with chips styled like its tabs. */
+.segmented {
+  align-items: center;
+  padding: var(--veilo-space-1);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-md);
+  background: var(--veilo-card);
+  box-shadow: var(--veilo-shadow-soft);
+}
+
+.segmented > .chip {
+  border-color: transparent;
+  background: transparent;
+  color: var(--veilo-text-muted);
+}
+
+.segmented > .chip:hover:not(:disabled) {
+  border-color: transparent;
+  color: var(--veilo-text);
+}
+
+/* Chosen: the tab bar's selected fill, so both controls read the same. */
+.segmented > .chip[data-state="on"] {
+  border-color: var(--veilo-border);
+  background: var(--veilo-secondary);
+  color: var(--veilo-text);
+}
