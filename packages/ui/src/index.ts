@@ -37,3 +37,7 @@ export { TextArea } from "./components/text-area.tsx";
 export type { TextAreaProps } from "./components/text-area.tsx";
 export { CodeBlock, COPIED_MS } from "./components/code-block.tsx";
 export type { CodeBlockProps } from "./components/code-block.tsx";
+export { DotGridBackground } from "./components/dot-grid-background.tsx";
+export type { DotGridBackgroundProps } from "./components/dot-grid-background.tsx";
+export { createDotGrid, DOT_GRID_DEFAULTS } from "./dot-grid/dot-grid.ts";
+export type { DotGrid, DotGridOptions, DotGridSettings } from "./dot-grid/dot-grid.ts";

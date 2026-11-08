@@ -6,7 +6,7 @@ import pkg from "./package.json" with { type: "json" };
 
 // Component tests need a real DOM, focus and CSS, so they run in headless Chromium.
 // Token tests are plain data and stay in Node.
-const BROWSER_TESTS = ["test/components/**/*.test.tsx"];
+const BROWSER_TESTS = ["test/components/**/*.test.tsx", "test/dot-grid/**/*.test.ts"];
 
 export default defineProject({
   plugins: [react()],
