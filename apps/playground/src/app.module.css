@@ -9,7 +9,10 @@
   gap: var(--veilo-space-4);
   align-content: start;
   min-height: 100vh;
-  padding: var(--veilo-space-4) max(var(--veilo-space-2), env(safe-area-inset-left));
+  /* Side gutters: at least space-2 (16 px), wider where a phone's safe area needs it. */
+  padding: var(--veilo-space-4) max(var(--veilo-space-2), env(safe-area-inset-right))
+    max(var(--veilo-space-4), env(safe-area-inset-bottom))
+    max(var(--veilo-space-2), env(safe-area-inset-left));
   color: var(--veilo-text);
   font: var(--veilo-type-body);
 }
@@ -18,6 +21,11 @@
 .header {
   display: grid;
   gap: var(--veilo-space-2);
+}
+
+.description {
+  margin: 0;
+  color: var(--veilo-text-muted);
 }
 
 .title {
@@ -35,9 +43,21 @@
   align-items: start;
 }
 
-/* Custom properties do not work in media queries; 900 px is the spec's breakpoint. */
+/* Stage column: sticks to the top gutter while the panel scrolls past (spec 1.1). */
+.stageColumn {
+  position: sticky;
+  top: var(--veilo-space-2);
+  min-width: 0;
+}
+
+/* Custom properties do not work in media queries; 900 px is the spec's breakpoint.
+   One column, stage first, and the stage scrolls with the page. */
 @media (max-width: 900px) {
   .workspace {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stageColumn {
+    position: static;
   }
 }

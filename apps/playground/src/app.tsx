@@ -19,10 +19,16 @@ export function App() {
     <main className={styles.app}>
       <header className={styles.header}>
         <h1 className={styles.title}>Veilo playground</h1>
+        <p className={styles.description}>
+          Design skeleton loaders and image and text reveals, then export the settings or the CSS.
+        </p>
         <PresetChips store={store} />
       </header>
       <div className={styles.workspace}>
-        <Stage store={store} />
+        {/* Sticky on wide screens, so the preview stays in view while the panel scrolls. */}
+        <div className={styles.stageColumn}>
+          <Stage store={store} />
+        </div>
         <Panel store={store} />
       </div>
     </main>
