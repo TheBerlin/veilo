@@ -4,6 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Veilo playground</title>
+    <!-- Applies the saved theme before the first paint, so the page does not flash.
+         The key must match THEME_STORAGE_KEY in src/theme/theme.ts. -->
+    <script>
+      try {
+        var theme = localStorage.getItem("veilo-theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch (error) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       rel="stylesheet"

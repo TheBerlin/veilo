@@ -5,6 +5,7 @@ import type { Reveal, RevealOptions, Settings } from "@veilo/core";
 import { useEffect, useRef, useState } from "react";
 import { LOADER_KEYS } from "../panel/controls.ts";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
+import { watchTheme } from "../theme/theme.ts";
 import { ImagePicker } from "./image-picker.tsx";
 import {
   loadImageFile,
@@ -118,6 +119,9 @@ export function Stage(props: StageProps) {
       },
     );
   };
+
+  // A theme change recolors the grid canvas in place (spec 1.4); CSS handles the rest.
+  useEffect(() => (reveal ? watchTheme(() => reveal.redraw()) : undefined), [reveal]);
 
   const onSample = (id: string) => {
     const sample = SAMPLE_IMAGES.find((item) => item.id === id);

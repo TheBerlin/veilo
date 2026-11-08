@@ -23,6 +23,15 @@
   gap: var(--veilo-space-2);
 }
 
+/* Title row: the title on the left, the theme switch on the right (below it when narrow). */
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2);
+}
+
 .description {
   margin: 0;
   color: var(--veilo-text-muted);

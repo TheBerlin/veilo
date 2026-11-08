@@ -5,6 +5,7 @@ import styles from "./app.module.css";
 import { PresetChips } from "./header/preset-chips.tsx";
 import { Panel } from "./panel/panel.tsx";
 import { Stage } from "./stage/stage.tsx";
+import { ThemeSwitch } from "./theme/theme-switch.tsx";
 import { createSettingsStore } from "./state/settings-store.ts";
 
 /**
@@ -18,7 +19,10 @@ export function App() {
   return (
     <main className={styles.app}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Veilo playground</h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>Veilo playground</h1>
+          <ThemeSwitch />
+        </div>
         <p className={styles.description}>
           Design skeleton loaders and image and text reveals, then export the settings or the CSS.
         </p>
