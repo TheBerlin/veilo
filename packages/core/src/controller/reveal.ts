@@ -90,6 +90,12 @@ export interface Reveal {
   seek(p: number): void;
   /** Stops everything and shows the skeleton. */
   showLoading(): void;
+  /**
+   * Reads the ink color again and redraws the current frame, without changing playback. Call it
+   * after a theme change. Skeleton and text follow CSS changes on their own; the grid canvas does
+   * not. An `ink` option, when given, is kept.
+   */
+  redraw(): void;
   /** Shows loading for `hold` seconds, then plays; with `loop`, restarts 900 ms after the end. */
   playSequence(options?: { loop?: boolean }): void;
   /** Adds an event listener and returns a function that removes it. */
@@ -184,6 +190,20 @@ export function createReveal(
   let realText: string[] = [];
   let ink = "";
 
+  /** The grid's ink: the `ink` option, else `--veilo-ink` on the image's parent, else its color. */
+  const readInk = (): string => {
+    const from = image?.parentElement ?? image;
+    if (options.ink || !from) return options.ink ?? "";
+    return computedValue(from, "--veilo-ink") || computedValue(from, "color");
+  };
+
+  /** Draws the grid canvas at the current progress, while it is mounted. */
+  const drawGrid = () => {
+    if (effectContext && grid && renderer) {
+      renderer.drawGridFrame(effectContext, grid, { ink }, progress);
+    }
+  };
+
   const setState = (next: RevealState) => {
     if (state === next) return;
     state = next;
@@ -251,10 +271,7 @@ export function createReveal(
         if (parent && computedValue(parent, "position") === "static") {
           layers.style(parent, "position", "relative");
         }
-        ink =
-          options.ink ||
-          computedValue(parent ?? image, "--veilo-ink") ||
-          computedValue(parent ?? image, "color");
+        ink = readInk();
         const canvas = createCanvasElement(gridSize.width, gridSize.height);
         canvas.setAttribute("aria-hidden", "true");
         image.after(canvas);
@@ -291,7 +308,7 @@ export function createReveal(
     } else {
       mount();
       if (image && grid && effectContext && renderer) {
-        renderer.drawGridFrame(effectContext, grid, { ink }, p);
+        drawGrid();
         image.style.opacity = cssNumber(photoOpacity(p));
       } else if (image && isImageFxStyle(parsed.imageFx)) {
         applyImageFxFrame(image, imageFxFrame(parsed.imageFx, parsed.origin, ease, p));
@@ -460,6 +477,14 @@ export function createReveal(
       if (destroyed) return;
       interrupt();
       sequence.run(loop);
+    },
+
+    redraw() {
+      if (destroyed) return;
+      // Before the first frame there is nothing to redraw; mount() reads the ink then.
+      if (!effectContext) return;
+      ink = readInk();
+      drawGrid();
     },
 
     on: emitter.on,

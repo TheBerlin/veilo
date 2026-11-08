@@ -66,18 +66,19 @@ const reveal = createReveal(
 
 **Methods and properties**
 
-| Member                   | What it does                                                                                                     |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `play()`                 | Plays the reveal from `p = 0`. Resolves `true` at the end, `false` if another call or `destroy()` interrupts it. |
-| `pause()`, `resume()`    | Pause and continue. A paused reveal stays paused when it scrolls back into view.                                 |
-| `seek(p)`                | Stops playback and shows the exact frame at `p`. At `p = 1` the real content shows.                              |
-| `showLoading()`          | Stops everything and shows the skeleton.                                                                         |
-| `playSequence({ loop })` | Loading for `hold` seconds, then the reveal. With `loop`, it starts again 900 ms after the end.                  |
-| `on(event, listener)`    | Events: `progress` (with `p`), `state` (with the new state) and `complete`. Returns an unsubscribe function.     |
-| `destroy()`              | Cancels frames, timers and observers, removes canvases, overlays and styles, and restores the page.              |
-| `state`                  | `"idle"`, `"loading"`, `"revealing"` or `"revealed"`.                                                            |
-| `progress`               | The current progress, from 0 to 1.                                                                               |
-| `ready`                  | Resolves once the image is sampled. Never rejects; a broken image is shown as it is.                             |
+| Member                   | What it does                                                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `play()`                 | Plays the reveal from `p = 0`. Resolves `true` at the end, `false` if another call or `destroy()` interrupts it.  |
+| `pause()`, `resume()`    | Pause and continue. A paused reveal stays paused when it scrolls back into view.                                  |
+| `seek(p)`                | Stops playback and shows the exact frame at `p`. At `p = 1` the real content shows.                               |
+| `showLoading()`          | Stops everything and shows the skeleton.                                                                          |
+| `redraw()`               | Reads the ink color again and redraws the current frame, without changing playback. Call it after a theme change. |
+| `playSequence({ loop })` | Loading for `hold` seconds, then the reveal. With `loop`, it starts again 900 ms after the end.                   |
+| `on(event, listener)`    | Events: `progress` (with `p`), `state` (with the new state) and `complete`. Returns an unsubscribe function.      |
+| `destroy()`              | Cancels frames, timers and observers, removes canvases, overlays and styles, and restores the page.               |
+| `state`                  | `"idle"`, `"loading"`, `"revealing"` or `"revealed"`.                                                             |
+| `progress`               | The current progress, from 0 to 1.                                                                                |
+| `ready`                  | Resolves once the image is sampled. Never rejects; a broken image is shown as it is.                              |
 
 The image is sampled once and cached; frames only draw. It is sampled again when it resizes by 2 px or more, or when the glyph font finishes loading. Playback pauses while the elements are off screen or the tab is hidden.
 

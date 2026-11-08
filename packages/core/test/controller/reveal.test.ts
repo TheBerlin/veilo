@@ -236,6 +236,36 @@ describe("grid image effect", () => {
     expect([...data.slice(solid - 3, solid + 1)]).toEqual([255, 0, 0, 255]);
   });
 
+  it("redraw() reads the ink again and keeps the frame and playback", async () => {
+    const { media, photo, reveal } = setup();
+    media.style.setProperty("--veilo-ink", "rgb(255, 0, 0)");
+    await reveal.ready;
+    reveal.seek(0.7);
+    media.style.setProperty("--veilo-ink", "rgb(0, 0, 255)");
+    reveal.redraw();
+    const canvas = photo.nextElementSibling as HTMLCanvasElement;
+    const { data } = canvas.getContext("2d")!.getImageData(0, 0, canvas.width, canvas.height);
+    const solid = data.findIndex((value, i) => i % 4 === 3 && value === 255);
+    expect([...data.slice(solid - 3, solid + 1)]).toEqual([0, 0, 255, 255]);
+    expect([reveal.state, reveal.progress]).toEqual(["revealing", 0.7]);
+  });
+
+  it("redraw() keeps an ink option and does nothing before the first frame or after destroy", async () => {
+    const { media, photo, reveal, root, before } = setup({}, { ink: "rgb(255, 0, 0)" });
+    await reveal.ready;
+    reveal.redraw();
+    expect(root.outerHTML).toBe(before);
+    reveal.seek(0.7);
+    media.style.setProperty("--veilo-ink", "rgb(0, 0, 255)");
+    reveal.redraw();
+    const canvas = photo.nextElementSibling as HTMLCanvasElement;
+    const { data } = canvas.getContext("2d")!.getImageData(0, 0, canvas.width, canvas.height);
+    const solid = data.findIndex((value, i) => i % 4 === 3 && value === 255);
+    expect([...data.slice(solid - 3, solid + 1)]).toEqual([255, 0, 0, 255]);
+    reveal.destroy();
+    expect(() => reveal.redraw()).not.toThrow();
+  });
+
   it("samples a real <img> once it has loaded", async () => {
     const { media, photo, label } = card();
     const img = document.createElement("img");
