@@ -33,8 +33,8 @@
 /* Thumb: an accent disc with a ring in the page color, so it stands off the track. */
 .thumb {
   display: block;
-  width: var(--veilo-size-icon-md);
-  height: var(--veilo-size-icon-md);
+  width: var(--veilo-size-icon-sm);
+  height: var(--veilo-size-icon-sm);
   border: 2px solid var(--veilo-bg);
   border-radius: var(--veilo-radius-pill);
   background: var(--veilo-accent);
