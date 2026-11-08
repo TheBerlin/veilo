@@ -49,6 +49,9 @@ importers:
       '@veilo/css':
         specifier: workspace:*
         version: link:../../packages/css
+      '@veilo/presets':
+        specifier: workspace:*
+        version: link:../../packages/presets
       '@veilo/ui':
         specifier: workspace:*
         version: link:../../packages/ui

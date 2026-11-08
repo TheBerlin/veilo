@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./app.module.css";
+import { PresetChips } from "./header/preset-chips.tsx";
 import { Panel } from "./panel/panel.tsx";
 import { Stage } from "./stage/stage.tsx";
 import { createSettingsStore } from "./state/settings-store.ts";
@@ -16,7 +17,10 @@ export function App() {
   const [store] = useState(() => createSettingsStore());
   return (
     <main className={styles.app}>
-      <h1 className={styles.title}>Veilo playground</h1>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Veilo playground</h1>
+        <PresetChips store={store} />
+      </header>
       <div className={styles.workspace}>
         <Stage store={store} />
         <Panel store={store} />
