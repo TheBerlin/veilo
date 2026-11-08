@@ -118,6 +118,12 @@ importers:
         specifier: ^1.33.0
         version: 1.33.0
 
+  packages/presets:
+    dependencies:
+      '@veilo/core':
+        specifier: workspace:*
+        version: link:../core
+
   packages/ui:
     dependencies:
       '@radix-ui/react-slider':
