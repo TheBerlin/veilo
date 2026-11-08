@@ -16,13 +16,14 @@ Tune an effect with live controls, scrub it frame by frame, and export it as CSS
 
 ## Packages
 
-| Package       | Status      | Purpose                                                                                                           |
-| ------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| `@veilo/core` | 0.2.0       | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md)) |
-| `@veilo/css`  | 0.2.0       | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                       |
-| `@veilo/ui`   | internal    | Design tokens and React components for the playground and website (never published)                               |
-| `playground`  | in progress | The online tool: test card, image source and transport bar so far                                                 |
-| Planned       | —           | `presets`, `element` (web components), `react`, `vue`, `svelte`, `angular`, docs and website                      |
+| Package          | Status      | Purpose                                                                                                           |
+| ---------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| `@veilo/core`    | 0.2.0       | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md)) |
+| `@veilo/css`     | 0.2.0       | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                       |
+| `@veilo/presets` | 0.2.0       | The named presets as typed data ([README](packages/presets/README.md))                                            |
+| `@veilo/ui`      | internal    | Design tokens and React components for the playground and website (never published)                               |
+| `playground`     | in progress | The online tool: test card, image source, transport bar, tabs and presets so far                                  |
+| Planned          | —           | `element` (web components), `react`, `vue`, `svelte`, `angular`, docs and website                                 |
 
 ```ts
 import { createReveal } from "@veilo/core";
