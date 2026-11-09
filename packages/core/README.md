@@ -152,6 +152,8 @@ const { settings, applied } = parseSettings(JSON.parse(text)); // applied: the k
 | Timing | `rDur`, `rEase` (+ `rx1`…`ry2`), `hold`                                                                      |
 | Colors | `baseColor`, `highlightColor` (optional `#rrggbb` overrides)                                                 |
 
+The named easings (`out`, `outSoft`, `inOut`, `in`, `linear`, `back`) are exported as `EASING_CURVES`, each the four numbers of a CSS `cubic-bezier()`, for example to draw them in a curve editor. With `custom`, the curve comes from `lx1`…`ly2` or `rx1`…`ry2`.
+
 Ranges and defaults are in the JSON Schema, also published as a file: `@veilo/core/settings.schema.json`.
 
 ## `generateLoaderCss(settings, options?)`
@@ -194,11 +196,11 @@ Hex and binary grids measure and draw their characters in IBM Plex Mono. The pac
 
 ## Entry points and size
 
-| Import                             | Contents                                                                                                       | Minified + gzip |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------- |
-| `@veilo/core`                      | Everything above                                                                                               | 8.6 KB          |
-| `@veilo/core/loader`               | `generateLoaderCss`, `parseSettings`, `defaultSettings`, `settingsJsonSchema`, `SETTINGS_VERSION`; no DOM code | 2.3 KB          |
-| `@veilo/core/settings.schema.json` | The settings JSON Schema                                                                                       |                 |
+| Import                             | Contents                                                                                                                        | Minified + gzip |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `@veilo/core`                      | Everything above                                                                                                                | 8.6 KB          |
+| `@veilo/core/loader`               | `generateLoaderCss`, `parseSettings`, `defaultSettings`, `settingsJsonSchema`, `SETTINGS_VERSION`, `EASING_CURVES`; no DOM code | 2.3 KB          |
+| `@veilo/core/settings.schema.json` | The settings JSON Schema                                                                                                        |                 |
 
 The grid effects (`dots`, `hex`, `binary`, `mosaic`) are loaded on demand: `createReveal` imports them only when one is used, and bundlers put them in a separate file of about 1.8 KB. `reveal.ready` waits for it. The package has no side effects on import (`"sideEffects": false`), so unused code is dropped.
 

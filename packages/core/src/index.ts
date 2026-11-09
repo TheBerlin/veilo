@@ -34,4 +34,6 @@ export { settingsJsonSchema } from "./schema/json-schema.ts";
 export type { ColorKey, SettingKey, Settings } from "./schema/types.ts";
 export { parseSettings } from "./schema/validate.ts";
 export type { ParsedSettings } from "./schema/validate.ts";
+export { EASING_CURVES } from "./math/easing.ts";
+export type { BezierCurve, EasingKey } from "./math/easing.ts";
 export { SETTINGS_VERSION } from "./schema/version.ts";

@@ -8,6 +8,7 @@ import * as main from "../src/index.ts";
 describe("@veilo/core/loader", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(loader).sort()).toEqual([
+      "EASING_CURVES",
       "SETTINGS_VERSION",
       "defaultSettings",
       "generateLoaderCss",
