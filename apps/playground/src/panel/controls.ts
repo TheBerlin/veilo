@@ -38,8 +38,34 @@ export interface ChoiceControl {
   shown?: (settings: Settings) => boolean;
 }
 
+/**
+ * An easing: the named curves in a select, and a curve editor that shows the chosen curve.
+ * Dragging the curve switches the easing to `custom` and writes the four point keys.
+ */
+export interface EasingControl {
+  kind: "easing";
+  key: "lEase" | "rEase";
+  label: string;
+  /** Visible name of each easing, by value. */
+  names: Readonly<Record<string, string>>;
+  /** The custom curve keys: x1, y1, x2, y2. */
+  points: readonly [NumberKey, NumberKey, NumberKey, NumberKey];
+  /** Hides the control when this returns false. */
+  shown?: (settings: Settings) => boolean;
+}
+
 /** One control of a tab. */
-export type Control = NumberControl | ChoiceControl;
+export type Control = NumberControl | ChoiceControl | EasingControl;
+
+/**
+ * The settings a control writes: its key, plus the curve points for an easing.
+ *
+ * @param control - A control.
+ * @returns Its setting keys.
+ */
+export function controlKeys(control: Control): SettingKey[] {
+  return control.kind === "easing" ? [control.key, ...control.points] : [control.key];
+}
 
 /** A titled group of controls; hidden when none of its controls are shown. */
 export interface ControlGroup {
@@ -107,21 +133,19 @@ const notPulse = (s: Settings) => s.effect !== "pulse";
 const isGrid = (s: Settings) => GRID_EFFECTS.has(s.imageFx);
 
 /**
- * The four curve sliders of a custom easing.
+ * The easing control of the loader or the reveal.
  *
  * @param prefix - `l` for the loader, `r` for the reveal.
- * @returns The four controls, shown when that easing is `custom`.
+ * @returns The control for that easing and its curve points.
  */
-function curveControls(prefix: "l" | "r"): NumberControl[] {
-  const shown = (s: Settings) => (prefix === "l" ? s.lEase : s.rEase) === "custom";
-  return (["x1", "y1", "x2", "y2"] as const).map((point) => ({
-    kind: "number",
-    key: `${prefix}${point}` as NumberKey,
-    label: `Curve ${point}`,
-    step: 0.01,
-    format: plain,
-    shown,
-  }));
+function easingControl(prefix: "l" | "r"): EasingControl {
+  return {
+    kind: "easing",
+    key: `${prefix}Ease`,
+    label: "Easing",
+    names: EASING_NAMES,
+    points: [`${prefix}x1`, `${prefix}y1`, `${prefix}x2`, `${prefix}y2`],
+  };
 }
 
 /** The Loader tab (spec 1.3). Colors have their own fields below these groups. */
@@ -149,8 +173,7 @@ export const LOADER_GROUPS: readonly ControlGroup[] = [
         format: seconds,
         shown: notPulse,
       },
-      { kind: "choice", key: "lEase", label: "Easing", names: EASING_NAMES },
-      ...curveControls("l"),
+      easingControl("l"),
       { kind: "choice", key: "repeat", label: "Repeat", names: { loop: "Loop", once: "Once" } },
       {
         kind: "number",
@@ -282,8 +305,7 @@ export const REVEAL_GROUPS: readonly ControlGroup[] = [
     title: "Timing",
     controls: [
       { kind: "number", key: "rDur", label: "Reveal duration", step: 0.05, format: seconds },
-      { kind: "choice", key: "rEase", label: "Easing", names: EASING_NAMES },
-      ...curveControls("r"),
+      easingControl("r"),
       {
         kind: "number",
         key: "hold",
@@ -297,7 +319,7 @@ export const REVEAL_GROUPS: readonly ControlGroup[] = [
 
 /** Every Loader-tab key, including the colors: changing one shows the Loading view again. */
 export const LOADER_KEYS: ReadonlySet<string> = new Set([
-  ...LOADER_GROUPS.flatMap((group) => group.controls.map((control) => control.key)),
+  ...LOADER_GROUPS.flatMap((group) => group.controls.flatMap(controlKeys)),
   "baseColor",
   "highlightColor",
 ]);

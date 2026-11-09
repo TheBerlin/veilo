@@ -4,6 +4,7 @@ import { defaultSettings, type Settings } from "@veilo/core";
 import { describe, expect, it } from "vitest";
 import {
   boundsOf,
+  controlKeys,
   LOADER_GROUPS,
   LOADER_KEYS,
   optionsOf,
@@ -30,7 +31,7 @@ function shown(groups: readonly ControlGroup[], changes: Partial<Settings>): str
 
 describe("control table", () => {
   it("has one control per setting, apart from the version", () => {
-    const keys = all.map((control) => control.key).sort();
+    const keys = all.flatMap(controlKeys).sort();
     const settingKeys = Object.keys(defaultSettings())
       .filter((key) => key !== "version")
       .sort();
@@ -46,7 +47,7 @@ describe("control table", () => {
 
   it("names every option", () => {
     for (const control of all) {
-      if (control.kind !== "choice") continue;
+      if (control.kind === "number") continue;
       for (const option of optionsOf(control.key)) {
         expect(control.names[option], `${control.key}.${option}`).toBeTruthy();
       }
@@ -63,7 +64,6 @@ describe("control table", () => {
       "Bar corner radius",
     ]);
     expect(shown(LOADER_GROUPS, { effect: "wave" })).toContain("Delay per element");
-    expect(shown(LOADER_GROUPS, { lEase: "custom" })).toContain("Curve y2");
   });
 
   it("shows only the reveal controls that apply (spec 1.4)", () => {

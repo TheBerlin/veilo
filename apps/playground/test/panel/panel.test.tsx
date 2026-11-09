@@ -93,6 +93,27 @@ describe("Panel", () => {
     expect(store.getState().settings.lDur).toBe(4);
   });
 
+  it("draws the chosen easing and switches to custom when a handle moves", async () => {
+    const { store } = renderApp();
+    // Loader default: ease out (0.22, 1, 0.36, 1).
+    expect(screen.getByText("cubic-bezier(0.22, 1.00, 0.36, 1.00)")).toBeTruthy();
+    await userEvent.selectOptions(screen.getByLabelText("Easing"), "in");
+    expect(screen.getByText("cubic-bezier(0.50, 0.00, 0.75, 0.00)")).toBeTruthy();
+
+    screen.getByRole("slider", { name: "Start handle" }).focus();
+    await userEvent.keyboard("{ArrowUp}");
+    const { lEase, lx1, ly1, lx2, ly2 } = store.getState().settings;
+    // Starts from the curve shown, so only the moved value changes.
+    expect({ lEase, lx1, ly1, lx2, ly2 }).toEqual({
+      lEase: "custom",
+      lx1: 0.5,
+      ly1: 0.01,
+      lx2: 0.75,
+      ly2: 0,
+    });
+    expect(screen.getByLabelText<HTMLSelectElement>("Easing").value).toBe("custom");
+  });
+
   it("overrides a color and resets both", async () => {
     const { store } = renderApp();
     const reset = screen.getByRole<HTMLButtonElement>("button", { name: "Reset colors" });

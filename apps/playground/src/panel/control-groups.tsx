@@ -1,7 +1,8 @@
 // control-groups.tsx: renders a tab's control table: sliders, chips and selects bound to the
 // settings store, with the controls that do not apply hidden.
 
-import { ChipGroup, ChipGroupItem, Select, Slider } from "@veilo/ui";
+import { EASING_CURVES, type Settings } from "@veilo/core";
+import { ChipGroup, ChipGroupItem, CurveEditor, Select, Slider, type CurveValue } from "@veilo/ui";
 import { useStore } from "zustand";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import styles from "./panel.module.css";
@@ -10,6 +11,7 @@ import {
   optionsOf,
   type ChoiceControl,
   type ControlGroup,
+  type EasingControl,
   type NumberControl,
 } from "./controls.ts";
 
@@ -51,6 +53,8 @@ export function ControlGroups(props: ControlGroupsProps) {
             {visible.map((control) =>
               control.kind === "number" ? (
                 <NumberField key={control.key} store={store} control={control} />
+              ) : control.kind === "easing" ? (
+                <EasingField key={control.key} store={store} control={control} />
               ) : (
                 <ChoiceField key={control.key} store={store} control={control} />
               ),
@@ -119,5 +123,58 @@ function ChoiceField(props: FieldProps<ChoiceControl>) {
         ))}
       </ChipGroup>
     </div>
+  );
+}
+
+/**
+ * The curve an easing setting stands for: a named curve from core, or the custom points.
+ *
+ * @param settings - The settings.
+ * @param control - The easing control.
+ * @returns The four cubic-bezier numbers.
+ */
+export function easingCurve(settings: Settings, control: EasingControl): CurveValue {
+  const name = settings[control.key];
+  if (name !== "custom") return EASING_CURVES[name];
+  const [x1, y1, x2, y2] = control.points.map((key) => settings[key]);
+  return [x1!, y1!, x2!, y2!];
+}
+
+/**
+ * The easing select and the curve editor below it. Picking a named easing draws its curve;
+ * dragging the curve (or moving a handle with the keys) switches to the custom curve, starting
+ * from the curve shown, so it never jumps.
+ *
+ * @param props - The store and the control.
+ * @returns The select and the editor.
+ */
+function EasingField(props: FieldProps<EasingControl>) {
+  const { store, control } = props;
+  const settings = useStore(store, (state) => state.settings);
+  const choice: ChoiceControl = {
+    kind: "choice",
+    key: control.key,
+    label: control.label,
+    names: control.names,
+  };
+  const onCurveChange = (next: CurveValue) => {
+    const [x1, y1, x2, y2] = control.points;
+    store.getState().setMany({
+      [control.key]: "custom",
+      [x1]: next[0],
+      [y1]: next[1],
+      [x2]: next[2],
+      [y2]: next[3],
+    });
+  };
+  return (
+    <>
+      <ChoiceField store={store} control={choice} />
+      <CurveEditor
+        label="Curve"
+        value={easingCurve(settings, control)}
+        onValueChange={onCurveChange}
+      />
+    </>
   );
 }
