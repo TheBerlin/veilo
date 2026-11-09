@@ -1,0 +1,73 @@
+/* Curve editor graph: scales to the field's width; the drawing keeps its proportions. */
+.graph {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+  touch-action: none;
+  user-select: none;
+}
+
+/* Reference lines: the unit square and the linear diagonal, thin and quiet. */
+.frame,
+.guide {
+  fill: none;
+  stroke: var(--veilo-border-strong);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.guide {
+  stroke: var(--veilo-border);
+}
+
+/* The curve itself, in the accent. */
+.curve {
+  fill: none;
+  stroke: var(--veilo-accent);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Handle arms from the curve's ends to the handles. */
+.arm {
+  stroke: var(--veilo-text-muted);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Hit area: invisible, takes the pointer and focus. */
+.hit {
+  fill: transparent;
+  cursor: grab;
+  outline: none;
+}
+
+.hit:active {
+  cursor: grabbing;
+}
+
+/* Knob: an accent disc with a ring in the page color, like the slider thumb. */
+.knob {
+  fill: var(--veilo-accent);
+  stroke: var(--veilo-bg);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+/* Focus ring around the knob, shown while its hit circle has keyboard focus
+   (SVG elements draw no outline in every browser, so the ring is its own circle). */
+.ring {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.hit:focus-visible ~ .ring {
+  stroke: var(--veilo-accent);
+}

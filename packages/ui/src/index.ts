@@ -31,6 +31,8 @@ export { Scrubber } from "./components/scrubber.tsx";
 export type { ScrubberProps } from "./components/scrubber.tsx";
 export { Select } from "./components/select.tsx";
 export type { SelectOption, SelectProps } from "./components/select.tsx";
+export { CurveEditor, formatCurve, snapToStep } from "./components/curve-editor.tsx";
+export type { CurveEditorProps, CurveValue } from "./components/curve-editor.tsx";
 export { Slider } from "./components/slider.tsx";
 export type { SliderProps } from "./components/slider.tsx";
 export { TextArea } from "./components/text-area.tsx";

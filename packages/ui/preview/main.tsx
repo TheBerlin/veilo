@@ -13,6 +13,7 @@ import {
   Scrubber,
   Select,
   Slider,
+  CurveEditor,
   Tabs,
   TabsContent,
   TabsList,
@@ -21,6 +22,7 @@ import {
   Tooltip,
   TooltipProvider,
 } from "../src/index.ts";
+import type { CurveValue } from "../src/index.ts";
 import styles from "./preview.module.css";
 
 /** A plus glyph for the icon buttons. */
@@ -54,6 +56,7 @@ function Preview() {
   const [light, setLight] = useState(new URLSearchParams(location.search).get("theme") === "light");
   const [effect, setEffect] = useState("shimmer");
   const [loop, setLoop] = useState(true);
+  const [curve, setCurve] = useState<CurveValue>([0.22, 1, 0.36, 1]);
   const [chip, setChip] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [progress, setProgress] = useState(0.4);
@@ -156,6 +159,7 @@ function Preview() {
                 ]}
               />
               <ColorField label="Base color" value={color} onValueChange={setColor} />
+              <CurveEditor label="Easing curve" value={curve} onValueChange={setCurve} />
             </div>
           </Section>
 
