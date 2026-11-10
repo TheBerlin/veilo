@@ -1,11 +1,23 @@
-/* Curve editor graph: scales to the field's width; the drawing keeps its proportions. */
-.graph {
-  display: block;
-  width: 100%;
-  height: auto;
+/* Label row: the label and the hint button, centered on one line. */
+.labelRow {
+  align-items: center;
+}
+
+/* Curve editor box: square, as wide as the field. */
+.box {
+  aspect-ratio: 1;
+  padding: var(--veilo-space-1);
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-base);
   background: var(--veilo-secondary);
+}
+
+/* Graph: fills the box; the drawing is square, so the unit square stays square. */
+.graph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   touch-action: none;
   user-select: none;
 }

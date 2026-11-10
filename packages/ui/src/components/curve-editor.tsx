@@ -3,7 +3,9 @@
 // support; the larger invisible hit circle and the native touchstart listener follow its approach.
 
 import { useEffect, useId, useRef, type KeyboardEvent, type PointerEvent } from "react";
+import { Button } from "./button.tsx";
 import field from "./field.module.css";
+import { Tooltip } from "./tooltip.tsx";
 import styles from "./curve-editor.module.css";
 
 /** A CSS `cubic-bezier(x1, y1, x2, y2)` as four numbers. */
@@ -17,9 +19,9 @@ export interface CurveEditorProps {
   value: CurveValue;
   /** Called with the new curve while a handle is dragged or moved with a key. */
   onValueChange: (value: CurveValue) => void;
-  /** Lowest y a handle may take (default -0.6, the settings range). */
+  /** Lowest y a handle may take and the graph shows (default -0.1). */
   yMin?: number;
-  /** Highest y a handle may take (default 1.6). */
+  /** Highest y a handle may take and the graph shows (default 1.1). */
   yMax?: number;
   /** Distance between allowed values (default 0.01). */
   step?: number;
@@ -27,13 +29,13 @@ export interface CurveEditorProps {
   className?: string;
 }
 
-// Drawing units: x 0..1 spans WIDTH, one unit of y spans UNIT_Y. The SVG scales uniformly
-// to the field's width, so circles stay round.
-const WIDTH = 200;
-const UNIT_Y = 100;
+// Drawing units: one curve unit spans UNIT in x and in y, so the unit square is square. The
+// graph is square too: x gets the same span as y, centered on 0..1. The SVG scales uniformly to
+// the box, so circles stay round.
+const UNIT = 200;
 const PAD = 10;
 const HANDLE_R = 6;
-// At least 22 CSS px of hit radius at the panel's width, so handles are easy to touch.
+// About 32 CSS px across at the panel's width, so handles are easy to touch.
 const HIT_R = 16;
 const HANDLE_NAMES = ["Start handle", "End handle"] as const;
 
@@ -67,19 +69,25 @@ export function formatCurve(value: CurveValue): string {
  * page (removed on unmount).
  *
  * @param props - The label, curve, range, step and change handler.
- * @returns The field with label, curve readout and graph.
+ * @returns The field with label, a hint button with the CSS value, and the graph. Needs a
+ * TooltipProvider above it.
  */
 export function CurveEditor(props: CurveEditorProps) {
-  const { label, value, onValueChange, yMin = -0.6, yMax = 1.6, step = 0.01, className } = props;
+  const { label, value, onValueChange, yMin = -0.1, yMax = 1.1, step = 0.01, className } = props;
   const labelId = useId();
   const hintId = useId();
   const svgRef = useRef<SVGSVGElement>(null);
   const dragging = useRef<0 | 1 | null>(null);
 
-  // Drawing coordinates. y grows downward in SVG, so y = yMax is at the top.
-  const height = (yMax - yMin) * UNIT_Y;
-  const px = (x: number) => PAD + x * WIDTH;
-  const py = (y: number) => PAD + (yMax - y) * UNIT_Y;
+  // Drawing coordinates. y grows downward in SVG, so y = yMax is at the top. The x margin
+  // centers 0..1 in a span as wide as y's.
+  const span = yMax - yMin;
+  const xMargin = (span - 1) / 2;
+  const size = span * UNIT + PAD * 2;
+  const px = (x: number) => PAD + (x + xMargin) * UNIT;
+  const py = (y: number) => PAD + (yMax - y) * UNIT;
+  // Handles from imported settings may lie outside the range; they are drawn at the edge.
+  const handleY = (y: number) => py(Math.min(yMax, Math.max(yMin, y)));
 
   const clampPoint = (x: number, y: number): [number, number] => [
     snapToStep(Math.min(1, Math.max(0, x)), step),
@@ -100,7 +108,7 @@ export function CurveEditor(props: CurveEditorProps) {
     const matrix = svg?.getScreenCTM();
     if (!svg || !matrix) return null;
     const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-    return [(point.x - PAD) / WIDTH, yMax - (point.y - PAD) / UNIT_Y];
+    return [(point.x - PAD) / UNIT - xMargin, yMax - (point.y - PAD) / UNIT];
   };
 
   const onPointerDown = (index: 0 | 1) => (event: PointerEvent<SVGCircleElement>) => {
@@ -156,64 +164,90 @@ export function CurveEditor(props: CurveEditorProps) {
 
   return (
     <div className={[field.field, className].filter(Boolean).join(" ")}>
-      <span className={field.label}>
+      <span className={[field.label, styles.labelRow].join(" ")}>
         <span id={labelId}>{label}</span>
-        <span className={field.value}>{formatCurve(value)}</span>
+        {/* The CSS value on demand, so the label row stays quiet. */}
+        <Tooltip content={formatCurve(value)} side="left">
+          <Button
+            variant="ghost"
+            size="sm"
+            iconOnly
+            aria-label="Curve values"
+            icon={<InfoIcon />}
+            type="button"
+          />
+        </Tooltip>
       </span>
-      <svg
-        ref={svgRef}
-        className={styles.graph}
-        viewBox={`0 0 ${WIDTH + PAD * 2} ${height + PAD * 2}`}
-        role="group"
-        aria-labelledby={labelId}
-      >
-        {/* The unit square, the 0 and 1 lines across it, and the linear diagonal for reference. */}
-        <rect className={styles.frame} x={px(0)} y={py(1)} width={WIDTH} height={UNIT_Y} />
-        <line className={styles.guide} x1={px(0)} y1={py(0)} x2={px(1)} y2={py(1)} />
-        <path className={styles.curve} d={curve} />
-        {handles.map((handle, index) => {
-          const i = index as 0 | 1;
-          const [hx, hy] = handle.at;
-          return (
-            <g key={i}>
-              <line
-                className={styles.arm}
-                x1={px(handle.from[0])}
-                y1={py(handle.from[1])}
-                x2={px(hx)}
-                y2={py(hy)}
-              />
-              {/* The invisible, larger hit circle takes focus and pointer input; the visible
+      <div className={styles.box}>
+        <svg
+          ref={svgRef}
+          className={styles.graph}
+          viewBox={`0 0 ${size} ${size}`}
+          role="group"
+          aria-labelledby={labelId}
+        >
+          {/* The unit square, the 0 and 1 lines across it, and the linear diagonal for reference. */}
+          <rect className={styles.frame} x={px(0)} y={py(1)} width={UNIT} height={UNIT} />
+          <line className={styles.guide} x1={px(0)} y1={py(0)} x2={px(1)} y2={py(1)} />
+          <path className={styles.curve} d={curve} />
+          {handles.map((handle, index) => {
+            const i = index as 0 | 1;
+            const [hx, hy] = handle.at;
+            return (
+              <g key={i}>
+                <line
+                  className={styles.arm}
+                  x1={px(handle.from[0])}
+                  y1={py(handle.from[1])}
+                  x2={px(hx)}
+                  y2={handleY(hy)}
+                />
+                {/* The invisible, larger hit circle takes focus and pointer input; the visible
                   knob after it shows the focus ring through the sibling selector. */}
-              <circle
-                data-handle={i}
-                className={styles.hit}
-                cx={px(hx)}
-                cy={py(hy)}
-                r={HIT_R}
-                tabIndex={0}
-                role="slider"
-                aria-label={HANDLE_NAMES[i]}
-                aria-describedby={hintId}
-                aria-valuemin={yMin}
-                aria-valuemax={yMax}
-                aria-valuenow={hy}
-                aria-valuetext={`x ${hx.toFixed(2)}, y ${hy.toFixed(2)}`}
-                onPointerDown={onPointerDown(i)}
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerUp}
-                onPointerCancel={onPointerUp}
-                onKeyDown={onKeyDown(i)}
-              />
-              <circle className={styles.knob} cx={px(hx)} cy={py(hy)} r={HANDLE_R} />
-              <circle className={styles.ring} cx={px(hx)} cy={py(hy)} r={HANDLE_R + 4} />
-            </g>
-          );
-        })}
-      </svg>
+                <circle
+                  data-handle={i}
+                  className={styles.hit}
+                  cx={px(hx)}
+                  cy={handleY(hy)}
+                  r={HIT_R}
+                  tabIndex={0}
+                  role="slider"
+                  aria-label={HANDLE_NAMES[i]}
+                  aria-describedby={hintId}
+                  aria-valuemin={yMin}
+                  aria-valuemax={yMax}
+                  aria-valuenow={hy}
+                  aria-valuetext={`x ${hx.toFixed(2)}, y ${hy.toFixed(2)}`}
+                  onPointerDown={onPointerDown(i)}
+                  onPointerMove={onPointerMove}
+                  onPointerUp={onPointerUp}
+                  onPointerCancel={onPointerUp}
+                  onKeyDown={onKeyDown(i)}
+                />
+                <circle className={styles.knob} cx={px(hx)} cy={handleY(hy)} r={HANDLE_R} />
+                <circle className={styles.ring} cx={px(hx)} cy={handleY(hy)} r={HANDLE_R + 4} />
+              </g>
+            );
+          })}
+        </svg>
+      </div>
       <span id={hintId} className={field.hint}>
         Drag a handle, or focus it and use the arrow keys. Shift moves further.
       </span>
     </div>
+  );
+}
+
+/**
+ * An "i" in a circle, 16 px, in the current text color.
+ *
+ * @returns The icon.
+ */
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none">
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" />
+      <path d="M8 7v4.5M8 4.5v.5" stroke="currentColor" strokeLinecap="round" />
+    </svg>
   );
 }
