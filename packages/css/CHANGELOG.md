@@ -1,5 +1,12 @@
 # @veilo/css
 
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies [38a00df]
+  - @veilo/core@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
