@@ -1,0 +1,46 @@
+/* Grid, desktop: 12 columns and 20 px gutters. The side padding is the larger of 32 px
+   (space-4), the safe-area inset and half the space left beside the 1200 px content (the 1440
+   frame minus two 120 px margins), so the content stays 1200 px and centered while it fits.
+   Percentages in padding refer to the parent's width, which is also the grid's. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--veilo-grid-desktop-columns), minmax(0, 1fr));
+  column-gap: var(--veilo-grid-desktop-gutter);
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding-block: 0;
+  padding-left: max(
+    var(--veilo-space-4),
+    env(safe-area-inset-left),
+    (100% - var(--veilo-grid-desktop-width) + 2 * var(--veilo-grid-desktop-margin)) / 2
+  );
+  padding-right: max(
+    var(--veilo-space-4),
+    env(safe-area-inset-right),
+    (100% - var(--veilo-grid-desktop-width) + 2 * var(--veilo-grid-desktop-margin)) / 2
+  );
+  list-style: none;
+}
+
+/* Cell: its start and span come from the component as local custom properties. */
+.cell {
+  grid-column: var(--grid-start) / span var(--grid-span);
+  min-width: 0;
+}
+
+/* Mobile, at the layout breakpoint (GRID_BREAKPOINT in tokens.ts) and below: 4 columns, 8 px
+   gutters, 20 px margins or the safe-area inset. Media queries cannot read custom properties,
+   so the number is written here and the tokens-only test checks it against the constant. */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(var(--veilo-grid-mobile-columns), minmax(0, 1fr));
+    column-gap: var(--veilo-grid-mobile-gutter);
+    padding-left: max(var(--veilo-grid-mobile-margin), env(safe-area-inset-left));
+    padding-right: max(var(--veilo-grid-mobile-margin), env(safe-area-inset-right));
+  }
+
+  .cell {
+    grid-column: var(--grid-start-mobile) / span var(--grid-span-mobile);
+  }
+}

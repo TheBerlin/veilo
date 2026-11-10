@@ -149,3 +149,10 @@ export const GRID = {
   desktop: { width: 1440, columns: 12, gutter: 20, margin: 120 },
   mobile: { width: 375, columns: 4, gutter: 8, margin: 20 },
 } as const;
+
+/**
+ * Widest viewport, in px, that uses the mobile grid (and the playground's one-column layout).
+ * Not a CSS token: media queries cannot read custom properties, so stylesheets write the number
+ * and the tokens-only test checks it against this value.
+ */
+export const GRID_BREAKPOINT = 900;

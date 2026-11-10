@@ -3,6 +3,7 @@
 
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { GRID_BREAKPOINT } from "../src/tokens.ts";
 
 const dir = new URL("../src/components/", import.meta.url);
 const sheets = readdirSync(dir).filter((name) => name.endsWith(".module.css"));
@@ -25,7 +26,11 @@ describe("component stylesheets", () => {
 
   it.each(sheets)("%s uses only tokens", (name) => {
     // Comments may mention numbers freely.
-    const css = readFileSync(new URL(name, dir), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    const css = readFileSync(new URL(name, dir), "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      // The layout breakpoint is the one length allowed in a media query (custom properties do
+      // not work there); any other width still fails.
+      .replaceAll(`@media (max-width: ${GRID_BREAKPOINT}px)`, "@media");
     const found = AD_HOC.flatMap(([pattern, what]) => {
       const match = css.match(pattern);
       return match ? [`${what}: ${match[0]}`] : [];

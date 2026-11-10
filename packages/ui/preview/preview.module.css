@@ -70,3 +70,28 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* Grid demo: full bleed (out of the page padding), so the grid's own margins show. */
+.gridDemo {
+  display: grid;
+  gap: var(--veilo-space-2);
+  margin: var(--veilo-space-4) calc(-1 * max(var(--veilo-space-2), env(safe-area-inset-left))) 0;
+}
+
+.gridHeading {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(var(--veilo-space-16) * 6 + 2 * var(--veilo-space-2));
+  margin: 0 auto;
+  padding-inline: max(var(--veilo-space-2), env(safe-area-inset-left));
+}
+
+.gridCell {
+  padding: var(--veilo-space-1);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  text-align: center;
+}

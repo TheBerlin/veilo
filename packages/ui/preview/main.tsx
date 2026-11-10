@@ -14,6 +14,8 @@ import {
   Select,
   Slider,
   CurveEditor,
+  Grid,
+  GridCell,
   Tabs,
   TabsContent,
   TabsList,
@@ -183,6 +185,38 @@ function Preview() {
             />
           </Section>
         </div>
+
+        {/* The page grid needs the full width to show its margins, so it sits outside the
+            column. Resize the window across 900 px to see it switch from 12 to 4 columns. */}
+        <section className={styles.gridDemo} aria-labelledby="grid-heading">
+          <h2 id="grid-heading" className={[styles.heading, styles.gridHeading].join(" ")}>
+            Grid (12 columns above 900 px, 4 at 900 px and below)
+          </h2>
+          <Grid rowGap="space-2">
+            {Array.from({ length: 12 }, (_, i) => (
+              <GridCell key={i} span={1} spanMobile={1} className={styles.gridCell}>
+                {i + 1}
+              </GridCell>
+            ))}
+            <GridCell span={6} className={styles.gridCell}>
+              Hero text, 6
+            </GridCell>
+            <GridCell span={6} className={styles.gridCell}>
+              Hero art, 6
+            </GridCell>
+            <GridCell span={4} className={styles.gridCell}>
+              How it works text, 4
+            </GridCell>
+            <GridCell span={7} start={6} className={styles.gridCell}>
+              Video, 7 (one empty column before)
+            </GridCell>
+            {[1, 2, 3, 4].map((n) => (
+              <GridCell key={n} span={3} spanMobile={2} className={styles.gridCell}>
+                Tile {n}, 3 (2 on mobile)
+              </GridCell>
+            ))}
+          </Grid>
+        </section>
       </main>
     </TooltipProvider>
   );

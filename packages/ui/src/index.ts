@@ -6,6 +6,7 @@ export {
   EASINGS,
   FONTS,
   GRID,
+  GRID_BREAKPOINT,
   RADIUS,
   RADIUS_BASE,
   SHADOW_SOFT,
@@ -24,6 +25,8 @@ export type { TabsContentProps, TabsListProps, TabsTriggerProps } from "./compon
 export { Toggle } from "./components/toggle.tsx";
 export type { ToggleProps } from "./components/toggle.tsx";
 export { Tooltip, TOOLTIP_HIDE_DELAY, TooltipProvider } from "./components/tooltip.tsx";
+export { fitCell, Grid, GridCell } from "./components/grid.tsx";
+export type { GridCellProps, GridProps, GridRowGap } from "./components/grid.tsx";
 export type { TooltipProps } from "./components/tooltip.tsx";
 export { ColorField } from "./components/color-field.tsx";
 export type { ColorFieldProps } from "./components/color-field.tsx";
