@@ -141,23 +141,17 @@ export function easingCurve(settings: Settings, control: EasingControl): CurveVa
 }
 
 /**
- * The easing select and the curve editor below it. Picking a named easing draws its curve;
- * dragging the curve (or moving a handle with the keys) switches to the custom curve, starting
- * from the curve shown, so it never jumps.
+ * The easing select, and the curve editor while the easing is `custom`. Choosing Custom curve
+ * starts from the curve chosen before it, so the motion does not jump.
  *
  * @param props - The store and the control.
- * @returns The select and the editor.
+ * @returns The select, and the editor when the curve is custom.
  */
 function EasingField(props: FieldProps<EasingControl>) {
   const { store, control } = props;
   const settings = useStore(store, (state) => state.settings);
-  const choice: ChoiceControl = {
-    kind: "choice",
-    key: control.key,
-    label: control.label,
-    names: control.names,
-  };
-  const onCurveChange = (next: CurveValue) => {
+  const name = settings[control.key];
+  const writeCurve = (next: CurveValue) => {
     const [x1, y1, x2, y2] = control.points;
     store.getState().setMany({
       [control.key]: "custom",
@@ -167,14 +161,29 @@ function EasingField(props: FieldProps<EasingControl>) {
       [y2]: next[3],
     });
   };
+  const onEasingChange = (next: string) => {
+    // Seed the custom points from the named curve being left; a named easing is just the name.
+    if (next === "custom" && name !== "custom") writeCurve(EASING_CURVES[name]);
+    else store.getState().set(control.key, next as never);
+  };
   return (
     <>
-      <ChoiceField store={store} control={choice} />
-      <CurveEditor
-        label="Curve"
-        value={easingCurve(settings, control)}
-        onValueChange={onCurveChange}
+      <Select
+        label={control.label}
+        value={name}
+        onValueChange={onEasingChange}
+        options={optionsOf(control.key).map((option) => ({
+          value: option,
+          label: control.names[option] ?? option,
+        }))}
       />
+      {name === "custom" ? (
+        <CurveEditor
+          label="Curve"
+          value={easingCurve(settings, control)}
+          onValueChange={writeCurve}
+        />
+      ) : null}
     </>
   );
 }
