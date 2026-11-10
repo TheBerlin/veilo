@@ -51,7 +51,7 @@ When the padding is uneven, use the smallest side. A surface placed inside anoth
 
 The **playground** is a tool and is fluid between the two frames: the stage stretches, the control panel is at most `size-panel` (380 px), and below 900 px the layout becomes one column. Side gutters are at least 16 px at every width and grow to the phone's safe-area insets.
 
-**Motion.** All interface motion comes from three durations and three easing curves (see Motion). Hover, press, focus and toggles take `duration-fast` (150 ms) with `ease-out`. Tab and panel switches, popovers and tooltips take `duration-base` (250 ms): `ease-out` to enter, `ease-in` to leave, `ease-in-out` to move. `duration-slow` (400 ms) is for large surfaces only. Animate `opacity`, `color`, `border-color`, `background-color` and `transform`, never size or position, so content stays put. The loader sweep and videos are the only continuous motion, and their speed and curve are product settings, not these tokens. Honor `prefers-reduced-motion`: the durations drop to 0 ms, placeholders are static `--veilo-base` and videos show their poster.
+**Motion.** All interface motion comes from three durations and four easing curves (see Motion). Hover, press, focus and toggles take `duration-fast` (150 ms) with `ease-out`. Tab and panel switches and popovers take `duration-base` (250 ms): `ease-out` to enter, `ease-in` to leave, `ease-in-out` to move. Tooltips have their own timing with `ease-hint` (see Tooltip). `duration-slow` (400 ms) is for large surfaces only. Animate `opacity`, `color`, `border-color`, `background-color` and `transform`, never size or position, so content stays put. The loader sweep and videos are the only continuous motion, and their speed and curve are product settings, not these tokens. Honor `prefers-reduced-motion`: the durations drop to 0 ms, placeholders are static `--veilo-base` and videos show their poster.
 
 **States.** Hover: primary at .88 opacity, secondary and chip borders turn `accent`. Pressed: shift down 1 px. Focus-visible: a solid 2 px `accent` outline with a 2 px offset on every interactive element. Disabled: .4 opacity. Loading: a skeleton in the shape of the content.
 
@@ -166,19 +166,20 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 
 ### Duration
 
-| Token           | Value   | Usage                                                                                                                                                          |
-| --------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `duration-fast` | `150ms` | Hover, press, focus and toggle changes on buttons, chips, tabs and links. Pair with ease-out.                                                                  |
-| `duration-base` | `250ms` | Tab and panel switches, and popovers, tooltips and dropdowns appearing, leaving or moving. Pair with ease-out to enter, ease-in to leave, ease-in-out to move. |
-| `duration-slow` | `400ms` | Large surfaces such as the mobile menu or a dialog. Use sparingly.                                                                                             |
+| Token           | Value   | Usage                                                                                                                                                                     |
+| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration-fast` | `150ms` | Hover, press, focus and toggle changes on buttons, chips, tabs and links. Pair with ease-out. Also the tooltip fade-out.                                                  |
+| `duration-base` | `250ms` | Tab and panel switches, and popovers and dropdowns appearing, leaving or moving; the tooltip fade-in. Pair with ease-out to enter, ease-in to leave, ease-in-out to move. |
+| `duration-slow` | `400ms` | Large surfaces such as the mobile menu or a dialog. Use sparingly. Also the wait before a tooltip hides.                                                                  |
 
 ### Easing
 
-| Token         | Value                          | Usage                                                                       |
-| ------------- | ------------------------------ | --------------------------------------------------------------------------- |
-| `ease-out`    | `cubic-bezier(0, 0, 0.2, 1)`   | Entering and state changes: fast start, soft landing. The default curve.    |
-| `ease-in`     | `cubic-bezier(0.4, 0, 1, 1)`   | Leaving: slow start, quick exit.                                            |
-| `ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)` | Moving between two places on the page, such as a selected-tab fill sliding. |
+| Token         | Value                              | Usage                                                                       |
+| ------------- | ---------------------------------- | --------------------------------------------------------------------------- |
+| `ease-out`    | `cubic-bezier(0, 0, 0.2, 1)`       | Entering and state changes: fast start, soft landing. The default curve.    |
+| `ease-in`     | `cubic-bezier(0.4, 0, 1, 1)`       | Leaving: slow start, quick exit.                                            |
+| `ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)`     | Moving between two places on the page, such as a selected-tab fill sliding. |
+| `ease-hint`   | `cubic-bezier(0.45, 0, 0.52, 0.9)` | Tooltips fading in and out: a gentle start and a soft landing.              |
 
 ### Grid
 
@@ -316,9 +317,29 @@ Provide the text. Add the `$` prompt only for shell commands. The Copy button co
 
 TextArea is a multi-line input in `code` type with a `border-strong` outline and `radius-base`, for pasting JSON. ColorField is a `size-control-sm` color swatch plus a `#rrggbb` text box; an invalid value shows a message and is restored on blur.
 
+### CurveEditor
+
+CurveEditor edits a `cubic-bezier()` easing on a square graph. The playground shows it in the Loader and Reveal tabs only when the easing is Custom curve, starting from the curve chosen before.
+
+- The box is square and as wide as the field. The unit square fills most of it, with y from -0.1 to 1.1 around it for overshoot. A handle beyond that range (for example from imported settings) is drawn at the edge and keeps its real value until moved.
+- Drag a handle (pointer capture, a hit area about 32 px across), or focus it and use the arrow keys: 0.01 per press, 0.1 with Shift. Each handle is a slider read as "x 0.22, y 1.00".
+- The curve is `accent`, the unit square `border-strong`, the linear diagonal `border`, the box `secondary` with a `border` hairline and `radius-base`. The CSS value is in a tooltip on an info button in the label row.
+
 ### Tooltip
 
-Tooltip (Radix Tooltip, inside one `TooltipProvider`) explains an icon-only control in `caption`. It appears with `duration-base` and `ease-out`. Never put information only in a tooltip.
+Tooltip (Radix Tooltip, inside one `TooltipProvider`) explains an icon-only control in `caption`, or shows a value on demand, such as the curve editor's `cubic-bezier()`. Never put information only in a tooltip: what it shows must also be available another way, such as the trigger's label or the handles' value text.
+
+| Step                                                 | Time                | Set by                                                        |
+| ---------------------------------------------------- | ------------------- | ------------------------------------------------------------- |
+| Wait before opening on hover                         | 200 ms              | `delayDuration` on the app's `TooltipProvider`                |
+| Fade in                                              | 250 ms, `ease-hint` | `duration-base`                                               |
+| Wait before hiding after the pointer or focus leaves | 400 ms              | `hideDelay`, default `TOOLTIP_HIDE_DELAY` (= `duration-slow`) |
+| Fade out                                             | 150 ms, `ease-hint` | `duration-fast`                                               |
+
+- Keyboard focus opens it at once. Within 300 ms of one tooltip closing, the next opens without the wait (Radix's `skipDelayDuration`).
+- Moving back onto the trigger, or onto the open tooltip, during the hide wait cancels the hide; the next leave starts the wait again. So a tooltip can be reached and read.
+- Escape hides it at once, without the wait.
+- Under reduced motion both fades are instant. The two waits stay, because they are not motion.
 
 ### VideoFrame _(planned)_
 
@@ -337,12 +358,12 @@ Skeletons on the site and in the playground come from `@veilo/css` (classes `vei
 
 ### Motion
 
-Motion is the set of three durations and three easing curves that every interface transition in Veilo uses.
+Motion is the set of three durations and four easing curves that every interface transition in Veilo uses.
 
 Provide the properties that change and take the timing from tokens, for example `transition: background-color var(--veilo-duration-fast) var(--veilo-ease-out)`. Never write a time or a curve by hand; a test fails on hand-written times, curves, colors and lengths in component styles.
 
 - Animate only `opacity`, `color`, `border-color`, `background-color` and `transform`. Never animate width, height, top or left, so content stays put.
-- Use `ease-out` to enter or change state, `ease-in` to leave and `ease-in-out` to move between two places.
+- Use `ease-out` to enter or change state, `ease-in` to leave and `ease-in-out` to move between two places. Tooltips use `ease-hint` and their own waits (see Tooltip).
 - Under `prefers-reduced-motion` the three durations drop to 0 ms, so transitions become instant. The skeleton sweep stops and videos show their poster.
 - The loader sweep and the reveals are product motion. Their speed and curve are settings in the playground and are not these tokens.
 
