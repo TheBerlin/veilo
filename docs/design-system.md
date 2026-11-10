@@ -47,7 +47,15 @@ When the padding is uneven, use the smallest side. A surface placed inside anoth
 
 **Imagery and background.** The only decoration is the dot grid in `grid-dot`: `size-grid-dot` (1.5 px) dots on a 16 px pitch, used in the hero, the final CTA, the playground stage and the 404 page only. The dotted ghost logo and its dissolving right edge echo it.
 
-**Layout.** The website (Home, Gallery, 404) uses two fixed layouts, centered, never fluid. Desktop is 1440 px wide (frame 1440 x 1024): a 12-column stretch grid with 120 px margins and 20 px gutters, so content is 1200 px and a column is about 81.7 px. Mobile is 375 px wide (frame 375 x 812): a 4-column stretch grid with 20 px margins and 8 px gutters, so content is 335 px and a column is about 77.8 px. Place every block on whole columns. On desktop the hero splits 6 and 6 columns, the three How it works rows use 4 and 7 columns with one empty column between, the four "Why it's useful" tiles take 3 columns each and gallery tiles take 4. On mobile every block spans 4 columns except the "Why it's useful" tiles, which take 2 each (2 by 2). Row gaps come from the spacing scale; the grid tokens `grid-desktop-*` and `grid-mobile-*` hold the numbers.
+**Layout.** The website (Home, Gallery, 404) is designed on two frames and built on two column grids (`Grid` and `GridCell` in `@veilo/ui`). Desktop is designed at 1440 px (frame 1440 x 1024): a 12-column stretch grid with 120 px margins and 20 px gutters, so content is 1200 px and a column is about 81.7 px. Mobile is designed at 375 px (frame 375 x 812): a 4-column stretch grid with 20 px margins and 8 px gutters, so content is 335 px and a column is about 77.8 px. Between and beyond the frames the column counts stay fixed and the space flexes, so the page never scrolls sideways:
+
+| Viewport          | Grid                      | Side margins                                                                    |
+| ----------------- | ------------------------- | ------------------------------------------------------------------------------- |
+| 1440 px and wider | 12 columns, 20 px gutters | Content stays 1200 px, centered: 120 px at 1440, wider beyond.                  |
+| 901 to 1439 px    | 12 columns, 20 px gutters | Shrink to 32 px (`space-4`), at 1264 px; below that the columns narrow instead. |
+| 900 px and below  | 4 columns, 8 px gutters   | 20 px; the columns stretch with the screen.                                     |
+
+The switch at 900 px is the same as the playground's one-column switch (`GRID_BREAKPOINT` in `tokens.ts`). Margins also grow to the phone's safe-area insets. Place every block on whole columns. On desktop the hero splits 6 and 6 columns, the three How it works rows use 4 and 7 columns with one empty column between, the four "Why it's useful" tiles take 3 columns each and gallery tiles take 4. On mobile every block spans 4 columns except the "Why it's useful" tiles, which take 2 each (2 by 2). Row gaps come from the spacing scale; the grid tokens `grid-desktop-*` and `grid-mobile-*` hold the numbers.
 
 The **playground** is a tool and is fluid between the two frames: the stage stretches, the control panel is at most `size-panel` (380 px), and below 900 px the layout becomes one column. Side gutters are at least 16 px at every width and grow to the phone's safe-area insets.
 
@@ -183,16 +191,16 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 
 ### Grid
 
-| Token                  | Value    | Usage                                                                       |
-| ---------------------- | -------- | --------------------------------------------------------------------------- |
-| `grid-desktop-width`   | `1440px` | Website desktop frame width (frame 1440 x 1024); never fluid.               |
-| `grid-desktop-columns` | `12`     | Desktop column count, stretch. Each column is about 81.7 px.                |
-| `grid-desktop-gutter`  | `20px`   | Desktop gutter between columns. Row gaps use the spacing scale.             |
-| `grid-desktop-margin`  | `120px`  | Desktop side margin, also the nav's side padding. Content width is 1200 px. |
-| `grid-mobile-width`    | `375px`  | Website mobile frame width (frame 375 x 812); never fluid.                  |
-| `grid-mobile-columns`  | `4`      | Mobile column count, stretch. Each column is about 77.8 px.                 |
-| `grid-mobile-gutter`   | `8px`    | Mobile gutter between columns.                                              |
-| `grid-mobile-margin`   | `20px`   | Mobile side margin, also the nav's side padding. Content width is 335 px.   |
+| Token                  | Value    | Usage                                                                           |
+| ---------------------- | -------- | ------------------------------------------------------------------------------- |
+| `grid-desktop-width`   | `1440px` | Website desktop frame width (frame 1440 x 1024). Content is at most 1200 px.    |
+| `grid-desktop-columns` | `12`     | Desktop column count, stretch. Each column is about 81.7 px.                    |
+| `grid-desktop-gutter`  | `20px`   | Desktop gutter between columns. Row gaps use the spacing scale.                 |
+| `grid-desktop-margin`  | `120px`  | Desktop side margin at 1440 px, also the nav's side padding. Never below 32 px. |
+| `grid-mobile-width`    | `375px`  | Website mobile frame width (frame 375 x 812). Used at 900 px and below.         |
+| `grid-mobile-columns`  | `4`      | Mobile column count, stretch. Each column is about 77.8 px.                     |
+| `grid-mobile-gutter`   | `8px`    | Mobile gutter between columns.                                                  |
+| `grid-mobile-margin`   | `20px`   | Mobile side margin, also the nav's side padding. Content width is 335 px.       |
 
 ## Components
 
@@ -202,7 +210,7 @@ Components marked _(planned)_ are specified here but not built yet in `packages/
 
 Nav is the top header: logo and wordmark with a version badge, the three page links, GitHub, and the theme switch.
 
-Provide the current page via `aria-current="page"` on one link. Pages are Home, Playground and Gallery. The header is `space-8` (64 px) high with the grid margin as side padding (120 px on desktop, 20 px on mobile; in the playground, the playground's gutter) and a `border` hairline below.
+Provide the current page via `aria-current="page"` on one link. Pages are Home, Playground and Gallery. The header is `space-8` (64 px) high with the grid margin as side padding (the same margins as `Grid`: 120 px at 1440, at least 32 px down to 901 px, 20 px at 900 px and below; in the playground, the playground's gutter) and a `border` hairline below.
 
 - The active link is an inverted `accent` fill with `on-accent` text; other links are plain `text` with a `secondary` hover fill.
 - The wordmark is set lowercase, `veilo`, in the nav only; the mark beside it is the dotted ghost logo. Until the logo SVG is added to `assets/Logo/`, show a plain `accent` square.
@@ -340,6 +348,16 @@ Tooltip (Radix Tooltip, inside one `TooltipProvider`) explains an icon-only cont
 - Moving back onto the trigger, or onto the open tooltip, during the hide wait cancels the hide; the next leave starts the wait again. So a tooltip can be reached and read.
 - Escape hides it at once, without the wait.
 - Under reduced motion both fades are instant. The two waits stay, because they are not motion.
+
+### Grid
+
+Grid is the website's column grid: `Grid` (the row container, full width with its own side margins) and `GridCell` (one block on whole columns), in `@veilo/ui`.
+
+- `GridCell` takes `span` and `start` for desktop (1 to 12; default full width) and `spanMobile` and `startMobile` for mobile (1 to 4; default full width). Out-of-range values are clamped, so a cell never adds a column. A start that would push the span past the edge moves left until it fits.
+- `Grid` takes `rowGap` as a spacing token name (such as `space-4`); columns always use the grid gutters.
+- `as` picks the element: `Grid as="ul"` with `GridCell as="li"` for lists such as gallery tiles, `section`, `header` or `footer` for page blocks.
+- Use one `Grid` per page block, directly under the page, not inside a card: its margins are the page margins. The widths it follows are in the Layout section.
+- The playground does not use it: it is a tool with its own fluid two-column layout.
 
 ### VideoFrame _(planned)_
 
