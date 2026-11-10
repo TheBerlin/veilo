@@ -323,7 +323,7 @@ CurveEditor edits a `cubic-bezier()` easing on a square graph. The playground sh
 
 - The box is square and as wide as the field. The unit square fills most of it, with y from -0.1 to 1.1 around it for overshoot. A handle beyond that range (for example from imported settings) is drawn at the edge and keeps its real value until moved.
 - Drag a handle (pointer capture, a hit area about 32 px across), or focus it and use the arrow keys: 0.01 per press, 0.1 with Shift. Each handle is a slider read as "x 0.22, y 1.00".
-- The curve is `accent`, the unit square `border-strong`, the linear diagonal `border`, the box `secondary` with a `border` hairline and `radius-base`. The CSS value is in a tooltip on an info button in the label row.
+- The curve is `accent`, the unit square `border-strong`, the linear diagonal `border`, the box `secondary` with a `border` hairline and `radius-base`. Inside the unit square only, a dot grid in `grid-dot` (`size-grid-dot`) marks every 0.1 of x and y (0.1 to 0.9; none on the square's edges). The CSS value is in a tooltip on an info button in the label row.
 
 ### Tooltip
 

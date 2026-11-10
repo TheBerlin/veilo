@@ -22,6 +22,12 @@
   user-select: none;
 }
 
+/* Dots of the working area's grid, as on the stage (grid-dot color and size). */
+.dot {
+  fill: var(--veilo-grid-dot);
+  r: var(--veilo-size-grid-dot);
+}
+
 /* Reference lines: the unit square and the linear diagonal, thin and quiet. */
 .frame,
 .guide {

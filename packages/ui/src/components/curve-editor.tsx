@@ -35,6 +35,8 @@ export interface CurveEditorProps {
 const UNIT = 200;
 const PAD = 10;
 const HANDLE_R = 6;
+/** Dot grid spacing inside the unit square: one dot every 0.1 of x and y. */
+const DOT_STEP = UNIT / 10;
 // About 32 CSS px across at the panel's width, so handles are easy to touch.
 const HIT_R = 16;
 const HANDLE_NAMES = ["Start handle", "End handle"] as const;
@@ -76,6 +78,8 @@ export function CurveEditor(props: CurveEditorProps) {
   const { label, value, onValueChange, yMin = -0.1, yMax = 1.1, step = 0.01, className } = props;
   const labelId = useId();
   const hintId = useId();
+  // useId returns ":r1:"-style ids; keep letters and digits so url(#...) always resolves.
+  const dotsId = `veilo-curve-dots-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const svgRef = useRef<SVGSVGElement>(null);
   const dragging = useRef<0 | 1 | null>(null);
 
@@ -186,6 +190,28 @@ export function CurveEditor(props: CurveEditorProps) {
           role="group"
           aria-labelledby={labelId}
         >
+          {/* Dot grid of the working area: the tile is shifted half a step, so its centered dot
+              lands on every 0.1 of x and y, counted from the square's corner. */}
+          <defs>
+            <pattern
+              id={dotsId}
+              patternUnits="userSpaceOnUse"
+              x={px(0) - DOT_STEP / 2}
+              y={py(1) - DOT_STEP / 2}
+              width={DOT_STEP}
+              height={DOT_STEP}
+            >
+              <circle className={styles.dot} cx={DOT_STEP / 2} cy={DOT_STEP / 2} />
+            </pattern>
+          </defs>
+          {/* Inset by half a step, so only the inner dots (0.1 to 0.9) show, not halves on the edges. */}
+          <rect
+            x={px(0) + DOT_STEP / 2}
+            y={py(1) + DOT_STEP / 2}
+            width={UNIT - DOT_STEP}
+            height={UNIT - DOT_STEP}
+            fill={`url(#${dotsId})`}
+          />
           {/* The unit square, the 0 and 1 lines across it, and the linear diagonal for reference. */}
           <rect className={styles.frame} x={px(0)} y={py(1)} width={UNIT} height={UNIT} />
           <line className={styles.guide} x1={px(0)} y1={py(0)} x2={px(1)} y2={py(1)} />
