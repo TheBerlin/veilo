@@ -97,15 +97,19 @@ describe("createSettingsStore", () => {
     expect(b.getState().settings.effect).toBe(defaultSettings().effect);
   });
 
-  it("removes the custom colors, and stays asleep when there are none", () => {
+  it("removes the given custom colors only, and stays asleep when there are none", () => {
     const store = createSettingsStore();
     const listener = vi.fn();
     store.subscribe(listener);
-    store.getState().resetColors();
+    store.getState().resetColors(["baseColor", "highlightColor"]);
     expect(listener).not.toHaveBeenCalled();
-    store.getState().setMany({ baseColor: "#112233", highlightColor: "#445566" });
-    store.getState().resetColors();
-    expect(store.getState().settings).toEqual(defaultSettings());
+    store
+      .getState()
+      .setMany({ baseColor: "#112233", highlightColor: "#445566", inkColor: "#778899" });
+    store.getState().resetColors(["baseColor", "highlightColor"]);
+    expect(store.getState().settings).toEqual({ ...defaultSettings(), inkColor: "#778899" });
     expect("baseColor" in store.getState().settings).toBe(false);
+    store.getState().resetColors(["inkColor"]);
+    expect(store.getState().settings).toEqual(defaultSettings());
   });
 });

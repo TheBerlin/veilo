@@ -135,6 +135,21 @@ describe("Panel", () => {
     await userEvent.click(reset);
     expect(store.getState().settings.baseColor).toBeUndefined();
   });
+
+  it("shows Ink for dots, hex and binary only, and resets it alone", async () => {
+    const { store } = renderApp();
+    await userEvent.click(screen.getByRole("tab", { name: "Reveal" }));
+    act(() => store.getState().set("imageFx", "mosaic"));
+    expect(screen.queryByRole("button", { name: "Reset color" })).toBeNull();
+    act(() => store.getState().setMany({ imageFx: "hex", baseColor: "#123456" }));
+    const reset = screen.getByRole<HTMLButtonElement>("button", { name: "Reset color" });
+    expect(reset.disabled).toBe(true);
+    act(() => store.getState().set("inkColor", "#ff0000"));
+    expect(reset.disabled).toBe(false);
+    await userEvent.click(reset);
+    expect(store.getState().settings.inkColor).toBeUndefined();
+    expect(store.getState().settings.baseColor).toBe("#123456");
+  });
 });
 
 describe("restart after a change", () => {

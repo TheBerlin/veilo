@@ -1,6 +1,9 @@
-// color-fields.tsx: the Loader tab's Base and Highlight colors and Reset colors (spec 1.3).
+// color-fields.tsx: the Loader tab's Base and Highlight colors and Reset colors (spec 1.3), and
+// the Reveal tab's Ink color for the dot and character grids.
 
+import type { Settings } from "@veilo/core";
 import { Button, ColorField } from "@veilo/ui";
+import { useStore } from "zustand";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import styles from "./panel.module.css";
 
@@ -49,9 +52,45 @@ export function ColorFields(props: ColorFieldsProps) {
         size="sm"
         variant="ghost"
         disabled={base === undefined && highlight === undefined}
-        onClick={() => store.getState().resetColors()}
+        onClick={() => store.getState().resetColors(["baseColor", "highlightColor"])}
       >
         Reset colors
+      </Button>
+    </fieldset>
+  );
+}
+
+/** Image reveals drawn in the ink color; mosaic uses the photo's own colors. */
+const INKED_EFFECTS: ReadonlySet<Settings["imageFx"]> = new Set(["dots", "hex", "binary"]);
+
+/**
+ * The ink of the dots and characters, shown only for the effects that use it. Picking a color
+ * overrides the theme's text color on the card; Reset color removes the override.
+ *
+ * @param props - The settings store.
+ * @returns The field and the reset button, or nothing for effects without ink.
+ */
+export function InkColorField(props: ColorFieldsProps) {
+  const { store } = props;
+  const ink = useSetting(store, "inkColor");
+  const imageFx = useStore(store, (state) => state.settings.imageFx);
+  if (!INKED_EFFECTS.has(imageFx)) return null;
+  return (
+    <fieldset className={styles.group}>
+      <legend className={styles.legend}>Colors</legend>
+      <ColorField
+        label="Ink"
+        // Without --veilo-ink, core draws in the card's text color.
+        value={ink ?? themeColor("--veilo-text")}
+        onValueChange={(value) => store.getState().set("inkColor", value)}
+      />
+      <Button
+        size="sm"
+        variant="ghost"
+        disabled={ink === undefined}
+        onClick={() => store.getState().resetColors(["inkColor"])}
+      >
+        Reset color
       </Button>
     </fieldset>
   );

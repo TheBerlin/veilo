@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@veilo/ui";
 import type { SettingsStore } from "../state/settings-store.ts";
-import { ColorFields } from "./color-fields.tsx";
+import { ColorFields, InkColorField } from "./color-fields.tsx";
 import { ControlGroups } from "./control-groups.tsx";
 import { ExportTab } from "./export-tab.tsx";
 import { LOADER_GROUPS, REVEAL_GROUPS } from "./controls.ts";
@@ -35,6 +35,7 @@ export function Panel(props: PanelProps) {
         </TabsContent>
         <TabsContent value="reveal" className={styles.content}>
           <ControlGroups store={props.store} groups={REVEAL_GROUPS} />
+          <InkColorField store={props.store} />
         </TabsContent>
         <TabsContent value="export" className={styles.content}>
           <ExportTab store={props.store} />

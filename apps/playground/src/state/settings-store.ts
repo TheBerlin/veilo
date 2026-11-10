@@ -38,8 +38,8 @@ export interface SettingsState {
   load: (input: unknown) => AnySettingKey[];
   /** Restores the default settings. */
   reset: () => void;
-  /** Removes the custom base and highlight colors, so the theme's colors apply again. */
-  resetColors: () => void;
+  /** Removes the given custom colors, so the theme's colors apply again. */
+  resetColors: (keys: readonly ColorKey[]) => void;
 }
 
 /** A settings store instance. */
@@ -97,12 +97,13 @@ export function createSettingsStore(initial?: unknown): SettingsStore {
       return applied;
     },
     reset: () => setState({ settings: defaultSettings() }),
-    resetColors: () =>
+    resetColors: (keys) =>
       setState((state) => {
-        const { baseColor, highlightColor, ...rest } = state.settings;
         // Nothing to remove: keep the same state, so subscribers stay asleep.
-        if (baseColor === undefined && highlightColor === undefined) return state;
-        return { settings: rest as Settings };
+        if (keys.every((key) => state.settings[key] === undefined)) return state;
+        const settings = { ...state.settings };
+        for (const key of keys) delete settings[key];
+        return { settings };
       }),
   }));
 }
