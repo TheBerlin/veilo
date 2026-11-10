@@ -4,7 +4,7 @@ Veilo is a free, open-source playground and package family for **skeleton loader
 
 Tune an effect with live controls, scrub it frame by frame, and export it as CSS or JSON. The same settings object drives a framework-agnostic engine that runs in plain HTML or any framework.
 
-> **Status:** early development, version 0.2.0. The core engine and the CSS loaders are done; the playground is being built (milestone M3). Nothing is published to npm yet, and the API can still change before 1.0.
+> **Status:** early development, version 0.3.0. The core engine, the CSS loaders and the first playground are done; the playground runs on a staging site at https://veilo-playground.vercel.app. Nothing is published to npm yet, and the API can still change before 1.0.
 
 ## What it does
 
@@ -16,14 +16,14 @@ Tune an effect with live controls, scrub it frame by frame, and export it as CSS
 
 ## Packages
 
-| Package          | Status      | Purpose                                                                                                           |
-| ---------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| `@veilo/core`    | 0.2.0       | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md)) |
-| `@veilo/css`     | 0.2.0       | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                       |
-| `@veilo/presets` | 0.2.0       | The named presets as typed data ([README](packages/presets/README.md))                                            |
-| `@veilo/ui`      | internal    | Design tokens and React components for the playground and website (never published)                               |
-| `playground`     | in progress | The online tool: test card, image source, transport bar, tabs and presets so far                                  |
-| Planned          | —           | `element` (web components), `react`, `vue`, `svelte`, `angular`, docs and website                                 |
+| Package          | Status   | Purpose                                                                                                                                            |
+| ---------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@veilo/core`    | 0.3.0    | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md))                                  |
+| `@veilo/css`     | 0.3.0    | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                                                        |
+| `@veilo/presets` | 0.3.0    | The named presets as typed data ([README](packages/presets/README.md))                                                                             |
+| `@veilo/ui`      | internal | Design tokens and React components for the playground and website (never published)                                                                |
+| `playground`     | staging  | The online tool ([staging site](https://veilo-playground.vercel.app)): test card, image source, transport bar, tabs, presets, curve editor, themes |
+| Planned          | —        | `element` (web components), `react`, `vue`, `svelte`, `angular`, docs and website                                                                  |
 
 ```ts
 import { createReveal } from "@veilo/core";
