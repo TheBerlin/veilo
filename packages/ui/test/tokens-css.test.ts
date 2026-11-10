@@ -41,6 +41,7 @@ describe("tokens.css", () => {
       "ease-out",
       "ease-in",
       "ease-in-out",
+      "ease-hint",
     ];
     for (const name of names) expect(committed).toContain(`  --veilo-${name}: `);
     expect(committed).not.toMatch(/^\s+--(?!veilo-)/m);

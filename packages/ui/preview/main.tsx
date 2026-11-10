@@ -68,7 +68,7 @@ function Preview() {
   }, [light]);
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={200}>
       <main className={styles.page}>
         <div className={styles.column}>
           <header className={styles.header}>

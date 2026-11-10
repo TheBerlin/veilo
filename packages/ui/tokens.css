@@ -83,6 +83,7 @@
   --veilo-ease-out: cubic-bezier(0, 0, 0.2, 1);
   --veilo-ease-in: cubic-bezier(0.4, 0, 1, 1);
   --veilo-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --veilo-ease-hint: cubic-bezier(0.45, 0, 0.52, 0.9);
   --veilo-grid-desktop-width: 1440px;
   --veilo-grid-desktop-columns: 12;
   --veilo-grid-desktop-gutter: 20px;

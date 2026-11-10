@@ -23,7 +23,7 @@ export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs.tsx"
 export type { TabsContentProps, TabsListProps, TabsTriggerProps } from "./components/tabs.tsx";
 export { Toggle } from "./components/toggle.tsx";
 export type { ToggleProps } from "./components/toggle.tsx";
-export { Tooltip, TooltipProvider } from "./components/tooltip.tsx";
+export { Tooltip, TOOLTIP_HIDE_DELAY, TooltipProvider } from "./components/tooltip.tsx";
 export type { TooltipProps } from "./components/tooltip.tsx";
 export { ColorField } from "./components/color-field.tsx";
 export type { ColorFieldProps } from "./components/color-field.tsx";

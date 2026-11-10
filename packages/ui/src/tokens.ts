@@ -140,6 +140,8 @@ export const EASINGS = {
   "ease-out": [0, 0, 0.2, 1],
   "ease-in": [0.4, 0, 1, 1],
   "ease-in-out": [0.4, 0, 0.2, 1],
+  // Hints (tooltips): a gentle reveal, chosen by eye in the playground.
+  "ease-hint": [0.45, 0, 0.52, 0.9],
 } as const satisfies Record<string, readonly [number, number, number, number]>;
 
 /** The two fixed layouts: frame width, columns, gutter and side margin. */
