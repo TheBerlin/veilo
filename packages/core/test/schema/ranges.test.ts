@@ -87,8 +87,8 @@ describe("EASING_KEYS", () => {
 });
 
 describe("colors", () => {
-  it("has the two overrides the Export tab writes", () => {
-    expect(COLOR_KEYS).toEqual(["baseColor", "highlightColor"]);
+  it("has the skeleton's two overrides and the reveal's ink", () => {
+    expect(COLOR_KEYS).toEqual(["baseColor", "highlightColor", "inkColor"]);
   });
 
   it.each(["#dde5e6", "#27373C", "#000000", "#FFFFFF"])("accepts %s", (color) => {

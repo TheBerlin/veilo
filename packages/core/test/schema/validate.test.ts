@@ -81,6 +81,23 @@ describe("parseSettings", () => {
     expect(applied).toEqual(["baseColor", "highlightColor"]);
   });
 
+  it("accepts an inkColor and counts it", () => {
+    const { settings, applied } = parseSettings({ inkColor: "#ff0000" });
+    expect(settings.inkColor).toBe("#ff0000");
+    expect(applied).toEqual(["inkColor"]);
+  });
+
+  it("reads a version 1 object saved before inkColor existed unchanged", () => {
+    // Every key of the 0.2.0 format, as an older export wrote it. Adding an optional key keeps
+    // the version, so such an object needs no migration (see version.ts).
+    const saved = { ...defaultSettings(), version: 1, cols: 32, baseColor: "#101010" };
+    const { settings, applied } = parseSettings(saved);
+    expect(SETTINGS_VERSION).toBe(1);
+    expect(settings).toEqual({ ...saved, version: SETTINGS_VERSION });
+    expect(settings).not.toHaveProperty("inkColor");
+    expect(applied).toHaveLength(Object.keys(SETTINGS_SPEC).length + 1);
+  });
+
   it.each(["#abc", "#aabbcc00", "aabbcc", "red", "#gggggg", 123])(
     "ignores the color %j",
     (color) => {

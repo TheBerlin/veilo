@@ -47,7 +47,10 @@ export type { RevealTargets } from "./targets.ts";
 export interface RevealOptions {
   /** Font family for hex and binary characters. Defaults to IBM Plex Mono. */
   fontFamily?: string;
-  /** Color of dots and characters. Defaults to `--veilo-ink` on the image's parent, then its color. */
+  /**
+   * Color of dots and characters when the settings have no `inkColor`. Defaults to `--veilo-ink`
+   * on the image's parent, then its color.
+   */
   ink?: string;
   /** Time source. Defaults to the browser's; tests pass a fake one. */
   scheduler?: Scheduler;
@@ -93,7 +96,7 @@ export interface Reveal {
   /**
    * Reads the ink color again and redraws the current frame, without changing playback. Call it
    * after a theme change. Skeleton and text follow CSS changes on their own; the grid canvas does
-   * not. An `ink` option, when given, is kept.
+   * not. An `inkColor` setting or an `ink` option, when given, is kept.
    */
   redraw(): void;
   /** Shows loading for `hold` seconds, then plays; with `loop`, restarts 900 ms after the end. */
@@ -190,8 +193,12 @@ export function createReveal(
   let realText: string[] = [];
   let ink = "";
 
-  /** The grid's ink: the `ink` option, else `--veilo-ink` on the image's parent, else its color. */
+  /**
+   * The grid's ink: the `inkColor` setting, else the `ink` option, else `--veilo-ink` on the
+   * image's parent, else its color. The setting wins, as saved colors do in generateLoaderCss.
+   */
   const readInk = (): string => {
+    if (parsed.inkColor) return parsed.inkColor;
     const from = image?.parentElement ?? image;
     if (options.ink || !from) return options.ink ?? "";
     return computedValue(from, "--veilo-ink") || computedValue(from, "color");

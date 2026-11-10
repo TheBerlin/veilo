@@ -58,7 +58,7 @@ const reveal = createReveal(
 | --------------- | ----------------------------------- | ------------------------------------------------------------------- |
 | `busy`          | the container, if given             | Gets `aria-busy="true"` while the skeleton shows.                   |
 | `warnings`      | on in development builds            | Prints slot mismatches to the console.                              |
-| `ink`           | `--veilo-ink`, then text color      | Color of dots and characters.                                       |
+| `ink`           | `--veilo-ink`, then text color      | Color of dots and characters when the settings have no `inkColor`.  |
 | `fontFamily`    | `"IBM Plex Mono", monospace`        | Font for hex and binary characters.                                 |
 | `reducedMotion` | the user's `prefers-reduced-motion` | Set `false` to preview effects regardless (as the playground does). |
 | `root`          | the document head                   | The shadow root to put the skeleton stylesheet in.                  |
@@ -150,7 +150,7 @@ const { settings, applied } = parseSettings(JSON.parse(text)); // applied: the k
 | Image  | `imageFx`, `origin`, `cols`, `startScale`, `spread`                                                          |
 | Text   | `textFx`, `charset`, `unit`                                                                                  |
 | Timing | `rDur`, `rEase` (+ `rx1`…`ry2`), `hold`                                                                      |
-| Colors | `baseColor`, `highlightColor` (optional `#rrggbb` overrides)                                                 |
+| Colors | `baseColor`, `highlightColor`, `inkColor` (optional `#rrggbb` overrides)                                     |
 
 The named easings (`out`, `outSoft`, `inOut`, `in`, `linear`, `back`) are exported as `EASING_CURVES`, each the four numbers of a CSS `cubic-bezier()`, for example to draw them in a curve editor. With `custom`, the curve comes from `lx1`…`ly2` or `rx1`…`ry2`.
 

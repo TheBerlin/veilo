@@ -4,8 +4,11 @@
 /** Easing preset keys shared by the loader and the reveal (spec: Easing presets). */
 export const EASING_KEYS = ["out", "outSoft", "inOut", "in", "linear", "back", "custom"] as const;
 
-/** Optional color overrides. They have no default, so they live outside the table. */
-export const COLOR_KEYS = ["baseColor", "highlightColor"] as const;
+/**
+ * Optional color overrides. They have no default, so they live outside the table: the skeleton's
+ * base and highlight, and the ink of the dots and characters in the grid reveals.
+ */
+export const COLOR_KEYS = ["baseColor", "highlightColor", "inkColor"] as const;
 
 /** Accepted color format: `#rrggbb`, either case. */
 export const COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;

@@ -31,9 +31,9 @@ describe("Settings", () => {
 });
 
 describe("keys", () => {
-  it("names every table key and the two colors", () => {
+  it("names every table key and the three colors", () => {
     expectTypeOf<"cols" | "hold" | "effect">().toExtend<SettingKey>();
-    expectTypeOf<ColorKey>().toEqualTypeOf<"baseColor" | "highlightColor">();
+    expectTypeOf<ColorKey>().toEqualTypeOf<"baseColor" | "highlightColor" | "inkColor">();
   });
 
   it("does not include the version or the colors in the table keys", () => {
