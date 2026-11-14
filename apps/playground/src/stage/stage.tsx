@@ -25,6 +25,8 @@ export interface StageProps {
   store: SettingsStore;
   /** Reveal options, such as a test scheduler. */
   revealOptions?: RevealOptions;
+  /** When set, the first card holds this progress, paused (a fixed-frame request). */
+  frame?: number;
 }
 
 /** The card's photo (the placeholder when `image` is null) and how its reveal starts. */
@@ -59,7 +61,7 @@ export function startAfterChange(keys: Iterable<string>): RevealStart {
  * picker. Side effects: decodes chosen images, and rebuilds the reveal when settings change (at
  * most once per animation frame, so a slider drag does not rebuild on every pointer move).
  *
- * @param props - The store and reveal options.
+ * @param props - The store, reveal options and optional fixed frame.
  * @returns The stage section and the transport bar.
  */
 export function Stage(props: StageProps) {
@@ -68,7 +70,8 @@ export function Stage(props: StageProps) {
     key: 0,
     image: null,
     sample: null,
-    start: "sequence",
+    // A fixed-frame request holds the first card only; any later change plays as usual.
+    start: props.frame === undefined ? "sequence" : "frame",
   });
   const [error, setError] = useState<string | null>(null);
   const [reveal, setReveal] = useState<Reveal | null>(null);
@@ -140,6 +143,7 @@ export function Stage(props: StageProps) {
           image={photo.image}
           onImageDrop={onFile}
           start={photo.start}
+          frame={props.frame}
           loop={loop}
           onReveal={setReveal}
         />

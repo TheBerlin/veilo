@@ -5,10 +5,11 @@ import { createReveal, type Layout, type Reveal, type RevealOptions } from "@vei
 import { useEffect, useRef, type RefObject } from "react";
 
 /**
- * How a new reveal starts: the full sequence, the Loading view only (after a Loader change), or
- * the reveal from `p = 0` without loading (after a Reveal change), as in spec 1.4.
+ * How a new reveal starts: the full sequence, the Loading view only (after a Loader change), the
+ * reveal from `p = 0` without loading (after a Reveal change), as in spec 1.4, or paused at one
+ * progress (`frame`, for visual tests; see `RevealSequence.frame`).
  */
-export type RevealStart = "sequence" | "loading" | "reveal";
+export type RevealStart = "sequence" | "loading" | "reveal" | "frame";
 
 /** How {@link useReveal} starts the reveal, and who gets it. */
 export interface RevealSequence {
@@ -16,13 +17,29 @@ export interface RevealSequence {
   start?: RevealStart;
   /** Whether the first sequence loops. */
   loop?: boolean;
+  /** The progress to hold when `start` is `frame`, from 0 to 1. Defaults to 0. */
+  frame?: number;
+  /** Called once the held frame is drawn with the final fonts (`frame` start only). */
+  onFrameReady?: () => void;
   /** Receives the reveal after it is created and `null` after it is destroyed. */
   onReveal?: (reveal: Reveal | null) => void;
 }
 
 /**
- * Creates a reveal on the element when the component mounts, starts the full sequence, and
- * destroys it on unmount, which restores the element exactly. React's development mode mounts
+ * Waits until the browser has painted twice, so work queued by the last change (such as core's
+ * redraw after a font loads) has reached the screen.
+ *
+ * @returns A promise that resolves after two animation frames.
+ */
+function nextPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  });
+}
+
+/**
+ * Creates a reveal on the element when the component mounts, starts it as `sequence.start` asks
+ * (the full sequence by default), and destroys it on unmount, which restores the element exactly. React's development mode mounts
  * twice; the first reveal is destroyed before the second is made, so this is safe to repeat.
  * The layout, options and loop flag are read once, at mount.
  *
@@ -50,10 +67,22 @@ export function useReveal(
     const instance = createReveal(target, startLayout, { reducedMotion: false, ...startOptions });
     reveal.current = instance;
     start?.onReveal?.(instance);
+    let cancelled = false;
     if (start?.start === "loading") instance.showLoading();
     else if (start?.start === "reveal") void instance.play();
-    else instance.playSequence({ loop: start?.loop ?? false });
+    else if (start?.start === "frame") {
+      instance.seek(start.frame ?? 0);
+      // Order matters: seek draws once the reveal is ready, and core draws the glyphs again when
+      // their font loads, so wait for every font and then for paint before calling it final.
+      void instance.ready
+        .then(() => document.fonts.ready)
+        .then(nextPaint)
+        .then(() => {
+          if (!cancelled) start.onFrameReady?.();
+        });
+    } else instance.playSequence({ loop: start?.loop ?? false });
     return () => {
+      cancelled = true;
       instance.destroy();
       if (reveal.current === instance) reveal.current = null;
       start?.onReveal?.(null);

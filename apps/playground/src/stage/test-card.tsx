@@ -2,7 +2,14 @@
 // markup and layout hints.
 
 import type { Layout, Reveal, RevealOptions, Settings } from "@veilo/core";
-import { useEffect, useLayoutEffect, useRef, type DragEvent, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type KeyboardEvent,
+} from "react";
 import { drawImageCover, type CardImage } from "./image-source.ts";
 import { drawPlaceholderImage } from "./placeholder-image.ts";
 import styles from "./test-card.module.css";
@@ -37,6 +44,8 @@ export interface TestCardProps {
   onImageDrop?: (file: File) => void;
   /** How the reveal starts at mount. Defaults to the full sequence. */
   start?: RevealStart;
+  /** The progress to hold when `start` is `frame`. Read at mount. */
+  frame?: number;
   /** Whether sequences loop: the first one (read at mount) and replays by click or key. */
   loop?: boolean;
   /** Receives the live reveal after mount and `null` after unmount. */
@@ -49,11 +58,12 @@ const REDRAW_THRESHOLD = 2;
 /**
  * The test card: image, heading, two description lines, price, old price and button, in that
  * order. Click, Enter or Space replays the full sequence; a file dropped on the image area goes
- * to `onImageDrop`. Side effects: draws the photo (again when its width changes by 2 px or more)
+ * to `onImageDrop`. With a `frame` start, the card gets `data-frame-ready` once the held frame
+ * is drawn, which the visual tests wait for. Side effects: draws the photo (again when its width changes by 2 px or more)
  * and runs a reveal on the card while mounted.
  *
- * @param props - The settings, reveal options, photo, drop handler, start, loop flag and reveal
- *   callback.
+ * @param props - The settings, reveal options, photo, drop handler, start, frame, loop flag and
+ *   reveal callback.
  * @returns The card.
  */
 export function TestCard(props: TestCardProps) {
@@ -86,11 +96,18 @@ export function TestCard(props: TestCardProps) {
     return () => observer.disconnect();
   }, []);
 
+  const [frameReady, setFrameReady] = useState(false);
   const reveal = useReveal(
     card,
     { version: 1, settings: props.settings, slots: CARD_SLOTS },
     props.revealOptions,
-    { start: props.start, loop: props.loop, onReveal: props.onReveal },
+    {
+      start: props.start,
+      frame: props.frame,
+      loop: props.loop,
+      onReveal: props.onReveal,
+      onFrameReady: () => setFrameReady(true),
+    },
   );
 
   const replay = () => reveal.current?.playSequence({ loop: props.loop ?? false });
@@ -115,6 +132,7 @@ export function TestCard(props: TestCardProps) {
       role="button"
       tabIndex={0}
       aria-label="Test card: MCHOSE L7 Pro. Press to replay the animation."
+      data-frame-ready={frameReady ? "" : undefined}
       onClick={replay}
       onKeyDown={onKeyDown}
     >
