@@ -18,6 +18,7 @@ import {
 } from "react";
 import { configKey, resolveConfig, type RevealConfig } from "./config.ts";
 import type { RevealElement } from "./reveal.tsx";
+import { useServerSkeleton } from "./server-skeleton.tsx";
 
 /** Props of {@link Skeleton}: the loader, the `loading` flag, and attributes for the element. */
 export interface SkeletonProps extends RevealConfig, Omit<HTMLAttributes<HTMLElement>, "children"> {
@@ -44,7 +45,9 @@ export interface SkeletonProps extends RevealConfig, Omit<HTMLAttributes<HTMLEle
  * a `div` unless set) and every `data-veilo-slot` element inside becomes a placeholder; text
  * slots show one bar per line, and the container gets `aria-busy`. With `asChild` the single
  * child itself becomes one solid placeholder and no element is added, the escape hatch for
- * wrapping one part. Users who prefer reduced motion see a still placeholder.
+ * wrapping one part. Users who prefer reduced motion see a still placeholder. In server-rendered
+ * HTML the loader already shows before any script runs; the live one replaces it after
+ * hydration.
  *
  * Side effects: through core, adds inline styles and a stylesheet while loading and restores the
  * elements exactly when loading ends or on unmount.
@@ -93,17 +96,30 @@ export function Skeleton(props: SkeletonProps) {
     };
   }, [element, key, asChild]);
 
+  // The skeleton in server HTML, until the live one below takes over.
+  const server = useServerSkeleton(loading, resolveConfig(config), asChild);
+
   useEffect(() => {
     if (!skeleton) return;
     if (loading) skeleton.start();
     else skeleton.stop();
-  }, [skeleton, loading]);
+    server.handOver();
+  }, [skeleton, loading, server.handOver]);
 
   if (asChild)
+    // The style goes next to the child, since nothing may be added inside it.
     return (
-      <Slot {...attributes} ref={setElement}>
-        {children}
-      </Slot>
+      <>
+        {server.style}
+        <Slot {...attributes} {...server.scope} ref={setElement}>
+          {children}
+        </Slot>
+      </>
     );
-  return createElement(as, { ...attributes, ref: setElement }, children);
+  return createElement(
+    as,
+    { ...attributes, ...server.scope, ref: setElement },
+    server.style,
+    children,
+  );
 }

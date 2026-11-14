@@ -24,6 +24,7 @@ export default defineProject({
             "react/jsx-dev-runtime",
             "react-dom",
             "react-dom/client",
+            "react-dom/server",
             "@testing-library/react",
           ],
         },

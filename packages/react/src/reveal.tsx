@@ -3,7 +3,8 @@
 
 import type { RevealOptions } from "@veilo/core";
 import { createElement, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
-import type { RevealConfig } from "./config.ts";
+import { resolveConfig, type RevealConfig } from "./config.ts";
+import { useServerSkeleton } from "./server-skeleton.tsx";
 import { useReveal } from "./use-reveal.ts";
 
 /** The elements `Reveal` can render as its container. */
@@ -35,7 +36,9 @@ export interface RevealProps extends RevealConfig, Omit<HTMLAttributes<HTMLEleme
  * Wraps content in a container and runs a Veilo reveal on the `data-veilo-slot` elements inside.
  * While `ready` is `false` they show the skeleton (render placeholder data meanwhile, so the
  * parts have their real size); when it turns `true` the reveal plays once. The container gets
- * `aria-busy` while loading. Users who prefer reduced motion see the content at once.
+ * `aria-busy` while loading. Users who prefer reduced motion see the content at once. In
+ * server-rendered HTML the skeleton already shows before any script runs (core's
+ * `serverSkeletonCss`); the live one replaces it after hydration.
  *
  * Side effects: through core, adds canvases, overlays and a stylesheet while mounted and removes
  * them on unmount.
@@ -57,7 +60,10 @@ export function Reveal(props: RevealProps) {
     children,
     ...attributes
   } = props;
-  const { ref, reveal } = useReveal({ preset, settings, layout }, options);
+  const config = { preset, settings, layout };
+  const { ref, reveal } = useReveal(config, options);
+  // The skeleton in server HTML, until the live one below takes over.
+  const server = useServerSkeleton(!ready, resolveConfig(config));
 
   // The reveal the effect below last saw, and whether content was ready then.
   const seen = useRef<{ reveal: typeof reveal; ready: boolean }>({ reveal: null, ready });
@@ -71,12 +77,14 @@ export function Reveal(props: RevealProps) {
     // the content has just become ready. Strict Mode re-runs this effect with the same reveal
     // and the same flag, which does nothing.
     else if (first ? revealOnMount : !wasReady) void reveal.play();
-  }, [reveal, ready, revealOnMount]);
+    // The live skeleton (or the content) shows now, so the server one can go.
+    server.handOver();
+  }, [reveal, ready, revealOnMount, server.handOver]);
 
   // The latest callback, so a new function on every render does not resubscribe.
   const complete = useRef(onComplete);
   complete.current = onComplete;
   useEffect(() => reveal?.on("complete", () => complete.current?.()), [reveal]);
 
-  return createElement(as, { ...attributes, ref }, children);
+  return createElement(as, { ...attributes, ...server.scope, ref }, server.style, children);
 }
