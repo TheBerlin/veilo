@@ -8,6 +8,7 @@ import { readFile } from "node:fs/promises";
 import { dirname, extname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { expect, test, type Page } from "@playwright/test";
+import { CSS_DEMO_NAME } from "./support/baselines.ts";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const cssDemo = pathToFileURL(resolve(repo, "examples/css-demo/index.html")).href;
@@ -130,7 +131,7 @@ test.describe("with reduced motion", () => {
     expect(animations.length).toBeGreaterThan(0);
     expect(new Set(animations)).toEqual(new Set(["none"]));
     // Not frozen by Playwright: the stylesheet itself must leave them still.
-    await expect(page).toHaveScreenshot("css-demo.png", { fullPage: true, animations: "allow" });
+    await expect(page).toHaveScreenshot(CSS_DEMO_NAME, { fullPage: true, animations: "allow" });
   });
 
   test("core's reveal skips the animation without being told", async ({ page }) => {

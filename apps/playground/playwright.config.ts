@@ -19,6 +19,9 @@ export default defineConfig({
   // A stray test.only must not pass CI with the other tests skipped.
   forbidOnly: !!process.env.CI,
   retries: 0,
+  // Baselines are written only on request (`visual:update` passes --update-snapshots). Playwright
+  // would otherwise write any missing one on whatever OS runs it, such as a Windows picture.
+  updateSnapshots: "none",
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
   use: {
     baseURL: `http://localhost:${PORT}`,
