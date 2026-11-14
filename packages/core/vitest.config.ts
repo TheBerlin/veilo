@@ -10,6 +10,7 @@ const BROWSER_TESTS = [
   "test/grid/ramps.test.ts",
   "test/render/**/*.test.ts",
   "test/loader/skeleton.test.ts",
+  "test/loader/skeleton-css.test.ts",
   "test/controller/reveal.test.ts",
   "test/controller/targets.test.ts",
   "test/controller/skeleton.test.ts",

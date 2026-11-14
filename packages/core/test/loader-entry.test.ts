@@ -13,6 +13,7 @@ describe("@veilo/core/loader", () => {
       "defaultSettings",
       "generateLoaderCss",
       "parseSettings",
+      "serverSkeletonCss",
       "settingsJsonSchema",
     ]);
   });
@@ -26,5 +27,6 @@ describe("@veilo/core/loader", () => {
   it("works without a browser", () => {
     expect(typeof document).toBe("undefined");
     expect(loader.generateLoaderCss(loader.defaultSettings())).toContain("@keyframes veilo-sweep");
+    expect(loader.serverSkeletonCss({}, "#card")).toContain("#card [data-veilo-slot]");
   });
 });

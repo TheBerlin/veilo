@@ -1,10 +1,18 @@
 // roles.ts: which role an element can play, and the guess when the layout names none.
 // Layer 2. Reads only the element it is given.
 
-import type { SlotRole } from "../schema/layout.ts";
+import { GUESSED_ROLE_TAGS, type SlotRole } from "../schema/layout.ts";
 
-// Elements the grid and image effects can draw from.
-const IMAGE_TAGS = ["IMG", "CANVAS"];
+/**
+ * Tells whether an element tag is in one of the guessed-role tag lists.
+ *
+ * @param element - The element.
+ * @param tags - Lowercase tag names.
+ * @returns `true` when the element's tag is listed.
+ */
+function hasTag(element: Element, tags: readonly string[]): boolean {
+  return tags.includes(element.tagName.toLowerCase());
+}
 
 /**
  * Tells whether an element can be the reveal's image.
@@ -13,7 +21,7 @@ const IMAGE_TAGS = ["IMG", "CANVAS"];
  * @returns `true` for `<img>` and `<canvas>`.
  */
 export function canBeImage(element: Element): boolean {
-  return IMAGE_TAGS.includes(element.tagName.toUpperCase());
+  return hasTag(element, GUESSED_ROLE_TAGS.image);
 }
 
 /**
@@ -24,9 +32,8 @@ export function canBeImage(element: Element): boolean {
  * @returns The guessed role.
  */
 export function guessRole(element: Element): SlotRole {
-  const tag = element.tagName.toUpperCase();
-  if (IMAGE_TAGS.includes(tag)) return "image";
-  if (tag === "BUTTON") return "button";
-  if (tag === "VIDEO") return "block";
+  if (hasTag(element, GUESSED_ROLE_TAGS.image)) return "image";
+  if (hasTag(element, GUESSED_ROLE_TAGS.button)) return "button";
+  if (hasTag(element, GUESSED_ROLE_TAGS.block)) return "block";
   return "text";
 }

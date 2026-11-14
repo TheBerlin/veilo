@@ -96,6 +96,19 @@ skeleton.stop(); // restores the elements exactly
 
 Given a container, every slot in it is a placeholder, in page order; given a list, the elements are the placeholders in that order. Text turns transparent, images, canvases and videos hide their picture but keep their size, and each element gets `--i` (its index) for the wave delay. Options: `busy`, `root`, `warnings`, and fallback `base` and `highlight` colors.
 
+## `serverSkeletonCss(settings | layout, scope, options?)`
+
+The skeleton stylesheet for server-rendered markup, so the page shows the skeleton before any script runs. It is the same CSS the live skeleton uses, scoped to a selector. Also exported from `@veilo/core/loader`, which loads without a browser.
+
+```ts
+import { serverSkeletonCss } from "@veilo/core/loader";
+
+const css = serverSkeletonCss(layout, '[data-skeleton="card-1"]');
+// <style>{css}</style><article data-skeleton="card-1">...slots...</article>
+```
+
+Every `data-veilo-slot` element inside the scope is a placeholder; text slots show line bars with the layout's `width` and `lines` hints. With `{ self: true }` the scope element itself is one solid placeholder. When `createSkeleton` or `createReveal` takes over, remove the `<style>` and the scope attribute. Until then the wave runs in step (its index is set by script), unnamed slots are guessed from their tag alone, and placeholders are not yet `aria-hidden`. Options: `self`, and fallback `base` and `highlight` colors. `@veilo/react` does all of this for you.
+
 ## Slots and the layout JSON
 
 Slots are the parts of your own markup marked with `data-veilo-slot="name"`. Sizes and positions always come from your elements and CSS. A layout pairs the effect settings with a map of slots, so one JSON file describes a whole component:

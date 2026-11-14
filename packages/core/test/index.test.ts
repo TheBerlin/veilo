@@ -36,6 +36,7 @@ describe("@veilo/core public API", () => {
       "generateLoaderCss",
       "parseLayout",
       "parseSettings",
+      "serverSkeletonCss",
       "settingsJsonSchema",
     ]);
   });

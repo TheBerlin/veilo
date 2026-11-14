@@ -14,6 +14,17 @@ export const SLOT_ROLES = ["image", "text", "button", "block"] as const;
 export type SlotRole = (typeof SLOT_ROLES)[number];
 
 /**
+ * The element tags (lowercase) whose guessed role is not `text`, for slots the layout does not
+ * name: images and canvases are `image`, buttons are `button`, videos are `block`. Shared by the
+ * guess on real elements and by the server stylesheet, which can only match tags in CSS.
+ */
+export const GUESSED_ROLE_TAGS = {
+  image: ["img", "canvas"],
+  button: ["button"],
+  block: ["video"],
+} as const satisfies Partial<Record<SlotRole, readonly string[]>>;
+
+/**
  * Hints for one slot. Sizes and positions always come from the element and its CSS; hints only
  * shape the skeleton placeholder.
  */

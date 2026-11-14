@@ -27,6 +27,8 @@ export { SLOT_ATTRIBUTE } from "./slots/discover.ts";
 // Loader CSS: the shimmer, wave or pulse stylesheet for a set of settings.
 export { generateLoaderCss } from "./loader/css-generator.ts";
 export type { LoaderCssOptions } from "./loader/css-generator.ts";
+export { serverSkeletonCss } from "./loader/skeleton-css.ts";
+export type { ServerSkeletonCssOptions } from "./loader/skeleton-css.ts";
 
 // Settings: the one flat JSON object, its defaults, validation and JSON Schema.
 export { defaultSettings } from "./schema/defaults.ts";

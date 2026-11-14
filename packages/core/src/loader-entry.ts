@@ -4,6 +4,8 @@
 
 export { generateLoaderCss } from "./loader/css-generator.ts";
 export type { LoaderCssOptions } from "./loader/css-generator.ts";
+export { serverSkeletonCss } from "./loader/skeleton-css.ts";
+export type { ServerSkeletonCssOptions } from "./loader/skeleton-css.ts";
 export { defaultSettings } from "./schema/defaults.ts";
 export { settingsJsonSchema } from "./schema/json-schema.ts";
 export type { ColorKey, SettingKey, Settings } from "./schema/types.ts";
