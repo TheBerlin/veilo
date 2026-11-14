@@ -42,12 +42,26 @@ function setup(
       time.advance(6000);
     });
   };
+  /** Lets core's async `ready` settle, then moves the clock part of the way into a reveal. */
+  const runPart = async (ms: number) => {
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      time.advance(ms);
+    });
+  };
   return {
     ...result,
     update: (next: Omit<RevealProps, "options">) => result.rerender(tree(next)),
     run,
+    runPart,
+    time,
   };
 }
+
+/** The container exactly as React rendered it, before core touched anything. */
+const PLAIN =
+  '<div data-testid="container"><h2 data-veilo-slot="title">Title</h2>' +
+  '<p data-veilo-slot="line">A line of text</p></div>';
 
 describe("Reveal", () => {
   it("shows the skeleton while not ready", () => {
@@ -95,6 +109,33 @@ describe("Reveal", () => {
     update({ ready: true, onComplete });
     await run();
     expect(onComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops every frame and timer when unmounted mid-reveal", async () => {
+    const onComplete = vi.fn();
+    const { getByTestId, update, runPart, time, unmount } = setup({ ready: false, onComplete });
+    const container = getByTestId("container");
+    update({ ready: true, onComplete });
+    await runPart(300);
+    // Mid-reveal: frames are scheduled and the text overlays are on the page.
+    expect(time.pending()).toBeGreaterThan(0);
+    unmount();
+    expect(time.pending()).toBe(0);
+    expect(container.outerHTML).toBe(PLAIN);
+    // Nothing fires later, so no callback reaches an unmounted component.
+    time.advance(6000);
+    expect(onComplete).not.toHaveBeenCalled();
+  });
+
+  it("restores the page when Strict Mode unmounts mid-reveal", async () => {
+    const strict = (node: ReactNode) => <StrictMode>{node}</StrictMode>;
+    const { getByTestId, update, runPart, time, unmount } = setup({ ready: false }, strict);
+    const container = getByTestId("container");
+    update({ ready: true });
+    await runPart(300);
+    unmount();
+    expect(time.pending()).toBe(0);
+    expect(container.outerHTML).toBe(PLAIN);
   });
 
   it("renders the chosen element with the given attributes", () => {
