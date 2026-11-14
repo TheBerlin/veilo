@@ -13,6 +13,9 @@ export default defineConfig({
   // are made only in the Playwright Docker image, the same Linux that CI runs.
   snapshotPathTemplate: "{testDir}/__screenshots__/{testFilePath}/{projectName}/{arg}{ext}",
   fullyParallel: true,
+  // One worker under CI (also set inside the Docker runner). Chromium draws on the CPU there,
+  // and parallel workers slowed each shot from about 0.5 s to 5 to 12 s and saturated the CPU.
+  workers: process.env.CI ? 1 : undefined,
   // A stray test.only must not pass CI with the other tests skipped.
   forbidOnly: !!process.env.CI,
   retries: 0,

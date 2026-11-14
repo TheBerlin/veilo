@@ -61,6 +61,9 @@ const result = spawnSync(
     "--ipc=host",
     "-e",
     "CI=1",
+    // Each container is new to Turbo, which would print its telemetry notice on every run.
+    "-e",
+    "TURBO_TELEMETRY_DISABLED=1",
     "-v",
     `${repo}:/src:ro`,
     "-v",
