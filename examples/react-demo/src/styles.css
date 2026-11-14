@@ -1,0 +1,61 @@
+/* Page: plain CSS, as a user's app would have; the Veilo design system is internal. */
+body {
+  margin: 0;
+  padding: 24px 16px;
+  font:
+    16px/1.5 system-ui,
+    sans-serif;
+  background: #f1f1f1;
+  color: #141414;
+}
+main {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* Card: the component Veilo animates. Sizes come from here, never from Veilo. */
+.card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 24px;
+  background: #fafafa;
+}
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+}
+.card h2 {
+  margin: 8px 0 0;
+  font-size: 18px;
+}
+.card p {
+  margin: 0;
+}
+.price {
+  font-weight: 700;
+}
+.card button {
+  height: 42px;
+  border: 0;
+  border-radius: 8px;
+  background: #141414;
+  color: #f1f1f1;
+  font: inherit;
+}
+
+/* Seller line: a single placeholder wrapped with Skeleton asChild. */
+.seller {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #c9cdcd;
+}

@@ -1,0 +1,24 @@
+{
+  "name": "example-react-demo",
+  "private": true,
+  "description": "Minimal React 19 app that reveals a product card with @veilo/react when its data arrives.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -p .",
+    "e2e": "node check.mjs"
+  },
+  "dependencies": {
+    "@veilo/react": "workspace:*",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "playwright": "1.64.1",
+    "vite": "^8.3.5"
+  }
+}
