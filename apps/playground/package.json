@@ -7,9 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "test": "vitest run",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p . && tsc -p tsconfig.e2e.json",
+    "e2e": "playwright test",
+    "visual": "node scripts/visual-docker.mjs",
+    "visual:update": "node scripts/visual-docker.mjs --update-snapshots"
   },
   "dependencies": {
+    "@fontsource/geist": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@veilo/core": "workspace:*",
     "@veilo/css": "workspace:*",
     "@veilo/presets": "workspace:*",
@@ -19,8 +24,10 @@
     "zustand": "^5.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",
+    "@types/node": "^26.6.6",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^6.2.1",

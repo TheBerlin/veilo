@@ -15,6 +15,8 @@
     "typecheck": { "dependsOn": ["^build"], "outputs": [] },
     // Not cached: these read other packages, which Turbo would not count as their input.
     "lint": { "cache": false },
-    "check:layers": { "cache": false }
+    "check:layers": { "cache": false },
+    // Playwright tests of a built app. Not cached: screenshots also depend on the browser.
+    "e2e": { "dependsOn": ["build"], "cache": false }
   }
 }

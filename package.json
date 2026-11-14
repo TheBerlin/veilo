@@ -15,6 +15,7 @@
     "dev": "turbo run dev",
     "typecheck": "turbo run typecheck",
     "check:layers": "turbo run check:layers",
+    "e2e": "turbo run e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "changeset": "changeset",

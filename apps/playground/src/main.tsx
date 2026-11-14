@@ -1,5 +1,11 @@
-// main.tsx: entry of the playground app. Loads the design tokens and mounts the app.
+// main.tsx: entry of the playground app. Loads the fonts and design tokens and mounts the app.
 
+// Self-hosted fonts (no third-party request; the same files in every visual test): the weights
+// the tokens use. IBM Plex Mono is also the glyph ramps' font.
+import "@fontsource/geist/400.css";
+import "@fontsource/geist/500.css";
+import "@fontsource/geist/700.css";
+import "@fontsource/ibm-plex-mono/400.css";
 import "@veilo/ui/tokens.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
