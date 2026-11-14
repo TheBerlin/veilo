@@ -17,6 +17,8 @@
     "lint": { "cache": false },
     "check:layers": { "cache": false },
     // Playwright tests of a built app. Not cached: screenshots also depend on the browser.
-    "e2e": { "dependsOn": ["build"], "cache": false }
+    // PLAYWRIGHT_BROWSERS_PATH tells the Playwright image where its browsers are; Turbo's strict
+    // env mode would strip it.
+    "e2e": { "dependsOn": ["build"], "cache": false, "passThroughEnv": ["PLAYWRIGHT_*"] }
   }
 }

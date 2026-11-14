@@ -47,9 +47,9 @@ const script = [
   `npm install --global --silent ${PNPM}`,
   "pnpm config set store-dir /pnpm-store",
   "pnpm install --frozen-lockfile --reporter=silent",
-  "pnpm exec turbo run build --filter=playground --output-logs=errors-only",
-  `cd ${work}`,
-  'pnpm exec playwright test "$@"',
+  // The same Turbo task as CI (`pnpm e2e`), so Turbo's env filtering applies here too; it builds
+  // the playground first. Arguments after -- go to `playwright test`.
+  'pnpm exec turbo run e2e --filter=playground --output-logs=new-only -- "$@"',
 ].join("\n");
 
 const result = spawnSync(
