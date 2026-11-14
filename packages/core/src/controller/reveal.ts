@@ -77,7 +77,10 @@ export interface Reveal {
   readonly state: RevealState;
   /** The current progress, from 0 to 1. */
   readonly progress: number;
-  /** Resolves once the image is sampled. Never rejects; a broken image is simply not sampled. */
+  /**
+   * Resolves once the image is sampled: at first, and again after its picture changes (a new
+   * `src`, or a late load). Never rejects; a broken image is simply not sampled.
+   */
   readonly ready: Promise<void>;
   /**
    * Plays the reveal from `p = 0`.
@@ -377,42 +380,71 @@ export function createReveal(
     startReveal: startWhenReady,
   });
 
-  const ready = (async () => {
-    try {
-      if (image && gridStyle) {
-        // Loads the grid code while the image decodes, so the split adds no waiting.
-        const [loaded] = await Promise.all([
-          import("../render/grid-renderer.ts"),
-          "decode" in image ? image.decode() : undefined,
-        ]);
-        renderer = loaded;
-        if (destroyed) return;
-        prepareGrid();
-        life.add(
-          watchResize(image, () => {
-            prepareGrid();
-            if (mounted) {
-              placeCanvas();
-              draw(progress);
-            }
-          }),
-        );
-        const font = grid?.ramp?.font;
-        if (font) {
-          void loadFont(font).then((loaded) => {
-            if (!loaded || destroyed) return;
-            prepareGrid();
-            if (mounted) draw(progress);
-          });
-        }
-      }
-    } catch {
-      // An image that cannot be decoded, or grid code that cannot load, leaves the image as it is.
-      grid = undefined;
-    } finally {
-      isReady = true;
+  /** Samples again and redraws the frame on screen, if any. */
+  const refresh = () => {
+    prepareGrid();
+    if (mounted) {
+      placeCanvas();
+      draw(progress);
     }
-  })();
+  };
+
+  /**
+   * Waits for the image's picture, then samples it. Never rejects: an image that cannot be
+   * decoded (no source yet, or a broken one) is simply not sampled, and the image shows as it is.
+   */
+  const decodeAndSample = async () => {
+    try {
+      if (image && "decode" in image) await image.decode();
+    } catch {
+      grid = undefined;
+      return;
+    }
+    if (!destroyed) refresh();
+  };
+
+  // Bumped by every sampling, so only the latest one marks the reveal ready.
+  let sampling = 0;
+  /** Samples the image (again), and makes `ready` and the next start wait for it. */
+  const sample = (work: () => Promise<void>) => {
+    const mine = ++sampling;
+    isReady = false;
+    ready = work().finally(() => {
+      if (mine === sampling) isReady = true;
+    });
+  };
+
+  let ready: Promise<void> = Promise.resolve();
+  sample(async () => {
+    if (!image || !gridStyle) return;
+    try {
+      // Loads the grid code while the image decodes, so the split adds no waiting.
+      const [loaded] = await Promise.all([import("../render/grid-renderer.ts"), decodeAndSample()]);
+      renderer = loaded;
+    } catch {
+      // Grid code that cannot load leaves the image as it is.
+      return;
+    }
+    if (destroyed) return;
+    // The decode above may have finished before the renderer arrived; sample now that both are.
+    if (!grid) await decodeAndSample();
+    life.add(watchResize(image, refresh));
+    // A new picture (a source set after creation, as when data arrives later, or a late load)
+    // is sampled again; a play that starts meanwhile waits for it with the skeleton showing.
+    const onLoad = () => {
+      if (!destroyed) sample(decodeAndSample);
+    };
+    image.addEventListener("load", onLoad);
+    life.add(() => image.removeEventListener("load", onLoad));
+    const font = grid?.ramp?.font;
+    if (font) {
+      void loadFont(font).then((loaded) => {
+        if (!loaded || destroyed) return;
+        prepareGrid();
+        if (mounted) draw(progress);
+      });
+    }
+  });
 
   const watched = image ?? texts[0] ?? button;
   if (watched) {
@@ -439,7 +471,9 @@ export function createReveal(
     get progress() {
       return progress;
     },
-    ready,
+    get ready() {
+      return ready;
+    },
 
     play() {
       if (destroyed) return Promise.resolve(false);

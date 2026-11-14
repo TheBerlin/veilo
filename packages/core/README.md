@@ -80,7 +80,7 @@ const reveal = createReveal(
 | `progress`               | The current progress, from 0 to 1.                                                                                |
 | `ready`                  | Resolves once the image is sampled. Never rejects; a broken image is shown as it is.                              |
 
-The image is sampled once and cached; frames only draw. It is sampled again when it resizes by 2 px or more, or when the glyph font finishes loading. Playback pauses while the elements are off screen or the tab is hidden.
+The image is sampled once and cached; frames only draw. It is sampled again when it resizes by 2 px or more, when the glyph font finishes loading, and when its picture changes (a `src` set after `createReveal`, as when data arrives later, or a late load); a `play()` started meanwhile keeps the skeleton until the new picture is sampled, and `ready` resolves again. Playback pauses while the elements are off screen or the tab is hidden.
 
 ## `createSkeleton(container | elements, settings, options?)`
 

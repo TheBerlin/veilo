@@ -314,6 +314,82 @@ describe("grid image effect", () => {
     expect(await done).toBe(true);
     expect(img.nextElementSibling).toBeNull();
   });
+
+  /**
+   * Swaps the card's canvas for an `<img>` with the given source (or none) and makes a reveal.
+   *
+   * @param src - The first source, or `undefined` for an image with no source yet.
+   * @returns The image, the picture to load later (half black), the reveal and the clock.
+   */
+  function imgCard(src: string | undefined) {
+    const { photo, label } = card();
+    const picture = photo.toDataURL();
+    const img = document.createElement("img");
+    if (src !== undefined) img.src = src;
+    img.style.cssText = "display: block; width: 100px; height: 100px;";
+    photo.replaceWith(img);
+    const time = fakeScheduler(10);
+    const reveal = createReveal({ image: img, text: [label] }, BASE, {
+      scheduler: time.scheduler,
+      reducedMotion: false,
+    });
+    /** Sets a new source and waits until the reveal has sampled it. */
+    const load = async (next: string) => {
+      const loaded = new Promise((done) => img.addEventListener("load", done, { once: true }));
+      img.src = next;
+      await loaded;
+      await reveal.ready;
+    };
+    return { img, picture, reveal, time, load };
+  }
+
+  /** A plain white picture: sampled, it gives a grid with no dots. */
+  function whitePicture() {
+    const blank = document.createElement("canvas");
+    blank.width = 100;
+    blank.height = 100;
+    const context = blank.getContext("2d")!;
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, 100, 100);
+    return blank.toDataURL();
+  }
+
+  it("samples the image again when its source changes after creation", async () => {
+    const { img, picture, reveal, load } = imgCard(whitePicture());
+    await reveal.ready;
+    reveal.seek(0.5);
+    // Sampled from the white placeholder: no dots.
+    expect(inked(img.nextElementSibling as HTMLCanvasElement)).toBe(0);
+    await load(picture);
+    // The frame on screen is redrawn from the new picture.
+    expect(inked(img.nextElementSibling as HTMLCanvasElement)).toBeGreaterThan(0);
+  });
+
+  it("samples an image that had no source when the reveal was made", async () => {
+    const { img, picture, reveal, load } = imgCard(undefined);
+    await reveal.ready;
+    await load(picture);
+    reveal.seek(0.5);
+    expect(inked(img.nextElementSibling as HTMLCanvasElement)).toBeGreaterThan(0);
+  });
+
+  it("makes a play started while sampling wait for the new picture", async () => {
+    const { img, picture, reveal, time } = imgCard(whitePicture());
+    await reveal.ready;
+    reveal.showLoading();
+    img.src = picture;
+    // Started before the new picture is sampled: the skeleton stays until it is.
+    const done = reveal.play();
+    expect(reveal.state).toBe("loading");
+    await new Promise((resolve) => img.addEventListener("load", resolve, { once: true }));
+    await reveal.ready;
+    await flush();
+    time.advance(400);
+    expect(reveal.state).toBe("revealing");
+    expect(inked(img.nextElementSibling as HTMLCanvasElement)).toBeGreaterThan(0);
+    time.advance(2000);
+    expect(await done).toBe(true);
+  });
 });
 
 describe("other image effects", () => {
