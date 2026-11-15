@@ -5,6 +5,7 @@ import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { RESET_MESSAGE, ResetButton } from "../../src/header/reset-button.tsx";
+import { createContentStore } from "../../src/state/content-store.ts";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
 /**
@@ -59,5 +60,41 @@ describe("ResetButton", () => {
     // Back to the state just before the second reset, not the first.
     expect(store.getState().settings).toEqual({ ...defaultSettings(), cols: 50 });
     expect(message().textContent).toBe("");
+  });
+
+  describe("with a content store", () => {
+    /**
+     * Renders the button on changed settings and a 16:9 image ratio.
+     *
+     * @returns Both stores.
+     */
+    function renderWithContent() {
+      const store = createSettingsStore({ cols: 40 });
+      const content = createContentStore({ ratio: "16:9" });
+      render(<ResetButton store={store} content={content} />);
+      return { store, content };
+    }
+
+    it("sets the image ratio back to square", async () => {
+      const { content } = renderWithContent();
+      await userEvent.click(screen.getByRole("button", { name: "Reset to defaults" }));
+      expect(content.getState().content.ratio).toBe("1:1");
+    });
+
+    it("undoes the ratio with the settings", async () => {
+      const { store, content } = renderWithContent();
+      await userEvent.click(screen.getByRole("button", { name: "Reset to defaults" }));
+      await userEvent.click(screen.getByRole("button", { name: "Undo" }));
+      expect(content.getState().content.ratio).toBe("16:9");
+      expect(store.getState().settings.cols).toBe(40);
+    });
+
+    it("stops offering Undo after a content change", async () => {
+      const { content } = renderWithContent();
+      await userEvent.click(screen.getByRole("button", { name: "Reset to defaults" }));
+      act(() => content.getState().setRatio("4:3"));
+      expect(screen.queryByRole("button", { name: "Undo" })).toBeNull();
+      expect(content.getState().content.ratio).toBe("4:3");
+    });
   });
 });

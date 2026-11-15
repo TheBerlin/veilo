@@ -62,6 +62,7 @@ export function App() {
             <PresetChips store={store} />
             <ResetButton
               store={store}
+              content={content}
               buttonClassName={styles.resetButton}
               messageClassName={styles.rowNotice}
             />
