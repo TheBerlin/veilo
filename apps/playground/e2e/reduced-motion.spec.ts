@@ -1,6 +1,7 @@
 // reduced-motion.spec.ts: what changes when the viewer prefers reduced motion (spec 3.7).
 // Loaders from @veilo/css stop, core's reveal jumps to the end without being told, the
 // playground's preview keeps animating on purpose, and the playground's own chrome stands still.
+// Its Reduced motion switch shows the reduced experience on demand.
 // Each check that expects stillness has a control without the preference, so it cannot pass
 // just because nothing ran.
 
@@ -144,6 +145,12 @@ test.describe("with reduced motion", () => {
 
   test("the playground's preview still animates", async ({ page }) => {
     await page.goto("/");
+    // The skeleton too (before 0.6.0 its CSS still followed the preference and stood still).
+    // Read once the card has started it, not while the page is still mounting.
+    await page.locator('[data-veilo-slot="heading"][data-veilo-skeleton]').waitFor();
+    expect(await animationNames(page, '[data-veilo-slot="heading"]')).toEqual([
+      expect.stringMatching(/^veilo-skeleton-/),
+    ]);
     // The state label passes through the reveal, as without the preference.
     await expect(page.getByRole("status").filter({ hasText: /Revealing [1-9]\d?%/ })).toBeVisible();
   });
@@ -174,5 +181,27 @@ test.describe("without reduced motion (controls)", () => {
   test("the playground's chrome moves", async ({ page }) => {
     await page.goto("/");
     expect(await baseDuration(page)).toBeGreaterThan(0);
+  });
+
+  test("the playground's reduced-motion preview shows the reduced experience", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("switch", { name: "Reduced motion" }).click();
+    await expect(page.getByRole("status")).toHaveText("Loading");
+    await page.locator('[data-veilo-slot="heading"][data-veilo-skeleton]').waitFor();
+    expect(await animationNames(page, '[data-veilo-slot="heading"]')).toEqual(["none"]);
+    // Record every label until the end; none may show a frame in between.
+    await page.evaluate(() => {
+      const status = document.querySelector('[role="status"]')!;
+      const seen: string[] = [];
+      (window as unknown as { seen: string[] }).seen = seen;
+      new MutationObserver(() => seen.push(status.textContent ?? "")).observe(status, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+    });
+    await expect(page.getByRole("status")).toHaveText("Revealed", { timeout: 10_000 });
+    const seen = await page.evaluate(() => (window as unknown as { seen: string[] }).seen);
+    expect(seen.filter((label) => /Revealing [1-9]/.test(label))).toEqual([]);
   });
 });

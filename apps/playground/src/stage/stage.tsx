@@ -76,6 +76,9 @@ export function Stage(props: StageProps) {
   const [error, setError] = useState<string | null>(null);
   const [reveal, setReveal] = useState<Reveal | null>(null);
   const [loop, setLoop] = useState(false);
+  // The reduced-motion preview: off when the page opens and never saved, so the preview shows
+  // the full effect by default (the spec's rule), whatever the viewer's own setting.
+  const [reducedMotion, setReducedMotion] = useState(false);
   const duration = useSetting(store, "rDur");
   // Only the latest request may win when loads overlap.
   const request = useRef(0);
@@ -132,6 +135,11 @@ export function Stage(props: StageProps) {
   };
   const onFile = (file: File) => show(loadImageFile(file), null);
   const onReset = () => show(Promise.resolve(null), null);
+  // The option is read when a reveal is created, so a new card plays the full sequence with it.
+  const onReducedMotion = (next: boolean) => {
+    setReducedMotion(next);
+    setPhoto((current) => ({ ...current, key: current.key + 1, start: "sequence" }));
+  };
 
   return (
     <div className={styles.column}>
@@ -139,7 +147,8 @@ export function Stage(props: StageProps) {
         <TestCard
           key={photo.key}
           settings={store.getState().settings}
-          revealOptions={props.revealOptions}
+          // Always set: the preview never follows the viewer's own preference (core's default).
+          revealOptions={{ ...props.revealOptions, reducedMotion }}
           image={photo.image}
           onImageDrop={onFile}
           start={photo.start}
@@ -148,7 +157,14 @@ export function Stage(props: StageProps) {
           onReveal={setReveal}
         />
       </section>
-      <TransportBar reveal={reveal} duration={duration} loop={loop} onLoopChange={setLoop}>
+      <TransportBar
+        reveal={reveal}
+        duration={duration}
+        loop={loop}
+        onLoopChange={setLoop}
+        reducedMotion={reducedMotion}
+        onReducedMotionChange={onReducedMotion}
+      >
         <ImagePicker
           selectedSample={photo.sample}
           error={error}

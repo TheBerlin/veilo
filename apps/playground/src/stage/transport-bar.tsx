@@ -1,5 +1,6 @@
 // transport-bar.tsx: the playback controls under the stage (spec 1.4): Play sequence, Loading
-// state, Replay reveal, Loop, the scrubber, the time readout and the state label.
+// state, Replay reveal, Loop, the reduced-motion preview, the scrubber, the time readout and the
+// state label.
 
 import type { Reveal, RevealState } from "@veilo/core";
 import { Button, Scrubber, Toggle } from "@veilo/ui";
@@ -16,6 +17,10 @@ export interface TransportBarProps {
   loop: boolean;
   /** Called with the new loop flag. */
   onLoopChange: (loop: boolean) => void;
+  /** Whether the preview shows what viewers with reduced motion see. */
+  reducedMotion: boolean;
+  /** Called with the new reduced-motion flag; the stage then rebuilds the card. */
+  onReducedMotionChange: (reducedMotion: boolean) => void;
   /** Extra tools shown at the end of the bar, such as the image picker. */
   children?: ReactNode;
 }
@@ -48,7 +53,7 @@ export function timeReadout(progress: number, duration: number): string {
 /**
  * The transport bar. Side effects: listens to the reveal's events and drives it.
  *
- * @param props - The reveal, duration, loop flag and extra tools.
+ * @param props - The reveal, duration, loop and reduced-motion flags, and extra tools.
  * @returns The toolbar.
  */
 export function TransportBar(props: TransportBarProps) {
@@ -97,6 +102,12 @@ export function TransportBar(props: TransportBarProps) {
           Replay reveal
         </Button>
         <Toggle label="Loop" checked={loop} onCheckedChange={onLoop} disabled={!reveal} />
+        {/* Not disabled without a reveal: it rebuilds the card, which makes a new one. */}
+        <Toggle
+          label="Reduced motion"
+          checked={props.reducedMotion}
+          onCheckedChange={props.onReducedMotionChange}
+        />
       </div>
       <Scrubber
         className={styles.scrubber}

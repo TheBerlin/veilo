@@ -114,4 +114,44 @@ describe("TransportBar", () => {
     await userEvent.click(screen.getByRole("button", { name: "Play sequence" }));
     expect(status()).toBe("Loading");
   });
+
+  it("previews reduced motion: a still skeleton, then the content at once", async () => {
+    const { card, status, clock } = renderStage();
+    const motion = screen.getByRole("switch", { name: "Reduced motion" });
+    expect(motion.getAttribute("aria-checked")).toBe("false");
+    await userEvent.click(motion);
+    // A new card plays the full sequence, starting from Loading.
+    await waitFor(() => expect(status()).toBe("Loading"));
+    const heading = () => card().querySelector<HTMLElement>('[data-veilo-slot="heading"]')!;
+    expect(getComputedStyle(heading()).animationName).toBe("none");
+    // Collect every label on the way, so a frame in between would be seen.
+    const labels = new Set<string>();
+    const observer = new MutationObserver(() => labels.add(status() ?? ""));
+    observer.observe(screen.getByRole("status"), {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+    await runUntil(clock, () => status() === "Revealed");
+    observer.disconnect();
+    expect([...labels].filter((label) => /Revealing [1-9]/.test(label))).toEqual([]);
+  });
+
+  it("animates again when the preview is turned off", async () => {
+    const { card, status } = renderStage();
+    const motion = screen.getByRole("switch", { name: "Reduced motion" });
+    await userEvent.click(motion);
+    await userEvent.click(motion);
+    expect(motion.getAttribute("aria-checked")).toBe("false");
+    await waitFor(() => expect(status()).toBe("Loading"));
+    const heading = card().querySelector<HTMLElement>('[data-veilo-slot="heading"]')!;
+    expect(getComputedStyle(heading).animationName).toMatch(/^veilo-skeleton-/);
+    // The preview never follows the viewer's own setting: no rule that could stop it.
+    // (Only the skeleton's own stylesheet: the design tokens rightly have such a rule.)
+    const skeletonCss = [...document.querySelectorAll("style")]
+      .map((style) => style.textContent ?? "")
+      .filter((text) => text.includes("data-veilo-skeleton"));
+    expect(skeletonCss).toHaveLength(1);
+    expect(skeletonCss[0]).not.toContain("prefers-reduced-motion");
+  });
 });
