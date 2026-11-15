@@ -40,6 +40,9 @@ async function mount(attributes: Record<string, string> = {}, html = SLOTS) {
   return { element, time, run };
 }
 
+/** Elements core adds to the document head (the skeleton stylesheet). */
+const headStyles = () => document.head.querySelectorAll("style").length;
+
 /** A small square photo as a data URL, so the grid effects have something to sample. */
 function photo(): string {
   const canvas = document.createElement("canvas");
@@ -136,5 +139,54 @@ describe("<veilo-reveal>", () => {
     const a = element.querySelector("img")!.getBoundingClientRect();
     const b = canvas!.getBoundingClientRect();
     expect([b.left, b.top, b.width, b.height]).toEqual([a.left, a.top, a.width, a.height]);
+  });
+
+  it("stops every frame and timer when removed mid-reveal, and fires nothing later", async () => {
+    const html = `<img data-veilo-slot="photo" src="${photo()}" width="120" height="120" alt="">${SLOTS}`;
+    const { element, time, run } = await mount({ loading: "", preset: "dot-upscale" }, html);
+    const complete = vi.fn();
+    element.addEventListener(COMPLETE_EVENT, complete);
+    element.loading = false;
+    await element.updateComplete;
+    await run(300);
+    // Mid-reveal: frames are scheduled, and the canvas and text overlays are in the page.
+    expect(time.pending()).toBeGreaterThan(0);
+    expect(element.querySelector("canvas")).not.toBeNull();
+    element.remove();
+    expect(time.pending()).toBe(0);
+    expect(element.innerHTML).toBe(html);
+    time.advance(6000);
+    expect(complete).not.toHaveBeenCalled();
+  });
+
+  it("keeps one skeleton when moved in the page while loading", async () => {
+    const before = headStyles();
+    const { element, time } = await mount({ loading: "" });
+    const elsewhere = document.createElement("section");
+    document.body.append(elsewhere);
+    // A move is a disconnect and a connect in one step.
+    elsewhere.append(element);
+    await element.updateComplete;
+    expect(element.reveal?.state).toBe("loading");
+    expect(element.getAttribute("aria-busy")).toBe("true");
+    expect(headStyles()).toBe(before + 1);
+    element.remove();
+    expect(headStyles()).toBe(before);
+    expect(time.pending()).toBe(0);
+  });
+
+  it("leaves nothing behind after many connects and disconnects", async () => {
+    const before = headStyles();
+    const { element } = await mount({ loading: "" });
+    for (let i = 0; i < 10; i++) {
+      element.remove();
+      document.body.append(element);
+      await element.updateComplete;
+    }
+    element.remove();
+    expect(headStyles()).toBe(before);
+    expect(element.innerHTML).toBe(SLOTS);
+    expect(element.attributes).toHaveLength(1);
+    expect(element.getAttribute("loading")).toBe("");
   });
 });

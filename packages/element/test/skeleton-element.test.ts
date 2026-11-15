@@ -71,6 +71,21 @@ describe("<veilo-skeleton>", () => {
     expect(title.getAttribute("aria-hidden")).toBe("true");
   });
 
+  it("keeps one loader when moved in the page while loading", async () => {
+    const before = headStyles();
+    const element = await mount(`<veilo-skeleton loading>${SLOTS}</veilo-skeleton>`);
+    const elsewhere = document.createElement("section");
+    document.body.append(elsewhere);
+    // A move is a disconnect and a connect in one step.
+    elsewhere.append(element);
+    await element.updateComplete;
+    expect(headStyles()).toBe(before + 1);
+    expect(element.querySelector("h2")!.getAttribute("aria-hidden")).toBe("true");
+    element.remove();
+    expect(headStyles()).toBe(before);
+    expect(element.innerHTML).toBe(SLOTS);
+  });
+
   it("follows effect, preset and settings changes, with effect winning", async () => {
     const element = await mount(
       `<veilo-skeleton loading preset="soft-pulse" settings='{"lDur":2}'>${SLOTS}</veilo-skeleton>`,
