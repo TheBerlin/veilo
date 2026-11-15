@@ -321,9 +321,9 @@ Provide the text. Add the `$` prompt only for shell commands. The Copy button co
 - Long lines scroll horizontally inside the block; never wrap a command. Inside a grid the block keeps `min-width: 0`, so it never widens its cell.
 - The success label uses `success` together with the word "Copied", never color alone.
 
-### TextArea and ColorField
+### TextArea, TextField and ColorField
 
-TextArea is a multi-line input in `code` type with a `border-strong` outline and `radius-base`, for pasting JSON. ColorField is a `size-control-sm` color swatch plus a `#rrggbb` text box; an invalid value shows a message and is restored on blur.
+TextArea is a multi-line input in `code` type with a `border-strong` outline and `radius-base`, for pasting JSON. TextField is one line of `body` type in the same outline, `size-control-sm` tall, for names such as a saved preset's; an `error` marks it invalid with a `danger` border and the message in words under it, in place of its hint. ColorField is a `size-control-sm` color swatch plus a `#rrggbb` text box; an invalid value shows a message and is restored on blur.
 
 ### CurveEditor
 

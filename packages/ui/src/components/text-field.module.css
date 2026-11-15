@@ -1,0 +1,37 @@
+/* Text field: one line of body text in the control outline, the same height as small controls. */
+.box {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--veilo-size-control-sm);
+  padding: 0 var(--veilo-space-1);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-bg);
+  color: var(--veilo-text);
+  font: var(--veilo-type-body);
+  letter-spacing: var(--veilo-type-body-tracking);
+  transition: border-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.box::placeholder {
+  color: var(--veilo-text-muted);
+}
+
+/* States: hover, keyboard focus, invalid (also said in words under the box), disabled. */
+.box:hover:not(:disabled, [aria-invalid="true"]) {
+  border-color: var(--veilo-accent);
+}
+
+.box:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+.box[aria-invalid="true"] {
+  border-color: var(--veilo-danger);
+}
+
+.box:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

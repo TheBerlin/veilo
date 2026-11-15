@@ -20,6 +20,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  TextField,
   Toggle,
   Tooltip,
   TooltipProvider,
@@ -64,6 +65,7 @@ function Preview() {
   const [progress, setProgress] = useState(0.4);
   const [origin, setOrigin] = useState("left");
   const [color, setColor] = useState("#dcdcdc");
+  const [name, setName] = useState("My shimmer");
 
   useEffect(() => {
     document.documentElement.dataset.theme = light ? "light" : "dark";
@@ -137,7 +139,7 @@ function Preview() {
             </Tabs>
           </Section>
 
-          <Section title="Slider, Select and Color field">
+          <Section title="Slider, Select, Color field and Text field">
             <div className={styles.fields}>
               <Slider
                 label="Speed"
@@ -161,6 +163,14 @@ function Preview() {
                 ]}
               />
               <ColorField label="Base color" value={color} onValueChange={setColor} />
+              <TextField
+                label="Preset name"
+                value={name}
+                onValueChange={setName}
+                maxLength={40}
+                hint="Up to 40 characters."
+                error={name.trim() === "" ? "Give the preset a name." : undefined}
+              />
               <CurveEditor label="Easing curve" value={curve} onValueChange={setCurve} />
             </div>
           </Section>

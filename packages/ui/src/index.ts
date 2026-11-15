@@ -40,5 +40,7 @@ export { Slider } from "./components/slider.tsx";
 export type { SliderProps } from "./components/slider.tsx";
 export { TextArea } from "./components/text-area.tsx";
 export type { TextAreaProps } from "./components/text-area.tsx";
+export { TextField } from "./components/text-field.tsx";
+export type { TextFieldProps } from "./components/text-field.tsx";
 export { CodeBlock, COPIED_MS } from "./components/code-block.tsx";
 export type { CodeBlockProps } from "./components/code-block.tsx";

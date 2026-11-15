@@ -1,6 +1,9 @@
 /* Field: a label above its control, shared by Slider, Select and Color field. */
 .field {
   display: grid;
+  /* Rows packed at the top: a field stretched by a taller neighbour in its row (for example
+     one with a hint) keeps its control right under the label, level with the neighbour's. */
+  align-content: start;
   gap: var(--veilo-space-1);
   min-width: 0;
 }
