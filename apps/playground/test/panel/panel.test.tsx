@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import { fakeScheduler } from "../../../../packages/core/test/support/scheduler.ts";
 import { TooltipProvider } from "@veilo/ui";
 import { Panel } from "../../src/panel/panel.tsx";
+import { createUserPresetsStore } from "../../src/presets/user-presets-store.ts";
 import { Stage, startAfterChange } from "../../src/stage/stage.tsx";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
@@ -26,7 +27,7 @@ function renderApp() {
     <>
       <Stage store={store} revealOptions={{ scheduler: clock.scheduler }} />
       <TooltipProvider>
-        <Panel store={store} />
+        <Panel store={store} presets={createUserPresetsStore(null)} />
       </TooltipProvider>
     </>,
   );

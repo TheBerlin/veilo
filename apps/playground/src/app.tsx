@@ -10,6 +10,7 @@ import { ResetButton } from "./header/reset-button.tsx";
 import { Panel } from "./panel/panel.tsx";
 import { browserStorage } from "./presets/browser-storage.ts";
 import { readLastSession, watchLastSession } from "./presets/last-session.ts";
+import { createUserPresetsStore } from "./presets/user-presets-store.ts";
 import { ShareNotice } from "./share/share-notice.tsx";
 import { parseFrameQuery } from "./stage/frame-query.ts";
 import { Stage } from "./stage/stage.tsx";
@@ -38,6 +39,8 @@ export function App() {
     ),
   );
   useEffect(() => (storage ? watchLastSession(store, storage) : undefined), [store, storage]);
+  // Saved presets: kept in the same storage, or in memory only when there is none.
+  const [presets] = useState(() => createUserPresetsStore(storage));
   return (
     <TooltipProvider delayDuration={200}>
       <main className={styles.app}>
@@ -65,7 +68,7 @@ export function App() {
           <div className={styles.stageColumn}>
             <Stage store={store} frame={frame?.p} />
           </div>
-          <Panel store={store} />
+          <Panel store={store} presets={presets} />
         </div>
       </main>
     </TooltipProvider>
