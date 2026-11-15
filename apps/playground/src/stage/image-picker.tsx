@@ -1,8 +1,9 @@
 // image-picker.tsx: the controls under the test card that choose its photo: sample thumbnails,
-// the viewer's own file, and Reset.
+// the viewer's own file, Reset, and the image area's ratio.
 
-import { Button } from "@veilo/ui";
+import { Button, Select } from "@veilo/ui";
 import { useRef, type ChangeEvent } from "react";
+import { ASPECT_RATIOS, toRatioId, type AspectRatioId } from "./aspect-ratio.ts";
 import { SAMPLE_IMAGES } from "./image-source.ts";
 import styles from "./image-picker.module.css";
 
@@ -18,7 +19,14 @@ export interface ImagePickerProps {
   onFile: (file: File) => void;
   /** Called by Reset. */
   onReset: () => void;
+  /** The image area's ratio. */
+  ratio: AspectRatioId;
+  /** Called with a newly chosen ratio. */
+  onRatioChange: (ratio: AspectRatioId) => void;
 }
+
+/** The ratio select's options. */
+const RATIO_OPTIONS = ASPECT_RATIOS.map((ratio) => ({ value: ratio.id, label: ratio.label }));
 
 /**
  * The image controls. Side effects: opens the system file picker on "Use my own image".
@@ -70,6 +78,16 @@ export function ImagePicker(props: ImagePickerProps) {
       <p className={styles.error} role="alert">
         {props.error}
       </p>
+      <Select
+        className={styles.ratio}
+        label="Image ratio"
+        value={props.ratio}
+        options={RATIO_OPTIONS}
+        onValueChange={(value) => {
+          const ratio = toRatioId(value);
+          if (ratio) props.onRatioChange(ratio);
+        }}
+      />
     </div>
   );
 }

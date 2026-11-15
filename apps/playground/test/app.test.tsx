@@ -122,4 +122,34 @@ describe("App startup", () => {
       presetSettings("soft-pulse"),
     );
   });
+
+  it("restores the image ratio from the last session, and saves a new one", async () => {
+    localStorage.setItem(
+      LAST_SESSION_KEY,
+      JSON.stringify({
+        version: LAST_SESSION_VERSION,
+        settings: presetSettings("soft-pulse"),
+        content: { ratio: "3:4" },
+      }),
+    );
+    render(<App />);
+    const select = screen.getByRole<HTMLSelectElement>("combobox", { name: "Image ratio" });
+    expect(select.value).toBe("3:4");
+    await userEvent.selectOptions(select, "16:9");
+    await waitFor(() => {
+      const saved = JSON.parse(localStorage.getItem(LAST_SESSION_KEY) ?? "null");
+      expect(saved?.content).toEqual({ ratio: "16:9" });
+    });
+  });
+
+  it("restores the image ratio from a share link", async () => {
+    const fragment = await encodeShareLink({
+      settings: presetSettings("cascade-wave"),
+      content: { ratio: "2:3" },
+    });
+    window.history.replaceState(null, "", window.location.pathname + fragment);
+    render(<App />);
+    const select = screen.getByRole<HTMLSelectElement>("combobox", { name: "Image ratio" });
+    await waitFor(() => expect(select.value).toBe("2:3"));
+  });
 });

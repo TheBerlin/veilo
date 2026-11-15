@@ -15,6 +15,7 @@ import { ShareNotice } from "./share/share-notice.tsx";
 import { parseFrameQuery } from "./stage/frame-query.ts";
 import { Stage } from "./stage/stage.tsx";
 import { ThemeSwitch } from "./theme/theme-switch.tsx";
+import { createContentStore } from "./state/content-store.ts";
 import { createSettingsStore } from "./state/settings-store.ts";
 
 /**
@@ -33,12 +34,17 @@ export function App() {
   // One store for the app's lifetime; useState's initializer runs once. Starting order: a frame
   // request, else the last session, else the defaults. A share link loads after mount
   // (ShareNotice) and so wins over the last session.
+  const [session] = useState(() => readLastSession(storage));
   const [store] = useState(() =>
-    createSettingsStore(
-      frame ? presetSettings(frame.preset) : (readLastSession(storage) ?? undefined),
-    ),
+    createSettingsStore(frame ? presetSettings(frame.preset) : session?.settings),
   );
-  useEffect(() => (storage ? watchLastSession(store, storage) : undefined), [store, storage]);
+  // The preview content (image ratio) starts from the session too; a frame request keeps the
+  // defaults, which the visual baselines are made with.
+  const [content] = useState(() => createContentStore(session?.content));
+  useEffect(
+    () => (storage ? watchLastSession(store, storage, { content }) : undefined),
+    [store, content, storage],
+  );
   // Saved presets: kept in the same storage, or in memory only when there is none.
   const [presets] = useState(() => createUserPresetsStore(storage));
   return (
@@ -61,14 +67,14 @@ export function App() {
             />
           </div>
           {/* A frame request is for the visual tests and wins over a shared link. */}
-          {frame ? null : <ShareNotice store={store} className={styles.notice} />}
+          {frame ? null : <ShareNotice store={store} content={content} className={styles.notice} />}
         </header>
         <div className={styles.workspace}>
           {/* Sticky on wide screens, so the preview stays in view while the panel scrolls. */}
           <div className={styles.stageColumn}>
-            <Stage store={store} frame={frame?.p} />
+            <Stage store={store} content={content} frame={frame?.p} />
           </div>
-          <Panel store={store} presets={presets} />
+          <Panel store={store} content={content} presets={presets} />
         </div>
       </main>
     </TooltipProvider>

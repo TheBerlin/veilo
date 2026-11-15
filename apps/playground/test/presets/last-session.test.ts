@@ -10,6 +10,7 @@ import {
   saveLastSession,
   watchLastSession,
 } from "../../src/presets/last-session.ts";
+import { createContentStore } from "../../src/state/content-store.ts";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
 /**
@@ -48,7 +49,15 @@ describe("readLastSession and saveLastSession", () => {
     const settings = { ...defaultSettings(), effect: "wave" as const, baseColor: "#123456" };
     expect(saveLastSession(storage, settings)).toBe(true);
     expect(saved(entries)).toEqual({ version: 1, settings });
-    expect(readLastSession(storage)).toEqual(settings);
+    expect(readLastSession(storage)).toEqual({ settings });
+  });
+
+  it("round-trip the preview content next to the settings", () => {
+    const { storage, entries } = fakeStorage();
+    const settings = defaultSettings();
+    expect(saveLastSession(storage, settings, { ratio: "16:9" })).toBe(true);
+    expect(saved(entries)).toEqual({ version: 1, settings, content: { ratio: "16:9" } });
+    expect(readLastSession(storage)).toEqual({ settings, content: { ratio: "16:9" } });
   });
 
   it("read nothing from no storage, an empty key or an unusable value", () => {
@@ -86,9 +95,32 @@ describe("readLastSession and saveLastSession", () => {
   it("leave checking to the store, which clamps a tampered value", () => {
     const { storage, entries } = fakeStorage();
     entries.set(LAST_SESSION_KEY, '{"version":1,"settings":{"lDur":999,"effect":"nope"}}');
-    const store = createSettingsStore(readLastSession(storage));
+    const store = createSettingsStore(readLastSession(storage)?.settings);
     expect(store.getState().settings.lDur).toBeLessThan(999);
     expect(store.getState().settings.effect).toBe(defaultSettings().effect);
+  });
+});
+
+describe("watchLastSession with content", () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it("saves after a content change too, with both parts", () => {
+    const { storage, entries } = fakeStorage();
+    const store = createSettingsStore();
+    const content = createContentStore();
+    const stop = watchLastSession(store, storage, { content, events: new EventTarget() });
+    content.getState().setRatio("3:4");
+    vi.advanceTimersByTime(LAST_SESSION_DELAY);
+    expect(saved(entries)).toEqual({
+      version: 1,
+      settings: store.getState().settings,
+      content: { ratio: "3:4" },
+    });
+    stop();
+    content.getState().setRatio("1:1");
+    vi.advanceTimersByTime(LAST_SESSION_DELAY);
+    expect((saved(entries) as { content: { ratio: string } }).content.ratio).toBe("3:4");
   });
 });
 

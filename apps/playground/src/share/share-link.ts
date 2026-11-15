@@ -12,12 +12,13 @@ export const SHARE_PREFIX = "v1.";
 export const SHARE_LIMITS = { data: 8_000, json: 64_000 } as const;
 
 /**
- * What a link carries. Only `settings` for now; the playground's content (text, layout, image
- * ratio) is added in the Custom content task as a new optional field, so old links stay valid.
+ * What a link carries. `content` is optional, so links made before it existed stay valid.
  */
 export interface SharePayload {
   /** The settings object, unchecked: the settings store's `load` checks and clamps it. */
   settings: unknown;
+  /** The preview content (image ratio), unchecked: the content store's `load` checks it. */
+  content?: unknown;
 }
 
 /** Why a link could not be read. */
@@ -140,11 +141,11 @@ export async function decodeShareLink(hash: string): Promise<ShareDecodeResult> 
     // Corrupt deflate data, text that is not UTF-8, or JSON that does not parse.
     return { ok: false, error: "invalid" };
   }
-  const settings = (payload as { settings?: unknown } | null)?.settings;
+  const { settings, content } = (payload ?? {}) as { settings?: unknown; content?: unknown };
   if (typeof settings !== "object" || settings === null || Array.isArray(settings)) {
     return { ok: false, error: "invalid" };
   }
-  return { ok: true, payload: { settings } };
+  return { ok: true, payload: content === undefined ? { settings } : { settings, content } };
 }
 
 /**

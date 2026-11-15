@@ -4,8 +4,10 @@
 import type { Reveal, RevealOptions, Settings } from "@veilo/core";
 import { useEffect, useRef, useState } from "react";
 import { LOADER_KEYS } from "../panel/controls.ts";
+import { createContentStore, useContent, type ContentStore } from "../state/content-store.ts";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import { watchTheme } from "../theme/theme.ts";
+import { ratioValue } from "./aspect-ratio.ts";
 import { ImagePicker } from "./image-picker.tsx";
 import {
   loadImageFile,
@@ -27,6 +29,8 @@ export interface StageProps {
   revealOptions?: RevealOptions;
   /** When set, the first card holds this progress, paused (a fixed-frame request). */
   frame?: number;
+  /** The preview content, such as the image ratio. Defaults to a fresh store. */
+  content?: ContentStore;
 }
 
 /** The card's photo (the placeholder when `image` is null) and how its reveal starts. */
@@ -59,9 +63,10 @@ export function startAfterChange(keys: Iterable<string>): RevealStart {
 /**
  * The stage: the test card centered on a calm surface, and the transport bar with the image
  * picker. Side effects: decodes chosen images, and rebuilds the reveal when settings change (at
- * most once per animation frame, so a slider drag does not rebuild on every pointer move).
+ * most once per animation frame, so a slider drag does not rebuild on every pointer move) or the
+ * image ratio changes.
  *
- * @param props - The store, reveal options and optional fixed frame.
+ * @param props - The store, reveal options, optional fixed frame and content store.
  * @returns The stage section and the transport bar.
  */
 export function Stage(props: StageProps) {
@@ -75,6 +80,8 @@ export function Stage(props: StageProps) {
   });
   const [error, setError] = useState<string | null>(null);
   const [reveal, setReveal] = useState<Reveal | null>(null);
+  const [content] = useState(() => props.content ?? createContentStore());
+  const ratioId = useContent(content, "ratio");
   const [loop, setLoop] = useState(false);
   // The reduced-motion preview: off when the page opens and never saved, so the preview shows
   // the full effect by default (the spec's rule), whatever the viewer's own setting.
@@ -126,6 +133,16 @@ export function Stage(props: StageProps) {
     );
   };
 
+  // A new ratio needs a new card (it is read at mount), which plays the full sequence.
+  useEffect(
+    () =>
+      content.subscribe((next, previous) => {
+        if (next.content.ratio === previous.content.ratio) return;
+        setPhoto((current) => ({ ...current, key: current.key + 1, start: "sequence" }));
+      }),
+    [content],
+  );
+
   // A theme change recolors the grid canvas in place (spec 1.4); CSS handles the rest.
   useEffect(() => (reveal ? watchTheme(() => reveal.redraw()) : undefined), [reveal]);
 
@@ -150,6 +167,7 @@ export function Stage(props: StageProps) {
           // Always set: the preview never follows the viewer's own preference (core's default).
           revealOptions={{ ...props.revealOptions, reducedMotion }}
           image={photo.image}
+          ratio={ratioValue(ratioId, photo.image)}
           onImageDrop={onFile}
           start={photo.start}
           frame={props.frame}
@@ -171,6 +189,8 @@ export function Stage(props: StageProps) {
           onSample={onSample}
           onFile={onFile}
           onReset={onReset}
+          ratio={ratioId}
+          onRatioChange={(ratio) => content.getState().setRatio(ratio)}
         />
       </TransportBar>
     </div>

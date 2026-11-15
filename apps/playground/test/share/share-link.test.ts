@@ -34,6 +34,18 @@ describe("encodeShareLink and decodeShareLink", () => {
     expect(await decodeShareLink(fragment.slice(1))).toEqual({ ok: true, payload: { settings } });
   });
 
+  it("carry the preview content when given, and read links without it", async () => {
+    const settings = defaultSettings();
+    const withContent = await encodeShareLink({ settings, content: { ratio: "16:9" } });
+    expect(await decodeShareLink(withContent)).toEqual({
+      ok: true,
+      payload: { settings, content: { ratio: "16:9" } },
+    });
+    // A link from before content existed has no content field at all.
+    const old = await encodeShareLink({ settings });
+    expect(await decodeShareLink(old)).toEqual({ ok: true, payload: { settings } });
+  });
+
   it("write a short fragment of URL-safe characters only", async () => {
     const fragment = await encodeShareLink({ settings: defaultSettings() });
     expect(fragment).toMatch(/^#v1\.[A-Za-z0-9_-]+$/);

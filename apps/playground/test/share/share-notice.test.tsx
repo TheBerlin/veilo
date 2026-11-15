@@ -1,10 +1,11 @@
 // Tests for src/share/share-notice.tsx: loading a link when the page opens, in Chromium.
 
 import { defaultSettings } from "@veilo/core";
-import { render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { encodeShareLink } from "../../src/share/share-link.ts";
 import { LINK_ERRORS, LINK_LOADED, ShareNotice } from "../../src/share/share-notice.tsx";
+import { createContentStore } from "../../src/state/content-store.ts";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
 /**
@@ -24,9 +25,11 @@ function setHash(hash: string) {
  */
 function renderNotice() {
   const store = createSettingsStore();
-  const view = render(<ShareNotice store={store} />);
+  // Starts on a non-default ratio, so loading a link's (or the default) content shows.
+  const content = createContentStore({ ratio: "3:2" });
+  const view = render(<ShareNotice store={store} content={content} />);
   const message = () => view.container.querySelector("p")!.textContent;
-  return { store, message };
+  return { store, content, message };
 }
 
 describe("ShareNotice", () => {
@@ -44,12 +47,24 @@ describe("ShareNotice", () => {
     expect(screen.getByText(LINK_LOADED).getAttribute("aria-live")).toBe("polite");
   });
 
+  it("loads a link's image ratio, and the default from a link made without one", async () => {
+    setHash(await encodeShareLink({ settings: defaultSettings(), content: { ratio: "16:9" } }));
+    const first = renderNotice();
+    await waitFor(() => expect(first.content.getState().content.ratio).toBe("16:9"));
+    cleanup();
+    setHash(await encodeShareLink({ settings: defaultSettings() }));
+    const second = renderNotice();
+    await waitFor(() => expect(second.message()).toBe(LINK_LOADED));
+    expect(second.content.getState().content.ratio).toBe("1:1");
+  });
+
   it("keeps the settings and explains when the link cannot be read", async () => {
     setHash("#v1.broken");
-    const { store, message } = renderNotice();
+    const { store, content, message } = renderNotice();
     await waitFor(() => expect(message()).toBe(LINK_ERRORS.invalid));
     expect(store.getState().settings).toEqual(defaultSettings());
     expect(store.getState().loads).toBe(0);
+    expect(content.getState().content.ratio).toBe("3:2");
     expect(window.location.hash).toBe("");
   });
 

@@ -4,6 +4,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@veilo/ui";
 import { PresetsTab } from "../presets/presets-tab.tsx";
 import type { UserPresetsStore } from "../presets/user-presets-store.ts";
+import type { ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { ColorFields, InkColorField } from "./color-fields.tsx";
 import { ControlGroups } from "./control-groups.tsx";
@@ -17,6 +18,8 @@ export interface PanelProps {
   store: SettingsStore;
   /** The user's saved presets, for the Presets tab. */
   presets: UserPresetsStore;
+  /** The preview content, for the Export tab's share link. */
+  content?: ContentStore;
 }
 
 /**
@@ -49,7 +52,7 @@ export function Panel(props: PanelProps) {
           <PresetsTab store={props.store} presets={props.presets} />
         </TabsContent>
         <TabsContent value="export" className={styles.content}>
-          <ExportTab store={props.store} />
+          <ExportTab store={props.store} content={props.content} />
         </TabsContent>
       </Tabs>
     </aside>

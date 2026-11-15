@@ -55,3 +55,8 @@
 .error:not(:empty) {
   margin-top: var(--veilo-space-1);
 }
+
+/* Ratio select: its own line under the image buttons. */
+.ratio {
+  margin-top: var(--veilo-space-1);
+}

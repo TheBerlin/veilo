@@ -6,6 +6,7 @@ import { Button, CodeBlock, TextArea } from "@veilo/ui";
 import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { encodeShareLink, shareUrl } from "../share/share-link.ts";
+import { createContentStore, type Content, type ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { themeColor } from "./color-fields.tsx";
 import styles from "./panel.module.css";
@@ -47,24 +48,25 @@ export function appliedMessage(count: number): string {
 }
 
 /**
- * The share link for the current settings. Encoding is async, so the link follows the settings
- * one step later; until the first one is ready it is empty.
+ * The share link for the current settings and preview content. Encoding is async, so the link
+ * follows changes one step later; until the first one is ready it is empty.
  *
  * @param settings - The current settings.
+ * @param content - The current preview content.
  * @returns The full URL, or `""` while it is being made.
  */
-function useShareUrl(settings: Settings): string {
+function useShareUrl(settings: Settings, content: Content): string {
   const [url, setUrl] = useState("");
   useEffect(() => {
-    // A newer change may finish first; only the latest settings' link is shown.
+    // A newer change may finish first; only the latest state's link is shown.
     let current = true;
-    void encodeShareLink({ settings }).then((fragment) => {
+    void encodeShareLink({ settings, content }).then((fragment) => {
       if (current) setUrl(shareUrl(window.location, fragment));
     });
     return () => {
       current = false;
     };
-  }, [settings]);
+  }, [settings, content]);
   return url;
 }
 
@@ -72,20 +74,24 @@ function useShareUrl(settings: Settings): string {
 export interface ExportTabProps {
   /** The settings store. */
   store: SettingsStore;
+  /** The preview content, for the share link. Defaults to a fresh store. */
+  content?: ContentStore;
 }
 
 /**
  * The Export tab. Side effects: Apply settings replaces the settings in the store.
  *
- * @param props - The settings store.
+ * @param props - The settings store and the content store.
  * @returns The tab's sections.
  */
 export function ExportTab(props: ExportTabProps) {
   const { store } = props;
   const settings = useStore(store, (state) => state.settings);
+  const [contentStore] = useState(() => props.content ?? createContentStore());
+  const content = useStore(contentStore, (state) => state.content);
   const [text, setText] = useState("");
   const [message, setMessage] = useState("");
-  const url = useShareUrl(settings);
+  const url = useShareUrl(settings, content);
 
   const apply = () => {
     let input: unknown;

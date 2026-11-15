@@ -2,6 +2,7 @@
 // from the address bar, and says what happened.
 
 import { useEffect, useState } from "react";
+import type { ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { decodeShareLink, type ShareError } from "./share-link.ts";
 
@@ -19,22 +20,25 @@ export const LINK_ERRORS: Record<ShareError, string> = {
 export interface ShareNoticeProps {
   /** The settings store the link's settings are loaded into. */
   store: SettingsStore;
+  /** The content store the link's preview content (image ratio) is loaded into. */
+  content?: ContentStore;
   /** Class for the message line. */
   className?: string;
 }
 
 /**
  * Reads `window.location.hash` once at mount. A link's settings are loaded into the store, which
- * replays the full sequence; an unreadable link leaves the store as it is. Either way the
+ * replays the full sequence, and its content into the content store; an unreadable link leaves
+ * both as they are. Either way the
  * fragment is removed with `history.replaceState`, so a reload shows the current state, not the
  * link again. Renders a polite live region with the result (empty when there was no fragment).
  * Side effects: changes the store and the address bar.
  *
- * @param props - The store and a class name.
+ * @param props - The stores and a class name.
  * @returns The message line.
  */
 export function ShareNotice(props: ShareNoticeProps) {
-  const { store, className } = props;
+  const { store, content, className } = props;
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -46,6 +50,9 @@ export function ShareNotice(props: ShareNoticeProps) {
     void decodeShareLink(hash).then((result) => {
       if (cancelled) return;
       if (result.ok) {
+        // Content first: its change and the settings load then rebuild the card together.
+        // A link from before content existed restores the defaults, which its sender saw.
+        content?.getState().load(result.payload.content);
         store.getState().load(result.payload.settings);
         setMessage(LINK_LOADED);
       } else {
