@@ -9,7 +9,7 @@ import {
   type SkeletonOptions,
 } from "@veilo/core";
 import type { PresetId } from "@veilo/presets";
-import { ReactiveElement, type PropertyDeclarations } from "lit";
+import { ReactiveElement, type PropertyDeclarations } from "@lit/reactive-element";
 import { configKey, jsonAttribute, resolveConfig, type RevealConfig } from "./config.ts";
 
 /**
