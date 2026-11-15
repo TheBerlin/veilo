@@ -11,6 +11,9 @@ beforeEach(() => {
 });
 
 // Testing Library only cleans up on its own when test globals are on, which they are not here.
+// Storage is cleared after the unmount, so no test starts on a session or presets saved by
+// another one (the App saves its settings as they change).
 afterEach(() => {
   cleanup();
+  localStorage.clear();
 });
