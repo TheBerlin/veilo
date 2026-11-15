@@ -108,7 +108,7 @@ function Card() {
 }
 ```
 
-It returns the `ref` for the container, the core `reveal` (`null` until mounted; see [its methods](../core/README.md#methods-and-properties)) and its `state` as React state. Progress is not React state, because it changes every frame; use `reveal.on("progress", ...)`. The hook starts nothing by itself.
+It returns the `ref` for the container, the core `reveal` (`null` until mounted; see [its methods](../core/README.md#createrevealcontainer--targets-settings-options)) and its `state` as React state. Progress is not React state, because it changes every frame; use `reveal.on("progress", ...)`. The hook starts nothing by itself.
 
 ## Server rendering
 
