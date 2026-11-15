@@ -1,0 +1,204 @@
+<!doctype html>
+<!-- Plain HTML demo for @veilo/element: a product card revealed when its data arrives, a reviews
+     list with a wave loader, and an avatar with a CSS-only loader from @veilo/css. No build
+     step: `pnpm install`, then `pnpm --filter example-element-demo dev` and open the URL it
+     prints (module scripts do not run from file://). Once the packages are on npm, the two
+     node_modules paths become https://cdn.jsdelivr.net/npm/@veilo/element and
+     https://cdn.jsdelivr.net/npm/@veilo/css/skeleton.css. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Veilo web components demo</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="node_modules/@veilo/css/skeleton.css" />
+    <script type="module" src="node_modules/@veilo/element/dist/cdn.js"></script>
+    <style>
+      /* Page: plain CSS, as a user's site would have; the Veilo design system is internal. */
+      body {
+        margin: 0;
+        padding: 24px 16px;
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+        background: #f1f1f3;
+        color: #1e1e22;
+      }
+      main {
+        display: grid;
+        gap: 16px;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      /* Card: the markup Veilo animates. Sizes come from here, never from Veilo. */
+      .card {
+        display: grid;
+        gap: 8px;
+        padding: 16px;
+        border-radius: 24px;
+        background: #fafafa;
+      }
+      .photo {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 8px;
+      }
+      .card h2 {
+        margin: 8px 0 0;
+        font-size: 18px;
+      }
+      .card p {
+        margin: 0;
+      }
+      .price {
+        font-weight: 700;
+      }
+      .card button {
+        height: 42px;
+        border: 0;
+        border-radius: 8px;
+        background: #1e1e22;
+        color: #f1f1f3;
+        font: inherit;
+      }
+
+      /* Seller line: the avatar uses the CSS-only loader while its picture loads. */
+      .seller {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #6e6d7a;
+      }
+
+      /* Reviews: a plain list; each line is a slot of the wave loader. */
+      .reviews {
+        display: grid;
+        gap: 4px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Veilo web components</h1>
+
+      <!-- The card shows the skeleton while `loading` is present; removing it plays the reveal. -->
+      <veilo-reveal class="card" preset="dot-upscale" loading>
+        <img class="photo" data-veilo-slot="photo" alt="" />
+        <h2 data-veilo-slot="title">Product name here</h2>
+        <p data-veilo-slot="description">A short description of the product, about two lines.</p>
+        <p class="price" data-veilo-slot="price">$00.00</p>
+        <button type="button" data-veilo-slot="buy">
+          <span data-veilo-slot="label">Add to cart</span>
+        </button>
+      </veilo-reveal>
+
+      <div class="seller">
+        <span class="avatar veilo veilo-pulse" aria-hidden="true"></span>
+        <span>Sold by Veilo Store</span>
+      </div>
+
+      <veilo-skeleton effect="wave" loading>
+        <ul class="reviews">
+          <li data-veilo-slot="review-1">A review of typical length goes here.</li>
+          <li data-veilo-slot="review-2">Another review, a little shorter.</li>
+          <li data-veilo-slot="review-3">One more short review.</li>
+        </ul>
+      </veilo-skeleton>
+
+      <p data-testid="status" role="status">Loading</p>
+      <button type="button" id="reload">Reload</button>
+    </main>
+
+    <script type="module">
+      // The demo's data: a fake fetch that answers after a delay, like a slow network.
+      const MOUSE =
+        "data:image/svg+xml," +
+        encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+            '<rect width="200" height="200" fill="#eef1f1"/>' +
+            '<ellipse cx="100" cy="172" rx="56" ry="10" fill="#c9cdcd"/>' +
+            '<rect x="62" y="30" width="76" height="136" rx="38" fill="#1e2124"/>' +
+            '<rect x="98" y="44" width="4" height="34" rx="2" fill="#6b7175"/>' +
+            "</svg>",
+        );
+      const EMPTY =
+        "data:image/svg+xml," +
+        encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"/>');
+      const PLACEHOLDER = {
+        name: "Product name here",
+        description: "A short description of the product, about two lines.",
+        price: "$00.00",
+        image: EMPTY,
+        reviews: [
+          "A review of typical length goes here.",
+          "Another review, a little shorter.",
+          "One more short review.",
+        ],
+      };
+      const PRODUCT = {
+        name: "MCHOSE L7 Pro",
+        description: "Lightweight 8K polling mouse with tri-mode wireless and a 60 g shell.",
+        price: "$59.99",
+        image: MOUSE,
+        reviews: ["Light and fast, great for long sessions.", "Battery lasts weeks.", "Love it."],
+      };
+
+      const card = document.querySelector("veilo-reveal");
+      const reviews = document.querySelector("veilo-skeleton");
+      const avatar = document.querySelector(".avatar");
+      const status = document.querySelector('[data-testid="status"]');
+
+      /** Writes a product into the page; the same markup for placeholder and real data. */
+      function show(product) {
+        card.querySelector("img").src = product.image;
+        card.querySelector("img").alt = product === PLACEHOLDER ? "" : product.name;
+        card.querySelector("h2").textContent = product.name;
+        card.querySelector('[data-veilo-slot="description"]').textContent = product.description;
+        card.querySelector(".price").textContent = product.price;
+        reviews.querySelectorAll("li").forEach((li, i) => (li.textContent = product.reviews[i]));
+      }
+
+      card.addEventListener("veilo-complete", () => (status.textContent = "Revealed"));
+
+      let request = 0;
+      /** Shows the loaders, then the data when the fake request answers. */
+      function load() {
+        const id = ++request;
+        show(PLACEHOLDER);
+        card.loading = true;
+        reviews.loading = true;
+        avatar.classList.add("veilo", "veilo-pulse");
+        status.textContent = "Loading";
+        setTimeout(() => {
+          if (id !== request) return;
+          show(PRODUCT);
+          card.loading = false;
+          reviews.loading = false;
+          avatar.classList.remove("veilo", "veilo-pulse");
+          status.textContent = "Revealing";
+        }, 1200);
+      }
+
+      document.querySelector("#reload").addEventListener("click", load);
+      // Wait for the elements, so the property setters are theirs.
+      await Promise.all(
+        ["veilo-reveal", "veilo-skeleton"].map((t) => customElements.whenDefined(t)),
+      );
+      load();
+    </script>
+  </body>
+</html>
