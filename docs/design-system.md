@@ -1,6 +1,6 @@
 # Veilo design system
 
-Veilo is the design system for the Veilo website and playground: a tech, black-dominant, monochrome interface where the animated dot grid is the only decoration. Build every page from the tokens and components here, and never add a new color, size or radius.
+Veilo is the design system for the Veilo website and playground: a tech, black-dominant, monochrome interface on calm near-black and near-white surfaces, with no decoration of its own: the only color and texture come from the images and effects it shows. Build every page from the tokens and components here, and never add a new color, size or radius.
 
 The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token table, `tokens.css` is generated from it (`pnpm --filter @veilo/ui generate:tokens`), and `src/components/` holds the React components (Radix UI and CSS Modules). Every token is a CSS custom property with the `--veilo-` prefix, for example `--veilo-bg` or `--veilo-space-2`. This document names tokens without the prefix for readability.
 
@@ -9,7 +9,7 @@ The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token
 - Monochrome. Color never carries meaning on its own; the only hues are the status colors, which always come with an icon or dot and a word. Hierarchy comes from fill, shape and size: only the primary action is a solid `accent` fill.
 - Flat and quiet. Separate surfaces with `card` fills and `border` hairlines. The only shadow is `shadow-soft`, for raised bars (tabs, segmented bars, pagination) and floating elements; no gradients or blur.
 - Content stays put. Placeholders and reveals never change layout; every media frame reserves its final size.
-- One system for site and package. The skeleton colors `--veilo-base` and `--veilo-hi` are the same names the packages read, so the site and the product share one palette.
+- One system for site and package. The skeleton colors `--veilo-base` and `--veilo-hi` are the same names the packages read, so the site's skeletons sit on its own surfaces. The packages keep neutral gray fallbacks of their own (`#DCDCDC` / `#F7F7F7`), because they must suit any site.
 
 ## Content fundamentals
 
@@ -22,7 +22,7 @@ The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token
 
 ## Visual foundations
 
-**Color.** Two themes, `dark` first. Balance: `bg` about 60%, `card` and `secondary` about 30%, `accent` about 10%. In dark mode the accent is `#F1F1F1`; in light mode `#030303`. Text is `text` or `text-muted` on `bg`, `card` or `secondary`; text on an `accent` fill is `on-accent`. Status uses `info`, `success`, `warning` and `danger` (each with a `-soft` fill), always with an icon or dot and a word, never color alone; the default status uses `secondary` and `text-muted`.
+**Color.** Two themes, `dark` first. Surfaces are calm and eye-friendly: near-black and near-white on one faint cool hue, never pure black or white. Text is softened to about 14:1 on `bg` to cut glare, and both text tones keep WCAG AAA (7:1) on `bg` and `card`. Balance: `bg` about 60%, `card` and `secondary` about 30%, `accent` about 10%. The accent is monochrome: the text color (`#E2E2E7` in dark mode, `#1E1E22` in light mode), with `bg` on it. Three accents are reserved for later and not in use: Signal mint, Warm amber and Soft cyan. Text is `text` or `text-muted` on `bg`, `card` or `secondary`; text on an `accent` fill is `on-accent`. Status uses `info`, `success`, `warning` and `danger` (each with a `-soft` fill), always with an icon or dot and a word, never color alone; the default status uses `secondary` and `text-muted`.
 
 **Theme switching.** Dark is the default. The light theme applies under `prefers-color-scheme: light` unless `<html data-theme="dark">`, and always under `<html data-theme="light">`. The theme switch offers System, Light and Dark, saves the choice in the browser and applies it before the first paint.
 
@@ -45,7 +45,7 @@ When the padding is uneven, use the smallest side. A surface placed inside anoth
 
 **Borders and elevation.** `border` hairlines (1 px) for decoration; `border-strong` for control outlines and slider tracks. There is one soft shadow, `shadow-soft` (x 0, y 4, blur 64, 10% black), for raised bars such as tabs, segmented bars and pagination, popovers and the hero demo; do not put it on every card. In dark mode it is barely visible, so keep the `border` hairline.
 
-**Imagery and background.** The only decoration is the dot grid in `grid-dot`: `size-grid-dot` (1.5 px) dots on a 16 px pitch, used in the hero, the final CTA, the playground stage and the 404 page only. The dotted ghost logo and its dissolving right edge echo it.
+**Imagery and background.** No background decoration: no dot grid, gradients or patterns. Pages and sections sit on plain `bg`; a closing section may sit on a `card`-colored band. Imagery is the product itself: live skeletons and reveals and the photos they draw. The dotted ghost logo is the one dotted mark.
 
 **Layout.** The website (Home, Gallery, 404) is designed on two frames and built on two column grids (`Grid` and `GridCell` in `@veilo/ui`). Desktop is designed at 1440 px (frame 1440 x 1024): a 12-column stretch grid with 120 px margins and 20 px gutters, so content is 1200 px and a column is about 81.7 px. Mobile is designed at 375 px (frame 375 x 812): a 4-column stretch grid with 20 px margins and 8 px gutters, so content is 335 px and a column is about 77.8 px. Between and beyond the frames the column counts stay fixed and the space flexes, so the page never scrolls sideways:
 
@@ -67,7 +67,7 @@ The **playground** is a tool and is fluid between the two frames: the stage stre
 
 ## Page structure
 
-The site has three pages: Home, Playground and Gallery, all with the Nav, plus a 404 page. On Home, in order: hero (headline, supporting text, primary and secondary CTA, install command, ghost illustration on the dot grid), demo panel of three effects, How it works (Design, Preview, Export with videos and the install command), Why it's useful (four media tiles), gallery preview with a button, final CTA, footer. The primary action everywhere is "Open Playground"; the secondary is "Browse gallery".
+The site has three pages: Home, Playground and Gallery, all with the Nav, plus a 404 page. On Home, in order: hero (headline, supporting text, primary and secondary CTA, install command, live demo card), demo panel of three effects, How it works (Design, Preview, Export with videos and the install command), Why it's useful (four media tiles), gallery preview with a button, final CTA, footer. The primary action everywhere is "Open Playground"; the secondary is "Browse gallery".
 
 ## Iconography
 
@@ -85,18 +85,18 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 
 | Token                   | Dark        | Light       | Usage                                                                                                                                                          |
 | ----------------------- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--veilo-bg`            | `#030303`   | `#F1F1F1`   | Page background, the 60% of the 60:30:10 balance. Ground for text, text-muted, accent and on-accent.                                                           |
-| `--veilo-card`          | `#0D0D0D`   | `#E7E7E7`   | Panels, the hero demo, video frames and gallery tiles (the 30%). Always sits on bg; add a border hairline in dark, where the step from bg is small.            |
-| `--veilo-secondary`     | `#171717`   | `#DCDCDC`   | Secondary buttons, chips at rest, code blocks, badges. Sits on bg or card. Text on it is text or text-muted.                                                   |
-| `--veilo-border`        | `#2A2A2A`   | `#C9C9C9`   | Decorative hairlines around cards, nav and dividers. Not for control outlines (too faint); use border-strong for those.                                        |
-| `--veilo-border-strong` | `#6B6B6B`   | `#767676`   | Outlines of controls (secondary button, chip, input) and the slider track. At least 3:1 on bg, card and secondary in both themes.                              |
-| `--veilo-text`          | `#EEEEEE`   | `#141414`   | Headings and body copy on bg, card and secondary. Never pure white or pure black.                                                                              |
-| `--veilo-text-muted`    | `#A0A0A0`   | `#595959`   | Captions, helper text and labels on bg, card and secondary (at least 4.9:1 in both themes; a test enforces it).                                                |
-| `--veilo-accent`        | `#F1F1F1`   | `#030303`   | The one accent, a monochrome inverse of bg (the 10%). Primary button fill, chosen chip fill, focus ring, logo dots. Keep solid fills to a few places per page. |
-| `--veilo-on-accent`     | `#030303`   | `#F1F1F1`   | Text and icons on an accent fill.                                                                                                                              |
-| `--veilo-base`          | `#171717`   | `#DCDCDC`   | Resting color of skeleton placeholders. The same custom property `@veilo/core` and `@veilo/css` read.                                                          |
-| `--veilo-hi`            | `#262626`   | `#F7F7F7`   | Highlight band of the skeleton shimmer. The same custom property the packages read. Raise it slightly if the sweep looks faint.                                |
-| `--veilo-grid-dot`      | `#3A3A3A`   | `#B8B8B8`   | Dots of the decorative dot grid. Decorative only; never carries text.                                                                                          |
+| `--veilo-bg`            | `#16161A`   | `#F1F1F3`   | Page background, the 60% of the 60:30:10 balance. Ground for text, text-muted, accent and on-accent.                                                           |
+| `--veilo-card`          | `#1D1D22`   | `#E8E8EB`   | Panels, the hero demo, video frames and gallery tiles (the 30%). Always sits on bg; add a border hairline in dark, where the step from bg is small.            |
+| `--veilo-secondary`     | `#26262C`   | `#DDDDE1`   | Secondary buttons, chips at rest, code blocks, badges. Sits on bg or card. Text on it is text or text-muted.                                                   |
+| `--veilo-border`        | `#303037`   | `#D0D0D6`   | Decorative hairlines around cards, nav and dividers. Not for control outlines (too faint); use border-strong for those.                                        |
+| `--veilo-border-strong` | `#72717E`   | `#6E6D7A`   | Outlines of controls (secondary button, chip, input) and the slider track. At least 3:1 on bg, card and secondary in both themes.                              |
+| `--veilo-text`          | `#E2E2E7`   | `#1E1E22`   | Headings and body copy on bg, card and secondary. Never pure white or pure black; about 14:1 on bg, AAA on every surface.                                      |
+| `--veilo-text-muted`    | `#A9A8B6`   | `#4A4A53`   | Captions, helper text and labels on bg, card and secondary (AAA, at least 7:1, on bg and card; at least 4.9:1 on secondary; a test enforces both).             |
+| `--veilo-accent`        | `#E2E2E7`   | `#1E1E22`   | The one accent, monochrome: the text color (the 10%). Primary button fill, chosen chip fill, focus ring, logo dots. Keep solid fills to a few places per page. |
+| `--veilo-on-accent`     | `#16161A`   | `#F1F1F3`   | Text and icons on an accent fill.                                                                                                                              |
+| `--veilo-base`          | `#26262C`   | `#DDDDE1`   | Resting color of skeleton placeholders, equal to secondary. The same custom property `@veilo/core` and `@veilo/css` read.                                      |
+| `--veilo-hi`            | `#33333A`   | `#F8F8F9`   | Highlight band of the skeleton shimmer. The same custom property the packages read. Raise it slightly if the sweep looks faint.                                |
+| `--veilo-grid-dot`      | `#3A3A42`   | `#B8B8BF`   | Grid dots inside the curve editor's unit square. Decorative only; never carries text.                                                                          |
 | `--veilo-danger`        | `#E5857F`   | `#B3261E`   | Error text and icon on bg, card and secondary (at least 4.8:1). Always paired with an icon and a word such as 'Error'; never color alone.                      |
 | `--veilo-success`       | `#7FC8A0`   | `#1F6B45`   | Success text and icon on bg, card and secondary. Always paired with an icon and a word such as 'Copied'; never color alone.                                    |
 | `--veilo-info`          | `#93A3F5`   | `#3B4BBF`   | Processing status text and icon on bg, card, secondary and info-soft. Always with an icon or dot and a word such as 'Processing'.                              |
@@ -153,7 +153,7 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | `size-panel`                   | `380px`                  | Maximum width of the playground's control panel.    |
 | `size-test-card`               | `320px`                  | Width of the playground's test card.                |
 | `size-test-card-button`        | `42px`                   | Height of the test card's button.                   |
-| `size-grid-dot`                | `1.5px`                  | Dots of the dot grid.                               |
+| `size-grid-dot`                | `1.5px`                  | Dots of the curve editor's 0.1 grid.                |
 
 ### Radius
 
@@ -391,7 +391,7 @@ Provide the properties that change and take the timing from tokens, for example 
 
 The Veilo logo is a small, rounded dotted ghost (dot grid, no text) whose right side dissolves into dots. It is a separate mark from the wordmark.
 
-Add the logo as a single-ink SVG on a transparent background, 512x512. Because SVGs shown through `<img>` cannot inherit color, add one file in `accent` ink for each theme (for example `ghost-dark-theme.svg` in #F1F1F1 and `ghost-light-theme.svg` in #030303). Until then the nav shows a plain `accent` square as a stand-in; never redraw the ghost in code.
+Add the logo as a single-ink SVG on a transparent background, 512x512. Because SVGs shown through `<img>` cannot inherit color, add one file in `accent` ink for each theme (for example `ghost-dark-theme.svg` in #E2E2E7 and `ghost-light-theme.svg` in #1E1E22). Until then the nav shows a plain `accent` square as a stand-in; never redraw the ghost in code.
 
 ## Code
 
