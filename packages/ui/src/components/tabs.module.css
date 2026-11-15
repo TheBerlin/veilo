@@ -1,6 +1,11 @@
 /* Tab bar: a raised card bar; 8 px of padding around 8 px tabs gives the medium radius. */
 .list {
   display: inline-flex;
+  /* Never wider than its container: tabs that still do not fit wrap onto a second row (a
+     scrolling bar would clip the focus ring), as the segmented chip group does. */
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  max-width: 100%;
   align-items: center;
   gap: var(--veilo-space-1);
   padding: var(--veilo-space-1);
@@ -34,6 +39,30 @@
   border-color: var(--veilo-border);
   background: var(--veilo-secondary);
   color: var(--veilo-text);
+}
+
+/* Stretched bar: the full width, shared evenly by the tabs (like a segmented control), with
+   tighter tabs, so four fit in the 380 px panel. */
+.stretch {
+  display: flex;
+}
+
+.stretch > .trigger {
+  flex: 1 1 auto;
+  padding: 0 var(--veilo-space-1);
+}
+
+/* Narrow screens (the grid breakpoint): smaller labels and gaps, so four still fit on one row
+   in the 375 px layout's panel. */
+@media (max-width: 900px) {
+  .stretch {
+    gap: var(--veilo-space-0-5);
+  }
+
+  .stretch > .trigger {
+    font: var(--veilo-type-label-sm);
+    letter-spacing: var(--veilo-type-label-sm-tracking);
+  }
 }
 
 /* Focus ring on tabs and on the panel, which is focusable for keyboard users. */

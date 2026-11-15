@@ -11,22 +11,31 @@ import styles from "./tabs.module.css";
 export const Tabs = TabsPrimitive.Root;
 
 /** Props of {@link TabsList}. */
-export type TabsListProps = ComponentPropsWithoutRef<typeof TabsPrimitive.List>;
+export type TabsListProps = ComponentPropsWithoutRef<typeof TabsPrimitive.List> & {
+  /**
+   * Spans the container's full width, with the tabs sharing it evenly like a segmented control,
+   * 8 px side padding, and smaller labels at 900 px and below. For a bar with more tabs than fit
+   * at the usual size, such as the playground panel's four.
+   */
+  stretch?: boolean;
+};
 
 /**
  * The tab bar. Give it an `aria-label`. Arrow keys move between tabs; Home and End jump.
  *
- * @param props - Radix `Tabs.List` props.
+ * @param props - Radix `Tabs.List` props, and `stretch` to span the container.
  * @returns The tablist element.
  */
 export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
-  { className, ...rest },
+  { className, stretch = false, ...rest },
   ref,
 ) {
   return (
     <TabsPrimitive.List
       ref={ref}
-      className={[styles.list, className].filter(Boolean).join(" ")}
+      className={[styles.list, stretch ? styles.stretch : undefined, className]
+        .filter(Boolean)
+        .join(" ")}
       {...rest}
     />
   );
