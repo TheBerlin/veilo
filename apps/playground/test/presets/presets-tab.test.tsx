@@ -1,10 +1,11 @@
 // Tests for src/presets/presets-tab.tsx, in Chromium with real storage.
 
 import { defaultSettings } from "@veilo/core";
-import { act, render, screen, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { browserStorage } from "../../src/presets/browser-storage.ts";
+import { PRESETS_FILE_ERRORS, PRESETS_FILE_NAME } from "../../src/presets/presets-file.ts";
 import { EMPTY_LIST, NOT_KEPT, PresetsTab } from "../../src/presets/presets-tab.tsx";
 import { NAME_ERRORS } from "../../src/presets/user-presets.ts";
 import { createUserPresetsStore, USER_PRESETS_KEY } from "../../src/presets/user-presets-store.ts";
@@ -46,6 +47,15 @@ function row(name: string): HTMLElement {
   return within(list)
     .getAllByRole("listitem")
     .find((item) => item.textContent?.startsWith(name))!;
+}
+
+/**
+ * The hidden file input that Import file opens.
+ *
+ * @returns The input.
+ */
+function fileInput(): HTMLInputElement {
+  return document.querySelector<HTMLInputElement>('input[type="file"]')!;
 }
 
 describe("PresetsTab", () => {
@@ -155,6 +165,69 @@ describe("PresetsTab", () => {
     await saveAs("A");
     await userEvent.click(screen.getByRole("button", { name: "Delete A" }));
     await saveAs("B");
+    expect(screen.queryByRole("button", { name: "Undo" })).toBeNull();
+  });
+
+  it("exports the presets as a file, and only when there are some", async () => {
+    renderTab();
+    const exportButton = screen.getByRole<HTMLButtonElement>("button", { name: "Export file" });
+    expect(exportButton.disabled).toBe(true);
+    await saveAs("One");
+    const blobs: Blob[] = [];
+    const create = vi.spyOn(URL, "createObjectURL").mockImplementation((blob) => {
+      blobs.push(blob as Blob);
+      return "blob:veilo-test";
+    });
+    // Keep the browser from starting a real download.
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    await userEvent.click(exportButton);
+    expect(click).toHaveBeenCalledTimes(1);
+    const file = JSON.parse(await blobs[0]!.text());
+    expect(file).toMatchObject({ format: "veilo-presets", version: 1, presets: [{ name: "One" }] });
+    expect(screen.getByText(`Exported 1 preset to ${PRESETS_FILE_NAME}.`)).toBeTruthy();
+    create.mockRestore();
+    click.mockRestore();
+  });
+
+  it("imports a file, renames clashes, and Undo removes what it added", async () => {
+    const { presets } = renderTab();
+    await saveAs("Soft");
+    const picker = vi.spyOn(fileInput(), "click").mockImplementation(() => {});
+    await userEvent.click(screen.getByRole("button", { name: "Import file" }));
+    expect(picker).toHaveBeenCalled();
+    const text = JSON.stringify({
+      format: "veilo-presets",
+      version: 1,
+      presets: [
+        { name: "soft", settings: { effect: "wave" } },
+        { name: "Grid", settings: { cols: 40 } },
+        { name: "" },
+      ],
+    });
+    await userEvent.upload(fileInput(), new File([text], "set.json", { type: "application/json" }));
+    await waitFor(() =>
+      expect(presets.getState().presets.map((p) => p.name)).toEqual(["Soft", "soft (2)", "Grid"]),
+    );
+    expect(screen.getByText("Added 2 presets. 1 entry could not be used.")).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", { name: "Undo" }));
+    expect(presets.getState().presets.map((p) => p.name)).toEqual(["Soft"]);
+  });
+
+  it("explains a file it cannot import, and keeps the list", async () => {
+    const { presets } = renderTab();
+    await saveAs("Soft");
+    await userEvent.upload(
+      fileInput(),
+      new File(["{ nope"], "bad.json", { type: "application/json" }),
+    );
+    await waitFor(() => expect(screen.getByText(PRESETS_FILE_ERRORS.json)).toBeTruthy());
+    const other = JSON.stringify({ effect: "wave" });
+    await userEvent.upload(
+      fileInput(),
+      new File([other], "settings.json", { type: "application/json" }),
+    );
+    await waitFor(() => expect(screen.getByText(PRESETS_FILE_ERRORS.format)).toBeTruthy());
+    expect(presets.getState().presets.map((p) => p.name)).toEqual(["Soft"]);
     expect(screen.queryByRole("button", { name: "Undo" })).toBeNull();
   });
 

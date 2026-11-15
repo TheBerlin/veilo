@@ -1,11 +1,22 @@
-// presets-tab.tsx: the Presets tab: save the current settings under a name, and apply, rename,
-// update or delete saved presets. Delete and Update offer Undo until the next action here.
+// presets-tab.tsx: the Presets tab: save the current settings under a name; apply, rename,
+// update or delete saved presets; export and import them as a file. Delete, Update and Import
+// offer Undo until the next action here.
 
 import { Button, TextField } from "@veilo/ui";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useStore } from "zustand";
 import styles from "../panel/panel.module.css";
 import type { SettingsStore } from "../state/settings-store.ts";
+import {
+  downloadText,
+  importMessage,
+  mergePresets,
+  PRESETS_FILE_ERRORS,
+  PRESETS_FILE_LIMITS,
+  PRESETS_FILE_NAME,
+  presetsFileText,
+  readPresetsFile,
+} from "./presets-file.ts";
 import tab from "./presets-tab.module.css";
 import { NAME_ERRORS, NAME_MAX, nameError, sameSettings, type UserPreset } from "./user-presets.ts";
 import type { UserPresetsStore } from "./user-presets-store.ts";
@@ -23,7 +34,12 @@ interface Notice {
   text: string;
   /** The list before the action, when it can be undone. */
   undo?: UserPreset[];
+  /** The section whose result line shows it. Defaults to the list. */
+  place?: NoticePlace;
 }
+
+/** Where a notice shows: under the My presets heading, or in the File section. */
+type NoticePlace = "list" | "file";
 
 /** Props of {@link PresetsTab}. */
 export interface PresetsTabProps {
@@ -54,6 +70,7 @@ export function PresetsTab(props: PresetsTabProps) {
     null,
   );
   const undoRef = useRef<HTMLButtonElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   // Where focus goes after the row it was in changes (a finished rename, a delete).
   const [focusTarget, setFocusTarget] = useState<string | null>(null);
 
@@ -98,7 +115,7 @@ export function PresetsTab(props: PresetsTabProps) {
   const undo = () => {
     if (!notice?.undo) return;
     actions.replaceAll(notice.undo);
-    setNotice({ text: "Undone." });
+    setNotice({ text: "Undone.", place: notice.place });
   };
 
   const finishRename = (event: FormEvent, preset: UserPreset) => {
@@ -118,6 +135,58 @@ export function PresetsTab(props: PresetsTabProps) {
   const cancelRename = (preset: UserPreset) => {
     setEditing(null);
     setFocusTarget(renameId(preset));
+  };
+
+  const exportFile = () => {
+    downloadText(presetsFileText(presets), PRESETS_FILE_NAME);
+    const count = `${presets.length} ${presets.length === 1 ? "preset" : "presets"}`;
+    setNotice({ text: `Exported ${count} to ${PRESETS_FILE_NAME}.`, place: "file" });
+  };
+
+  const importFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.target;
+    const file = input.files?.[0];
+    // Cleared, so choosing the same file again still fires a change.
+    input.value = "";
+    if (!file) return;
+    if (file.size > PRESETS_FILE_LIMITS.bytes) {
+      setNotice({ text: PRESETS_FILE_ERRORS.large, place: "file" });
+      return;
+    }
+    const result = readPresetsFile(await file.text());
+    if (!result.ok) {
+      setNotice({ text: PRESETS_FILE_ERRORS[result.error], place: "file" });
+      return;
+    }
+    // Read after the await: the list may have changed while the file was read.
+    const before = presetsStore.getState().presets;
+    actions.replaceAll(mergePresets(before, result.entries));
+    setNotice({
+      text: importMessage(result.entries.length, result.skipped),
+      undo: before,
+      place: "file",
+    });
+  };
+
+  /**
+   * The result line of one section. Both lines are always rendered (a live region that appears
+   * with its text is often not read out); the notice shows in the section it belongs to.
+   *
+   * @param place - The section.
+   * @returns The polite live region.
+   */
+  const noticeLine = (place: NoticePlace) => {
+    const shown = notice && (notice.place ?? "list") === place ? notice : null;
+    return (
+      <p className={tab.notice} aria-live="polite">
+        {shown?.text}
+        {shown?.undo ? (
+          <Button ref={undoRef} size="sm" variant="ghost" onClick={undo}>
+            Undo
+          </Button>
+        ) : null}
+      </p>
+    );
   };
 
   return (
@@ -142,15 +211,7 @@ export function PresetsTab(props: PresetsTabProps) {
       <section className={styles.group}>
         <h3 className={styles.legend}>My presets</h3>
         {persistent ? null : <p className={styles.message}>{NOT_KEPT}</p>}
-        {/* Polite live region: results are read out without moving focus. */}
-        <p className={tab.notice} aria-live="polite">
-          {notice?.text}
-          {notice?.undo ? (
-            <Button ref={undoRef} size="sm" variant="ghost" onClick={undo}>
-              Undo
-            </Button>
-          ) : null}
-        </p>
+        {noticeLine("list")}
         {presets.length === 0 ? (
           <p className={styles.message}>{EMPTY_LIST}</p>
         ) : (
@@ -237,6 +298,30 @@ export function PresetsTab(props: PresetsTabProps) {
             })}
           </ul>
         )}
+      </section>
+
+      <section className={styles.group}>
+        <h3 className={styles.legend}>File</h3>
+        <p className={styles.message}>
+          Move presets to another browser, or share a set, as {PRESETS_FILE_NAME}.
+        </p>
+        <div className={tab.actions}>
+          <Button size="sm" onClick={exportFile} disabled={presets.length === 0}>
+            Export file
+          </Button>
+          <Button size="sm" onClick={() => fileInput.current?.click()}>
+            Import file
+          </Button>
+          {/* The native picker, opened by Import file; hidden, as the button names it. */}
+          <input
+            ref={fileInput}
+            type="file"
+            accept=".json,application/json"
+            hidden
+            onChange={(event) => void importFile(event)}
+          />
+        </div>
+        {noticeLine("file")}
       </section>
     </>
   );
