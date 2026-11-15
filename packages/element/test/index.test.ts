@@ -7,7 +7,9 @@ describe("@veilo/element exports", () => {
   // An API change must update this list and the README.
   it("exports exactly the public API", () => {
     expect(Object.keys(api).sort()).toEqual([
+      "COMPLETE_EVENT",
       "ELEMENT_TAGS",
+      "VeiloRevealElement",
       "VeiloSkeletonElement",
       "defineVeiloElements",
     ]);
@@ -15,6 +17,6 @@ describe("@veilo/element exports", () => {
 
   it("registers nothing on import", () => {
     expect(typeof document).toBe("undefined");
-    expect(api.ELEMENT_TAGS).toEqual({ skeleton: "veilo-skeleton" });
+    expect(api.ELEMENT_TAGS).toEqual({ reveal: "veilo-reveal", skeleton: "veilo-skeleton" });
   });
 });

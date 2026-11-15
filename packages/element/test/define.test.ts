@@ -2,11 +2,13 @@
 
 import { describe, expect, it } from "vitest";
 import { defineVeiloElements, ELEMENT_TAGS } from "../src/define.ts";
+import { VeiloRevealElement } from "../src/reveal-element.ts";
 import { VeiloSkeletonElement } from "../src/skeleton-element.ts";
 
 describe("defineVeiloElements", () => {
   it("registers every tag, and a second call changes nothing", () => {
     defineVeiloElements();
+    expect(customElements.get(ELEMENT_TAGS.reveal)).toBe(VeiloRevealElement);
     expect(customElements.get(ELEMENT_TAGS.skeleton)).toBe(VeiloSkeletonElement);
     expect(() => defineVeiloElements()).not.toThrow();
   });
@@ -17,5 +19,6 @@ describe("defineVeiloElements", () => {
     registry.define(ELEMENT_TAGS.skeleton, Other);
     defineVeiloElements(registry);
     expect(registry.get(ELEMENT_TAGS.skeleton)).toBe(Other);
+    expect(registry.get(ELEMENT_TAGS.reveal)).toBe(VeiloRevealElement);
   });
 });

@@ -4,7 +4,11 @@ import shared from "../../vitest.shared.ts";
 
 // The elements drive core on real elements (canvas, layout, observers), so they run in headless
 // Chromium. Plain data helpers and the export list stay in Node.
-const BROWSER_TESTS = ["test/define.test.ts", "test/skeleton-element.test.ts"];
+const BROWSER_TESTS = [
+  "test/define.test.ts",
+  "test/reveal-element.test.ts",
+  "test/skeleton-element.test.ts",
+];
 
 export default defineProject({
   test: {

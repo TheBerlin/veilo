@@ -1,9 +1,11 @@
 // define.ts: registers the elements under their tag names.
 
+import { VeiloRevealElement } from "./reveal-element.ts";
 import { VeiloSkeletonElement } from "./skeleton-element.ts";
 
 /** The tag names the elements are registered under. */
 export const ELEMENT_TAGS = {
+  reveal: "veilo-reveal",
   skeleton: "veilo-skeleton",
 } as const;
 
@@ -16,7 +18,11 @@ export const ELEMENT_TAGS = {
  * @param registry - The registry to use. Defaults to the global `customElements`.
  */
 export function defineVeiloElements(registry: CustomElementRegistry = customElements): void {
-  if (!registry.get(ELEMENT_TAGS.skeleton)) {
-    registry.define(ELEMENT_TAGS.skeleton, VeiloSkeletonElement);
+  const elements = [
+    [ELEMENT_TAGS.reveal, VeiloRevealElement],
+    [ELEMENT_TAGS.skeleton, VeiloSkeletonElement],
+  ] as const;
+  for (const [tag, element] of elements) {
+    if (!registry.get(tag)) registry.define(tag, element);
   }
 }
