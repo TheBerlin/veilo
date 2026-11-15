@@ -42,6 +42,17 @@ describe("createSkeleton", () => {
     expect(container.hasAttribute("aria-busy")).toBe(false);
   });
 
+  it("passes the reduced-motion override on, for a container and for a list", () => {
+    const container = markup(CARD);
+    const title = container.querySelector("h3")!;
+    const still = createSkeleton(container, {}, { reducedMotion: true });
+    still.start();
+    expect(getComputedStyle(title).animationName).toBe("none");
+    still.stop();
+    createSkeleton([title], {}, { reducedMotion: true }).start();
+    expect(getComputedStyle(title).animationName).toBe("none");
+  });
+
   it("reads the settings out of a layout", () => {
     const container = markup(CARD);
     createSkeleton(container, { settings: { effect: "pulse", lDur: 3 }, slots: {} }).start();

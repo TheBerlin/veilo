@@ -100,6 +100,8 @@ export interface SkeletonCssOptions {
   base?: string;
   /** Highlight color when the settings have no override. */
   highlight?: string;
+  /** Overrides `prefers-reduced-motion`, as in `generateLoaderCss`. Defaults to following it. */
+  reducedMotion?: boolean;
 }
 
 /**
@@ -119,6 +121,7 @@ export function skeletonCss(settings: Settings, options: SkeletonCssOptions): st
       keyframes: options.keyframes,
       base: options.base ?? DEFAULT_BASE,
       highlight: options.highlight ?? DEFAULT_HIGHLIGHT,
+      reducedMotion: options.reducedMotion,
     }),
     // Hides the real text even when the element sets its color inline, which would beat the
     // generated rule's `color: transparent`.

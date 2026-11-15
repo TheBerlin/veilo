@@ -54,7 +54,11 @@ export interface RevealOptions {
   ink?: string;
   /** Time source. Defaults to the browser's; tests pass a fake one. */
   scheduler?: Scheduler;
-  /** Overrides the user's `prefers-reduced-motion`. The playground preview passes `false`. */
+  /**
+   * Overrides the user's `prefers-reduced-motion`, for both the skeleton and the reveal: `true`
+   * keeps the skeleton still and jumps the reveal to the end; `false` always animates both. The
+   * playground preview passes `false`, or `true` for its reduced-motion preview.
+   */
   reducedMotion?: boolean;
   /** The loading region, which gets `aria-busy` while the skeleton shows. */
   busy?: Element;
@@ -173,6 +177,8 @@ export function createReveal(
     busy: options.busy ?? resolved.container,
     root: options.root,
     bars: resolved.bars,
+    // The raw option: left out, the skeleton's CSS follows the preference live.
+    reducedMotion: options.reducedMotion,
   });
   life.add(() => skeleton.destroy());
 

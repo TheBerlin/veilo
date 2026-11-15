@@ -54,15 +54,15 @@ const reveal = createReveal(
 
 **Options**
 
-| Key             | Default                             | What it does                                                        |
-| --------------- | ----------------------------------- | ------------------------------------------------------------------- |
-| `busy`          | the container, if given             | Gets `aria-busy="true"` while the skeleton shows.                   |
-| `warnings`      | on in development builds            | Prints slot mismatches to the console.                              |
-| `ink`           | `--veilo-ink`, then text color      | Color of dots and characters when the settings have no `inkColor`.  |
-| `fontFamily`    | `"IBM Plex Mono", monospace`        | Font for hex and binary characters.                                 |
-| `reducedMotion` | the user's `prefers-reduced-motion` | Set `false` to preview effects regardless (as the playground does). |
-| `root`          | the document head                   | The shadow root to put the skeleton stylesheet in.                  |
-| `scheduler`     | the browser's clock and frames      | A custom time source, for tests that drive time by hand.            |
+| Key             | Default                             | What it does                                                                                                                             |
+| --------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `busy`          | the container, if given             | Gets `aria-busy="true"` while the skeleton shows.                                                                                        |
+| `warnings`      | on in development builds            | Prints slot mismatches to the console.                                                                                                   |
+| `ink`           | `--veilo-ink`, then text color      | Color of dots and characters when the settings have no `inkColor`.                                                                       |
+| `fontFamily`    | `"IBM Plex Mono", monospace`        | Font for hex and binary characters.                                                                                                      |
+| `reducedMotion` | the user's `prefers-reduced-motion` | For the skeleton and the reveal: `true` keeps the skeleton still and jumps to the end; `false` always animates (as the playground does). |
+| `root`          | the document head                   | The shadow root to put the skeleton stylesheet in.                                                                                       |
+| `scheduler`     | the browser's clock and frames      | A custom time source, for tests that drive time by hand.                                                                                 |
 
 **Methods and properties**
 
@@ -94,7 +94,7 @@ skeleton.start(); // also restarts the animation if it already shows
 skeleton.stop(); // restores the elements exactly
 ```
 
-Given a container, every slot in it is a placeholder, in page order; given a list, the elements are the placeholders in that order. Text turns transparent, images, canvases and videos hide their picture but keep their size, and each element gets `--i` (its index) for the wave delay. Options: `busy`, `root`, `warnings`, and fallback `base` and `highlight` colors.
+Given a container, every slot in it is a placeholder, in page order; given a list, the elements are the placeholders in that order. Text turns transparent, images, canvases and videos hide their picture but keep their size, and each element gets `--i` (its index) for the wave delay. Options: `busy`, `root`, `warnings`, fallback `base` and `highlight` colors, and `reducedMotion` (`true` keeps the placeholders still, `false` always animates them; by default they follow `prefers-reduced-motion`).
 
 ## `serverSkeletonCss(settings | layout, scope, options?)`
 
@@ -179,7 +179,7 @@ import { generateLoaderCss } from "@veilo/core";
 const css = generateLoaderCss(settings, { selector: ".skeleton" });
 ```
 
-Options: `selector` (default `.skeleton`), fallback `base` and `highlight` colors, `radius` (a CSS value for `border-radius`, such as `var(--veilo-radius, 6px)`; default the `radius` setting in px), and `keyframes` (the animation name; give each stylesheet on one page its own).
+Options: `selector` (default `.skeleton`), fallback `base` and `highlight` colors, `radius` (a CSS value for `border-radius`, such as `var(--veilo-radius, 6px)`; default the `radius` setting in px), `keyframes` (the animation name; give each stylesheet on one page its own), and `reducedMotion`. By default the CSS ends with a `prefers-reduced-motion` rule that stops the animation; `reducedMotion: true` writes a still placeholder instead (no animation or keyframes), and `false` leaves the rule out.
 
 ## Theming
 

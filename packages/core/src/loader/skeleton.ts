@@ -22,6 +22,11 @@ export interface ElementSkeletonOptions {
    * `width` is the last line's width in percent, `lines` the lines shown while it is empty.
    */
   bars?: ReadonlyMap<HTMLElement, Pick<SlotHint, "lines" | "width">>;
+  /**
+   * Overrides the viewer's `prefers-reduced-motion`: `true` keeps the placeholder still,
+   * `false` always animates it. By default it follows the preference, live.
+   */
+  reducedMotion?: boolean;
 }
 
 /** A skeleton loader on a set of elements. */
@@ -42,7 +47,7 @@ export interface Skeleton {
  * Each element becomes a placeholder: its text turns transparent and the generated shimmer,
  * wave or pulse runs on its background. Images, canvases and videos hide their picture but keep
  * their size. Elements get `aria-hidden` and `--i` (their index, for the wave delay). With
- * reduced motion the placeholder stays still.
+ * reduced motion the placeholder stays still (see the `reducedMotion` option to override).
  *
  * @example
  * ```ts
@@ -88,6 +93,7 @@ export function createElementSkeleton(
         keyframes: `veilo-skeleton-${id}`,
         base: options.base,
         highlight: options.highlight,
+        reducedMotion: options.reducedMotion,
       });
 
       elements.forEach((element, index) => {

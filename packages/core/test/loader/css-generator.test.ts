@@ -66,6 +66,33 @@ describe("generateLoaderCss", () => {
     },
   );
 
+  it.each(["shimmer", "wave", "pulse"])(
+    "writes a still %s placeholder when reduced motion is forced on",
+    (effect) => {
+      const normal = generateLoaderCss(settings({ effect }), THEME);
+      const css = generateLoaderCss(settings({ effect }), { ...THEME, reducedMotion: true });
+      expect(css).not.toContain("animation");
+      expect(css).not.toContain("@keyframes");
+      expect(css).not.toContain("@media");
+      expect(css).not.toContain("--i");
+      // Otherwise the same rule: colors, band and the resting position on the base color.
+      const rule = (text: string) => text.slice(text.indexOf(".skeleton {"), text.indexOf("}"));
+      expect(rule(css)).toBe(rule(normal).replace(/\n {2}animation: [^\n]*/, ""));
+      expect(css.endsWith("}\n")).toBe(true);
+    },
+  );
+
+  it.each(["shimmer", "wave", "pulse"])(
+    "always animates %s when reduced motion is forced off",
+    (effect) => {
+      const normal = generateLoaderCss(settings({ effect }), THEME);
+      const css = generateLoaderCss(settings({ effect }), { ...THEME, reducedMotion: false });
+      expect(css).not.toContain("@media");
+      // The default output without its reduced-motion rule, still ending in one newline.
+      expect(css).toBe(`${normal.slice(0, normal.indexOf("@media")).trimEnd()}\n`);
+    },
+  );
+
   it("adds the wave delay and a note about --i", () => {
     const css = generateLoaderCss(settings({ effect: "wave", stagger: 0.12 }));
     expect(css).toContain("calc(var(--i, 0) * 0.12s) infinite both");

@@ -24,6 +24,12 @@ export interface LoaderCssOptions {
    * trusted.
    */
   keyframes?: string;
+  /**
+   * Overrides the viewer's `prefers-reduced-motion`. `true` writes a still placeholder (no
+   * animation or keyframes); `false` always animates (no reduced-motion rule). By default the
+   * output follows the preference through an `@media (prefers-reduced-motion: reduce)` rule.
+   */
+  reducedMotion?: boolean;
 }
 
 const WAVE_NOTE = "/* Set --i on each element: 0, 1, 2... Each one starts later than the last. */";
@@ -114,9 +120,11 @@ function pulseCss(
  * @param options - The selector and fallback colors. For the Export panel, pass the theme's
  * hex values to resolve the colors. Without them the CSS follows `--veilo-base` and `--veilo-hi`.
  * @returns A stylesheet with one rule, its keyframes and a reduced-motion rule that stops it.
+ *   With `reducedMotion: true`, only the still rule; with `false`, no reduced-motion rule.
  */
 export function generateLoaderCss(settings: Settings, options: LoaderCssOptions = {}): string {
   const { selector = ".skeleton", base, highlight, radius, keyframes: name } = options;
+  const { reducedMotion: motionOverride } = options;
   const baseColor = settings.baseColor ?? base ?? "var(--veilo-base)";
   const highlightColor = settings.highlightColor ?? highlight ?? "var(--veilo-hi)";
   const easing = `cubic-bezier(${resolveCurve(settings, "l").map(cssNumber).join(", ")})`;
@@ -127,21 +135,49 @@ export function generateLoaderCss(settings: Settings, options: LoaderCssOptions 
       ? pulseCss(settings, baseColor, easing, iterations, name ?? "veilo-pulse")
       : sweepCss(settings, baseColor, highlightColor, easing, iterations, name ?? "veilo-sweep");
 
-  const rule = [
+  // Spec 3.7: under reduced motion the element stays a still base-color placeholder. Without
+  // the animation, the sweep rests at background-position 100% 0, which shows only the base
+  // color, and pulse stays at full opacity.
+  if (motionOverride === true) {
+    // Forced still: the same rule without its animation, and no keyframes to go with it.
+    const still = declarations.filter((line) => !line.startsWith("animation:"));
+    return [...ruleLines(selector, settings, radius, still), ""].join("\n");
+  }
+  const note = settings.effect === "wave" ? [WAVE_NOTE] : [];
+  const rule = ruleLines(selector, settings, radius, declarations);
+  // Forced motion leaves the rule out, so the viewer's preference does not stop it.
+  const reducedMotion =
+    motionOverride === false
+      ? []
+      : [
+          "@media (prefers-reduced-motion: reduce) {",
+          `  ${selector} { animation: none; }`,
+          "}",
+          "",
+        ];
+  return [...note, ...rule, "", ...keyframes, "", ...reducedMotion].join("\n");
+}
+
+/**
+ * The loader's main rule.
+ *
+ * @param selector - The selector.
+ * @param settings - The settings, for the default radius.
+ * @param radius - The `border-radius` value, when given.
+ * @param declarations - The effect's declarations.
+ * @returns The rule's lines.
+ */
+function ruleLines(
+  selector: string,
+  settings: Settings,
+  radius: string | undefined,
+  declarations: readonly string[],
+): string[] {
+  return [
     `${selector} {`,
     "  color: transparent;",
     `  border-radius: ${radius ?? `${cssNumber(settings.radius)}px`};`,
     ...declarations.map((line) => `  ${line}`),
     "}",
   ];
-  const note = settings.effect === "wave" ? [WAVE_NOTE] : [];
-  // Spec 3.7: under reduced motion the element stays a still base-color placeholder. Without
-  // the animation, the sweep rests at background-position 100% 0, which shows only the base
-  // color, and pulse stays at full opacity.
-  const reducedMotion = [
-    "@media (prefers-reduced-motion: reduce) {",
-    `  ${selector} { animation: none; }`,
-    "}",
-  ];
-  return [...note, ...rule, "", ...keyframes, "", ...reducedMotion, ""].join("\n");
 }

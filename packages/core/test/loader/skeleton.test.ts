@@ -92,6 +92,27 @@ describe("createElementSkeleton", () => {
     );
   });
 
+  it("stays still whatever the preference when reduced motion is forced on", () => {
+    const { elements } = card();
+    createElementSkeleton(elements, { effect: "pulse" }, { reducedMotion: true }).start();
+    const style = getComputedStyle(elements[1]!);
+    expect(style.animationName).toBe("none");
+    expect(style.opacity).toBe("1");
+    // Still a placeholder: hidden text on the base color.
+    expect(style.color).toBe("rgba(0, 0, 0, 0)");
+    expect(style.backgroundColor).toBe("rgb(220, 220, 220)");
+  });
+
+  it("animates whatever the preference when reduced motion is forced off", () => {
+    const { elements } = card();
+    createElementSkeleton(elements, {}, { reducedMotion: false }).start();
+    const sheet = [...document.styleSheets].at(-1)!;
+    expect([...sheet.cssRules].some((rule) => rule instanceof CSSMediaRule)).toBe(false);
+    expect(getComputedStyle(elements[1]!).animationName).toBe(
+      `veilo-skeleton-${idOf(elements[1]!)}`,
+    );
+  });
+
   it("sets aria-busy on the busy region", () => {
     const { region, elements } = card();
     const skeleton = createElementSkeleton(elements, {}, { busy: region });

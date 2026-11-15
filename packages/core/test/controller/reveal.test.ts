@@ -128,6 +128,20 @@ describe("play", () => {
     expect(await second).toBe(true);
   });
 
+  it("keeps its skeleton still with reduced motion, and animating without", () => {
+    const still = setup({}, { reducedMotion: true });
+    still.reveal.showLoading();
+    expect(getComputedStyle(still.heading).animationName).toBe("none");
+    still.reveal.destroy();
+    const moving = setup({}, { reducedMotion: false });
+    moving.reveal.showLoading();
+    expect(getComputedStyle(moving.heading).animationName).toMatch(/^veilo-skeleton-/);
+    // Forced on: no rule left that the viewer's preference could use to stop it.
+    const css = [...document.querySelectorAll("style")].map((s) => s.textContent).join("");
+    expect(css).not.toContain("prefers-reduced-motion");
+    moving.reveal.destroy();
+  });
+
   it("jumps straight to the end with reduced motion", async () => {
     const { root, reveal, before, time } = setup({}, { reducedMotion: true });
     const done = reveal.play();
