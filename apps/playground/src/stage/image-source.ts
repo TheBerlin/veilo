@@ -28,32 +28,54 @@ export const NOT_AN_IMAGE = "That file is not an image.";
 const MAX_PIXEL_RATIO = 2;
 const MIN_SIZE = 160;
 
-/**
- * The source rectangle that covers a square target: the largest centered square of the image.
- *
- * @param width - Image width in pixels.
- * @param height - Image height in pixels.
- * @returns Source x, y and side length.
- */
-export function coverSquare(width: number, height: number): { x: number; y: number; side: number } {
-  const side = Math.min(width, height);
-  return { x: (width - side) / 2, y: (height - side) / 2, side };
+/** A rectangle in pixels. */
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 /**
- * Sizes a square canvas to its CSS width times the pixel ratio (capped at 2, at least 160 px).
- * Side effects: sets width and height, which clears the canvas.
+ * The source rectangle that covers a target of the given ratio: the largest centered part of
+ * the image with that ratio.
+ *
+ * @param width - Image width in pixels.
+ * @param height - Image height in pixels.
+ * @param ratio - The target's width divided by its height.
+ * @returns The source rectangle.
+ */
+export function coverRect(width: number, height: number, ratio: number): Rect {
+  // Too wide for the target: use the full height and crop the sides; else the reverse.
+  if (width / height > ratio) {
+    const cropped = height * ratio;
+    return { x: (width - cropped) / 2, y: 0, width: cropped, height };
+  }
+  const cropped = width / ratio;
+  return { x: 0, y: (height - cropped) / 2, width, height: cropped };
+}
+
+/**
+ * Sizes a canvas to its CSS width times the pixel ratio (capped at 2, at least 160 px wide), with
+ * the height from the given ratio. The height is computed, not read, so it matches the ratio
+ * exactly. Side effects: sets width and height, which clears the canvas.
  *
  * @param canvas - The laid-out canvas.
+ * @param ratio - Width divided by height.
  * @param pixelRatio - The device pixel ratio.
- * @returns The side length in canvas pixels.
+ * @returns The canvas size in canvas pixels.
  */
-export function sizeSquareCanvas(canvas: HTMLCanvasElement, pixelRatio: number): number {
-  const ratio = Math.min(Math.max(pixelRatio, 1), MAX_PIXEL_RATIO);
-  const size = Math.max(Math.round(canvas.clientWidth * ratio), MIN_SIZE);
-  canvas.width = size;
-  canvas.height = size;
-  return size;
+export function sizeCanvas(
+  canvas: HTMLCanvasElement,
+  ratio: number,
+  pixelRatio: number,
+): { width: number; height: number } {
+  const scale = Math.min(Math.max(pixelRatio, 1), MAX_PIXEL_RATIO);
+  const width = Math.max(Math.round(canvas.clientWidth * scale), MIN_SIZE);
+  const height = Math.max(Math.round(width / ratio), 1);
+  canvas.width = width;
+  canvas.height = height;
+  return { width, height };
 }
 
 /**
@@ -62,21 +84,23 @@ export function sizeSquareCanvas(canvas: HTMLCanvasElement, pixelRatio: number):
  *
  * @param canvas - The image-area canvas, already laid out.
  * @param image - The decoded image.
+ * @param ratio - The image area's width divided by its height.
  * @param pixelRatio - The device pixel ratio.
  */
 export function drawImageCover(
   canvas: HTMLCanvasElement,
   image: CardImage,
+  ratio: number,
   pixelRatio: number,
 ): void {
-  const size = sizeSquareCanvas(canvas, pixelRatio);
+  const { width, height } = sizeCanvas(canvas, ratio, pixelRatio);
   const context = canvas.getContext("2d");
   if (!context) return;
   context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, size, size);
-  const source = coverSquare(image.width, image.height);
+  context.fillRect(0, 0, width, height);
+  const source = coverRect(image.width, image.height, ratio);
   context.imageSmoothingQuality = "high";
-  context.drawImage(image, source.x, source.y, source.side, source.side, 0, 0, size, size);
+  context.drawImage(image, source.x, source.y, source.width, source.height, 0, 0, width, height);
 }
 
 /**

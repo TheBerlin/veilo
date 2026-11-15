@@ -19,7 +19,8 @@
   outline-offset: 2px;
 }
 
-/* Image area: square; media inside a card uses the base radius. */
+/* Image area: square unless the card is given another ratio (set inline); media inside a card
+   uses the base radius. */
 .image {
   display: block;
   width: 100%;

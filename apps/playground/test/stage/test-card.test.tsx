@@ -1,7 +1,7 @@
 // Tests for src/stage/test-card.tsx and the reveal it runs, in Chromium with a hand-driven clock.
 
 import { defaultSettings } from "@veilo/core";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 // Core's hand-driven scheduler, shared so both packages drive time the same way.
@@ -105,6 +105,33 @@ describe("TestCard", () => {
     expect(card.getAttribute("aria-busy")).toBeNull();
     await press(card);
     expect(card.getAttribute("aria-busy")).toBe("true");
+  });
+
+  it.each([
+    ["16:9", 16 / 9],
+    ["2:3", 2 / 3],
+  ])("shapes the image area, its drawing and the grid to %s", async (_name, ratio) => {
+    const clock = fakeScheduler();
+    render(
+      <TestCard
+        settings={{ ...settings, imageFx: "dots" }}
+        ratio={ratio}
+        revealOptions={{ scheduler: clock.scheduler }}
+        start="frame"
+        frame={0.4}
+      />,
+    );
+    const card = screen.getByRole("button", { name: /Test card/ });
+    const photo = card.querySelector("canvas")!;
+    const box = photo.getBoundingClientRect();
+    expect(box.width / box.height).toBeCloseTo(ratio, 1);
+    expect(photo.width / photo.height).toBeCloseTo(ratio, 2);
+    // The held frame draws the dot grid on its own canvas over the photo, in the same box.
+    await waitFor(() => expect(card.hasAttribute("data-frame-ready")).toBe(true));
+    // Within a pixel: core sizes its canvas from the element's whole-pixel size.
+    const grid = card.querySelector("canvas + canvas")!.getBoundingClientRect();
+    expect(Math.abs(grid.width - box.width)).toBeLessThan(1);
+    expect(Math.abs(grid.height - box.height)).toBeLessThan(1);
   });
 
   it("leaves no styles, canvases or overlays behind after unmount", async () => {

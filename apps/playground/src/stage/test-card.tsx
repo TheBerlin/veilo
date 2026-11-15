@@ -40,6 +40,11 @@ export interface TestCardProps {
   revealOptions?: RevealOptions;
   /** The photo; the drawn placeholder when absent. Read at mount: change the card's key. */
   image?: CardImage | null;
+  /**
+   * The image area's width divided by its height. Defaults to 1 (square). Read at mount: change
+   * the card's key.
+   */
+  ratio?: number;
   /** Called with a file dropped on the image area. */
   onImageDrop?: (file: File) => void;
   /** How the reveal starts at mount. Defaults to the full sequence. */
@@ -62,8 +67,8 @@ const REDRAW_THRESHOLD = 2;
  * is drawn, which the visual tests wait for. Side effects: draws the photo (again when its width changes by 2 px or more)
  * and runs a reveal on the card while mounted.
  *
- * @param props - The settings, reveal options, photo, drop handler, start, frame, loop flag and
- *   reveal callback.
+ * @param props - The settings, reveal options, photo and its ratio, drop handler, start, frame,
+ *   loop flag and reveal callback.
  * @returns The card.
  */
 export function TestCard(props: TestCardProps) {
@@ -72,9 +77,13 @@ export function TestCard(props: TestCardProps) {
 
   // Read at mount, like the reveal: a new image comes with a new key, so a fresh card.
   const image = useRef(props.image ?? null);
+  const ratio = useRef(props.ratio ?? 1);
   const draw = (canvas: HTMLCanvasElement) => {
-    if (image.current) drawImageCover(canvas, image.current, window.devicePixelRatio);
-    else drawPlaceholderImage(canvas, window.devicePixelRatio);
+    if (image.current) {
+      drawImageCover(canvas, image.current, ratio.current, window.devicePixelRatio);
+    } else {
+      drawPlaceholderImage(canvas, ratio.current, window.devicePixelRatio);
+    }
   };
 
   // A layout effect runs before the reveal's effect, so the image is drawn before it is sampled.
@@ -139,6 +148,8 @@ export function TestCard(props: TestCardProps) {
       <canvas
         ref={photo}
         className={styles.image}
+        // The chosen shape; the drawing above matches it in canvas pixels.
+        style={{ aspectRatio: ratio.current }}
         data-veilo-slot="photo"
         aria-hidden="true"
         onDragOver={onDragOver}
