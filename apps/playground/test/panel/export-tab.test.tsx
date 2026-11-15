@@ -13,6 +13,7 @@ import {
   loaderCss,
   settingsJson,
 } from "../../src/panel/export-tab.tsx";
+import { decodeShareLink } from "../../src/share/share-link.ts";
 import { Stage } from "../../src/stage/stage.tsx";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
@@ -74,6 +75,23 @@ describe("ExportTab", () => {
     act(() => store.getState().set("cols", 40));
     expect(json.textContent).toContain('"cols": 40');
     expect(screen.getByLabelText("Loader CSS").textContent).toContain(".skeleton {");
+  });
+
+  it("shows a share link for the current page that follows changes", async () => {
+    const { store } = renderTab();
+    const block = screen.getByLabelText("Share link");
+    const linkSettings = async () => {
+      const url = new URL(block.textContent!);
+      expect(url.origin + url.pathname).toBe(window.location.origin + window.location.pathname);
+      expect(url.search).toBe("");
+      const result = await decodeShareLink(url.hash);
+      return result.ok ? result.payload.settings : null;
+    };
+    await waitFor(async () => expect(await linkSettings()).toEqual(defaultSettings()));
+    act(() => store.getState().set("effect", "pulse"));
+    await waitFor(async () =>
+      expect(await linkSettings()).toEqual({ ...defaultSettings(), effect: "pulse" }),
+    );
   });
 
   it("applies pasted settings and says how many", async () => {

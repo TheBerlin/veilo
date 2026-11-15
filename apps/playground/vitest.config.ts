@@ -11,6 +11,7 @@ const BROWSER_TESTS = [
   "test/theme/**/*.test.ts",
   "test/stage/**/*.test.tsx",
   "test/panel/**/*.test.tsx",
+  "test/share/**/*.test.tsx",
 ];
 
 export default defineProject({

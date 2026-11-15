@@ -6,6 +6,7 @@ import { useState } from "react";
 import styles from "./app.module.css";
 import { PresetChips } from "./header/preset-chips.tsx";
 import { Panel } from "./panel/panel.tsx";
+import { ShareNotice } from "./share/share-notice.tsx";
 import { parseFrameQuery } from "./stage/frame-query.ts";
 import { Stage } from "./stage/stage.tsx";
 import { ThemeSwitch } from "./theme/theme-switch.tsx";
@@ -13,7 +14,7 @@ import { createSettingsStore } from "./state/settings-store.ts";
 
 /**
  * The playground page. A `?preset=<id>&p=<0..1>` query opens it on that preset, paused at that
- * progress (used by the visual tests).
+ * progress (used by the visual tests). Otherwise a `#v1.` share link fragment, if any, is loaded.
  *
  * @returns The app.
  */
@@ -36,6 +37,8 @@ export function App() {
             Design skeleton loaders and image and text reveals, then export the settings or the CSS.
           </p>
           <PresetChips store={store} />
+          {/* A frame request is for the visual tests and wins over a shared link. */}
+          {frame ? null : <ShareNotice store={store} className={styles.notice} />}
         </header>
         <div className={styles.workspace}>
           {/* Sticky on wide screens, so the preview stays in view while the panel scrolls. */}

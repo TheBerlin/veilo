@@ -37,6 +37,20 @@
   color: var(--veilo-text-muted);
 }
 
+/* Share link notice: one caption line under the preset chips; empty (no height) without a link. */
+.notice {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* Empty: out of the grid flow, so it adds no gap, but still rendered. A live region hidden with
+   display: none is often not read out when its text arrives. */
+.notice:empty {
+  position: absolute;
+}
+
 .title {
   margin: 0;
   font: var(--veilo-type-h3);

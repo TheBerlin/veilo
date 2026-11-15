@@ -1,10 +1,11 @@
-// export-tab.tsx: the Export tab (spec 1.6): the settings as JSON, the loader as plain CSS, and
-// a box to load settings back.
+// export-tab.tsx: the Export tab (spec 1.6): a share link, the settings as JSON, the loader as
+// plain CSS, and a box to load settings back.
 
 import { generateLoaderCss, type Settings } from "@veilo/core";
 import { Button, CodeBlock, TextArea } from "@veilo/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "zustand";
+import { encodeShareLink, shareUrl } from "../share/share-link.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { themeColor } from "./color-fields.tsx";
 import styles from "./panel.module.css";
@@ -45,6 +46,28 @@ export function appliedMessage(count: number): string {
   return `${count} ${count === 1 ? "setting" : "settings"} applied.`;
 }
 
+/**
+ * The share link for the current settings. Encoding is async, so the link follows the settings
+ * one step later; until the first one is ready it is empty.
+ *
+ * @param settings - The current settings.
+ * @returns The full URL, or `""` while it is being made.
+ */
+function useShareUrl(settings: Settings): string {
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    // A newer change may finish first; only the latest settings' link is shown.
+    let current = true;
+    void encodeShareLink({ settings }).then((fragment) => {
+      if (current) setUrl(shareUrl(window.location, fragment));
+    });
+    return () => {
+      current = false;
+    };
+  }, [settings]);
+  return url;
+}
+
 /** Props of {@link ExportTab}. */
 export interface ExportTabProps {
   /** The settings store. */
@@ -62,6 +85,7 @@ export function ExportTab(props: ExportTabProps) {
   const settings = useStore(store, (state) => state.settings);
   const [text, setText] = useState("");
   const [message, setMessage] = useState("");
+  const url = useShareUrl(settings);
 
   const apply = () => {
     let input: unknown;
@@ -76,6 +100,11 @@ export function ExportTab(props: ExportTabProps) {
 
   return (
     <>
+      <section className={styles.group}>
+        <h3 className={styles.legend}>Share link</h3>
+        <CodeBlock code={url} aria-label="Share link" />
+        <p className={styles.message}>The link holds the settings, not your own image.</p>
+      </section>
       <section className={styles.group}>
         <h3 className={styles.legend}>Settings (JSON)</h3>
         <CodeBlock code={settingsJson(settings)} aria-label="Settings JSON" />
