@@ -100,10 +100,10 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | `--veilo-danger`        | `#E5857F`   | `#B3261E`   | Error text and icon on bg, card and secondary (at least 4.8:1). Always paired with an icon and a word such as 'Error'; never color alone.                      |
 | `--veilo-success`       | `#7FC8A0`   | `#1F6B45`   | Success text and icon on bg, card and secondary. Always paired with an icon and a word such as 'Copied'; never color alone.                                    |
 | `--veilo-info`          | `#93A3F5`   | `#3B4BBF`   | Processing status text and icon on bg, card, secondary and info-soft. Always with an icon or dot and a word such as 'Processing'.                              |
-| `--veilo-warning`       | `#E6B450`   | `#8A5A00`   | Warning status text and icon on bg, card, secondary and warning-soft. Always with an icon or dot and a word such as 'Warning'.                                 |
+| `--veilo-warning`       | `#E6B450`   | `#805300`   | Warning status text and icon on bg, card, secondary and warning-soft (at least 4.5:1). Always with an icon or dot and a word such as 'Warning'.                |
 | `--veilo-info-soft`     | `#93A3F524` | `#3B4BBF1A` | Soft fill behind an info badge. Pair with info text.                                                                                                           |
 | `--veilo-success-soft`  | `#7FC8A024` | `#1F6B451A` | Soft fill behind a success badge. Pair with success text.                                                                                                      |
-| `--veilo-warning-soft`  | `#E6B45024` | `#8A5A001A` | Soft fill behind a warning badge. Pair with warning text.                                                                                                      |
+| `--veilo-warning-soft`  | `#E6B45024` | `#8053001A` | Soft fill behind a warning badge. Pair with warning text.                                                                                                      |
 | `--veilo-danger-soft`   | `#E5857F24` | `#B3261E1A` | Soft fill behind an error badge. Pair with danger text.                                                                                                        |
 
 ### Type

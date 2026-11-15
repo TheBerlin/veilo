@@ -110,10 +110,10 @@
   --veilo-danger: #b3261e;
   --veilo-success: #1f6b45;
   --veilo-info: #3b4bbf;
-  --veilo-warning: #8a5a00;
+  --veilo-warning: #805300;
   --veilo-info-soft: #3b4bbf1a;
   --veilo-success-soft: #1f6b451a;
-  --veilo-warning-soft: #8a5a001a;
+  --veilo-warning-soft: #8053001a;
   --veilo-danger-soft: #b3261e1a;
   color-scheme: light;
 }
@@ -135,10 +135,10 @@
     --veilo-danger: #b3261e;
     --veilo-success: #1f6b45;
     --veilo-info: #3b4bbf;
-    --veilo-warning: #8a5a00;
+    --veilo-warning: #805300;
     --veilo-info-soft: #3b4bbf1a;
     --veilo-success-soft: #1f6b451a;
-    --veilo-warning-soft: #8a5a001a;
+    --veilo-warning-soft: #8053001a;
     --veilo-danger-soft: #b3261e1a;
     color-scheme: light;
   }

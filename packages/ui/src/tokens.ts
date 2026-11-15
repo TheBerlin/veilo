@@ -32,10 +32,10 @@ export const COLORS = {
   danger: { dark: "#e5857f", light: "#b3261e" },
   success: { dark: "#7fc8a0", light: "#1f6b45" },
   info: { dark: "#93a3f5", light: "#3b4bbf" },
-  warning: { dark: "#e6b450", light: "#8a5a00" },
+  warning: { dark: "#e6b450", light: "#805300" },
   "info-soft": { dark: "#93a3f524", light: "#3b4bbf1a" },
   "success-soft": { dark: "#7fc8a024", light: "#1f6b451a" },
-  "warning-soft": { dark: "#e6b45024", light: "#8a5a001a" },
+  "warning-soft": { dark: "#e6b45024", light: "#8053001a" },
   "danger-soft": { dark: "#e5857f24", light: "#b3261e1a" },
 } as const satisfies Record<string, ThemedColor>;
 

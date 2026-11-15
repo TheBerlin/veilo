@@ -65,7 +65,10 @@ describe("colors", () => {
       expect(contrast(COLORS.text[theme], ground)).toBeGreaterThanOrEqual(7);
       expect(contrast(COLORS["text-muted"][theme], ground)).toBeGreaterThanOrEqual(textFloor);
       expect(contrast(COLORS["border-strong"][theme], ground)).toBeGreaterThanOrEqual(3);
-      expect(contrast(COLORS.danger[theme], ground)).toBeGreaterThanOrEqual(4.5);
+      // Status colors are text too (labels, messages): WCAG AA.
+      for (const status of ["danger", "success", "info", "warning"] as const) {
+        expect(contrast(COLORS[status][theme], ground)).toBeGreaterThanOrEqual(4.5);
+      }
     }
     expect(contrast(COLORS["on-accent"][theme], COLORS.accent[theme])).toBeGreaterThanOrEqual(7);
   });
