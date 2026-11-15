@@ -39,7 +39,7 @@ describe("Select", () => {
     render(<Origin />);
     await user.tab();
     const style = getComputedStyle(screen.getByRole("combobox"));
-    expect(style.borderTopColor).toBe("rgb(107, 107, 107)");
+    expect(style.borderTopColor).toBe("rgb(114, 113, 126)");
     expect(style.borderTopLeftRadius).toBe("8px");
     expect(style.height).toBe("32px");
     expect(style.outlineStyle).toBe("solid");

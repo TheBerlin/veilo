@@ -36,7 +36,7 @@ describe("Toggle", () => {
     await user.tab();
     await user.keyboard(" ");
     const style = getComputedStyle(screen.getByRole("switch"));
-    expect(style.backgroundColor).toBe("rgb(241, 241, 241)");
+    expect(style.backgroundColor).toBe("rgb(226, 226, 231)");
     expect(style.outlineStyle).toBe("solid");
   });
 

@@ -62,7 +62,7 @@ describe("Slider", () => {
     render(<Speed />);
     await user.tab();
     const thumb = getComputedStyle(screen.getByRole("slider"));
-    expect(thumb.backgroundColor).toBe("rgb(241, 241, 241)");
+    expect(thumb.backgroundColor).toBe("rgb(226, 226, 231)");
     expect(thumb.outlineStyle).toBe("solid");
   });
 });

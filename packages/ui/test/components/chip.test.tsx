@@ -43,7 +43,7 @@ describe("Chip", () => {
     await user.tab();
     await user.keyboard(" ");
     expect(chip.getAttribute("aria-pressed")).toBe("true");
-    expect(getComputedStyle(chip).backgroundColor).toBe("rgb(241, 241, 241)");
+    expect(getComputedStyle(chip).backgroundColor).toBe("rgb(226, 226, 231)");
     expect(getComputedStyle(chip).outlineStyle).toBe("solid");
   });
 });

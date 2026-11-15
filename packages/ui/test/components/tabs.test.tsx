@@ -47,7 +47,7 @@ describe("Tabs", () => {
     await user.tab();
     const selected = getComputedStyle(screen.getByRole("tab", { name: "Loader" }));
     const other = getComputedStyle(screen.getByRole("tab", { name: "Reveal" }));
-    expect(selected.backgroundColor).toBe("rgb(23, 23, 23)");
+    expect(selected.backgroundColor).toBe("rgb(38, 38, 44)");
     expect(other.backgroundColor).toBe("rgba(0, 0, 0, 0)");
     expect(selected.outlineStyle).toBe("solid");
     expect(selected.height).toBe("40px");

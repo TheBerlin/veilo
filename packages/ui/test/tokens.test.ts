@@ -43,15 +43,14 @@ describe("radius", () => {
 });
 
 describe("colors", () => {
-  it("uses the fixed theme backgrounds and the monochrome inverse accent", () => {
-    expect(COLORS.bg).toEqual({ dark: "#030303", light: "#f1f1f1" });
-    expect(COLORS.accent).toEqual({ dark: COLORS.bg.light, light: COLORS.bg.dark });
+  it("uses the monochrome accent: the text color, with bg on it", () => {
+    expect(COLORS.accent).toEqual(COLORS.text);
     expect(COLORS["on-accent"]).toEqual(COLORS.bg);
   });
 
-  it("never uses pure white or black for text", () => {
+  it("never uses pure white or black for surfaces or text", () => {
     for (const theme of THEMES) {
-      for (const name of ["text", "text-muted"] as const) {
+      for (const name of [...SURFACES, "text", "text-muted"] as const) {
         expect(["#ffffff", "#000000"]).not.toContain(COLORS[name][theme]);
       }
     }
@@ -60,17 +59,18 @@ describe("colors", () => {
   it.each(THEMES)("keeps the promised contrast on every surface in %s", (theme) => {
     for (const surface of SURFACES) {
       const ground = COLORS[surface][theme];
-      expect(contrast(COLORS.text[theme], ground)).toBeGreaterThanOrEqual(4.5);
-      // The design system's promise, above WCAG AA's 4.5.
-      expect(contrast(COLORS["text-muted"][theme], ground)).toBeGreaterThanOrEqual(4.9);
+      // AAA (7:1) for both text tones on the page and card surfaces; muted text on a secondary
+      // fill keeps the older promise, above WCAG AA's 4.5.
+      const textFloor = surface === "secondary" ? 4.9 : 7;
+      expect(contrast(COLORS.text[theme], ground)).toBeGreaterThanOrEqual(7);
+      expect(contrast(COLORS["text-muted"][theme], ground)).toBeGreaterThanOrEqual(textFloor);
       expect(contrast(COLORS["border-strong"][theme], ground)).toBeGreaterThanOrEqual(3);
       expect(contrast(COLORS.danger[theme], ground)).toBeGreaterThanOrEqual(4.5);
     }
-    expect(contrast(COLORS["on-accent"][theme], COLORS.accent[theme])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(COLORS["on-accent"][theme], COLORS.accent[theme])).toBeGreaterThanOrEqual(7);
   });
 
-  it("uses the same skeleton colors as the @veilo/css light fallbacks", () => {
-    expect(COLORS.base.light).toBe("#dcdcdc");
-    expect(COLORS.hi.light).toBe("#f7f7f7");
+  it("uses the secondary fill as the skeleton base color", () => {
+    expect(COLORS.base).toEqual(COLORS.secondary);
   });
 });

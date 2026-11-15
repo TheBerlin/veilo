@@ -10,23 +10,25 @@ export interface ThemedColor {
 }
 
 /**
- * Colors. Neutrals are one gray hue; the accent is the monochrome inverse of `bg`. `base` and `hi`
- * are the skeleton colors and use the exact names `@veilo/css` reads (`--veilo-base`,
- * `--veilo-hi`), so the site and the package share one palette.
+ * Colors. Calm near-black and near-white surfaces on one faint cool hue, never pure black or white;
+ * text is softened (about 14:1 on bg) to cut glare and every text tone keeps WCAG AAA (7:1) on `bg`
+ * and `card`. The accent is monochrome: the text color, with `bg` on it. `base` and `hi` are the
+ * skeleton colors and use the exact names `@veilo/css` reads (`--veilo-base`, `--veilo-hi`), so the
+ * site's skeletons sit on its own surfaces; the packages keep neutral gray fallbacks of their own.
  */
 export const COLORS = {
-  bg: { dark: "#030303", light: "#f1f1f1" },
-  card: { dark: "#0d0d0d", light: "#e7e7e7" },
-  secondary: { dark: "#171717", light: "#dcdcdc" },
-  border: { dark: "#2a2a2a", light: "#c9c9c9" },
-  "border-strong": { dark: "#6b6b6b", light: "#767676" },
-  text: { dark: "#eeeeee", light: "#141414" },
-  "text-muted": { dark: "#a0a0a0", light: "#595959" },
-  accent: { dark: "#f1f1f1", light: "#030303" },
-  "on-accent": { dark: "#030303", light: "#f1f1f1" },
-  base: { dark: "#171717", light: "#dcdcdc" },
-  hi: { dark: "#262626", light: "#f7f7f7" },
-  "grid-dot": { dark: "#3a3a3a", light: "#b8b8b8" },
+  bg: { dark: "#16161a", light: "#f1f1f3" },
+  card: { dark: "#1d1d22", light: "#e8e8eb" },
+  secondary: { dark: "#26262c", light: "#dddde1" },
+  border: { dark: "#303037", light: "#d0d0d6" },
+  "border-strong": { dark: "#72717e", light: "#6e6d7a" },
+  text: { dark: "#e2e2e7", light: "#1e1e22" },
+  "text-muted": { dark: "#a9a8b6", light: "#4a4a53" },
+  accent: { dark: "#e2e2e7", light: "#1e1e22" },
+  "on-accent": { dark: "#16161a", light: "#f1f1f3" },
+  base: { dark: "#26262c", light: "#dddde1" },
+  hi: { dark: "#33333a", light: "#f8f8f9" },
+  "grid-dot": { dark: "#3a3a42", light: "#b8b8bf" },
   danger: { dark: "#e5857f", light: "#b3261e" },
   success: { dark: "#7fc8a0", light: "#1f6b45" },
   info: { dark: "#93a3f5", light: "#3b4bbf" },

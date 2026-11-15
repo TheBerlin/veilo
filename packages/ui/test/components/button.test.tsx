@@ -47,8 +47,8 @@ describe("Button", () => {
     const style = getComputedStyle(button);
     expect(style.outlineStyle).toBe("solid");
     expect(style.outlineWidth).toBe("2px");
-    // Dark is the default theme, so the accent is #f1f1f1.
-    expect(style.outlineColor).toBe("rgb(241, 241, 241)");
+    // Dark is the default theme, so the accent is #e2e2e7.
+    expect(style.outlineColor).toBe("rgb(226, 226, 231)");
   });
 
   it("uses the design system's sizes and the control radius", () => {
@@ -72,10 +72,10 @@ describe("Button", () => {
       </>,
     );
     expect(getComputedStyle(screen.getByText("Primary")).backgroundColor).toBe(
-      "rgb(241, 241, 241)",
+      "rgb(226, 226, 231)",
     );
     expect(getComputedStyle(screen.getByText("Secondary")).borderTopColor).toBe(
-      "rgb(107, 107, 107)",
+      "rgb(114, 113, 126)",
     );
   });
 

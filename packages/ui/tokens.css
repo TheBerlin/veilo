@@ -2,18 +2,18 @@
    Run `pnpm --filter @veilo/ui generate:tokens` after changing the table. */
 
 :root {
-  --veilo-bg: #030303;
-  --veilo-card: #0d0d0d;
-  --veilo-secondary: #171717;
-  --veilo-border: #2a2a2a;
-  --veilo-border-strong: #6b6b6b;
-  --veilo-text: #eeeeee;
-  --veilo-text-muted: #a0a0a0;
-  --veilo-accent: #f1f1f1;
-  --veilo-on-accent: #030303;
-  --veilo-base: #171717;
-  --veilo-hi: #262626;
-  --veilo-grid-dot: #3a3a3a;
+  --veilo-bg: #16161a;
+  --veilo-card: #1d1d22;
+  --veilo-secondary: #26262c;
+  --veilo-border: #303037;
+  --veilo-border-strong: #72717e;
+  --veilo-text: #e2e2e7;
+  --veilo-text-muted: #a9a8b6;
+  --veilo-accent: #e2e2e7;
+  --veilo-on-accent: #16161a;
+  --veilo-base: #26262c;
+  --veilo-hi: #33333a;
+  --veilo-grid-dot: #3a3a42;
   --veilo-danger: #e5857f;
   --veilo-success: #7fc8a0;
   --veilo-info: #93a3f5;
@@ -95,18 +95,18 @@
 }
 
 :root[data-theme="light"] {
-  --veilo-bg: #f1f1f1;
-  --veilo-card: #e7e7e7;
-  --veilo-secondary: #dcdcdc;
-  --veilo-border: #c9c9c9;
-  --veilo-border-strong: #767676;
-  --veilo-text: #141414;
-  --veilo-text-muted: #595959;
-  --veilo-accent: #030303;
-  --veilo-on-accent: #f1f1f1;
-  --veilo-base: #dcdcdc;
-  --veilo-hi: #f7f7f7;
-  --veilo-grid-dot: #b8b8b8;
+  --veilo-bg: #f1f1f3;
+  --veilo-card: #e8e8eb;
+  --veilo-secondary: #dddde1;
+  --veilo-border: #d0d0d6;
+  --veilo-border-strong: #6e6d7a;
+  --veilo-text: #1e1e22;
+  --veilo-text-muted: #4a4a53;
+  --veilo-accent: #1e1e22;
+  --veilo-on-accent: #f1f1f3;
+  --veilo-base: #dddde1;
+  --veilo-hi: #f8f8f9;
+  --veilo-grid-dot: #b8b8bf;
   --veilo-danger: #b3261e;
   --veilo-success: #1f6b45;
   --veilo-info: #3b4bbf;
@@ -120,18 +120,18 @@
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --veilo-bg: #f1f1f1;
-    --veilo-card: #e7e7e7;
-    --veilo-secondary: #dcdcdc;
-    --veilo-border: #c9c9c9;
-    --veilo-border-strong: #767676;
-    --veilo-text: #141414;
-    --veilo-text-muted: #595959;
-    --veilo-accent: #030303;
-    --veilo-on-accent: #f1f1f1;
-    --veilo-base: #dcdcdc;
-    --veilo-hi: #f7f7f7;
-    --veilo-grid-dot: #b8b8b8;
+    --veilo-bg: #f1f1f3;
+    --veilo-card: #e8e8eb;
+    --veilo-secondary: #dddde1;
+    --veilo-border: #d0d0d6;
+    --veilo-border-strong: #6e6d7a;
+    --veilo-text: #1e1e22;
+    --veilo-text-muted: #4a4a53;
+    --veilo-accent: #1e1e22;
+    --veilo-on-accent: #f1f1f3;
+    --veilo-base: #dddde1;
+    --veilo-hi: #f8f8f9;
+    --veilo-grid-dot: #b8b8bf;
     --veilo-danger: #b3261e;
     --veilo-success: #1f6b45;
     --veilo-info: #3b4bbf;
