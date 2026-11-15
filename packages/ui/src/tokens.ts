@@ -105,7 +105,7 @@ export const SIZES = {
   "size-test-card-button": 42,
   // The playground's control panel, at most this wide (spec 1.1).
   "size-panel": 380,
-  // Dots of the decorative dot grid; the pitch is space-2.
+  // Dots of the curve editor's 0.1 grid.
   "size-grid-dot": 1.5,
 } as const;
 

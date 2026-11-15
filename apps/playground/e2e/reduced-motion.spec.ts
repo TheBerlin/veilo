@@ -107,17 +107,16 @@ function animationNames(page: Page, selector: string): Promise<string[]> {
 }
 
 /**
- * Reads the playground's dot-grid background twice, 400 ms apart.
+ * Reads the playground's base interface duration token as computed by the browser.
  *
  * @param page - The test's page, on the playground.
- * @returns Both images as data URLs.
+ * @returns The duration in its unit (the browser may write 0s or 0ms), as a number.
  */
-async function dotGridTwice(page: Page): Promise<[string, string]> {
-  const canvas = page.locator("main > canvas");
-  const read = () => canvas.evaluate((element) => (element as HTMLCanvasElement).toDataURL());
-  const first = await read();
-  await page.waitForTimeout(400);
-  return [first, await read()];
+async function baseDuration(page: Page): Promise<number> {
+  const value = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue("--veilo-duration-base").trim(),
+  );
+  return parseFloat(value);
 }
 
 test.describe("with reduced motion", () => {
@@ -151,13 +150,7 @@ test.describe("with reduced motion", () => {
 
   test("the playground's chrome stands still", async ({ page }) => {
     await page.goto("/");
-    const [before, after] = await dotGridTwice(page);
-    expect(after).toBe(before);
-    const duration = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue("--veilo-duration-base").trim(),
-    );
-    // The browser may write the computed value as 0s or 0ms.
-    expect(parseFloat(duration)).toBe(0);
+    expect(await baseDuration(page)).toBe(0);
   });
 });
 
@@ -180,7 +173,6 @@ test.describe("without reduced motion (controls)", () => {
 
   test("the playground's chrome moves", async ({ page }) => {
     await page.goto("/");
-    const [before, after] = await dotGridTwice(page);
-    expect(after).not.toBe(before);
+    expect(await baseDuration(page)).toBeGreaterThan(0);
   });
 });

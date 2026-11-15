@@ -57,7 +57,7 @@ export function startAfterChange(keys: Iterable<string>): RevealStart {
 }
 
 /**
- * The stage: the test card centered on the dot grid, and the transport bar with the image
+ * The stage: the test card centered on a calm surface, and the transport bar with the image
  * picker. Side effects: decodes chosen images, and rebuilds the reveal when settings change (at
  * most once per animation frame, so a slider drag does not rebuild on every pointer move).
  *
