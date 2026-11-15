@@ -6,6 +6,7 @@ import { TooltipProvider } from "@veilo/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
 import { PresetChips } from "./header/preset-chips.tsx";
+import { ResetButton } from "./header/reset-button.tsx";
 import { Panel } from "./panel/panel.tsx";
 import { browserStorage } from "./presets/browser-storage.ts";
 import { readLastSession, watchLastSession } from "./presets/last-session.ts";
@@ -48,7 +49,14 @@ export function App() {
           <p className={styles.description}>
             Design skeleton loaders and image and text reveals, then export the settings or the CSS.
           </p>
-          <PresetChips store={store} />
+          <div className={styles.presetRow}>
+            <PresetChips store={store} />
+            <ResetButton
+              store={store}
+              buttonClassName={styles.resetButton}
+              messageClassName={styles.rowNotice}
+            />
+          </div>
           {/* A frame request is for the visual tests and wins over a shared link. */}
           {frame ? null : <ShareNotice store={store} className={styles.notice} />}
         </header>

@@ -65,10 +65,11 @@ describe("createSettingsStore", () => {
     expect(store.getState().loads).toBe(1);
   });
 
-  it("resets to the defaults", () => {
-    const store = createSettingsStore({ effect: "pulse" });
+  it("resets to the defaults, colors included, as a load", () => {
+    const store = createSettingsStore({ effect: "pulse", baseColor: "#123456" });
     store.getState().reset();
     expect(store.getState().settings).toEqual(defaultSettings());
+    expect(store.getState().loads).toBe(1);
   });
 
   it("round-trips through JSON", () => {

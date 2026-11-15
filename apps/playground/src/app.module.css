@@ -37,6 +37,36 @@
   color: var(--veilo-text-muted);
 }
 
+/* Preset row: the preset chips, then Reset to defaults; wraps on narrow screens. */
+.presetRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-1);
+}
+
+/* Reset to defaults sits at the far right, apart from the presets. */
+.resetButton {
+  margin-left: auto;
+}
+
+/* The reset message takes a line of its own under the row. */
+.rowNotice {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: var(--veilo-space-1);
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* Empty: out of the flow, as for .notice below. */
+.rowNotice:empty {
+  position: absolute;
+}
+
 /* Share link notice: one caption line under the preset chips; empty (no height) without a link. */
 .notice {
   margin: 0;

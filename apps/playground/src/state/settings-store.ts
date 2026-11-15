@@ -36,7 +36,10 @@ export interface SettingsState {
    * Returns the keys that were applied, for the "N settings applied" message.
    */
   load: (input: unknown) => AnySettingKey[];
-  /** Restores the default settings. */
+  /**
+   * Restores the default settings, custom colors included. Counts as a load, so the stage plays
+   * the full sequence.
+   */
   reset: () => void;
   /** Removes the given custom colors, so the theme's colors apply again. */
   resetColors: (keys: readonly ColorKey[]) => void;
@@ -96,7 +99,7 @@ export function createSettingsStore(initial?: unknown): SettingsStore {
       setState((state) => ({ settings, loads: state.loads + 1 }));
       return applied;
     },
-    reset: () => setState({ settings: defaultSettings() }),
+    reset: () => setState((state) => ({ settings: defaultSettings(), loads: state.loads + 1 })),
     resetColors: (keys) =>
       setState((state) => {
         // Nothing to remove: keep the same state, so subscribers stay asleep.
