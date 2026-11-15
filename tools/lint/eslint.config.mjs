@@ -20,7 +20,18 @@ const EXPORTED_FUNCTIONS = [
 ];
 
 export default tseslint.config(
-  { ignores: ["**/dist/", "**/node_modules/", "**/.turbo/", "docs/"] },
+  {
+    // Generated output (builds, caches, Playwright reports; git ignores them, ESLint does not)
+    // and the docs folder.
+    ignores: [
+      "**/dist/",
+      "**/node_modules/",
+      "**/.turbo/",
+      "**/playwright-report/",
+      "**/test-results/",
+      "docs/",
+    ],
+  },
 
   js.configs.recommended,
   tseslint.configs.recommended,
