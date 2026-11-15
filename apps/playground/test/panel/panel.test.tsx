@@ -38,13 +38,17 @@ function renderApp() {
 }
 
 /**
- * Moves the fake clock in 100 ms steps, with real waits for `ready`, until a condition holds.
+ * Moves the fake clock in 100 ms steps, with real waits for `ready`, until a condition holds or
+ * 4 s of real time have passed.
  *
  * @param clock - The fake clock.
  * @param done - The condition.
  */
 async function runUntil(clock: ReturnType<typeof fakeScheduler>, done: () => boolean) {
-  for (let step = 0; step < 200 && !done(); step++) await run(clock, 100);
+  // Bounded by real time, not clock time: `ready` is real async and may finish late on a slow
+  // runner, and the reveal then still needs rDur of clock time after it.
+  const deadline = performance.now() + 4_000; // under Vitest's 5 s test timeout
+  while (!done() && performance.now() < deadline) await run(clock, 100);
   expect(done()).toBe(true);
 }
 

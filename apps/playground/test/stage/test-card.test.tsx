@@ -27,21 +27,25 @@ function renderCard() {
 /**
  * Runs the clock until the sequence (hold, then the reveal) has finished. The reveal also waits
  * for `ready` (image sampling and the grid renderer, loaded on demand), which takes real async
- * time, so the clock moves in small steps with real waits between them.
+ * time, so the clock moves in small steps with real waits between them, for at most 4 s of
+ * real time.
  *
  * @param card - The card element.
  * @param clock - The fake clock.
  */
 async function finishSequence(card: HTMLElement, clock: ReturnType<typeof fakeScheduler>) {
-  const limit = (settings.hold + settings.rDur) * 1000 + 2000;
-  for (let elapsed = 0; elapsed < limit; elapsed += 100) {
+  // Bounded by real time, not clock time: `ready` may finish late on a slow runner, and the
+  // reveal then still needs rDur of clock time after it. Extra clock time after the end is
+  // harmless.
+  const deadline = performance.now() + 4_000; // under Vitest's 5 s test timeout
+  while (performance.now() < deadline) {
     await new Promise((resolve) => setTimeout(resolve, 5));
     clock.advance(100);
     if (card.getAttribute("aria-busy") === null && !card.querySelector("canvas + canvas")) {
       return;
     }
   }
-  throw new Error("The sequence did not finish");
+  throw new Error("The sequence did not finish within 4 s of real time");
 }
 
 describe("TestCard", () => {
