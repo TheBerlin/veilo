@@ -153,6 +153,9 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | `size-panel`                   | `380px`                  | Maximum width of the playground's control panel.    |
 | `size-test-card`               | `320px`                  | Width of the playground's test card.                |
 | `size-test-card-button`        | `42px`                   | Height of the test card's button.                   |
+| `size-card-thumb`              | `64px`                   | List-row card thumbnail.                            |
+| `size-card-thumb-sm`           | `40px`                   | Table-row card thumbnail.                           |
+| `size-card-avatar`             | `72px`                   | Profile-header card avatar.                         |
 | `size-grid-dot`                | `1.5px`                  | Dots of the curve editor's 0.1 grid.                |
 
 ### Radius

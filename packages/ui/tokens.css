@@ -68,6 +68,9 @@
   --veilo-size-icon-lg: 24px;
   --veilo-size-test-card: 320px;
   --veilo-size-test-card-button: 42px;
+  --veilo-size-card-thumb: 64px;
+  --veilo-size-card-thumb-sm: 40px;
+  --veilo-size-card-avatar: 72px;
   --veilo-size-panel: 380px;
   --veilo-size-grid-dot: 1.5px;
   --veilo-radius-base: 8px;

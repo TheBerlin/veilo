@@ -1,5 +1,5 @@
-// test-card.tsx: the fixed product card the playground animates (spec 1.2), with its slot
-// markup and layout hints.
+// test-card.tsx: the card the playground animates: the product card of spec 1.2 or one of the
+// other layouts of card-layouts.ts, with its slot markup and layout hints.
 
 import type { Reveal, RevealOptions, Settings } from "@veilo/core";
 import {
@@ -10,7 +10,7 @@ import {
   type DragEvent,
   type KeyboardEvent,
 } from "react";
-import { defaultText, PRODUCT_LAYOUT } from "./card-layouts.ts";
+import { CARD_LAYOUTS, DEFAULT_LAYOUT, defaultText, type CardLayoutId } from "./card-layouts.ts";
 import { drawImageCover, type CardImage } from "./image-source.ts";
 import { drawPlaceholderImage } from "./placeholder-image.ts";
 import styles from "./test-card.module.css";
@@ -22,6 +22,8 @@ export interface TestCardProps {
   settings: Settings;
   /** Reveal options, such as a test scheduler. */
   revealOptions?: RevealOptions;
+  /** The card layout. Defaults to the product card. Read at mount: change the card's key. */
+  layout?: CardLayoutId;
   /** The photo; the drawn placeholder when absent. Read at mount: change the card's key. */
   image?: CardImage | null;
   /**
@@ -61,7 +63,10 @@ export function TestCard(props: TestCardProps) {
 
   // Read at mount, like the reveal: a new image comes with a new key, so a fresh card.
   const image = useRef(props.image ?? null);
-  const ratio = useRef(props.ratio ?? 1);
+  // A layout without a large image always draws a square, whatever ratio was chosen.
+  const ratio = useRef(
+    CARD_LAYOUTS[props.layout ?? DEFAULT_LAYOUT].hasRatio ? (props.ratio ?? 1) : 1,
+  );
   const draw = (canvas: HTMLCanvasElement) => {
     if (image.current) {
       drawImageCover(canvas, image.current, ratio.current, window.devicePixelRatio);
@@ -89,8 +94,8 @@ export function TestCard(props: TestCardProps) {
     return () => observer.disconnect();
   }, []);
 
-  // Only the product layout exists so far; the text comes from its table.
-  const layout = PRODUCT_LAYOUT;
+  // The layout is read at mount, like the ratio: another layout comes with a new key.
+  const [layout] = useState(() => CARD_LAYOUTS[props.layout ?? DEFAULT_LAYOUT]);
   const text = (slot: string) => defaultText(layout, slot);
   const [frameReady, setFrameReady] = useState(false);
   const reveal = useReveal(
@@ -121,49 +126,115 @@ export function TestCard(props: TestCardProps) {
     if (file) props.onImageDrop?.(file);
   };
 
+  // The image area: the layout's class sets its size and shape; only layouts with a large image
+  // take the chosen ratio, the others are a fixed square (thumbnail, avatar).
+  const photoCanvas = (
+    <canvas
+      ref={photo}
+      className={`${styles.image} ${styles[`image-${layout.id}`]}`}
+      // The chosen shape; the drawing above matches it in canvas pixels.
+      style={layout.hasRatio ? { aspectRatio: ratio.current } : undefined}
+      data-veilo-slot="photo"
+      aria-hidden="true"
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+    />
+  );
+  const heading = (
+    <h2 className={styles.heading} data-veilo-slot="heading">
+      {text("heading")}
+    </h2>
+  );
+  const line = (slot: string) => (
+    <p className={styles.line} data-veilo-slot={slot}>
+      {text(slot)}
+    </p>
+  );
+  const price = (
+    <span className={styles.price} data-veilo-slot="price">
+      {text("price")}
+    </span>
+  );
+  const button = (
+    <span className={styles.button} data-veilo-slot="buy">
+      <span className={styles.label} data-veilo-slot="label">
+        {text("label")}
+      </span>
+    </span>
+  );
+
   return (
     <article
       ref={card}
-      className={styles.card}
+      className={`${styles.card} ${styles[`card-${layout.id}`]}`}
+      style={{ width: layout.width }}
       role="button"
       tabIndex={0}
-      aria-label="Test card: MCHOSE L7 Pro. Press to replay the animation."
+      aria-label={`Test card, ${layout.name.toLowerCase()}. Press to replay the animation.`}
       data-frame-ready={frameReady ? "" : undefined}
       onClick={replay}
       onKeyDown={onKeyDown}
     >
-      <canvas
-        ref={photo}
-        className={styles.image}
-        // The chosen shape; the drawing above matches it in canvas pixels.
-        style={{ aspectRatio: ratio.current }}
-        data-veilo-slot="photo"
-        aria-hidden="true"
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-      />
-      <h2 className={styles.heading} data-veilo-slot="heading">
-        {text("heading")}
-      </h2>
-      <p className={styles.line} data-veilo-slot="line1">
-        {text("line1")}
-      </p>
-      <p className={styles.line} data-veilo-slot="line2">
-        {text("line2")}
-      </p>
-      <span className={styles.prices}>
-        <span className={styles.price} data-veilo-slot="price">
-          {text("price")}
-        </span>
-        <span className={styles.oldPrice} data-veilo-slot="oldPrice">
-          {text("oldPrice")}
-        </span>
-      </span>
-      <span className={styles.button} data-veilo-slot="buy">
-        <span className={styles.label} data-veilo-slot="label">
-          {text("label")}
-        </span>
-      </span>
+      {layout.id === "product" && (
+        <>
+          {photoCanvas}
+          {heading}
+          {line("line1")}
+          {line("line2")}
+          <span className={styles.prices}>
+            {price}
+            <span className={styles.oldPrice} data-veilo-slot="oldPrice">
+              {text("oldPrice")}
+            </span>
+          </span>
+          {button}
+        </>
+      )}
+      {layout.id === "list" && (
+        <>
+          {photoCanvas}
+          <span className={styles.stack}>
+            {heading}
+            {line("line1")}
+          </span>
+          {price}
+        </>
+      )}
+      {layout.id === "profile" && (
+        <>
+          <span className={styles.person}>
+            {photoCanvas}
+            <span className={styles.stack}>
+              {heading}
+              {line("line1")}
+            </span>
+          </span>
+          {line("line2")}
+          {button}
+        </>
+      )}
+      {layout.id === "article" && (
+        <>
+          {photoCanvas}
+          {line("tag")}
+          {heading}
+          {line("line1")}
+          {line("line2")}
+          {line("meta")}
+        </>
+      )}
+      {layout.id === "table" && (
+        <>
+          {photoCanvas}
+          <span className={styles.stack}>
+            {heading}
+            {line("line1")}
+          </span>
+          {line("category")}
+          {line("stock")}
+          {price}
+        </>
+      )}
     </article>
   );
 }

@@ -1,13 +1,16 @@
 /* Column: the stage with the transport bar under it. */
 .column {
   display: grid;
+  /* A wide card (the table row is 640 px) must not widen the column: it shrinks instead. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--veilo-space-2);
 }
 
 /* Stage: the card centered on a calm page-colored surface. */
 .stage {
   display: grid;
-  place-content: center;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
   justify-items: center;
   gap: var(--veilo-space-3);
   min-height: calc(var(--veilo-size-test-card) * 1.75);

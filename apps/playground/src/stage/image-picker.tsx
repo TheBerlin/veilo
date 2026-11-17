@@ -19,8 +19,8 @@ export interface ImagePickerProps {
   onFile: (file: File) => void;
   /** Called by Reset. */
   onReset: () => void;
-  /** The image area's ratio. */
-  ratio: AspectRatioId;
+  /** The image area's ratio; `undefined` hides the select (the layout's image has a fixed shape). */
+  ratio?: AspectRatioId;
   /** Called with a newly chosen ratio. */
   onRatioChange: (ratio: AspectRatioId) => void;
 }
@@ -78,16 +78,18 @@ export function ImagePicker(props: ImagePickerProps) {
       <p className={styles.error} role="alert">
         {props.error}
       </p>
-      <Select
-        className={styles.ratio}
-        label="Image ratio"
-        value={props.ratio}
-        options={RATIO_OPTIONS}
-        onValueChange={(value) => {
-          const ratio = toRatioId(value);
-          if (ratio) props.onRatioChange(ratio);
-        }}
-      />
+      {props.ratio !== undefined && (
+        <Select
+          className={styles.ratio}
+          label="Image ratio"
+          value={props.ratio}
+          options={RATIO_OPTIONS}
+          onValueChange={(value) => {
+            const ratio = toRatioId(value);
+            if (ratio) props.onRatioChange(ratio);
+          }}
+        />
+      )}
     </div>
   );
 }

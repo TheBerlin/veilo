@@ -8,6 +8,7 @@ import { createContentStore, useContent, type ContentStore } from "../state/cont
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import { watchTheme } from "../theme/theme.ts";
 import { ratioValue } from "./aspect-ratio.ts";
+import { CARD_LAYOUTS } from "./card-layouts.ts";
 import { ImagePicker } from "./image-picker.tsx";
 import {
   loadImageFile,
@@ -82,6 +83,7 @@ export function Stage(props: StageProps) {
   const [reveal, setReveal] = useState<Reveal | null>(null);
   const [content] = useState(() => props.content ?? createContentStore());
   const ratioId = useContent(content, "ratio");
+  const layoutId = useContent(content, "layout");
   const [loop, setLoop] = useState(false);
   // The reduced-motion preview: off when the page opens and never saved, so the preview shows
   // the full effect by default (the spec's rule), whatever the viewer's own setting.
@@ -133,11 +135,17 @@ export function Stage(props: StageProps) {
     );
   };
 
-  // A new ratio needs a new card (it is read at mount), which plays the full sequence.
+  // A new ratio or layout needs a new card (both are read at mount), which plays the full
+  // sequence.
   useEffect(
     () =>
       content.subscribe((next, previous) => {
-        if (next.content.ratio === previous.content.ratio) return;
+        if (
+          next.content.ratio === previous.content.ratio &&
+          next.content.layout === previous.content.layout
+        ) {
+          return;
+        }
         setPhoto((current) => ({ ...current, key: current.key + 1, start: "sequence" }));
       }),
     [content],
@@ -166,6 +174,7 @@ export function Stage(props: StageProps) {
           settings={store.getState().settings}
           // Always set: the preview never follows the viewer's own preference (core's default).
           revealOptions={{ ...props.revealOptions, reducedMotion }}
+          layout={layoutId}
           image={photo.image}
           ratio={ratioValue(ratioId, photo.image)}
           onImageDrop={onFile}
@@ -189,7 +198,8 @@ export function Stage(props: StageProps) {
           onSample={onSample}
           onFile={onFile}
           onReset={onReset}
-          ratio={ratioId}
+          // Only layouts with a large image have a ratio to choose.
+          ratio={CARD_LAYOUTS[layoutId].hasRatio ? ratioId : undefined}
           onRatioChange={(ratio) => content.getState().setRatio(ratio)}
         />
       </TransportBar>

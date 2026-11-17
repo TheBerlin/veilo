@@ -1,12 +1,14 @@
-// panel.tsx: the control panel beside the stage, with the Loader, Reveal, Presets and Export
-// tabs.
+// panel.tsx: the control panel beside the stage, with the Loader, Reveal, Content, Presets and
+// Export tabs.
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@veilo/ui";
+import { useState } from "react";
 import { PresetsTab } from "../presets/presets-tab.tsx";
 import type { UserPresetsStore } from "../presets/user-presets-store.ts";
-import type { ContentStore } from "../state/content-store.ts";
+import { createContentStore, type ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { ColorFields, InkColorField } from "./color-fields.tsx";
+import { ContentTab } from "./content-tab.tsx";
 import { ControlGroups } from "./control-groups.tsx";
 import { ExportTab } from "./export-tab.tsx";
 import { LOADER_GROUPS, REVEAL_GROUPS } from "./controls.ts";
@@ -30,13 +32,16 @@ export interface PanelProps {
  * @returns The panel.
  */
 export function Panel(props: PanelProps) {
+  // The app passes its store; tests that leave it out get a private one.
+  const [content] = useState(() => props.content ?? createContentStore());
   return (
     <aside className={styles.panel} aria-label="Settings">
       <Tabs defaultValue="loader">
-        {/* Stretched: four tabs fit on one row in the panel only this way. */}
+        {/* Stretched: five tabs fit on one row in the panel only this way. */}
         <TabsList aria-label="Settings sections" stretch>
           <TabsTrigger value="loader">Loader</TabsTrigger>
           <TabsTrigger value="reveal">Reveal</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="presets">Presets</TabsTrigger>
           <TabsTrigger value="export">Export</TabsTrigger>
         </TabsList>
@@ -48,11 +53,14 @@ export function Panel(props: PanelProps) {
           <ControlGroups store={props.store} groups={REVEAL_GROUPS} />
           <InkColorField store={props.store} />
         </TabsContent>
+        <TabsContent value="content" className={styles.content}>
+          <ContentTab content={content} />
+        </TabsContent>
         <TabsContent value="presets" className={styles.content}>
           <PresetsTab store={props.store} presets={props.presets} />
         </TabsContent>
         <TabsContent value="export" className={styles.content}>
-          <ExportTab store={props.store} content={props.content} />
+          <ExportTab store={props.store} content={content} />
         </TabsContent>
       </Tabs>
     </aside>

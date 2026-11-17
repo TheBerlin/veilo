@@ -1,9 +1,9 @@
-/* Card: fixed width (spec 1.2), a card surface; 16 px padding gives the large radius. */
+/* Card: a card surface; 16 px padding gives the large radius. Its width is set inline from the
+   layout (the product card is 320 px, spec 1.2). */
 .card {
   display: grid;
   gap: var(--veilo-space-1);
   box-sizing: border-box;
-  width: var(--veilo-size-test-card);
   max-width: 100%;
   padding: var(--veilo-space-2);
   border: 1px solid var(--veilo-border);
@@ -82,4 +82,65 @@
   display: block;
   width: 100%;
   text-align: center;
+}
+
+/* Product card and article teaser: the large image keeps the base block above. Other layouts
+   draw their image at a fixed size; the canvas is square, so width and height match. */
+.image-list {
+  width: var(--veilo-size-card-thumb);
+}
+
+.image-table {
+  width: var(--veilo-size-card-thumb-sm);
+}
+
+/* The avatar is round: pill radius is for dots and avatars only. */
+.image-profile {
+  width: var(--veilo-size-card-avatar);
+  border-radius: var(--veilo-radius-pill);
+}
+
+/* A column of text parts, as a flex child that may shrink below its content. */
+.stack {
+  display: grid;
+  gap: var(--veilo-space-1);
+  min-width: 0;
+}
+
+/* List row and table row: parts side by side, centered on the image's height. */
+.card-list {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.card-table {
+  grid-template-columns: auto minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+/* Prices in a row take their own width; text sits flush right. */
+.card-list .price,
+.card-table .price {
+  flex: none;
+  text-align: right;
+}
+
+/* Profile header: avatar and name side by side, then bio and button. */
+.person {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.card-profile .heading,
+.card-list .heading,
+.card-table .heading {
+  margin: 0;
+}
+
+/* Article teaser: the tag reads as a small label above the headline. */
+.card-article .heading {
+  margin: 0;
 }
