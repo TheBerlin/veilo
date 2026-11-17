@@ -1,7 +1,7 @@
 import { LAYOUT_VERSION, defaultSettings, type Layout } from "@veilo/core";
 import { presetSettings } from "@veilo/presets";
 import { describe, expect, it } from "vitest";
-import { configKey, resolveConfig } from "../src/config.ts";
+import { configKey, resolveConfig, type LayoutInput } from "../src/config.ts";
 
 const layout: Layout = {
   version: LAYOUT_VERSION,
@@ -22,6 +22,19 @@ describe("resolveConfig", () => {
 
   it("keeps a layout's slots and settings", () => {
     expect(resolveConfig({ layout })).toEqual(layout);
+  });
+
+  it("accepts a layout whose settings hold only the changed keys", () => {
+    // The playground's layout JSON is written like this; it must typecheck as a prop.
+    const short: LayoutInput = { version: LAYOUT_VERSION, settings: { imageFx: "hex" }, slots: {} };
+    expect(resolveConfig({ layout: short })).toEqual({
+      version: LAYOUT_VERSION,
+      settings: { imageFx: "hex" },
+      slots: {},
+    });
+    // Settings are optional too.
+    const bare: LayoutInput = { version: LAYOUT_VERSION, slots: { photo: { role: "image" } } };
+    expect(resolveConfig({ layout: bare })).toMatchObject({ slots: bare.slots });
   });
 
   it("lets a preset replace a layout's settings but keep its slots", () => {

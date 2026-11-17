@@ -4,6 +4,12 @@
 import { LAYOUT_VERSION, type Layout, type Settings } from "@veilo/core";
 import { presetSettings, type PresetId } from "@veilo/presets";
 
+/**
+ * A layout as you write it: like core's `Layout`, but `settings` may hold only the keys you
+ * change. Core fills in the rest, so the layout JSON of the playground can be pasted as it is.
+ */
+export type LayoutInput = Omit<Layout, "settings"> & { settings?: Partial<Settings> };
+
 /** What a component or hook animates: a preset, settings, a layout, or a mix. */
 export interface RevealConfig {
   /** A built-in preset. Replaces the layout's settings; `settings` still apply on top. */
@@ -11,7 +17,7 @@ export interface RevealConfig {
   /** Settings to apply last, over the preset or the layout's settings. */
   settings?: Partial<Settings>;
   /** A layout: base settings plus slot hints for the `data-veilo-slot` elements. */
-  layout?: Layout;
+  layout?: LayoutInput;
 }
 
 /**
