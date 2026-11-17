@@ -1,0 +1,6 @@
+{
+  // For tsdown only: the published sources. tsconfig.json also covers the tests, which import
+  // core's test helpers; built with that one, the declaration step wrote .d.ts files into core.
+  "extends": "./tsconfig.json",
+  "include": ["src"]
+}

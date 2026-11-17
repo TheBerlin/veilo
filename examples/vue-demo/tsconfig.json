@@ -1,0 +1,16 @@
+{
+  // Standalone on purpose: check.mjs copies this example out of the repo, so it must not extend
+  // the repo's base config. Strict, as a careful user would set it. Checked by vue-tsc, which
+  // reads the .vue files too.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"]
+}
