@@ -4,7 +4,7 @@ Veilo is a free, open-source playground and package family for **skeleton loader
 
 Tune an effect with live controls, scrub it frame by frame, and export it as CSS or JSON. The same settings object drives a framework-agnostic engine that runs in plain HTML or any framework.
 
-> **Status:** early development, version 0.6.0. The core engine, the CSS loaders, the React components, the web components with their CDN bundle and the playground are done (share links, saved presets, any image ratio, editable card content, a reduced-motion preview and code for every package), and every preset is locked by screenshot tests; the playground runs on a staging site at https://veilo-playground.vercel.app. Nothing is published to npm yet, and the API can still change before 1.0.
+> **Status:** early development, version 0.7.0. The core engine, the CSS loaders, the wrappers for React, Vue, Svelte and Angular, the web components with their CDN bundle and the playground are done (share links, saved presets, any image ratio, editable card content, a reduced-motion preview and code for every package), and every preset is locked by screenshot tests; the playground runs on a staging site at https://veilo-playground.vercel.app. Nothing is published to npm yet, and the API can still change before 1.0.
 
 ## What it does
 
@@ -18,14 +18,17 @@ Tune an effect with live controls, scrub it frame by frame, and export it as CSS
 
 | Package          | Status   | Purpose                                                                                                                                                                                                                   |
 | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@veilo/core`    | 0.6.0    | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md))                                                                                                         |
-| `@veilo/css`     | 0.6.0    | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                                                                                                                               |
-| `@veilo/presets` | 0.6.0    | The named presets as typed data ([README](packages/presets/README.md))                                                                                                                                                    |
-| `@veilo/react`   | 0.6.0    | React components: `Reveal`, `Skeleton` and `useReveal`, with server rendering ([README](packages/react/README.md))                                                                                                        |
-| `@veilo/element` | 0.6.0    | Web components `<veilo-reveal>` and `<veilo-skeleton>`, and a one-file CDN bundle for plain HTML ([README](packages/element/README.md))                                                                                   |
+| `@veilo/core`    | 0.7.0    | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md))                                                                                                         |
+| `@veilo/css`     | 0.7.0    | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                                                                                                                               |
+| `@veilo/presets` | 0.7.0    | The named presets as typed data ([README](packages/presets/README.md))                                                                                                                                                    |
+| `@veilo/react`   | 0.7.0    | React components: `Reveal`, `Skeleton` and `useReveal`, with server rendering ([README](packages/react/README.md))                                                                                                        |
+| `@veilo/vue`     | 0.7.0    | Vue 3 components `Reveal` and `Skeleton` and a `useReveal` composable, typed for script setup ([README](packages/vue/README.md))                                                                                          |
+| `@veilo/svelte`  | 0.7.0    | Svelte 5 components `Reveal` and `Skeleton` and the `reveal` and `skeleton` actions ([README](packages/svelte/README.md))                                                                                                 |
+| `@veilo/angular` | 0.7.0    | Angular 20 to 22 standalone components and directives, running outside the zone ([README](packages/angular/README.md))                                                                                                    |
+| `@veilo/element` | 0.7.0    | Web components `<veilo-reveal>` and `<veilo-skeleton>`, and a one-file CDN bundle for plain HTML ([README](packages/element/README.md))                                                                                   |
 | `@veilo/ui`      | internal | Design tokens and React components for the playground and website (never published)                                                                                                                                       |
 | `playground`     | staging  | The online tool ([staging site](https://veilo-playground.vercel.app)): test card with five layouts, image source and ratio, transport bar, presets of your own, share links, curve editor, code for every package, themes |
-| Planned          | —        | `vue`, `svelte`, `angular`, docs and website                                                                                                                                                                              |
+| Planned          | —        | Docs and website                                                                                                                                                                                                          |
 
 ```ts
 import { createReveal } from "@veilo/core";
@@ -46,8 +49,8 @@ reveal.playSequence();
 
 ```
 apps/       playground (docs and website later)
-packages/   core, css, presets, react, element, ui
-examples/   css-demo, react-demo, element-demo, snippet-check
+packages/   core, css, presets, react, vue, svelte, angular, element, ui
+examples/   css-demo, react-demo, vue-demo, svelte-demo, angular-demo, element-demo, snippet-check
 tools/      layer-check, lint (internal)
 docs/       SPEC.md, the product specification
 ```
