@@ -23,18 +23,19 @@ function Sections() {
 }
 
 /**
- * The playground's four tabs in a box of the given width.
+ * The playground's five tabs in a box of the given width.
  *
  * @param props - The box width in px, and whether the bar is stretched.
  * @returns The tabs in the box.
  */
-function FourTabs(props: { width: number; stretch?: boolean }) {
+function FiveTabs(props: { width: number; stretch?: boolean }) {
   return (
     <div style={{ width: props.width }}>
       <Tabs defaultValue="loader">
-        <TabsList aria-label="Four" stretch={props.stretch}>
+        <TabsList aria-label="Five" stretch={props.stretch}>
           <TabsTrigger value="loader">Loader</TabsTrigger>
           <TabsTrigger value="reveal">Reveal</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="presets">Presets</TabsTrigger>
           <TabsTrigger value="export">Export</TabsTrigger>
         </TabsList>
@@ -61,9 +62,9 @@ describe("Tabs", () => {
     ["the desktop panel", 1440, 346],
     // 375 minus 16 px page gutters, 16 px panel padding and 1 px borders on each side.
     ["the panel of the 375 px layout", 375, 309],
-  ])("stretched, fits four tabs on one row across %s", async (_name, viewport, width) => {
+  ])("stretched, fits five tabs on one row across %s", async (_name, viewport, width) => {
     await page.viewport(viewport, 800);
-    render(<FourTabs width={width} stretch />);
+    render(<FiveTabs width={width} stretch />);
     expect(tabRows()).toHaveLength(1);
     expect(screen.getByRole("tablist").getBoundingClientRect().width).toBe(width);
     // Shared evenly: no tab is far narrower than another.
@@ -72,7 +73,7 @@ describe("Tabs", () => {
   });
 
   it("keeps its usual size when not stretched", () => {
-    render(<FourTabs width={600} />);
+    render(<FiveTabs width={600} />);
     const bar = screen.getByRole("tablist").getBoundingClientRect().width;
     expect(bar).toBeLessThan(600);
     expect(getComputedStyle(screen.getAllByRole("tab")[0]!).paddingLeft).toBe("16px");
@@ -80,7 +81,7 @@ describe("Tabs", () => {
 
   it("wraps tabs that do not fit instead of growing past its box", async () => {
     await page.viewport(375, 800);
-    render(<FourTabs width={200} />);
+    render(<FiveTabs width={200} />);
     expect(tabRows().length).toBeGreaterThan(1);
     expect(screen.getByRole("tablist").getBoundingClientRect().width).toBeLessThanOrEqual(200);
   });

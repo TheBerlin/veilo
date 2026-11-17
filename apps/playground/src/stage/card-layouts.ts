@@ -174,6 +174,20 @@ export function toLayoutId(value: unknown): CardLayoutId | undefined {
   return LAYOUT_IDS.find((id) => id === value);
 }
 
+/** The longest text a part may hold, in UTF-16 units. Keeps share links short. */
+export const TEXT_LIMIT = 120;
+
+/**
+ * Makes typed or saved text fit a part: line breaks and tabs become spaces (a part is one line of
+ * a card) and the length is capped at {@link TEXT_LIMIT}.
+ *
+ * @param text - The text as typed or read.
+ * @returns The cleaned text. It may be empty.
+ */
+export function cleanText(text: string): string {
+  return text.replace(/[\r\n\t]+/g, " ").slice(0, TEXT_LIMIT);
+}
+
 /**
  * Finds a text part's default text.
  *

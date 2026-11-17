@@ -138,7 +138,7 @@ describe("App startup", () => {
     await userEvent.selectOptions(select, "16:9");
     await waitFor(() => {
       const saved = JSON.parse(localStorage.getItem(LAST_SESSION_KEY) ?? "null");
-      expect(saved?.content).toEqual({ ratio: "16:9", layout: "product" });
+      expect(saved?.content).toEqual({ ratio: "16:9", layout: "product", texts: {} });
     });
   });
 

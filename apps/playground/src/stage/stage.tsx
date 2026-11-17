@@ -34,6 +34,9 @@ export interface StageProps {
   content?: ContentStore;
 }
 
+/** How long (ms) after the last keystroke the card is rebuilt with the new text. */
+export const TEXT_REPLAY_DELAY = 500;
+
 /** The card's photo (the placeholder when `image` is null) and how its reveal starts. */
 interface PhotoState {
   /** The card's key; a new one rebuilds the card and its reveal. */
@@ -84,6 +87,7 @@ export function Stage(props: StageProps) {
   const [content] = useState(() => props.content ?? createContentStore());
   const ratioId = useContent(content, "ratio");
   const layoutId = useContent(content, "layout");
+  const texts = useContent(content, "texts");
   const [loop, setLoop] = useState(false);
   // The reduced-motion preview: off when the page opens and never saved, so the preview shows
   // the full effect by default (the spec's rule), whatever the viewer's own setting.
@@ -151,6 +155,23 @@ export function Stage(props: StageProps) {
     [content],
   );
 
+  // Edited text also needs a new card, but typing must not replay the animation on every
+  // keystroke: wait until the user pauses.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = content.subscribe((next, previous) => {
+      if (next.content.texts === previous.content.texts) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        setPhoto((current) => ({ ...current, key: current.key + 1, start: "sequence" }));
+      }, TEXT_REPLAY_DELAY);
+    });
+    return () => {
+      unsubscribe();
+      clearTimeout(timer);
+    };
+  }, [content]);
+
   // A theme change recolors the grid canvas in place (spec 1.4); CSS handles the rest.
   useEffect(() => (reveal ? watchTheme(() => reveal.redraw()) : undefined), [reveal]);
 
@@ -175,6 +196,7 @@ export function Stage(props: StageProps) {
           // Always set: the preview never follows the viewer's own preference (core's default).
           revealOptions={{ ...props.revealOptions, reducedMotion }}
           layout={layoutId}
+          texts={texts[layoutId]}
           image={photo.image}
           ratio={ratioValue(ratioId, photo.image)}
           onImageDrop={onFile}

@@ -261,7 +261,7 @@ Provide the tab list with an `aria-label`, one trigger per view and the matching
 
 - The bar is a `card` with a `border` hairline, `radius-md` and `shadow-soft`. Tabs are `size-tab` (40 px) high with `radius-base`, so the bar is 8 + 8 padding = 16.
 - The selected tab has a `secondary` fill, `text` color and a `border` hairline; unselected tabs are `text-muted` and become `text` on hover. State never rests on color alone: the fill marks the selected tab.
-- `TabsList stretch` spans the container and the tabs share it evenly, like a segmented control, with `space-1` side padding (16 otherwise). At 900 px and below it also uses `label-sm` labels and `space-0-5` gaps. The playground panel uses it, because its four tabs do not fit the 380 px panel (or the 375 px layout) at the usual size. Other bars keep the usual size.
+- `TabsList stretch` spans the container and the tabs share it evenly, like a segmented control, with `space-0-5` side padding (16 otherwise), `label-sm` labels and `space-0-5` gaps, at every width. The playground panel uses it, because its five tabs do not fit the 380 px panel (or the 375 px layout) at the usual size. Other bars keep the usual size.
 - The bar is never wider than its container: tabs that still do not fit wrap onto a second row. It does not scroll, because a scrolling bar would clip the focus ring.
 - Keep labels to one or two words and the count to five or fewer. For page navigation use the Nav, not Tabs.
 

@@ -5,7 +5,11 @@ import { createContentStore, defaultContent, parseContent } from "../../src/stat
 
 describe("parseContent", () => {
   it("keeps valid parts and defaults the rest", () => {
-    expect(parseContent({ ratio: "16:9" })).toEqual({ ratio: "16:9", layout: "product" });
+    expect(parseContent({ ratio: "16:9" })).toEqual({
+      ratio: "16:9",
+      layout: "product",
+      texts: {},
+    });
     for (const input of [undefined, null, "x", [], {}, { ratio: "5:4" }, { ratio: 2 }]) {
       expect(parseContent(input), JSON.stringify(input)).toEqual(defaultContent());
     }
@@ -14,14 +18,20 @@ describe("parseContent", () => {
 
 describe("createContentStore", () => {
   it("starts square, or from checked input", () => {
-    expect(createContentStore().getState().content).toEqual({ ratio: "1:1", layout: "product" });
+    expect(createContentStore().getState().content).toEqual({
+      ratio: "1:1",
+      layout: "product",
+      texts: {},
+    });
     expect(createContentStore({ ratio: "3:4" }).getState().content).toEqual({
       ratio: "3:4",
       layout: "product",
+      texts: {},
     });
     expect(createContentStore({ ratio: "nope" }).getState().content).toEqual({
       ratio: "1:1",
       layout: "product",
+      texts: {},
     });
   });
 
@@ -51,7 +61,7 @@ describe("createContentStore", () => {
     expect(listener).not.toHaveBeenCalled();
     store.getState().setLayout("article");
     // The ratio is kept: it comes back when the user returns to a layout that uses it.
-    expect(store.getState().content).toEqual({ ratio: "16:9", layout: "article" });
+    expect(store.getState().content).toEqual({ ratio: "16:9", layout: "article", texts: {} });
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
@@ -60,6 +70,68 @@ describe("createContentStore", () => {
     store.getState().load(undefined);
     expect(store.getState().content).toEqual(defaultContent());
     store.getState().load({ ratio: "2:3", unknown: true });
-    expect(store.getState().content).toEqual({ ratio: "2:3", layout: "product" });
+    expect(store.getState().content).toEqual({ ratio: "2:3", layout: "product", texts: {} });
+  });
+});
+
+describe("text edits", () => {
+  it("stores only parts that differ from the default, per layout", () => {
+    const store = createContentStore();
+    const { setText } = store.getState();
+    setText("product", "heading", "Hello");
+    setText("list", "heading", "Other");
+    setText("product", "label", "Buy now");
+    expect(store.getState().content.texts).toEqual({
+      product: { heading: "Hello" },
+      list: { heading: "Other" },
+    });
+    // Back to the default removes the edit, and an empty layout entry goes with it.
+    setText("list", "heading", "MCHOSE L7 Pro");
+    expect(store.getState().content.texts).toEqual({ product: { heading: "Hello" } });
+  });
+
+  it("cleans text: one line, at most 120 characters, empty allowed", () => {
+    const store = createContentStore();
+    store.getState().setText("product", "heading", `a\nb\t${"x".repeat(200)}`);
+    const heading = store.getState().content.texts.product!.heading!;
+    expect(heading.startsWith("a b ")).toBe(true);
+    expect(heading).toHaveLength(120);
+    store.getState().setText("product", "heading", "");
+    expect(store.getState().content.texts.product).toEqual({ heading: "" });
+  });
+
+  it("ignores unknown slots, and wakes nobody when nothing changes", () => {
+    const store = createContentStore();
+    const listener = vi.fn();
+    store.subscribe(listener);
+    store.getState().setText("product", "nope", "x");
+    store.getState().setText("product", "heading", "MCHOSE L7 Pro");
+    store.getState().resetTexts("product");
+    expect(listener).not.toHaveBeenCalled();
+    store.getState().setText("product", "heading", "A");
+    store.getState().setText("product", "heading", "A");
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets one layout and keeps the others", () => {
+    const store = createContentStore();
+    store.getState().setText("product", "heading", "A");
+    store.getState().setText("table", "stock", "Sold out");
+    store.getState().resetTexts("product");
+    expect(store.getState().content.texts).toEqual({ table: { stock: "Sold out" } });
+  });
+
+  it("reads saved text part by part and drops what is wrong", () => {
+    const content = parseContent({
+      texts: {
+        product: { heading: "Kept", line1: 5, nope: "x", label: "Buy now" },
+        grid: { heading: "unknown layout" },
+        list: "not an object",
+      },
+    });
+    expect(content.texts).toEqual({ product: { heading: "Kept" } });
+    for (const texts of [undefined, null, "x", [], 3]) {
+      expect(parseContent({ texts }).texts, JSON.stringify(texts)).toEqual({});
+    }
   });
 });

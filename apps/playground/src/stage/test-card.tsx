@@ -24,6 +24,11 @@ export interface TestCardProps {
   revealOptions?: RevealOptions;
   /** The card layout. Defaults to the product card. Read at mount: change the card's key. */
   layout?: CardLayoutId;
+  /**
+   * The user's text for this layout, by slot; parts without an entry show the layout's default.
+   * Read at mount: change the card's key.
+   */
+  texts?: Record<string, string>;
   /** The photo; the drawn placeholder when absent. Read at mount: change the card's key. */
   image?: CardImage | null;
   /**
@@ -96,7 +101,9 @@ export function TestCard(props: TestCardProps) {
 
   // The layout is read at mount, like the ratio: another layout comes with a new key.
   const [layout] = useState(() => CARD_LAYOUTS[props.layout ?? DEFAULT_LAYOUT]);
-  const text = (slot: string) => defaultText(layout, slot);
+  // The user's text for this layout, read at mount too; parts without an edit show the default.
+  const [edits] = useState(() => props.texts);
+  const text = (slot: string) => edits?.[slot] ?? defaultText(layout, slot);
   const [frameReady, setFrameReady] = useState(false);
   const reveal = useReveal(
     card,

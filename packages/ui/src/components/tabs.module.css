@@ -42,27 +42,18 @@
 }
 
 /* Stretched bar: the full width, shared evenly by the tabs (like a segmented control), with
-   tighter tabs, so four fit in the 380 px panel. */
+   smaller labels, gaps and padding, so five fit on one row in the 380 px panel and in the
+   375 px layout's panel. */
 .stretch {
   display: flex;
+  gap: var(--veilo-space-0-5);
 }
 
 .stretch > .trigger {
   flex: 1 1 auto;
-  padding: 0 var(--veilo-space-1);
-}
-
-/* Narrow screens (the grid breakpoint): smaller labels and gaps, so four still fit on one row
-   in the 375 px layout's panel. */
-@media (max-width: 900px) {
-  .stretch {
-    gap: var(--veilo-space-0-5);
-  }
-
-  .stretch > .trigger {
-    font: var(--veilo-type-label-sm);
-    letter-spacing: var(--veilo-type-label-sm-tracking);
-  }
+  padding: 0 var(--veilo-space-0-5);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
 }
 
 /* Focus ring on tabs and on the panel, which is focusable for keyboard users. */

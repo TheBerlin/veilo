@@ -55,15 +55,17 @@ describe("readLastSession and saveLastSession", () => {
   it("round-trip the preview content next to the settings", () => {
     const { storage, entries } = fakeStorage();
     const settings = defaultSettings();
-    expect(saveLastSession(storage, settings, { ratio: "16:9", layout: "product" })).toBe(true);
+    expect(
+      saveLastSession(storage, settings, { ratio: "16:9", layout: "product", texts: {} }),
+    ).toBe(true);
     expect(saved(entries)).toEqual({
       version: 1,
       settings,
-      content: { ratio: "16:9", layout: "product" },
+      content: { ratio: "16:9", layout: "product", texts: {} },
     });
     expect(readLastSession(storage)).toEqual({
       settings,
-      content: { ratio: "16:9", layout: "product" },
+      content: { ratio: "16:9", layout: "product", texts: {} },
     });
   });
 
@@ -122,7 +124,7 @@ describe("watchLastSession with content", () => {
     expect(saved(entries)).toEqual({
       version: 1,
       settings: store.getState().settings,
-      content: { ratio: "3:4", layout: "product" },
+      content: { ratio: "3:4", layout: "product", texts: {} },
     });
     stop();
     content.getState().setRatio("1:1");
