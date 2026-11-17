@@ -9,6 +9,7 @@ describe("parseContent", () => {
       ratio: "16:9",
       layout: "product",
       texts: {},
+      widths: {},
     });
     for (const input of [undefined, null, "x", [], {}, { ratio: "5:4" }, { ratio: 2 }]) {
       expect(parseContent(input), JSON.stringify(input)).toEqual(defaultContent());
@@ -22,16 +23,19 @@ describe("createContentStore", () => {
       ratio: "1:1",
       layout: "product",
       texts: {},
+      widths: {},
     });
     expect(createContentStore({ ratio: "3:4" }).getState().content).toEqual({
       ratio: "3:4",
       layout: "product",
       texts: {},
+      widths: {},
     });
     expect(createContentStore({ ratio: "nope" }).getState().content).toEqual({
       ratio: "1:1",
       layout: "product",
       texts: {},
+      widths: {},
     });
   });
 
@@ -61,7 +65,12 @@ describe("createContentStore", () => {
     expect(listener).not.toHaveBeenCalled();
     store.getState().setLayout("article");
     // The ratio is kept: it comes back when the user returns to a layout that uses it.
-    expect(store.getState().content).toEqual({ ratio: "16:9", layout: "article", texts: {} });
+    expect(store.getState().content).toEqual({
+      ratio: "16:9",
+      layout: "article",
+      texts: {},
+      widths: {},
+    });
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
@@ -70,7 +79,12 @@ describe("createContentStore", () => {
     store.getState().load(undefined);
     expect(store.getState().content).toEqual(defaultContent());
     store.getState().load({ ratio: "2:3", unknown: true });
-    expect(store.getState().content).toEqual({ ratio: "2:3", layout: "product", texts: {} });
+    expect(store.getState().content).toEqual({
+      ratio: "2:3",
+      layout: "product",
+      texts: {},
+      widths: {},
+    });
   });
 });
 
@@ -106,7 +120,7 @@ describe("text edits", () => {
     store.subscribe(listener);
     store.getState().setText("product", "nope", "x");
     store.getState().setText("product", "heading", "MCHOSE L7 Pro");
-    store.getState().resetTexts("product");
+    store.getState().resetLayout("product");
     expect(listener).not.toHaveBeenCalled();
     store.getState().setText("product", "heading", "A");
     store.getState().setText("product", "heading", "A");
@@ -117,7 +131,7 @@ describe("text edits", () => {
     const store = createContentStore();
     store.getState().setText("product", "heading", "A");
     store.getState().setText("table", "stock", "Sold out");
-    store.getState().resetTexts("product");
+    store.getState().resetLayout("product");
     expect(store.getState().content.texts).toEqual({ table: { stock: "Sold out" } });
   });
 
@@ -133,5 +147,57 @@ describe("text edits", () => {
     for (const texts of [undefined, null, "x", [], 3]) {
       expect(parseContent({ texts }).texts, JSON.stringify(texts)).toEqual({});
     }
+  });
+});
+
+describe("card width", () => {
+  it("snaps to 10 px steps inside 200 to 720, per layout, and drops the default", () => {
+    const store = createContentStore();
+    const { setWidth } = store.getState();
+    setWidth("product", 333);
+    setWidth("table", 5000);
+    setWidth("list", 1);
+    expect(store.getState().content.widths).toEqual({ product: 330, table: 720, list: 200 });
+    // The product card's default is 320, so choosing it again removes the edit.
+    setWidth("product", 320);
+    expect(store.getState().content.widths).toEqual({ table: 720, list: 200 });
+  });
+
+  it("wakes nobody when the width stays the same", () => {
+    const store = createContentStore();
+    const listener = vi.fn();
+    store.subscribe(listener);
+    store.getState().setWidth("product", 320);
+    store.getState().setWidth("product", 400);
+    store.getState().setWidth("product", 404);
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it("reads saved widths part by part and drops what is wrong", () => {
+    const content = parseContent({
+      widths: {
+        product: 400,
+        list: "wide",
+        table: Number.NaN,
+        profile: 400,
+        grid: 300,
+        article: 90,
+      },
+    });
+    // profile's default is 400, so it is no edit; article is clamped up to the minimum.
+    expect(content.widths).toEqual({ product: 400, article: 200 });
+    for (const widths of [undefined, null, "x", [], 3]) {
+      expect(parseContent({ widths }).widths, JSON.stringify(widths)).toEqual({});
+    }
+  });
+
+  it("Reset clears one layout's text and width together", () => {
+    const store = createContentStore();
+    store.getState().setWidth("product", 400);
+    store.getState().setText("product", "heading", "A");
+    store.getState().setWidth("table", 700);
+    store.getState().resetLayout("product");
+    expect(store.getState().content.texts).toEqual({});
+    expect(store.getState().content.widths).toEqual({ table: 700 });
   });
 });

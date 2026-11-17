@@ -79,23 +79,44 @@ describe("Content tab text", () => {
     );
   });
 
-  it("keeps each layout's own edits, and Reset text clears the current layout only", async () => {
+  it("keeps each layout's own edits, and Reset content clears the current layout only", async () => {
     const { content, user } = await renderContentTab();
     await user.type(screen.getByRole("textbox", { name: "Heading" }), "!");
     await user.selectOptions(screen.getByLabelText("Layout"), "list");
     expect((screen.getByRole("textbox", { name: "Title" }) as HTMLInputElement).value).toBe(
       "MCHOSE L7 Pro",
     );
-    expect(screen.getByRole("button", { name: "Reset text" })).toHaveProperty("disabled", true);
+    expect(screen.getByRole("button", { name: "Reset content" })).toHaveProperty("disabled", true);
 
     await user.type(screen.getByRole("textbox", { name: "Title" }), "?");
-    await user.click(screen.getByRole("button", { name: "Reset text" }));
+    await user.click(screen.getByRole("button", { name: "Reset content" }));
     expect(content.getState().content.texts).toEqual({ product: { heading: "MCHOSE L7 Pro!" } });
 
     await user.selectOptions(screen.getByLabelText("Layout"), "product");
     expect((screen.getByRole("textbox", { name: "Heading" }) as HTMLInputElement).value).toBe(
       "MCHOSE L7 Pro!",
     );
+  });
+
+  it("the width slider sets the card width after a pause, per layout", async () => {
+    const { content, user } = await renderContentTab();
+    const slider = screen.getByRole("slider", { name: /Card width/ });
+    expect(slider.getAttribute("aria-valuenow")).toBe("320");
+    slider.focus();
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    expect(content.getState().content.widths).toEqual({ product: 340 });
+    await waitFor(
+      () => expect(screen.getByRole("button", { name: /Test card/ }).style.width).toBe("340px"),
+      { timeout: 3000 },
+    );
+    // Another layout starts at its own default, and Reset content brings the first one back.
+    await user.selectOptions(screen.getByLabelText("Layout"), "list");
+    expect(screen.getByRole("slider", { name: /Card width/ }).getAttribute("aria-valuenow")).toBe(
+      "480",
+    );
+    await user.selectOptions(screen.getByLabelText("Layout"), "product");
+    await user.click(screen.getByRole("button", { name: "Reset content" }));
+    expect(content.getState().content.widths).toEqual({});
   });
 
   it("limits a field to 120 characters", async () => {

@@ -1,11 +1,18 @@
 // content-tab.tsx: the Content tab: what the preview card shows. The layout picker and one text
-// field per part of the layout; the width slider joins in the next step of the Custom content
-// task.
+// field per part of the layout, the card width and a button that resets them.
 
-import { Button, Select, TextField } from "@veilo/ui";
+import { Button, Select, Slider, TextField } from "@veilo/ui";
 import type { ContentStore } from "../state/content-store.ts";
 import { useContent } from "../state/content-store.ts";
-import { CARD_LAYOUTS, LAYOUT_IDS, TEXT_LIMIT, toLayoutId } from "../stage/card-layouts.ts";
+import {
+  CARD_LAYOUTS,
+  LAYOUT_IDS,
+  TEXT_LIMIT,
+  toLayoutId,
+  WIDTH_MAX,
+  WIDTH_MIN,
+  WIDTH_STEP,
+} from "../stage/card-layouts.ts";
 import styles from "./panel.module.css";
 
 /** Props of {@link ContentTab}. */
@@ -18,9 +25,9 @@ export interface ContentTabProps {
 const LAYOUT_OPTIONS = LAYOUT_IDS.map((id) => ({ value: id, label: CARD_LAYOUTS[id].name }));
 
 /**
- * The Content tab. Side effects: writes the chosen layout and the typed text to the content
- * store, which rebuilds the card and plays the full sequence (at once for a layout, after a
- * pause in typing for text).
+ * The Content tab. Side effects: writes the chosen layout, text and width to the content store,
+ * which rebuilds the card and plays the full sequence (at once for a layout, after a pause in
+ * typing or dragging for text and width).
  *
  * @param props - The content store.
  * @returns The tab's controls.
@@ -28,6 +35,7 @@ const LAYOUT_OPTIONS = LAYOUT_IDS.map((id) => ({ value: id, label: CARD_LAYOUTS[
 export function ContentTab(props: ContentTabProps) {
   const layoutId = useContent(props.content, "layout");
   const edits = useContent(props.content, "texts")[layoutId];
+  const width = useContent(props.content, "widths")[layoutId];
   const layout = CARD_LAYOUTS[layoutId];
   return (
     <>
@@ -42,6 +50,15 @@ export function ContentTab(props: ContentTabProps) {
             if (next) props.content.getState().setLayout(next);
           }}
         />
+        <Slider
+          label="Card width"
+          value={width ?? layout.width}
+          min={WIDTH_MIN}
+          max={WIDTH_MAX}
+          step={WIDTH_STEP}
+          formatValue={(value) => `${value} px`}
+          onValueChange={(next) => props.content.getState().setWidth(layoutId, next)}
+        />
       </fieldset>
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Text</legend>
@@ -55,15 +72,15 @@ export function ContentTab(props: ContentTabProps) {
             onValueChange={(text) => props.content.getState().setText(layoutId, part.slot, text)}
           />
         ))}
-        <Button
-          size="sm"
-          variant="ghost"
-          disabled={!edits}
-          onClick={() => props.content.getState().resetTexts(layoutId)}
-        >
-          Reset text
-        </Button>
       </fieldset>
+      <Button
+        size="sm"
+        variant="ghost"
+        disabled={!edits && width === undefined}
+        onClick={() => props.content.getState().resetLayout(layoutId)}
+      >
+        Reset content
+      </Button>
     </>
   );
 }

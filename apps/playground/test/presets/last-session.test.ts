@@ -56,16 +56,21 @@ describe("readLastSession and saveLastSession", () => {
     const { storage, entries } = fakeStorage();
     const settings = defaultSettings();
     expect(
-      saveLastSession(storage, settings, { ratio: "16:9", layout: "product", texts: {} }),
+      saveLastSession(storage, settings, {
+        ratio: "16:9",
+        layout: "product",
+        texts: {},
+        widths: {},
+      }),
     ).toBe(true);
     expect(saved(entries)).toEqual({
       version: 1,
       settings,
-      content: { ratio: "16:9", layout: "product", texts: {} },
+      content: { ratio: "16:9", layout: "product", texts: {}, widths: {} },
     });
     expect(readLastSession(storage)).toEqual({
       settings,
-      content: { ratio: "16:9", layout: "product", texts: {} },
+      content: { ratio: "16:9", layout: "product", texts: {}, widths: {} },
     });
   });
 
@@ -124,7 +129,7 @@ describe("watchLastSession with content", () => {
     expect(saved(entries)).toEqual({
       version: 1,
       settings: store.getState().settings,
-      content: { ratio: "3:4", layout: "product", texts: {} },
+      content: { ratio: "3:4", layout: "product", texts: {}, widths: {} },
     });
     stop();
     content.getState().setRatio("1:1");

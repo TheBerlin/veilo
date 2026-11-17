@@ -88,6 +88,7 @@ export function Stage(props: StageProps) {
   const ratioId = useContent(content, "ratio");
   const layoutId = useContent(content, "layout");
   const texts = useContent(content, "texts");
+  const widths = useContent(content, "widths");
   const [loop, setLoop] = useState(false);
   // The reduced-motion preview: off when the page opens and never saved, so the preview shows
   // the full effect by default (the spec's rule), whatever the viewer's own setting.
@@ -155,12 +156,17 @@ export function Stage(props: StageProps) {
     [content],
   );
 
-  // Edited text also needs a new card, but typing must not replay the animation on every
-  // keystroke: wait until the user pauses.
+  // Edited text and width also need a new card, but typing or dragging must not replay the
+  // animation on every change: wait until the user pauses.
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const unsubscribe = content.subscribe((next, previous) => {
-      if (next.content.texts === previous.content.texts) return;
+      if (
+        next.content.texts === previous.content.texts &&
+        next.content.widths === previous.content.widths
+      ) {
+        return;
+      }
       clearTimeout(timer);
       timer = setTimeout(() => {
         setPhoto((current) => ({ ...current, key: current.key + 1, start: "sequence" }));
@@ -197,6 +203,7 @@ export function Stage(props: StageProps) {
           revealOptions={{ ...props.revealOptions, reducedMotion }}
           layout={layoutId}
           texts={texts[layoutId]}
+          width={widths[layoutId]}
           image={photo.image}
           ratio={ratioValue(ratioId, photo.image)}
           onImageDrop={onFile}

@@ -1,6 +1,6 @@
 // content-store.ts: what the preview shows, apart from the effect settings: the image area's
-// ratio, the card layout and the edited card text; width joins in the Custom content task. Kept out of the
-// settings object, which is what the packages read and the Settings JSON export writes.
+// ratio, the card layout and the edited card text and width. Kept out of the settings object,
+// which is what the packages read and the Settings JSON export writes.
 
 import { useStore } from "zustand";
 import { createStore, type StoreApi } from "zustand/vanilla";
@@ -8,6 +8,7 @@ import { DEFAULT_RATIO, toRatioId, type AspectRatioId } from "../stage/aspect-ra
 import {
   CARD_LAYOUTS,
   cleanText,
+  cleanWidth,
   DEFAULT_LAYOUT,
   LAYOUT_IDS,
   toLayoutId,
@@ -25,6 +26,11 @@ export interface Content {
    * stored, so each layout keeps its own edits and an untouched layout has no entry.
    */
   texts: Partial<Record<CardLayoutId, Record<string, string>>>;
+  /**
+   * The user's card width in CSS px, per layout. Only widths that differ from the layout's
+   * default are stored, so an untouched layout uses its own default width.
+   */
+  widths: Partial<Record<CardLayoutId, number>>;
 }
 
 /** The store's state: the content plus the actions that change it. */
@@ -43,8 +49,15 @@ export interface ContentState {
    * @param text - The new text, cleaned to fit the part.
    */
   setText: (layout: CardLayoutId, slot: string, text: string) => void;
-  /** Drops every edit of one layout, back to its default text. */
-  resetTexts: (layout: CardLayoutId) => void;
+  /**
+   * Sets a layout's card width. A width equal to the default removes the edit.
+   *
+   * @param layout - The layout.
+   * @param width - The width in CSS px, snapped to the slider's steps and range.
+   */
+  setWidth: (layout: CardLayoutId, width: number) => void;
+  /** Drops every edit of one layout, text and width, back to its defaults. */
+  resetLayout: (layout: CardLayoutId) => void;
   /**
    * Replaces the content with checked input over the defaults, as a share link or the last
    * session does. Unknown or invalid parts fall back to their defaults.
@@ -61,7 +74,7 @@ export type ContentStore = StoreApi<ContentState>;
  * @returns A fresh object.
  */
 export function defaultContent(): Content {
-  return { ratio: DEFAULT_RATIO, layout: DEFAULT_LAYOUT, texts: {} };
+  return { ratio: DEFAULT_RATIO, layout: DEFAULT_LAYOUT, texts: {}, widths: {} };
 }
 
 /**
@@ -90,6 +103,25 @@ function parseTexts(input: unknown): Content["texts"] {
 }
 
 /**
+ * Reads saved widths: known layouts only, finite numbers only, snapped, and only what differs
+ * from the default.
+ *
+ * @param input - An unchecked value.
+ * @returns The checked widths.
+ */
+function parseWidths(input: unknown): Content["widths"] {
+  const widths: Content["widths"] = {};
+  if (typeof input !== "object" || input === null) return widths;
+  for (const id of LAYOUT_IDS) {
+    const value = (input as Record<string, unknown>)[id];
+    if (typeof value !== "number" || !Number.isFinite(value)) continue;
+    const width = cleanWidth(value);
+    if (width !== CARD_LAYOUTS[id].width) widths[id] = width;
+  }
+  return widths;
+}
+
+/**
  * Reads content from unchecked input, part by part.
  *
  * @param input - Saved or shared content, unchecked.
@@ -100,11 +132,13 @@ export function parseContent(input: unknown): Content {
     ratio?: unknown;
     layout?: unknown;
     texts?: unknown;
+    widths?: unknown;
   };
   return {
     ratio: toRatioId(value.ratio) ?? DEFAULT_RATIO,
     layout: toLayoutId(value.layout) ?? DEFAULT_LAYOUT,
     texts: parseTexts(value.texts),
+    widths: parseWidths(value.widths),
   };
 }
 
@@ -142,12 +176,26 @@ export function createContentStore(initial?: unknown): ContentStore {
         else delete texts[layout];
         return { content: { ...state.content, texts } };
       }),
-    resetTexts: (layout) =>
+    setWidth: (layout, width) =>
       setState((state) => {
-        if (!state.content.texts[layout]) return state;
+        const cleaned = cleanWidth(width);
+        const widths = { ...state.content.widths };
+        if (cleaned === CARD_LAYOUTS[layout].width) delete widths[layout];
+        else widths[layout] = cleaned;
+        // The same state object when nothing changes, so subscribers stay asleep.
+        if (widths[layout] === state.content.widths[layout]) return state;
+        return { content: { ...state.content, widths } };
+      }),
+    resetLayout: (layout) =>
+      setState((state) => {
+        if (!state.content.texts[layout] && state.content.widths[layout] === undefined) {
+          return state;
+        }
         const texts = { ...state.content.texts };
+        const widths = { ...state.content.widths };
         delete texts[layout];
-        return { content: { ...state.content, texts } };
+        delete widths[layout];
+        return { content: { ...state.content, texts, widths } };
       }),
     load: (input) => setState({ content: parseContent(input) }),
   }));

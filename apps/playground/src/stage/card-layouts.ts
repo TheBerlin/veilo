@@ -122,7 +122,7 @@ export const ARTICLE_LAYOUT: CardLayout = {
     { slot: "heading", label: "Headline", text: "Veilo 0.6 adds share links" },
     { slot: "line1", label: "Excerpt, line 1", text: "Send any effect as one short link, and" },
     { slot: "line2", label: "Excerpt, line 2", text: "open it on another device unchanged." },
-    { slot: "meta", label: "Byline", text: "Mara L. · 4 min read" },
+    { slot: "meta", label: "Byline", text: "Mara L. Â· 4 min read" },
   ],
 };
 
@@ -172,6 +172,24 @@ export const DEFAULT_LAYOUT: CardLayoutId = "product";
  */
 export function toLayoutId(value: unknown): CardLayoutId | undefined {
   return LAYOUT_IDS.find((id) => id === value);
+}
+
+/** The narrowest card width in CSS px the width slider allows. */
+export const WIDTH_MIN = 200;
+/** The widest card width in CSS px the width slider allows. */
+export const WIDTH_MAX = 720;
+/** The slider's step in CSS px. */
+export const WIDTH_STEP = 10;
+
+/**
+ * Makes a width fit the slider: a whole number of steps inside the range.
+ *
+ * @param width - The width as read or dragged.
+ * @returns The nearest allowed width.
+ */
+export function cleanWidth(width: number): number {
+  const stepped = Math.round(width / WIDTH_STEP) * WIDTH_STEP;
+  return Math.min(WIDTH_MAX, Math.max(WIDTH_MIN, stepped));
 }
 
 /** The longest text a part may hold, in UTF-16 units. Keeps share links short. */

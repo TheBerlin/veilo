@@ -29,6 +29,11 @@ export interface TestCardProps {
    * Read at mount: change the card's key.
    */
   texts?: Record<string, string>;
+  /**
+   * The card width in CSS px; the layout's own width when absent. Read at mount: change the
+   * card's key.
+   */
+  width?: number;
   /** The photo; the drawn placeholder when absent. Read at mount: change the card's key. */
   image?: CardImage | null;
   /**
@@ -103,6 +108,8 @@ export function TestCard(props: TestCardProps) {
   const [layout] = useState(() => CARD_LAYOUTS[props.layout ?? DEFAULT_LAYOUT]);
   // The user's text for this layout, read at mount too; parts without an edit show the default.
   const [edits] = useState(() => props.texts);
+  // The width too: the layout's own unless the user chose one.
+  const [width] = useState(() => props.width ?? layout.width);
   const text = (slot: string) => edits?.[slot] ?? defaultText(layout, slot);
   const [frameReady, setFrameReady] = useState(false);
   const reveal = useReveal(
@@ -174,7 +181,7 @@ export function TestCard(props: TestCardProps) {
     <article
       ref={card}
       className={`${styles.card} ${styles[`card-${layout.id}`]}`}
-      style={{ width: layout.width }}
+      style={{ width }}
       role="button"
       tabIndex={0}
       aria-label={`Test card, ${layout.name.toLowerCase()}. Press to replay the animation.`}
