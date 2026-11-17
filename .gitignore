@@ -4,6 +4,8 @@ node_modules/
 
 # Build output
 dist/
+# Written by svelte-package next to dist.
+.svelte-kit/
 build/
 .turbo/
 .next/

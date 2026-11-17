@@ -1,0 +1,18 @@
+{
+  // Standalone on purpose: check.mjs copies this example out of the repo, so it must not extend
+  // the repo's base config. Strict, as a careful user would set it. Checked by svelte-check,
+  // which reads the .svelte files too.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": false,
+    "types": ["svelte", "vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.svelte"]
+}

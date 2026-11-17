@@ -25,6 +25,7 @@ export default tseslint.config(
     // and the docs folder.
     ignores: [
       "**/dist/",
+      "**/.svelte-kit/",
       "**/node_modules/",
       "**/.turbo/",
       "**/playwright-report/",

@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // svelte-check reads .svelte files and, through the base config, the .ts files next to them.
+  "compilerOptions": { "types": [] },
+  "include": ["src", "test"]
+}
