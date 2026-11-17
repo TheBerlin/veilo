@@ -1,0 +1,14 @@
+{
+  // Type check of sources and tests (no emit). ng-packagr uses tsconfig.lib.json for the build.
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": [],
+    "allowImportingTsExtensions": true,
+    "declaration": false,
+    "declarationMap": false,
+    // The tests import the package as built (see vitest.config.ts), so types come from dist.
+    "paths": { "@veilo/angular": ["./dist/index.d.ts"] }
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
