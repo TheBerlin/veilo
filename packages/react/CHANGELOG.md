@@ -1,5 +1,18 @@
 # @veilo/react
 
+## 0.6.0
+
+### Minor Changes
+
+- 8832ebb: The `layout` prop of `Reveal`, `Skeleton` and `useReveal` now accepts a layout whose `settings` hold only the keys you change (the new `LayoutInput` type). Core already filled in the rest at run time; the type did not allow it, so the layout JSON the playground exports could not be pasted as it was.
+
+### Patch Changes
+
+- Updated dependencies [8832ebb]
+- Updated dependencies [8832ebb]
+  - @veilo/core@0.6.0
+  - @veilo/presets@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

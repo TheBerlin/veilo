@@ -1,5 +1,16 @@
 # @veilo/presets
 
+## 0.6.0
+
+### Minor Changes
+
+- 8832ebb: No changes in these packages. The version moves with the others, which share one number.
+
+### Patch Changes
+
+- Updated dependencies [8832ebb]
+  - @veilo/core@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

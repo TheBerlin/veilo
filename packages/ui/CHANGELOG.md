@@ -1,5 +1,11 @@
 # @veilo/ui
 
+## 0.6.0
+
+### Minor Changes
+
+- 8832ebb: Adds the `TextField` component, a `stretch` option for `TabsList` (full width, compact labels, so five tabs fit the playground panel), and the `size-card-thumb`, `size-card-thumb-sm` and `size-card-avatar` tokens. The package stays internal and is never published.
+
 ## 0.5.0
 
 ### Minor Changes
