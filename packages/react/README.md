@@ -52,16 +52,16 @@ Slots are `img` or `canvas` for the photo, `button` for the button, `video` for 
 
 ## `Reveal`
 
-| Prop            | Default  | What it does                                                                                                    |
-| --------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
-| `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.    |
-| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo/presets`).                      |
-| `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped by core.            |
-| `layout`        | none     | Slot roles and bar hints, plus base settings. A `preset` replaces its settings; `settings` still apply on top.  |
-| `revealOnMount` | `false`  | Play when `ready` is already `true` at mount. Off by default: content that was there from the start just shows. |
-| `onComplete`    | none     | Called each time a reveal finishes.                                                                             |
-| `as`            | `"div"`  | The container: `div`, `section`, `article`, `aside`, `figure`, `li` or `span`.                                  |
-| `options`       | none     | Core options: `ink`, `fontFamily`, `reducedMotion` and others. Read when the reveal is created.                 |
+| Prop            | Default  | What it does                                                                                                                              |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                              |
+| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo/presets`).                                                |
+| `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped by core.                                      |
+| `layout`        | none     | Slot roles and bar hints, plus base settings (only the keys you change). A `preset` replaces its settings; `settings` still apply on top. |
+| `revealOnMount` | `false`  | Play when `ready` is already `true` at mount. Off by default: content that was there from the start just shows.                           |
+| `onComplete`    | none     | Called each time a reveal finishes.                                                                                                       |
+| `as`            | `"div"`  | The container: `div`, `section`, `article`, `aside`, `figure`, `li` or `span`.                                                            |
+| `options`       | none     | Core options: `ink`, `fontFamily`, `reducedMotion` and others. Read when the reveal is created.                                           |
 
 Any other prop, such as `className`, `style`, `id` or `data-*`, goes to the container. Effect props are compared by value, so writing `settings={{ rDur: 2 }}` inline does not rebuild anything on each render.
 
