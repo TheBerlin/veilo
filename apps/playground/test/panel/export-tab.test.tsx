@@ -6,15 +6,11 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 // Core's hand-driven scheduler, shared so both packages drive time the same way.
 import { fakeScheduler } from "../../../../packages/core/test/support/scheduler.ts";
-import {
-  appliedMessage,
-  ExportTab,
-  INVALID_JSON,
-  loaderCss,
-  settingsJson,
-} from "../../src/panel/export-tab.tsx";
+import { loaderCss, settingsJson } from "../../src/export/code-formats.ts";
+import { appliedMessage, ExportTab, INVALID_JSON } from "../../src/panel/export-tab.tsx";
 import { decodeShareLink } from "../../src/share/share-link.ts";
 import { Stage } from "../../src/stage/stage.tsx";
+import { createContentStore } from "../../src/state/content-store.ts";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
 /**
@@ -68,13 +64,64 @@ describe("export helpers", () => {
 });
 
 describe("ExportTab", () => {
-  it("shows the current settings and CSS, and follows changes", () => {
+  it("shows the current settings and CSS, and follows changes", async () => {
     const { store } = renderTab();
     const json = screen.getByLabelText("Settings JSON");
     expect(json.textContent).toContain('"cols": 64');
     act(() => store.getState().set("cols", 40));
     expect(json.textContent).toContain('"cols": 40');
+    await userEvent.selectOptions(screen.getByLabelText("Format"), "css");
     expect(screen.getByLabelText("Loader CSS").textContent).toContain(".skeleton {");
+  });
+
+  it("lists every code format and shows the chosen one", async () => {
+    renderTab();
+    const select = screen.getByLabelText("Format") as HTMLSelectElement;
+    expect([...select.options].map((option) => option.text)).toEqual([
+      "Settings JSON",
+      "Loader CSS",
+      "Layout JSON",
+      "Vanilla JS",
+      "React",
+      "Web component",
+      "CDN",
+    ]);
+    const expected: Record<string, string> = {
+      layout: '"slots"',
+      vanilla: "createReveal",
+      react: "@veilo/react",
+      element: "@veilo/element/define",
+      cdn: "cdn.jsdelivr.net",
+    };
+    for (const [value, text] of Object.entries(expected)) {
+      await userEvent.selectOptions(select, value);
+      const label = select.selectedOptions[0]!.text;
+      expect(screen.getByLabelText(label).textContent, value).toContain(text);
+    }
+  });
+
+  it("notes that the packages are not on npm yet, only for code that imports them", async () => {
+    renderTab();
+    const note = /not on npm yet/;
+    expect(screen.queryByText(note)).toBeNull();
+    await userEvent.selectOptions(screen.getByLabelText("Format"), "react");
+    expect(screen.getByText(note)).toBeTruthy();
+    await userEvent.selectOptions(screen.getByLabelText("Format"), "css");
+    expect(screen.queryByText(note)).toBeNull();
+  });
+
+  it("writes the snippets for the card on the stage, and follows its changes", async () => {
+    const store = createSettingsStore();
+    const content = createContentStore({ layout: "profile", widths: { profile: 450 } });
+    render(<ExportTab store={store} content={content} />);
+    await userEvent.selectOptions(screen.getByLabelText("Format"), "vanilla");
+    const code = () => screen.getByLabelText("Vanilla JS").textContent!;
+    expect(code()).toContain("Mara Lindqvist");
+    expect(code()).toContain("width: 450px");
+    act(() => content.getState().setText("profile", "heading", "Someone Else"));
+    expect(code()).toContain("Someone Else");
+    act(() => store.getState().set("imageFx", "mosaic"));
+    expect(code()).toContain('"imageFx": "mosaic"');
   });
 
   it("shows a share link for the current page that follows changes", async () => {

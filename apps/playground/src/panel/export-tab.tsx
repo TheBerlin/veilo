@@ -1,41 +1,18 @@
-// export-tab.tsx: the Export tab (spec 1.6): a share link, the settings as JSON, the loader as
-// plain CSS, and a box to load settings back.
+// export-tab.tsx: the Export tab (spec 1.6): a share link, the Code section (settings, CSS,
+// layout JSON and the code snippets) and a box to load settings back.
 
-import { generateLoaderCss, type Settings } from "@veilo/core";
+import type { Settings } from "@veilo/core";
 import { Button, CodeBlock, TextArea } from "@veilo/ui";
 import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { encodeShareLink, shareUrl } from "../share/share-link.ts";
 import { createContentStore, type Content, type ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
-import { themeColor } from "./color-fields.tsx";
+import { CodeSection } from "./code-section.tsx";
 import styles from "./panel.module.css";
 
 /** The message for text that does not parse. */
 export const INVALID_JSON = "That is not valid JSON.";
-
-/**
- * The settings as the Export tab shows them: every key, two-space indented.
- *
- * @param settings - The current settings.
- * @returns The JSON text.
- */
-export function settingsJson(settings: Settings): string {
-  return JSON.stringify(settings, null, 2);
-}
-
-/**
- * The loader as plain CSS for the default `.skeleton` class, with the theme's colors resolved to
- * hex values where nothing is picked (spec 1.6).
- *
- * @param settings - The current settings.
- * @param base - The theme's base color.
- * @param highlight - The theme's highlight color.
- * @returns The CSS text.
- */
-export function loaderCss(settings: Settings, base: string, highlight: string): string {
-  return generateLoaderCss(settings, { selector: ".skeleton", base, highlight });
-}
 
 /**
  * The message after applying pasted text.
@@ -111,17 +88,7 @@ export function ExportTab(props: ExportTabProps) {
         <CodeBlock code={url} aria-label="Share link" />
         <p className={styles.message}>The link holds the settings, not your own image.</p>
       </section>
-      <section className={styles.group}>
-        <h3 className={styles.legend}>Settings (JSON)</h3>
-        <CodeBlock code={settingsJson(settings)} aria-label="Settings JSON" />
-      </section>
-      <section className={styles.group}>
-        <h3 className={styles.legend}>Loader CSS</h3>
-        <CodeBlock
-          code={loaderCss(settings, themeColor("--veilo-base"), themeColor("--veilo-hi"))}
-          aria-label="Loader CSS"
-        />
-      </section>
+      <CodeSection settings={settings} content={content} />
       <section className={styles.group}>
         <h3 className={styles.legend}>Load settings</h3>
         <TextArea
