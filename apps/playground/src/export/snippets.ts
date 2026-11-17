@@ -303,8 +303,11 @@ function loadingScript(lead: string[]): string[] {
     '<script type="module">',
     ...lead.map((line) => (line === "" ? "" : `  ${line}`)),
     '  const card = document.querySelector("veilo-reveal");',
-    "  // Remove `loading` when your data is ready: the reveal plays.",
-    "  card.loading = false;",
+    "  // Remove `loading` when your data is ready and the reveal plays. A timer stands in for",
+    "  // the data here.",
+    "  setTimeout(() => {",
+    "    card.loading = false;",
+    "  }, 1000);",
     "</script>",
   ];
 }

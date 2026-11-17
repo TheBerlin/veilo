@@ -47,7 +47,7 @@ reveal.playSequence();
 ```
 apps/       playground (docs and website later)
 packages/   core, css, presets, react, element, ui
-examples/   css-demo, react-demo, element-demo
+examples/   css-demo, react-demo, element-demo, snippet-check
 tools/      layer-check, lint (internal)
 docs/       SPEC.md, the product specification
 ```
