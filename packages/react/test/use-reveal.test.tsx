@@ -2,7 +2,7 @@ import type { Reveal, RevealState } from "@veilo/core";
 import { act, render } from "@testing-library/react";
 import { StrictMode, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
-import type { RevealConfig } from "../src/config.ts";
+import type { RevealConfig } from "@veilo/presets";
 import { useReveal } from "../src/use-reveal.ts";
 
 /** What the test card reports to the test on every render. */

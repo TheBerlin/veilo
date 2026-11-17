@@ -7,7 +7,7 @@ import type { VeiloSkeletonElement } from "./skeleton-element.ts";
 export { defineVeiloElements, ELEMENT_TAGS } from "./define.ts";
 export { COMPLETE_EVENT, VeiloRevealElement } from "./reveal-element.ts";
 export { VeiloSkeletonElement } from "./skeleton-element.ts";
-export type { RevealConfig } from "./config.ts";
+export type { RevealConfig } from "@veilo/presets";
 
 declare global {
   interface HTMLElementTagNameMap {

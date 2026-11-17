@@ -16,7 +16,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { configKey, resolveConfig, type RevealConfig } from "./config.ts";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
 import type { RevealElement } from "./reveal.tsx";
 import { useServerSkeleton } from "./server-skeleton.tsx";
 

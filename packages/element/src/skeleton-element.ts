@@ -10,7 +10,8 @@ import {
 } from "@veilo/core";
 import type { PresetId } from "@veilo/presets";
 import { ReactiveElement, type PropertyDeclarations } from "@lit/reactive-element";
-import { configKey, jsonAttribute, resolveConfig, type RevealConfig } from "./config.ts";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+import { jsonAttribute } from "./config.ts";
 
 /**
  * `<veilo-skeleton>`: every `data-veilo-slot` element inside becomes a placeholder while the

@@ -2,6 +2,7 @@
 // plus helpers that turn a preset into complete settings and find the preset that matches some.
 // Settings are checked by core's parseSettings, so a preset can never hold a value core rejects.
 
+import { LAYOUT_VERSION, type Layout } from "@veilo/core";
 import { parseSettings, type Settings } from "@veilo/core/loader";
 
 /** The id of a built-in preset, in kebab case (used in URLs and the `preset` attribute later). */
@@ -150,4 +151,52 @@ export function matchingPreset(settings: Settings): Preset | undefined {
       Object.keys(full).length === keys.length && keys.every((key) => full[key] === settings[key])
     );
   });
+}
+
+/**
+ * A layout as you write it: like core's `Layout`, but `settings` may hold only the keys you
+ * change. Core fills in the rest, so the layout JSON of the playground can be pasted as it is.
+ */
+export type LayoutInput = Omit<Layout, "settings"> & { settings?: Partial<Settings> };
+
+/**
+ * What a component, directive or element animates: a preset, settings, a layout, or a mix. Every
+ * Veilo wrapper (React, Vue, Svelte, Angular, the web components) takes this same shape.
+ */
+export interface RevealConfig {
+  /** A built-in preset. Replaces the layout's settings; `settings` still apply on top. */
+  preset?: PresetId;
+  /** Settings to apply last, over the preset or the layout's settings. */
+  settings?: Partial<Settings>;
+  /** A layout: base settings plus slot hints for the `data-veilo-slot` elements. */
+  layout?: LayoutInput;
+}
+
+/**
+ * Combines a config into core's input. Order, lowest first: the layout's settings, the preset
+ * (which replaces them), then `settings`. Core validates and clamps the result, so unknown or
+ * out-of-range values are safe.
+ *
+ * @param config - The preset, settings and layout.
+ * @returns A layout when slot hints were given, otherwise plain settings, so core guesses roles
+ *   from the elements as it does for plain settings.
+ */
+export function resolveConfig(config: RevealConfig): Layout | Partial<Settings> {
+  const base = config.preset
+    ? (presetSettings(config.preset) ?? {})
+    : (config.layout?.settings ?? {});
+  const settings = { ...base, ...config.settings };
+  if (!config.layout) return settings;
+  return { version: LAYOUT_VERSION, settings: settings as Settings, slots: config.layout.slots };
+}
+
+/**
+ * A stable key for a config, so a wrapper re-creates its effect only when the effect really
+ * changed, not when it receives a new but equal object.
+ *
+ * @param config - The preset, settings and layout.
+ * @returns A string that is equal for equal configs.
+ */
+export function configKey(config: RevealConfig): string {
+  return JSON.stringify(resolveConfig(config));
 }

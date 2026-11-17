@@ -92,9 +92,11 @@ describe("@veilo/presets", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(api).sort()).toEqual([
       "PRESETS",
+      "configKey",
       "findPreset",
       "matchingPreset",
       "presetSettings",
+      "resolveConfig",
     ]);
   });
 

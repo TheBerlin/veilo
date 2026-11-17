@@ -3,7 +3,7 @@
 
 import { createReveal, type Reveal, type RevealOptions, type RevealState } from "@veilo/core";
 import { useEffect, useRef, useState, type RefCallback } from "react";
-import { configKey, resolveConfig, type RevealConfig } from "./config.ts";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
 
 /** What {@link useReveal} returns. */
 export interface UseRevealResult<T extends HTMLElement> {

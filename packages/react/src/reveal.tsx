@@ -3,7 +3,7 @@
 
 import type { RevealOptions } from "@veilo/core";
 import { createElement, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
-import { resolveConfig, type RevealConfig } from "./config.ts";
+import { resolveConfig, type RevealConfig } from "@veilo/presets";
 import { useServerSkeleton } from "./server-skeleton.tsx";
 import { useReveal } from "./use-reveal.ts";
 

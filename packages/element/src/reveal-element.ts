@@ -14,7 +14,8 @@ import {
   type PropertyDeclarations,
   type PropertyValues,
 } from "@lit/reactive-element";
-import { configKey, jsonAttribute, resolveConfig, type RevealConfig } from "./config.ts";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+import { jsonAttribute } from "./config.ts";
 
 /** Name of the DOM event fired each time a reveal finishes. */
 export const COMPLETE_EVENT = "veilo-complete";
