@@ -8,3 +8,6 @@ declare module "*.module.css" {
 
 // The token stylesheet, imported only for its side effect of defining the --veilo-* variables.
 declare module "*/tokens.css";
+
+// Font stylesheets imported by the test setup, only for their side effect of adding @font-face.
+declare module "@fontsource/*";
