@@ -30,15 +30,14 @@ import { chromium } from "playwright";
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "../..");
 const playground = join(repo, "apps/playground/src");
-const { cdnSnippet, elementSnippet, reactSnippet, vanillaSnippet, vueSnippet } = await import(
-  pathToFileURL(join(playground, "export/snippets.ts")).href
-);
+const { cdnSnippet, elementSnippet, reactSnippet, svelteSnippet, vanillaSnippet, vueSnippet } =
+  await import(pathToFileURL(join(playground, "export/snippets.ts")).href);
 const { CARD_LAYOUTS, LAYOUT_IDS } = await import(
   pathToFileURL(join(playground, "stage/card-layouts.ts")).href
 );
 
 /** The packages a user installs for these snippets, as workspace folders. */
-const PACKAGES = ["core", "presets", "react", "vue", "element"];
+const PACKAGES = ["core", "presets", "react", "vue", "svelte", "element"];
 const PORT = 4177;
 const ORIGIN = `http://localhost:${PORT}`;
 /** The address the CDN snippet loads its script from; the check serves the packed file there. */
@@ -108,6 +107,7 @@ for (const layoutId of LAYOUT_IDS) {
   cases.push({ ...base, kind: "cdn", html: cdnSnippet(input) });
   cases.push({ ...base, kind: "react", tsx: reactSnippet(input) });
   cases.push({ ...base, kind: "vue", sfc: vueSnippet(input) });
+  cases.push({ ...base, kind: "svelte", svelte: svelteSnippet(input) });
 }
 for (const entry of cases) entry.name = `${entry.kind}-${entry.layoutId}`;
 // SNIPPET_ONLY=element-product,cdn-list runs just those pages, for debugging a failure.
@@ -136,8 +136,13 @@ try {
   const vueDemo = JSON.parse(readFileSync(join(repo, "examples/vue-demo/package.json"), "utf8"));
   // vue-tsc needs TypeScript 5 or 6 (it uses the compiler's JavaScript API), so every snippet,
   // the React ones too, is checked with the version the Vue demo uses.
+  const svelteDemo = JSON.parse(
+    readFileSync(join(repo, "examples/svelte-demo/package.json"), "utf8"),
+  );
   const devDependencies = {
     ...reactDemo.devDependencies,
+    "@sveltejs/vite-plugin-svelte": svelteDemo.devDependencies["@sveltejs/vite-plugin-svelte"],
+    "svelte-check": svelteDemo.devDependencies["svelte-check"],
     "@vitejs/plugin-vue": vueDemo.devDependencies["@vitejs/plugin-vue"],
     "vue-tsc": vueDemo.devDependencies["vue-tsc"],
     typescript: vueDemo.devDependencies.typescript,
@@ -150,9 +155,11 @@ try {
     dependencies: {
       ...reactDemo.dependencies,
       vue: vueDemo.dependencies.vue,
+      svelte: svelteDemo.dependencies.svelte,
       "@veilo/core": local["@veilo/core"],
       "@veilo/react": local["@veilo/react"],
       "@veilo/vue": local["@veilo/vue"],
+      "@veilo/svelte": local["@veilo/svelte"],
       "@veilo/element": local["@veilo/element"],
     },
     devDependencies,
@@ -177,20 +184,70 @@ try {
           types: ["vite/client"],
         },
         include: ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+        // vue-tsc cannot read .svelte files, and svelte-check cannot read .vue ones: each has
+        // its own config.
+        exclude: ["src/svelte-*"],
       },
       null,
       2,
     )}\n`,
   );
+  writeFileSync(
+    join(app, "tsconfig.svelte.json"),
+    `${JSON.stringify(
+      {
+        compilerOptions: {
+          target: "ES2022",
+          lib: ["ES2022", "DOM", "DOM.Iterable"],
+          module: "esnext",
+          moduleResolution: "bundler",
+          strict: true,
+          noEmit: true,
+          verbatimModuleSyntax: true,
+          isolatedModules: true,
+          skipLibCheck: false,
+          types: ["svelte", "vite/client"],
+        },
+        include: ["src/svelte-*"],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  writeFileSync(
+    join(app, "svelte.config.js"),
+    'import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";\n\nexport default { preprocess: vitePreprocess() };\n',
+  );
   // Every page is a build input. `dedupe` as in the react-demo: one React for the app.
   const inputs = cases.map((entry) => `"${entry.name}.html"`).join(", ");
   writeFileSync(
     join(app, "vite.config.js"),
-    `import react from "@vitejs/plugin-react";\nimport vue from "@vitejs/plugin-vue";\nimport { defineConfig } from "vite";\n\nexport default defineConfig({\n  plugins: [react(), vue()],\n  resolve: { dedupe: ["react", "react-dom", "vue"] },\n  build: { rollupOptions: { input: [${inputs}] } },\n});\n`,
+    `import react from "@vitejs/plugin-react";\nimport vue from "@vitejs/plugin-vue";\nimport { svelte } from "@sveltejs/vite-plugin-svelte";\nimport { defineConfig } from "vite";\n\nexport default defineConfig({\n  plugins: [react(), vue(), svelte()],\n  resolve: { dedupe: ["react", "react-dom", "vue", "svelte"] },\n  build: { rollupOptions: { input: [${inputs}] } },\n});\n`,
   );
   // The photo every snippet names. Browsers read an image by its bytes, not its extension.
   copyFileSync(join(playground, "stage/samples/figure.webp"), join(app, "public/photo.jpg"));
   for (const entry of cases) {
+    if (entry.kind === "svelte") {
+      // The Svelte snippet is a component file, used by a small host component that turns
+      // `ready` on shortly after mount, as data arriving would.
+      writeFileSync(join(app, "src", `${entry.name}.svelte`), `${entry.svelte}\n`);
+      writeFileSync(
+        join(app, "src", `${entry.name}-host.svelte`),
+        `<script lang="ts">\n  import { onMount } from "svelte";\n  import Card from "./${entry.name}.svelte";\n\n  let ready = $state(false);\n  onMount(() => {\n    const timer = setTimeout(() => (ready = true), 300);\n    return () => clearTimeout(timer);\n  });\n</script>\n\n<Card {ready} />\n`,
+      );
+      writeFileSync(
+        join(app, "src", `${entry.name}-main.ts`),
+        `import { mount } from "svelte";\nimport Host from "./${entry.name}-host.svelte";\n\nmount(Host, { target: document.getElementById("root")! });\n`,
+      );
+      writeFileSync(
+        join(app, `${entry.name}.html`),
+        page(
+          entry.name,
+          `<div id="root"></div>\n<script type="module" src="/src/${entry.name}-main.ts"></script>`,
+        ),
+      );
+      continue;
+    }
     if (entry.kind === "vue") {
       // The Vue snippet is a component file, used by a small page that turns `ready` on shortly
       // after mount, as data arriving would.
@@ -233,6 +290,9 @@ try {
   // (vue-tsc has nothing to check when SNIPPET_ONLY leaves out every React and Vue page.)
   if (cases.some((entry) => entry.kind === "react" || entry.kind === "vue")) {
     run("npx", ["vue-tsc", "-p", "."], app);
+  }
+  if (cases.some((entry) => entry.kind === "svelte")) {
+    run("npx", ["svelte-check", "--tsconfig", "./tsconfig.svelte.json"], app);
   }
   run("npx", ["vite", "build", "--logLevel", "warn"], app);
   const cdnFile = join(

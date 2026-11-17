@@ -84,6 +84,7 @@ describe("ExportTab", () => {
       "Vanilla JS",
       "React",
       "Vue",
+      "Svelte",
       "Web component",
       "CDN",
     ]);
@@ -92,6 +93,7 @@ describe("ExportTab", () => {
       vanilla: "createReveal",
       react: "@veilo/react",
       vue: "@veilo/vue",
+      svelte: "@veilo/svelte",
       element: "@veilo/element/define",
       cdn: "cdn.jsdelivr.net",
     };

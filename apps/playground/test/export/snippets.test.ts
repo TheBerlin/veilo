@@ -8,6 +8,7 @@ import {
   elementSnippet,
   layoutJson,
   reactSnippet,
+  svelteSnippet,
   vanillaSnippet,
   vueSnippet,
   type SnippetInput,
@@ -67,7 +68,14 @@ describe("snippet markup", () => {
   for (const id of LAYOUT_IDS) {
     it(`${id}: every snippet marks exactly the layout's slots`, () => {
       const expected = Object.keys(CARD_LAYOUTS[id].slots).sort();
-      for (const make of [vanillaSnippet, reactSnippet, vueSnippet, elementSnippet, cdnSnippet]) {
+      for (const make of [
+        vanillaSnippet,
+        reactSnippet,
+        vueSnippet,
+        svelteSnippet,
+        elementSnippet,
+        cdnSnippet,
+      ]) {
         expect(slotsIn(make(input(id))).sort(), make.name).toEqual(expected);
       }
     });
@@ -124,6 +132,17 @@ describe("snippets", () => {
     expect(code).toContain('A {{ "{{" }} b }} &lt;c&gt;</h2>');
   });
 
+  it("Svelte is a runes component with the layout as a prop, and escapes braces", () => {
+    const code = svelteSnippet(input("product", { texts: { heading: "A {b} <c>" } }));
+    expect(code.startsWith('<script lang="ts">')).toBe(true);
+    expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo/svelte";');
+    expect(code).toContain("let { ready }: { ready: boolean } = $props();");
+    expect(code).toContain("{ready} {layout}>");
+    expect(code).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
+    // A brace would start an expression in a template; `<` is escaped as in HTML.
+    expect(code).toContain('A {"{"}b{"}"} &lt;c&gt;</h2>');
+  });
+
   it("the web component snippet registers the element and ends loading", () => {
     const code = elementSnippet(input("profile"));
     expect(code).toContain('import "@veilo/element/define";');
@@ -147,7 +166,14 @@ describe("snippets", () => {
   });
 
   it("has no trailing spaces", () => {
-    for (const make of [vanillaSnippet, reactSnippet, vueSnippet, elementSnippet, cdnSnippet]) {
+    for (const make of [
+      vanillaSnippet,
+      reactSnippet,
+      vueSnippet,
+      svelteSnippet,
+      elementSnippet,
+      cdnSnippet,
+    ]) {
       expect(make(input("product")), make.name).not.toMatch(/[ \t]+\n/);
     }
   });

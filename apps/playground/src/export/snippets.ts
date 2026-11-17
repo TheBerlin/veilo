@@ -93,7 +93,7 @@ const MARKUP: Record<CardLayoutId, MarkupNode[]> = {
 };
 
 /** The markup syntaxes the snippets use. */
-type Syntax = "html" | "jsx" | "vue";
+type Syntax = "html" | "jsx" | "vue" | "svelte";
 
 /**
  * Escapes text for HTML.
@@ -117,6 +117,11 @@ function escapeHtml(text: string): string {
 function content(text: string, syntax: Syntax): string {
   if (syntax === "html") return escapeHtml(text);
   if (syntax === "vue") return escapeHtml(text).replaceAll("{{", `{{ "{{" }}`);
+  // In a Svelte template a brace starts an expression, so each one is written as one.
+  if (syntax === "svelte") {
+    // One pass, so the braces of an expression just written are not escaped again.
+    return escapeHtml(text).replace(/[{}]/g, (brace) => `{"${brace}"}`);
+  }
   return /[{}<>]/.test(text) ? `{${JSON.stringify(text)}}` : text;
 }
 
@@ -303,6 +308,30 @@ export function vueSnippet(input: SnippetInput): string {
     ...innerMarkup(input, "vue", 2),
     "  </Reveal>",
     "</template>",
+  ].join("\n");
+}
+
+/**
+ * A Svelte 5 component: the markup inside `Reveal`, with the layout as a prop.
+ *
+ * @param input - The layout, text, width and settings.
+ * @returns The `.svelte` file text.
+ */
+export function svelteSnippet(input: SnippetInput): string {
+  return [
+    '<script lang="ts">',
+    '  import { Reveal, type LayoutInput } from "@veilo/svelte";',
+    "",
+    "  // `ready` is false while your data loads: the skeleton shows. When it turns true, the",
+    "  // reveal plays.",
+    "  let { ready }: { ready: boolean } = $props();",
+    "",
+    `  const layout: LayoutInput = ${indentAfterFirst(layoutJson(input), 1)};`,
+    "</script>",
+    "",
+    `<Reveal as="article" class="card" style="width: ${widthOf(input)}px" {ready} {layout}>`,
+    ...innerMarkup(input, "svelte", 1),
+    "</Reveal>",
   ].join("\n");
 }
 

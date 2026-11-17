@@ -13,9 +13,9 @@ const context = {
 };
 
 describe("code formats", () => {
-  it("lists eight formats with unique ids, and the default is one of them", () => {
-    expect(CODE_FORMATS).toHaveLength(8);
-    expect(new Set(CODE_FORMATS.map((format) => format.id)).size).toBe(8);
+  it("lists nine formats with unique ids, and the default is one of them", () => {
+    expect(CODE_FORMATS).toHaveLength(9);
+    expect(new Set(CODE_FORMATS.map((format) => format.id)).size).toBe(9);
     expect(CODE_FORMATS.some((format) => format.id === DEFAULT_CODE_FORMAT)).toBe(true);
   });
 
@@ -35,7 +35,7 @@ describe("code formats", () => {
   it("the other formats carry only the changed settings", () => {
     const layout = JSON.parse(codeFor("layout", context));
     expect(layout.settings).toEqual({ imageFx: "hex" });
-    for (const id of ["vanilla", "react", "vue", "element", "cdn"] as const) {
+    for (const id of ["vanilla", "react", "vue", "svelte", "element", "cdn"] as const) {
       expect(codeFor(id, context), id).toContain('"imageFx": "hex"');
       expect(codeFor(id, context), id).not.toContain('"cols"');
     }
@@ -57,6 +57,6 @@ describe("code formats", () => {
 
   it("marks exactly the formats that import a package", () => {
     const withPackage = CODE_FORMATS.filter((format) => format.usesPackage).map((f) => f.id);
-    expect(withPackage).toEqual(["vanilla", "react", "vue", "element", "cdn"]);
+    expect(withPackage).toEqual(["vanilla", "react", "vue", "svelte", "element", "cdn"]);
   });
 });
