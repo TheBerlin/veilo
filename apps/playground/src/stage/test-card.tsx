@@ -1,7 +1,7 @@
 // test-card.tsx: the fixed product card the playground animates (spec 1.2), with its slot
 // markup and layout hints.
 
-import type { Layout, Reveal, RevealOptions, Settings } from "@veilo/core";
+import type { Reveal, RevealOptions, Settings } from "@veilo/core";
 import {
   useEffect,
   useLayoutEffect,
@@ -10,27 +10,11 @@ import {
   type DragEvent,
   type KeyboardEvent,
 } from "react";
+import { defaultText, PRODUCT_LAYOUT } from "./card-layouts.ts";
 import { drawImageCover, type CardImage } from "./image-source.ts";
 import { drawPlaceholderImage } from "./placeholder-image.ts";
 import styles from "./test-card.module.css";
 import { useReveal, type RevealStart } from "./use-reveal.ts";
-
-/**
- * The card's slots and skeleton bar widths (spec 1.2). The image and the button are full width.
- * "Buy now" is a span named as the button role, because the whole card is already a button and
- * a button inside a button is invalid.
- */
-export const CARD_SLOTS: Layout["slots"] = {
-  photo: { role: "image" },
-  heading: { role: "text", width: 58 },
-  line1: { role: "text", width: 96 },
-  line2: { role: "text", width: 70 },
-  // The prices are sized to 28% and 20% of their row in CSS, so their bars are full width.
-  price: { role: "text" },
-  oldPrice: { role: "text" },
-  buy: { role: "button" },
-  label: { role: "text" },
-};
 
 /** Props of {@link TestCard}. */
 export interface TestCardProps {
@@ -105,10 +89,13 @@ export function TestCard(props: TestCardProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Only the product layout exists so far; the text comes from its table.
+  const layout = PRODUCT_LAYOUT;
+  const text = (slot: string) => defaultText(layout, slot);
   const [frameReady, setFrameReady] = useState(false);
   const reveal = useReveal(
     card,
-    { version: 1, settings: props.settings, slots: CARD_SLOTS },
+    { version: 1, settings: props.settings, slots: layout.slots },
     props.revealOptions,
     {
       start: props.start,
@@ -156,25 +143,25 @@ export function TestCard(props: TestCardProps) {
         onDrop={onDrop}
       />
       <h2 className={styles.heading} data-veilo-slot="heading">
-        MCHOSE L7 Pro
+        {text("heading")}
       </h2>
       <p className={styles.line} data-veilo-slot="line1">
-        Lightweight 8K polling mouse with
+        {text("line1")}
       </p>
       <p className={styles.line} data-veilo-slot="line2">
-        tri-mode wireless and a 60 g shell.
+        {text("line2")}
       </p>
       <span className={styles.prices}>
         <span className={styles.price} data-veilo-slot="price">
-          $59.99
+          {text("price")}
         </span>
         <span className={styles.oldPrice} data-veilo-slot="oldPrice">
-          $79.99
+          {text("oldPrice")}
         </span>
       </span>
       <span className={styles.button} data-veilo-slot="buy">
         <span className={styles.label} data-veilo-slot="label">
-          Buy now
+          {text("label")}
         </span>
       </span>
     </article>
