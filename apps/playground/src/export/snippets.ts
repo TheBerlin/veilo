@@ -93,7 +93,7 @@ const MARKUP: Record<CardLayoutId, MarkupNode[]> = {
 };
 
 /** The markup syntaxes the snippets use. */
-type Syntax = "html" | "jsx";
+type Syntax = "html" | "jsx" | "vue";
 
 /**
  * Escapes text for HTML.
@@ -107,14 +107,16 @@ function escapeHtml(text: string): string {
 
 /**
  * Writes text as markup content. JSX reads `{`, `}`, `<` and `>` as syntax, so text with them
- * becomes a string expression.
+ * becomes a string expression. A Vue template is HTML in which `{{` starts an interpolation, so
+ * that one is written as an expression too.
  *
  * @param text - Plain text.
- * @param syntax - HTML or JSX.
+ * @param syntax - HTML, JSX or a Vue template.
  * @returns The content to put between tags.
  */
 function content(text: string, syntax: Syntax): string {
   if (syntax === "html") return escapeHtml(text);
+  if (syntax === "vue") return escapeHtml(text).replaceAll("{{", `{{ "{{" }}`);
   return /[{}<>]/.test(text) ? `{${JSON.stringify(text)}}` : text;
 }
 
@@ -137,7 +139,10 @@ function renderNode(
   const slot = node.slot ? ` data-veilo-slot="${node.slot}"` : "";
   if (node.tag === "img") {
     // The alt text is empty: the slot's `photo` is a placeholder the user replaces.
-    return [`${pad}<img${slot} src="photo.jpg" alt=""${syntax === "jsx" ? " /" : ""}>`];
+    // A Vue template turns a relative `src` into a module import, which fails to build when the
+    // file is not next to the component; an absolute path is left alone (a file in `public/`).
+    const src = syntax === "vue" ? "/photo.jpg" : "photo.jpg";
+    return [`${pad}<img${slot} src="${src}" alt=""${syntax === "html" ? "" : " /"}>`];
   }
   if (node.children) {
     return [
@@ -272,6 +277,32 @@ export function reactSnippet(input: SnippetInput): string {
     "    </Reveal>",
     "  );",
     "}",
+  ].join("\n");
+}
+
+/**
+ * A Vue single-file component: the markup inside `Reveal`, with the layout as a prop.
+ *
+ * @param input - The layout, text, width and settings.
+ * @returns The `.vue` file text.
+ */
+export function vueSnippet(input: SnippetInput): string {
+  return [
+    '<script setup lang="ts">',
+    'import { Reveal, type LayoutInput } from "@veilo/vue";',
+    "",
+    "// `ready` is false while your data loads: the skeleton shows. When it turns true, the",
+    "// reveal plays.",
+    "defineProps<{ ready: boolean }>();",
+    "",
+    `const layout: LayoutInput = ${layoutJson(input)};`,
+    "</script>",
+    "",
+    "<template>",
+    `  <Reveal as="article" class="card" style="width: ${widthOf(input)}px" :ready="ready" :layout="layout">`,
+    ...innerMarkup(input, "vue", 2),
+    "  </Reveal>",
+    "</template>",
   ].join("\n");
 }
 

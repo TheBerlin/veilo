@@ -9,6 +9,7 @@ import {
   layoutJson,
   reactSnippet,
   vanillaSnippet,
+  vueSnippet,
   type SnippetInput,
 } from "../../src/export/snippets.ts";
 import { CARD_LAYOUTS, LAYOUT_IDS } from "../../src/stage/card-layouts.ts";
@@ -66,7 +67,7 @@ describe("snippet markup", () => {
   for (const id of LAYOUT_IDS) {
     it(`${id}: every snippet marks exactly the layout's slots`, () => {
       const expected = Object.keys(CARD_LAYOUTS[id].slots).sort();
-      for (const make of [vanillaSnippet, reactSnippet, elementSnippet, cdnSnippet]) {
+      for (const make of [vanillaSnippet, reactSnippet, vueSnippet, elementSnippet, cdnSnippet]) {
         expect(slotsIn(make(input(id))).sort(), make.name).toEqual(expected);
       }
     });
@@ -111,6 +112,18 @@ describe("snippets", () => {
     expect(code).toContain("ready={ready} layout={layout}>");
   });
 
+  it("Vue is a script-setup component with the layout as a prop, and escapes interpolation", () => {
+    const code = vueSnippet(input("product", { texts: { heading: "A {{ b }} <c>" } }));
+    expect(code.startsWith('<script setup lang="ts">')).toBe(true);
+    expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo/vue";');
+    expect(code).toContain("defineProps<{ ready: boolean }>();");
+    expect(code).toContain(':ready="ready" :layout="layout"');
+    // An absolute path: a relative one would be compiled into a module import.
+    expect(code).toContain('<img data-veilo-slot="photo" src="/photo.jpg" alt="" />');
+    // `{{` would start an interpolation in a template; `<` is escaped as in HTML.
+    expect(code).toContain('A {{ "{{" }} b }} &lt;c&gt;</h2>');
+  });
+
   it("the web component snippet registers the element and ends loading", () => {
     const code = elementSnippet(input("profile"));
     expect(code).toContain('import "@veilo/element/define";');
@@ -134,7 +147,7 @@ describe("snippets", () => {
   });
 
   it("has no trailing spaces", () => {
-    for (const make of [vanillaSnippet, reactSnippet, elementSnippet, cdnSnippet]) {
+    for (const make of [vanillaSnippet, reactSnippet, vueSnippet, elementSnippet, cdnSnippet]) {
       expect(make(input("product")), make.name).not.toMatch(/[ \t]+\n/);
     }
   });

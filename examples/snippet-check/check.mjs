@@ -30,7 +30,7 @@ import { chromium } from "playwright";
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "../..");
 const playground = join(repo, "apps/playground/src");
-const { cdnSnippet, elementSnippet, reactSnippet, vanillaSnippet } = await import(
+const { cdnSnippet, elementSnippet, reactSnippet, vanillaSnippet, vueSnippet } = await import(
   pathToFileURL(join(playground, "export/snippets.ts")).href
 );
 const { CARD_LAYOUTS, LAYOUT_IDS } = await import(
@@ -38,7 +38,7 @@ const { CARD_LAYOUTS, LAYOUT_IDS } = await import(
 );
 
 /** The packages a user installs for these snippets, as workspace folders. */
-const PACKAGES = ["core", "presets", "react", "element"];
+const PACKAGES = ["core", "presets", "react", "vue", "element"];
 const PORT = 4177;
 const ORIGIN = `http://localhost:${PORT}`;
 /** The address the CDN snippet loads its script from; the check serves the packed file there. */
@@ -107,6 +107,7 @@ for (const layoutId of LAYOUT_IDS) {
   cases.push({ ...base, kind: "element", html: elementSnippet(input) });
   cases.push({ ...base, kind: "cdn", html: cdnSnippet(input) });
   cases.push({ ...base, kind: "react", tsx: reactSnippet(input) });
+  cases.push({ ...base, kind: "vue", sfc: vueSnippet(input) });
 }
 for (const entry of cases) entry.name = `${entry.kind}-${entry.layoutId}`;
 // SNIPPET_ONLY=element-product,cdn-list runs just those pages, for debugging a failure.
@@ -132,7 +133,15 @@ try {
     readFileSync(join(repo, "examples/react-demo/package.json"), "utf8"),
   );
   const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo/${name}`, tarball(name)]));
-  const devDependencies = { ...reactDemo.devDependencies, typescript: "^7.0.2" };
+  const vueDemo = JSON.parse(readFileSync(join(repo, "examples/vue-demo/package.json"), "utf8"));
+  // vue-tsc needs TypeScript 5 or 6 (it uses the compiler's JavaScript API), so every snippet,
+  // the React ones too, is checked with the version the Vue demo uses.
+  const devDependencies = {
+    ...reactDemo.devDependencies,
+    "@vitejs/plugin-vue": vueDemo.devDependencies["@vitejs/plugin-vue"],
+    "vue-tsc": vueDemo.devDependencies["vue-tsc"],
+    typescript: vueDemo.devDependencies.typescript,
+  };
   delete devDependencies.playwright;
   const pkg = {
     name: "veilo-snippet-check-app",
@@ -140,8 +149,10 @@ try {
     type: "module",
     dependencies: {
       ...reactDemo.dependencies,
+      vue: vueDemo.dependencies.vue,
       "@veilo/core": local["@veilo/core"],
       "@veilo/react": local["@veilo/react"],
+      "@veilo/vue": local["@veilo/vue"],
       "@veilo/element": local["@veilo/element"],
     },
     devDependencies,
@@ -165,7 +176,7 @@ try {
           skipLibCheck: false,
           types: ["vite/client"],
         },
-        include: ["src"],
+        include: ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
       },
       null,
       2,
@@ -175,11 +186,28 @@ try {
   const inputs = cases.map((entry) => `"${entry.name}.html"`).join(", ");
   writeFileSync(
     join(app, "vite.config.js"),
-    `import react from "@vitejs/plugin-react";\nimport { defineConfig } from "vite";\n\nexport default defineConfig({\n  plugins: [react()],\n  resolve: { dedupe: ["react", "react-dom"] },\n  build: { rollupOptions: { input: [${inputs}] } },\n});\n`,
+    `import react from "@vitejs/plugin-react";\nimport vue from "@vitejs/plugin-vue";\nimport { defineConfig } from "vite";\n\nexport default defineConfig({\n  plugins: [react(), vue()],\n  resolve: { dedupe: ["react", "react-dom", "vue"] },\n  build: { rollupOptions: { input: [${inputs}] } },\n});\n`,
   );
   // The photo every snippet names. Browsers read an image by its bytes, not its extension.
   copyFileSync(join(playground, "stage/samples/figure.webp"), join(app, "public/photo.jpg"));
   for (const entry of cases) {
+    if (entry.kind === "vue") {
+      // The Vue snippet is a component file, used by a small page that turns `ready` on shortly
+      // after mount, as data arriving would.
+      writeFileSync(join(app, "src", `${entry.name}.vue`), `${entry.sfc}\n`);
+      writeFileSync(
+        join(app, "src", `${entry.name}-main.ts`),
+        `import { createApp, h, onMounted, ref } from "vue";\nimport Card from "./${entry.name}.vue";\n\ncreateApp({\n  setup() {\n    const ready = ref(false);\n    onMounted(() => setTimeout(() => (ready.value = true), 300));\n    return () => h(Card, { ready: ready.value });\n  },\n}).mount("#root");\n`,
+      );
+      writeFileSync(
+        join(app, `${entry.name}.html`),
+        page(
+          entry.name,
+          `<div id="root"></div>\n<script type="module" src="/src/${entry.name}-main.ts"></script>`,
+        ),
+      );
+      continue;
+    }
     if (entry.kind !== "react") {
       writeFileSync(join(app, `${entry.name}.html`), page(entry.name, entry.html));
       continue;
@@ -202,8 +230,10 @@ try {
 
   // 3. Install with npm, as most users would; typecheck the React snippets; build every page.
   run("npm", ["install", "--no-audit", "--no-fund", "--loglevel=error"], app);
-  // (tsc has nothing to check when SNIPPET_ONLY leaves out every React page.)
-  if (cases.some((entry) => entry.kind === "react")) run("npx", ["tsc", "-p", "."], app);
+  // (vue-tsc has nothing to check when SNIPPET_ONLY leaves out every React and Vue page.)
+  if (cases.some((entry) => entry.kind === "react" || entry.kind === "vue")) {
+    run("npx", ["vue-tsc", "-p", "."], app);
+  }
   run("npx", ["vite", "build", "--logLevel", "warn"], app);
   const cdnFile = join(
     app,

@@ -83,6 +83,7 @@ describe("ExportTab", () => {
       "Layout JSON",
       "Vanilla JS",
       "React",
+      "Vue",
       "Web component",
       "CDN",
     ]);
@@ -90,6 +91,7 @@ describe("ExportTab", () => {
       layout: '"slots"',
       vanilla: "createReveal",
       react: "@veilo/react",
+      vue: "@veilo/vue",
       element: "@veilo/element/define",
       cdn: "cdn.jsdelivr.net",
     };

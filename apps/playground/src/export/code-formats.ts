@@ -10,12 +10,14 @@ import {
   elementSnippet,
   layoutJson,
   reactSnippet,
+  vueSnippet,
   vanillaSnippet,
   type SnippetInput,
 } from "./snippets.ts";
 
 /** The id of a code format. */
-export type CodeFormatId = "settings" | "css" | "layout" | "vanilla" | "react" | "element" | "cdn";
+export type CodeFormatId =
+  "settings" | "css" | "layout" | "vanilla" | "react" | "vue" | "element" | "cdn";
 
 /** One format the Code section can show. */
 export interface CodeFormat {
@@ -34,6 +36,7 @@ export const CODE_FORMATS: readonly CodeFormat[] = [
   { id: "layout", label: "Layout JSON", usesPackage: false },
   { id: "vanilla", label: "Vanilla JS", usesPackage: true },
   { id: "react", label: "React", usesPackage: true },
+  { id: "vue", label: "Vue", usesPackage: true },
   { id: "element", label: "Web component", usesPackage: true },
   { id: "cdn", label: "CDN", usesPackage: true },
 ];
@@ -101,6 +104,8 @@ export function codeFor(format: CodeFormatId, context: CodeContext): string {
       return vanillaSnippet(input);
     case "react":
       return reactSnippet(input);
+    case "vue":
+      return vueSnippet(input);
     case "element":
       return elementSnippet(input);
     case "cdn":
