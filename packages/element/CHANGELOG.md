@@ -1,5 +1,18 @@
 # @veilo/element
 
+## 0.7.0
+
+### Minor Changes
+
+- 56996f6: Use the shared `resolveConfig` and `configKey` from `@veilo/presets` instead of their own copies. No behavior change. `RevealConfig` and `LayoutInput` are now re-exported from `@veilo/presets`.
+
+### Patch Changes
+
+- Updated dependencies [56996f6]
+- Updated dependencies [56996f6]
+  - @veilo/presets@0.7.0
+  - @veilo/core@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @veilo/css
 
+## 0.7.0
+
+### Minor Changes
+
+- 56996f6: No changes in these packages. The version moves with the others, which share one number.
+
+### Patch Changes
+
+- Updated dependencies [56996f6]
+  - @veilo/core@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes
