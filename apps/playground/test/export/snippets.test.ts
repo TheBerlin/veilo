@@ -3,6 +3,7 @@
 import { defaultSettings, parseLayout } from "@veilo/core";
 import { describe, expect, it } from "vitest";
 import {
+  angularSnippet,
   cdnSnippet,
   changedSettings,
   elementSnippet,
@@ -141,6 +142,19 @@ describe("snippets", () => {
     expect(code).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
     // A brace would start an expression in a template; `<` is escaped as in HTML.
     expect(code).toContain('A {"{"}b{"}"} &lt;c&gt;</h2>');
+  });
+
+  it("Angular is a standalone component with the layout as an input, and escapes its template", () => {
+    const code = angularSnippet(input("product", { texts: { heading: "A {b} @c `d` ${e} <f>" } }));
+    expect(code).toContain('import { VeiloReveal, type LayoutInput } from "@veilo/angular";');
+    expect(code).toContain("imports: [VeiloReveal],");
+    expect(code).toContain("readonly ready = input.required<boolean>();");
+    expect(code).toContain('[ready]="ready()" [layout]="layout">');
+    expect(code).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
+    // Braces and @ become character references; backtick and ${ are escaped for the literal.
+    // (String.raw keeps the backslashes the snippet writes before each backtick.) A `$` before a
+    // brace needs no escape: the brace is already a character reference, so `${` never appears.
+    expect(code).toContain(String.raw`A &#123;b&#125; &#64;c \`d\` $&#123;e&#125; &lt;f&gt;</h2>`);
   });
 
   it("the web component snippet registers the element and ends loading", () => {

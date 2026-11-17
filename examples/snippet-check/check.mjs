@@ -12,9 +12,10 @@
 // use browser globals, which this Node script otherwise does not have.
 /* global window, document, customElements, MutationObserver */
 
-import { execFileSync, spawn } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import {
   copyFileSync,
+  cpSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
@@ -26,18 +27,26 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
+import { serve } from "../element-demo/serve.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "../..");
 const playground = join(repo, "apps/playground/src");
-const { cdnSnippet, elementSnippet, reactSnippet, svelteSnippet, vanillaSnippet, vueSnippet } =
-  await import(pathToFileURL(join(playground, "export/snippets.ts")).href);
+const {
+  angularSnippet,
+  cdnSnippet,
+  elementSnippet,
+  reactSnippet,
+  svelteSnippet,
+  vanillaSnippet,
+  vueSnippet,
+} = await import(pathToFileURL(join(playground, "export/snippets.ts")).href);
 const { CARD_LAYOUTS, LAYOUT_IDS } = await import(
   pathToFileURL(join(playground, "stage/card-layouts.ts")).href
 );
 
 /** The packages a user installs for these snippets, as workspace folders. */
-const PACKAGES = ["core", "presets", "react", "vue", "svelte", "element"];
+const PACKAGES = ["core", "presets", "react", "vue", "svelte", "angular", "element"];
 const PORT = 4177;
 const ORIGIN = `http://localhost:${PORT}`;
 /** The address the CDN snippet loads its script from; the check serves the packed file there. */
@@ -108,8 +117,16 @@ for (const layoutId of LAYOUT_IDS) {
   cases.push({ ...base, kind: "react", tsx: reactSnippet(input) });
   cases.push({ ...base, kind: "vue", sfc: vueSnippet(input) });
   cases.push({ ...base, kind: "svelte", svelte: svelteSnippet(input) });
+  cases.push({ ...base, kind: "angular", ts: angularSnippet(input) });
 }
-for (const entry of cases) entry.name = `${entry.kind}-${entry.layoutId}`;
+for (const entry of cases) {
+  entry.name = `${entry.kind}-${entry.layoutId}`;
+  // The Angular snippets are one app (its own TypeScript and build), shown by a query.
+  entry.url =
+    entry.kind === "angular"
+      ? `${ORIGIN}/angular/index.html?layout=${entry.layoutId}`
+      : `${ORIGIN}/${entry.name}.html`;
+}
 // SNIPPET_ONLY=element-product,cdn-list runs just those pages, for debugging a failure.
 const only = process.env.SNIPPET_ONLY?.split(",");
 if (only) cases.splice(0, cases.length, ...cases.filter((entry) => only.includes(entry.name)));
@@ -219,7 +236,8 @@ try {
     'import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";\n\nexport default { preprocess: vitePreprocess() };\n',
   );
   // Every page is a build input. `dedupe` as in the react-demo: one React for the app.
-  const inputs = cases.map((entry) => `"${entry.name}.html"`).join(", ");
+  const vitePages = cases.filter((entry) => entry.kind !== "angular");
+  const inputs = vitePages.map((entry) => `"${entry.name}.html"`).join(", ");
   writeFileSync(
     join(app, "vite.config.js"),
     `import react from "@vitejs/plugin-react";\nimport vue from "@vitejs/plugin-vue";\nimport { svelte } from "@sveltejs/vite-plugin-svelte";\nimport { defineConfig } from "vite";\n\nexport default defineConfig({\n  plugins: [react(), vue(), svelte()],\n  resolve: { dedupe: ["react", "react-dom", "vue", "svelte"] },\n  build: { rollupOptions: { input: [${inputs}] } },\n});\n`,
@@ -227,6 +245,7 @@ try {
   // The photo every snippet names. Browsers read an image by its bytes, not its extension.
   copyFileSync(join(playground, "stage/samples/figure.webp"), join(app, "public/photo.jpg"));
   for (const entry of cases) {
+    if (entry.kind === "angular") continue; // built into its own app below
     if (entry.kind === "svelte") {
       // The Svelte snippet is a component file, used by a small host component that turns
       // `ready` on shortly after mount, as data arriving would.
@@ -294,7 +313,68 @@ try {
   if (cases.some((entry) => entry.kind === "svelte")) {
     run("npx", ["svelte-check", "--tsconfig", "./tsconfig.svelte.json"], app);
   }
-  run("npx", ["vite", "build", "--logLevel", "warn"], app);
+  if (vitePages.length > 0) run("npx", ["vite", "build", "--logLevel", "warn"], app);
+  mkdirSync(join(app, "dist"), { recursive: true });
+
+  // The Angular snippets are one app of their own: Angular 22 needs TypeScript 6, which the
+  // other frameworks' type checkers here cannot use. Every snippet is a component, compiled with
+  // strict templates by `ng build` against the package, which was built with Angular 20, so this
+  // is also the check that an app on a newer Angular links it.
+  const angularPages = cases.filter((entry) => entry.kind === "angular");
+  if (angularPages.length > 0) {
+    const demo = join(repo, "examples/angular-demo");
+    const ngApp = join(work, "ng-app");
+    mkdirSync(join(ngApp, "src/snippets"), { recursive: true });
+    for (const file of ["angular.json", "tsconfig.json", "tsconfig.app.json", "src/index.html"]) {
+      copyFileSync(join(demo, file), join(ngApp, file));
+    }
+    writeFileSync(join(ngApp, "src/styles.css"), "");
+    const ownNg = JSON.parse(readFileSync(join(demo, "package.json"), "utf8"));
+    const ngDevDependencies = { ...ownNg.devDependencies };
+    delete ngDevDependencies.playwright;
+    writeFileSync(
+      join(ngApp, "package.json"),
+      `${JSON.stringify(
+        {
+          name: "veilo-snippet-check-ng-app",
+          private: true,
+          type: "module",
+          dependencies: { ...ownNg.dependencies, "@veilo/angular": local["@veilo/angular"] },
+          devDependencies: ngDevDependencies,
+          overrides: local,
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    // Each snippet is a file of its own. They all name their component `Card` with the selector
+    // `app-card`, so the page gets a copy per layout with both made unique.
+    const ids = angularPages.map((entry) => entry.layoutId);
+    for (const entry of angularPages) {
+      const unique = entry.ts
+        .replace('selector: "app-card"', `selector: "app-card-${entry.layoutId}"`)
+        .replace("export class Card ", `export class Card_${entry.layoutId} `);
+      writeFileSync(join(ngApp, "src/snippets", `${entry.name}.ts`), `${unique}\n`);
+    }
+    const imports = angularPages
+      .map((entry) => `import { Card_${entry.layoutId} } from "./snippets/${entry.name}";`)
+      .join("\n");
+    const switchCases = ids
+      .map((id) => `      @case ("${id}") {\n        <app-card-${id} [ready]="ready()" />\n      }`)
+      .join("\n");
+    writeFileSync(
+      join(ngApp, "src/main.ts"),
+      `import { Component, provideZonelessChangeDetection, signal } from "@angular/core";\nimport { bootstrapApplication } from "@angular/platform-browser";\n${imports}\n\n@Component({\n  selector: "app-root",\n  imports: [${ids.map((id) => `Card_${id}`).join(", ")}],\n  template: \`\n    @switch (layout) {\n${switchCases}\n    }\n  \`,\n})\nclass Root {\n  protected readonly layout = new URLSearchParams(location.search).get("layout");\n  protected readonly ready = signal(false);\n  constructor() {\n    // Data arriving shortly after the page opens.\n    setTimeout(() => this.ready.set(true), 300);\n  }\n}\n\nbootstrapApplication(Root, { providers: [provideZonelessChangeDetection()] });\n`,
+    );
+    run("npm", ["install", "--no-audit", "--no-fund", "--loglevel=error"], ngApp);
+    run("npx", ["ng", "build", "--base-href", "/angular/"], ngApp);
+    cpSync(join(ngApp, "dist/browser"), join(app, "dist/angular"), { recursive: true });
+    // The photo every snippet names, next to the page they are served from.
+    copyFileSync(
+      join(playground, "stage/samples/figure.webp"),
+      join(app, "dist/angular/photo.jpg"),
+    );
+  }
   const cdnFile = join(
     app,
     "node_modules/@veilo/element",
@@ -303,11 +383,7 @@ try {
   );
 
   // 4. Serve the build and open every page like a visitor.
-  server = spawn("npx", ["vite", "preview", "--port", String(PORT), "--strictPort"], {
-    cwd: app,
-    stdio: "ignore",
-    shell: process.platform === "win32",
-  });
+  server = serve(join(app, "dist"), PORT);
   browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1000, height: 900 } });
   // The CDN address is answered from the packed package; the script needs a CORS header, as a
@@ -346,7 +422,7 @@ try {
   for (let attempt = 0; ; attempt++) {
     try {
       const probe = await context.newPage();
-      await probe.goto(`${ORIGIN}/${cases[0].name}.html`);
+      await probe.goto(cases[0].url);
       await probe.close();
       break;
     } catch (error) {
@@ -376,7 +452,7 @@ try {
       }
     });
     try {
-      await tab.goto(`${ORIGIN}/${entry.name}.html`);
+      await tab.goto(entry.url);
       const card = tab.locator(".card");
       await card.waitFor();
       // The engine must start, then the card must settle: no busy flag, no skeleton, no grid
@@ -446,16 +522,7 @@ try {
   console.log(`ok  example-snippet-check: ${cases.length} snippets install, typecheck and run`);
 } finally {
   await browser?.close();
-  if (server?.pid) {
-    // On Windows the server runs under a shell; kill the whole tree, or Vite keeps the folder.
-    if (process.platform === "win32") {
-      try {
-        execFileSync("taskkill", ["/pid", String(server.pid), "/T", "/F"], { stdio: "ignore" });
-      } catch {
-        // Already gone.
-      }
-    } else server.kill();
-  }
+  server?.close();
   try {
     rmSync(work, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 });
   } catch (error) {

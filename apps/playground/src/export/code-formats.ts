@@ -5,6 +5,7 @@ import { defaultSettings, generateLoaderCss, type Settings } from "@veilo/core";
 import { CARD_LAYOUTS } from "../stage/card-layouts.ts";
 import type { Content } from "../state/content-store.ts";
 import {
+  angularSnippet,
   cdnSnippet,
   changedSettings,
   elementSnippet,
@@ -18,7 +19,16 @@ import {
 
 /** The id of a code format. */
 export type CodeFormatId =
-  "settings" | "css" | "layout" | "vanilla" | "react" | "vue" | "svelte" | "element" | "cdn";
+  | "settings"
+  | "css"
+  | "layout"
+  | "vanilla"
+  | "react"
+  | "vue"
+  | "svelte"
+  | "angular"
+  | "element"
+  | "cdn";
 
 /** One format the Code section can show. */
 export interface CodeFormat {
@@ -39,6 +49,7 @@ export const CODE_FORMATS: readonly CodeFormat[] = [
   { id: "react", label: "React", usesPackage: true },
   { id: "vue", label: "Vue", usesPackage: true },
   { id: "svelte", label: "Svelte", usesPackage: true },
+  { id: "angular", label: "Angular", usesPackage: true },
   { id: "element", label: "Web component", usesPackage: true },
   { id: "cdn", label: "CDN", usesPackage: true },
 ];
@@ -110,6 +121,8 @@ export function codeFor(format: CodeFormatId, context: CodeContext): string {
       return vueSnippet(input);
     case "svelte":
       return svelteSnippet(input);
+    case "angular":
+      return angularSnippet(input);
     case "element":
       return elementSnippet(input);
     case "cdn":

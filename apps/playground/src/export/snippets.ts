@@ -93,7 +93,7 @@ const MARKUP: Record<CardLayoutId, MarkupNode[]> = {
 };
 
 /** The markup syntaxes the snippets use. */
-type Syntax = "html" | "jsx" | "vue" | "svelte";
+type Syntax = "html" | "jsx" | "vue" | "svelte" | "angular";
 
 /**
  * Escapes text for HTML.
@@ -117,6 +117,16 @@ function escapeHtml(text: string): string {
 function content(text: string, syntax: Syntax): string {
   if (syntax === "html") return escapeHtml(text);
   if (syntax === "vue") return escapeHtml(text).replaceAll("{{", `{{ "{{" }}`);
+  // An Angular template written in a TypeScript template literal: `@` starts control flow and a
+  // brace starts an expression, so they become character references; then the characters that
+  // end or interpolate the literal are escaped.
+  if (syntax === "angular") {
+    return escapeHtml(text)
+      .replace(/[@{}]/g, (char) => `&#${char.charCodeAt(0)};`)
+      .replace(/\\/g, "\\\\")
+      .replace(/`/g, "\\`")
+      .replaceAll("${", "\\${");
+  }
   // In a Svelte template a brace starts an expression, so each one is written as one.
   if (syntax === "svelte") {
     // One pass, so the braces of an expression just written are not escaped again.
@@ -332,6 +342,38 @@ export function svelteSnippet(input: SnippetInput): string {
     `<Reveal as="article" class="card" style="width: ${widthOf(input)}px" {ready} {layout}>`,
     ...innerMarkup(input, "svelte", 1),
     "</Reveal>",
+  ].join("\n");
+}
+
+/**
+ * An Angular standalone component: the markup inside `<veilo-reveal>`, with the layout as an
+ * input.
+ *
+ * @param input - The layout, text, width and settings.
+ * @returns The TypeScript text.
+ */
+export function angularSnippet(input: SnippetInput): string {
+  return [
+    'import { Component, input } from "@angular/core";',
+    'import { VeiloReveal, type LayoutInput } from "@veilo/angular";',
+    "",
+    `const layout: LayoutInput = ${layoutJson(input)};`,
+    "",
+    "@Component({",
+    '  selector: "app-card",',
+    "  imports: [VeiloReveal],",
+    "  template: `",
+    `    <veilo-reveal class="card" style="width: ${widthOf(input)}px" [ready]="ready()" [layout]="layout">`,
+    ...innerMarkup(input, "angular", 3),
+    "    </veilo-reveal>",
+    "  `,",
+    "})",
+    "export class Card {",
+    "  // `ready` is false while your data loads: the skeleton shows. When it turns true, the",
+    "  // reveal plays.",
+    "  readonly ready = input.required<boolean>();",
+    "  protected readonly layout = layout;",
+    "}",
   ].join("\n");
 }
 
