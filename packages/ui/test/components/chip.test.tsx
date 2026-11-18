@@ -97,12 +97,44 @@ describe("ChipGroup", () => {
     };
     const group = screen.getByRole("radiogroup", { name: "Theme" });
     expect(style(group, props)).toEqual(style(screen.getByRole("tablist"), props));
-    const item = ["border-color", "background-color", "color"];
-    expect(style(screen.getByRole("radio", { name: "Light" }), item)).toEqual(
-      style(screen.getByRole("tab", { name: "A" }), item),
+    // The chosen chip is transparent; the sliding pill under it carries the tab's selected fill.
+    const pill = group.querySelector("span[aria-hidden]") as Element;
+    const fill = ["border-color", "background-color"];
+    expect(style(pill, fill)).toEqual(style(screen.getByRole("tab", { name: "A" }), fill));
+    expect(style(screen.getByRole("radio", { name: "Light" }), ["color"])).toEqual(
+      style(screen.getByRole("tab", { name: "A" }), ["color"]),
     );
+    const item = ["border-color", "background-color", "color"];
     expect(style(screen.getByRole("radio", { name: "Dark" }), item)).toEqual(
       style(screen.getByRole("tab", { name: "B" }), item),
     );
+  });
+
+  it("segmented: the pill sits under the chosen chip and follows a change", async () => {
+    function Bar() {
+      const [value, setValue] = useState("light");
+      return (
+        <ChipGroup aria-label="Theme" value={value} onValueChange={setValue} variant="segmented">
+          <ChipGroupItem value="light">Light</ChipGroupItem>
+          <ChipGroupItem value="dark">Dark</ChipGroupItem>
+        </ChipGroup>
+      );
+    }
+    render(<Bar />);
+    const group = screen.getByRole("radiogroup", { name: "Theme" });
+    const pill = group.querySelector("span[aria-hidden]") as HTMLElement;
+    const overlap = (chip: HTMLElement) => {
+      const a = pill.getBoundingClientRect();
+      const b = chip.getBoundingClientRect();
+      return (
+        Math.abs(a.left - b.left) < 1 &&
+        Math.abs(a.width - b.width) < 1 &&
+        Math.abs(a.top - b.top) < 1
+      );
+    };
+    expect(overlap(screen.getByRole("radio", { name: "Light" }))).toBe(true);
+    await userEvent.click(screen.getByRole("radio", { name: "Dark" }));
+    // Durations are 0 in tests, so the move is immediate.
+    await vi.waitFor(() => expect(overlap(screen.getByRole("radio", { name: "Dark" }))).toBe(true));
   });
 });

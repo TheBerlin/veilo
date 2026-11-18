@@ -46,6 +46,7 @@
 
 /* Segmented group: the tab bar's raised container, with chips styled like its tabs. */
 .segmented {
+  position: relative;
   align-items: center;
   padding: var(--veilo-space-1);
   border: 1px solid var(--veilo-border);
@@ -65,9 +66,39 @@
   color: var(--veilo-text);
 }
 
-/* Chosen: the tab bar's selected fill, so both controls read the same. */
+/* Chosen: the chip itself stays transparent; the sliding pill under it carries the fill. */
 .segmented > .chip[data-state="on"] {
-  border-color: var(--veilo-border);
-  background: var(--veilo-secondary);
+  background: transparent;
   color: var(--veilo-text);
+}
+
+/* Chips sit above the pill. */
+.segmented > .chip {
+  position: relative;
+  z-index: 1;
+}
+
+/* Sliding pill: the tab bar's selected fill, moved under the chosen chip by script. Hidden until
+   the first placement, and animated only after it. Reduced motion zeroes the duration token. */
+.pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill[data-placed="true"] {
+  opacity: 1;
+}
+
+.pill[data-ready="true"] {
+  transition:
+    transform var(--veilo-duration-base) var(--veilo-ease-out),
+    width var(--veilo-duration-base) var(--veilo-ease-out),
+    height var(--veilo-duration-base) var(--veilo-ease-out);
 }

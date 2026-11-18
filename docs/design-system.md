@@ -245,7 +245,7 @@ Chip is a compact control with `radius-base` corners, `size-chip` high, in `labe
 
 - **Toggle chip** (`Chip`): one chip that turns on and off, with `aria-pressed`.
 - **Chip group** (`ChipGroup` with `ChipGroupItem`): a single choice. It is a `radiogroup` with `radio` items and an `aria-label`; exactly one item is chosen, arrow keys move between items, Space or Enter chooses, and pressing the chosen item keeps it chosen. Items wrap with `space-1` gaps.
-- **Segmented bar** (`ChipGroup variant="segmented"`): the same chip group inside a raised bar that looks like the tab bar: `card` fill, `border` hairline, `radius-md`, `space-1` padding, `shadow-soft`. Chips inside are transparent and `text-muted` at rest, `text` on hover, and the chosen one gets a `secondary` fill, `border` hairline and `text`. Use it for small settings that sit apart from the main controls, such as the theme switch; a test keeps it identical to the tab bar.
+- **Segmented bar** (`ChipGroup variant="segmented"`): the same chip group inside a raised bar that looks like the tab bar: `card` fill, `border` hairline, `radius-md`, `space-1` padding, `shadow-soft`. Chips inside are transparent and `text-muted` at rest and `text` on hover. A pill with a `secondary` fill and `border` hairline slides under the chosen chip (`duration-base`, `ease-out`; placed without motion on first paint, and still under reduced motion because the duration token is 0), and the chosen chip's label is `text`. Use it for small settings that sit apart from the main controls, such as the theme switch; a test keeps it identical to the tab bar.
 
 Rules:
 

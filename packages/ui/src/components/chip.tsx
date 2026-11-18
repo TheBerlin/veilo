@@ -2,7 +2,14 @@
 
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from "react";
 import styles from "./chip.module.css";
 
 /** Props of {@link Chip}: Radix Toggle's, such as `pressed` and `onPressedChange`. */
@@ -49,16 +56,66 @@ export interface ChipGroupProps {
 }
 
 /**
+ * Moves the sliding pill of a segmented group under the chosen item, and keeps it there when the
+ * group is resized or its items change size (a font loading, wrapping at a narrow width).
+ *
+ * @param group - The group element.
+ * @param pill - The pill element inside it.
+ * @param enabled - Whether the group is the segmented variant; nothing happens otherwise.
+ * @param value - The chosen value, so the pill moves when it changes.
+ */
+function usePill(
+  group: React.RefObject<HTMLDivElement | null>,
+  pill: React.RefObject<HTMLSpanElement | null>,
+  enabled: boolean,
+  value: string,
+) {
+  // Place before paint, so the pill is never seen in the wrong spot. The first placement has no
+  // transition: `data-ready` is set only after it, so the pill does not glide in from the corner.
+  useLayoutEffect(() => {
+    const root = group.current;
+    const element = pill.current;
+    if (!enabled || !root || !element) return;
+    const place = () => {
+      const chosen = root.querySelector<HTMLElement>('[data-state="on"]');
+      if (!chosen) return;
+      element.style.transform = `translate(${chosen.offsetLeft}px, ${chosen.offsetTop}px)`;
+      element.style.width = `${chosen.offsetWidth}px`;
+      element.style.height = `${chosen.offsetHeight}px`;
+      element.dataset.placed = "true";
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(root);
+    for (const item of root.querySelectorAll("button")) observer.observe(item);
+    return () => observer.disconnect();
+  }, [group, pill, enabled, value]);
+  // Switch the transition on once the first placement has been painted.
+  useEffect(() => {
+    const element = pill.current;
+    if (!enabled || !element) return;
+    const frame = requestAnimationFrame(() => {
+      element.dataset.ready = "true";
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pill, enabled]);
+}
+
+/**
  * A single-choice segmented group of chips. Arrow keys move between items, and exactly one item
- * stays chosen.
+ * stays chosen. In the `segmented` variant a pill slides to the chosen item.
  *
  * @param props - The value, the change handler, a label and the items.
  * @returns The group element.
  */
 export function ChipGroup(props: ChipGroupProps) {
-  const { value, onValueChange, className, variant = "chips", ...rest } = props;
+  const { value, onValueChange, className, variant = "chips", children, ...rest } = props;
+  const group = useRef<HTMLDivElement>(null);
+  const pill = useRef<HTMLSpanElement>(null);
+  usePill(group, pill, variant === "segmented", value);
   return (
     <ToggleGroupPrimitive.Root
+      ref={group}
       type="single"
       value={value}
       // Radix reports "" when the chosen item is pressed again; keep the choice instead.
@@ -69,7 +126,10 @@ export function ChipGroup(props: ChipGroupProps) {
         .filter(Boolean)
         .join(" ")}
       {...rest}
-    />
+    >
+      {variant === "segmented" && <span ref={pill} className={styles.pill} aria-hidden="true" />}
+      {children}
+    </ToggleGroupPrimitive.Root>
   );
 }
 
