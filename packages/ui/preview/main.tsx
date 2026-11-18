@@ -16,6 +16,7 @@ import {
   CurveEditor,
   Grid,
   GridCell,
+  Nav,
   Tabs,
   TabsContent,
   TabsList,
@@ -99,6 +100,29 @@ function Preview() {
               <Button iconOnly aria-label="Add" icon={plus} />
               <Button iconOnly aria-label="Add, large" size="lg" icon={plus} />
             </div>
+          </Section>
+
+          <Section title="Nav (menu button at 900 px and below)">
+            <Nav
+              brand={<span>Veilo</span>}
+              brandLabel="Veilo home"
+              links={[
+                { label: "Playground", href: "#nav", current: true },
+                { label: "Gallery", href: "#nav" },
+                { label: "GitHub", href: "#nav" },
+              ]}
+              trailing={
+                <ChipGroup
+                  aria-label="Theme, in the nav"
+                  value={light ? "light" : "dark"}
+                  onValueChange={(value) => setLight(value === "light")}
+                  variant="segmented"
+                >
+                  <ChipGroupItem value="light">Light</ChipGroupItem>
+                  <ChipGroupItem value="dark">Dark</ChipGroupItem>
+                </ChipGroup>
+              }
+            />
           </Section>
 
           <Section title="Chip and Toggle">

@@ -209,16 +209,16 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 
 Components marked _(planned)_ are specified here but not built yet in `packages/ui`.
 
-### Nav _(planned)_
+### Nav
 
-Nav is the top header: logo and wordmark with a version badge, the three page links, GitHub, and the theme switch.
+Nav is the top header (`Nav` in `@veilo/ui`): the brand link, the page links and a trailing slot for controls such as the theme switch.
 
-Provide the current page via `aria-current="page"` on one link. Pages are Home, Playground and Gallery. The header is `space-8` (64 px) high with the grid margin as side padding (the same margins as `Grid`: 120 px at 1440, at least 32 px down to 901 px, 20 px at 900 px and below; in the playground, the playground's gutter) and a `border` hairline below.
+Pass the current page with `current: true` on one link, which sets `aria-current="page"`. The header is `space-8` (64 px) high with the grid margin as side padding (the same margins as `Grid`: 120 px at 1440, at least 32 px down to 901 px, 20 px at 900 px and below) and a `border` hairline below. The brand is a `brand` node (logo and wordmark) plus a `brandLabel` that names the home link.
 
-- The active link is an inverted `accent` fill with `on-accent` text; other links are plain `text` with a `secondary` hover fill.
-- The wordmark is set lowercase, `veilo`, in the nav only; the mark beside it is the dotted ghost logo. Until the logo SVG is added to `assets/Logo/`, show a plain `accent` square.
-- The theme switch is a small segmented bar (System, Light, Dark; see Chip). It follows the system theme by default and stores the user's choice. Until the Nav exists, the playground shows it in its header.
-- On the 375 px mobile layout show the logo and a menu button only; move the page links, GitHub and the theme switch into the menu.
+- The current link is an inverted `accent` fill with `on-accent` text; other links are plain `text` with a `secondary` hover fill. A link may carry a decorative icon (hidden from screen readers; the label names the link).
+- The logo is a single-ink SVG (see Logo); never redraw the ghost in code.
+- The theme switch goes in the `trailing` slot as a segmented bar (System, Light, Dark; see Chip). It follows the system theme by default and stores the user's choice. The playground keeps its own switch beside the title.
+- At 900 px and below the bar shows the brand and a 44 px menu button; the links and the trailing controls open in a panel under the bar. The button has `aria-expanded` and `aria-controls`; Escape, a tap outside and choosing a link close the panel, and Escape returns focus to the button.
 
 ### Button
 

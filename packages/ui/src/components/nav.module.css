@@ -1,0 +1,169 @@
+/* Nav, desktop: a 64 px bar with a hairline below. The side padding is the page grid's: the
+   larger of 32 px, the safe-area inset and the space beside the 1200 px content. */
+.header {
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid var(--veilo-border);
+  background: var(--veilo-bg);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-3);
+  box-sizing: border-box;
+  height: var(--veilo-space-8);
+  padding-left: max(
+    var(--veilo-space-4),
+    env(safe-area-inset-left),
+    (100% - var(--veilo-grid-desktop-width) + 2 * var(--veilo-grid-desktop-margin)) / 2
+  );
+  padding-right: max(
+    var(--veilo-space-4),
+    env(safe-area-inset-right),
+    (100% - var(--veilo-grid-desktop-width) + 2 * var(--veilo-grid-desktop-margin)) / 2
+  );
+}
+
+/* Brand: the logo and wordmark in one link. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--veilo-space-1-5);
+  border-radius: var(--veilo-radius-base);
+  color: var(--veilo-text);
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+  text-decoration: none;
+}
+
+.brand svg {
+  width: var(--veilo-size-icon-lg);
+  height: var(--veilo-size-icon-lg);
+}
+
+/* Panel: links, then the trailing controls, pushed to the end of the bar. */
+.panel {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-3);
+  min-width: 0;
+}
+
+.links {
+  display: flex;
+  gap: var(--veilo-space-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Link: plain text, a secondary fill on hover, an inverted pill for the current page. */
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--veilo-space-1);
+  height: var(--veilo-size-control-sm);
+  padding: 0 var(--veilo-space-1-5);
+  border-radius: var(--veilo-radius-base);
+  color: var(--veilo-text);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+  text-decoration: none;
+  transition: background-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.link:hover {
+  background: var(--veilo-secondary);
+}
+
+.link[aria-current="page"] {
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+}
+
+.icon {
+  display: inline-flex;
+}
+
+.icon svg {
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+}
+
+.brand:focus-visible,
+.link:focus-visible,
+.menuButton:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+.trailing {
+  display: flex;
+  align-items: center;
+}
+
+/* The menu button only exists at the narrow layout. */
+.menuButton {
+  display: none;
+}
+
+/* Mobile, at the layout breakpoint (GRID_BREAKPOINT in tokens.ts) and below: the brand and a
+   menu button; the panel drops below the bar when open. 20 px margins or the safe-area inset. */
+@media (max-width: 900px) {
+  .bar {
+    justify-content: space-between;
+    padding-left: max(var(--veilo-grid-mobile-margin), env(safe-area-inset-left));
+    padding-right: max(var(--veilo-grid-mobile-margin), env(safe-area-inset-right));
+  }
+
+  .menuButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--veilo-size-control-md);
+    height: var(--veilo-size-control-md);
+    border: 1px solid var(--veilo-border-strong);
+    border-radius: var(--veilo-radius-base);
+    background: var(--veilo-secondary);
+    color: var(--veilo-text);
+    cursor: pointer;
+  }
+
+  .menuButton svg {
+    width: var(--veilo-size-icon-md);
+    height: var(--veilo-size-icon-md);
+  }
+
+  .panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--veilo-space-2);
+    padding: var(--veilo-space-2) var(--veilo-grid-mobile-margin) var(--veilo-space-3);
+    border-bottom: 1px solid var(--veilo-border);
+    background: var(--veilo-bg);
+  }
+
+  .panel[data-open="true"] {
+    display: flex;
+  }
+
+  .links {
+    flex-direction: column;
+  }
+
+  .link {
+    height: var(--veilo-size-control-md);
+  }
+
+  .trailing {
+    justify-content: flex-start;
+  }
+}

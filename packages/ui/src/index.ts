@@ -20,6 +20,8 @@ export { Button } from "./components/button.tsx";
 export type { ButtonProps } from "./components/button.tsx";
 export { Chip, ChipGroup, ChipGroupItem } from "./components/chip.tsx";
 export type { ChipGroupItemProps, ChipGroupProps, ChipProps } from "./components/chip.tsx";
+export { Nav } from "./components/nav.tsx";
+export type { NavLink, NavProps } from "./components/nav.tsx";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs.tsx";
 export type { TabsContentProps, TabsListProps, TabsTriggerProps } from "./components/tabs.tsx";
 export { Toggle } from "./components/toggle.tsx";
