@@ -209,6 +209,12 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 
 Components marked _(planned)_ are specified here but not built yet in `packages/ui`.
 
+### Kbd
+
+Kbd is a keycap (`Kbd` in `@veilo/ui`) that shows a keyboard shortcut next to a control, for example `R` on a Replay button. It is a 20 px square (`size-icon-md`) with a `border-strong` hairline, `text-muted` mono type and `radius-base`.
+
+It only shows the hint. The caller handles the key and names it for assistive technology with `aria-keyshortcuts` on the control. Ignore the shortcut while the user types in a field, and when Ctrl, Cmd or Alt are held (the browser owns those).
+
 ### Nav
 
 Nav is the top header (`Nav` in `@veilo/ui`): the brand link, the page links and a trailing slot for controls such as the theme switch.

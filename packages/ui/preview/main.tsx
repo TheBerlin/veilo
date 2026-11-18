@@ -17,6 +17,7 @@ import {
   CurveEditor,
   Grid,
   GridCell,
+  Kbd,
   Nav,
   Tabs,
   TabsContent,
@@ -124,6 +125,16 @@ function Preview() {
                 </ChipGroup>
               }
             />
+          </Section>
+
+          <Section title="Kbd">
+            <div className={styles.row}>
+              <Button size="sm" aria-keyshortcuts="r">
+                Replay <Kbd>R</Kbd>
+              </Button>
+              <Kbd>Esc</Kbd>
+              <Kbd>⌘</Kbd>
+            </div>
           </Section>
 
           <Section title="Card">

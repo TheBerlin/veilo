@@ -22,6 +22,8 @@ export { Card } from "./components/card.tsx";
 export type { CardProps } from "./components/card.tsx";
 export { Chip, ChipGroup, ChipGroupItem } from "./components/chip.tsx";
 export type { ChipGroupItemProps, ChipGroupProps, ChipProps } from "./components/chip.tsx";
+export { Kbd } from "./components/kbd.tsx";
+export type { KbdProps } from "./components/kbd.tsx";
 export { Nav } from "./components/nav.tsx";
 export type { NavLink, NavProps } from "./components/nav.tsx";
 export {

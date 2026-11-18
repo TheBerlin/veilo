@@ -31,7 +31,12 @@
   outline-offset: 2px;
 }
 
-.button:active:not(:disabled, [aria-disabled="true"]) {
+/* Pressed: the real press, or `data-pressed` for a caller that imitates one (a keyboard shortcut
+   that acts as a click shows the button pressed). A press happens with the pointer over the
+   button, so `data-pressed` also carries each variant's hover style below: holding the shortcut
+   looks the same as hovering and holding the left mouse button. */
+.button:active:not(:disabled, [aria-disabled="true"]),
+.button[data-pressed="true"]:not(:disabled, [aria-disabled="true"]) {
   transform: translateY(1px);
 }
 
@@ -48,7 +53,8 @@
   color: var(--veilo-on-accent);
 }
 
-.primary:hover:not(:disabled, [aria-disabled="true"]) {
+.primary:hover:not(:disabled, [aria-disabled="true"]),
+.primary[data-pressed="true"]:not(:disabled, [aria-disabled="true"]) {
   opacity: 0.88;
 }
 
@@ -58,7 +64,8 @@
   color: var(--veilo-text);
 }
 
-.secondary:hover:not(:disabled, [aria-disabled="true"]) {
+.secondary:hover:not(:disabled, [aria-disabled="true"]),
+.secondary[data-pressed="true"]:not(:disabled, [aria-disabled="true"]) {
   border-color: var(--veilo-accent);
 }
 
@@ -67,7 +74,8 @@
   color: var(--veilo-text);
 }
 
-.ghost:hover:not(:disabled, [aria-disabled="true"]) {
+.ghost:hover:not(:disabled, [aria-disabled="true"]),
+.ghost[data-pressed="true"]:not(:disabled, [aria-disabled="true"]) {
   background: var(--veilo-secondary);
 }
 
