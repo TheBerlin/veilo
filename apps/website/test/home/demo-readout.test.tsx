@@ -21,3 +21,10 @@ describe("DemoReadout", () => {
     expect(container.textContent).toContain("Loading");
   });
 });
+
+describe("DemoReadout state", () => {
+  it("starts as idle in data-demo-state, which the hero tests read", () => {
+    const { container } = render(<DemoReadout reveal={null} />);
+    expect((container.firstElementChild as HTMLElement).dataset.demoState).toBe("idle");
+  });
+});

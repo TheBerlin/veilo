@@ -26,13 +26,15 @@ export interface DemoReadoutProps {
 /**
  * A small readout of a reveal: a state label and a progress bar. It writes to the DOM directly,
  * so a frame-by-frame progress change does not re-render React. It is decoration for sighted
- * visitors, so it is hidden from screen readers.
+ * visitors, so it is hidden from screen readers; the reveal's state is also kept in
+ * `data-demo-state`, which the tests read.
  *
  * @param props - The reveal to follow.
  * @returns The readout element.
  */
 export function DemoReadout(props: DemoReadoutProps) {
   const { reveal } = props;
+  const root = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLSpanElement>(null);
   const fill = useRef<HTMLElement>(null);
 
@@ -40,6 +42,7 @@ export function DemoReadout(props: DemoReadoutProps) {
     if (!reveal) return;
     const show = () => {
       const { state, progress } = reveal;
+      if (root.current) root.current.dataset.demoState = state;
       if (label.current) label.current.textContent = readoutLabel(state, progress);
       // The bar is empty while loading, and follows progress after that.
       if (fill.current)
@@ -55,7 +58,7 @@ export function DemoReadout(props: DemoReadoutProps) {
   }, [reveal]);
 
   return (
-    <div className={styles.readout} aria-hidden="true">
+    <div ref={root} className={styles.readout} data-demo-state="idle" aria-hidden="true">
       <span ref={label} className={styles.label}>
         Loading
       </span>

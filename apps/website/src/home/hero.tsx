@@ -2,18 +2,11 @@
 // card that plays a reveal.
 
 import { Button, ChipGroup, ChipGroupItem, CodeBlock, Grid, GridCell } from "@veilo/ui";
-import type { PresetId } from "@veilo/presets";
 import { useState } from "react";
 import { INSTALL_COMMAND, PLAYGROUND_URL } from "../site/links.ts";
-import { DemoCard } from "./demo-card.tsx";
+import { DEMO_KINDS, DemoStage, type DemoKind } from "./demo-stage.tsx";
+import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./hero.module.css";
-
-/** The presets the visitor can switch the demo card between, with their labels. */
-export const HERO_PRESETS = [
-  { id: "dot-upscale", label: "Dot upscale" },
-  { id: "hex-from-center", label: "Hex" },
-  { id: "mosaic-from-edge", label: "Mosaic" },
-] as const;
 
 /**
  * The hero section. The copy is on the left in six columns and the demo on the right in five;
@@ -22,7 +15,7 @@ export const HERO_PRESETS = [
  * @returns The section with the page's only `h1`.
  */
 export function Hero() {
-  const [preset, setPreset] = useState<PresetId>(HERO_PRESETS[0].id);
+  const [kind, setKind] = useState<DemoKind>(DEMO_KINDS[0].id);
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
       <Grid rowGap="space-4">
@@ -59,19 +52,19 @@ export function Hero() {
         </GridCell>
         <GridCell start={8} span={5} spanMobile={4}>
           <div className={styles.demo}>
-            <DemoCard preset={preset} />
             <ChipGroup
-              aria-label="Preset on the demo card"
-              value={preset}
-              onValueChange={(value) => setPreset(value as PresetId)}
+              aria-label="Component on the demo"
+              value={kind}
+              onValueChange={(value) => setKind(value as DemoKind)}
               variant="segmented"
             >
-              {HERO_PRESETS.map((item) => (
+              {DEMO_KINDS.map((item) => (
                 <ChipGroupItem key={item.id} value={item.id}>
                   {item.label}
                 </ChipGroupItem>
               ))}
             </ChipGroup>
+            <DemoStage kind={kind} settings={HERO_SETTINGS} />
           </div>
         </GridCell>
       </Grid>
