@@ -1,0 +1,30 @@
+{
+  "name": "website",
+  "private": true,
+  "description": "The Veilo website: home page, gallery and links to the playground and the docs.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@fontsource/geist": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@veilo/core": "workspace:*",
+    "@veilo/presets": "workspace:*",
+    "@veilo/ui": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^6.2.1",
+    "@vitest/browser-playwright": "5.1.0",
+    "playwright": "1.64.1",
+    "vite": "^8.3.5"
+  }
+}

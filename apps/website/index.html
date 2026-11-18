@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Veilo: skeleton loaders and reveal animations</title>
+    <meta
+      name="description"
+      content="Design skeleton loaders and reveal animations in the playground, then run them on your own markup."
+    />
+    <!-- Applies the saved theme before the first paint, so the page does not flash.
+         The key is the playground's (THEME_STORAGE_KEY), so both sites share the choice. -->
+    <script>
+      try {
+        var theme = localStorage.getItem("veilo-theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
