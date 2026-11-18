@@ -1,0 +1,90 @@
+/* Hero: copy and demo side by side, centered on each other; vertical rhythm from the spacing
+   tokens (64 px above, 128 px below). */
+.hero {
+  padding-block: var(--veilo-space-8) var(--veilo-space-16);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--veilo-space-4);
+}
+
+/* Headline: the largest type step; it balances across lines. */
+.title {
+  margin: 0;
+  font: var(--veilo-type-h1);
+  letter-spacing: var(--veilo-type-h1-tracking);
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 34em;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body-lg);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--veilo-space-1-5);
+}
+
+/* Install: the command block is as wide as the command needs, never wider than the column. */
+.install {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--veilo-space-1);
+  max-width: 100%;
+}
+
+/* The block never outgrows the column; a long command scrolls inside it. */
+.command {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.note {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* Demo: the live card, then its switch. */
+.demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+/* Narrow layout: smaller headline, tighter vertical rhythm, full-width actions. */
+@media (max-width: 900px) {
+  .hero {
+    padding-block: var(--veilo-space-4) var(--veilo-space-8);
+  }
+
+  .title {
+    text-wrap: wrap;
+    font: var(--veilo-type-h1-mobile);
+    letter-spacing: var(--veilo-type-h1-mobile-tracking);
+  }
+
+  .lead {
+    font: var(--veilo-type-body);
+  }
+
+  /* The block takes the column's width, and a long command scrolls inside it. */
+  .install,
+  .command {
+    width: 100%;
+  }
+
+  .actions > * {
+    flex: 1 1 auto;
+  }
+}

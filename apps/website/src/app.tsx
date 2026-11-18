@@ -1,14 +1,20 @@
-// app.tsx: root of the website. A placeholder until the Home sections land.
+// app.tsx: root of the website: the header and the home page.
+
+import { Hero } from "./home/hero.tsx";
+import { SiteNav } from "./site/site-nav.tsx";
 
 /**
  * The website's root component.
  *
- * @returns The page.
+ * @returns The page: a skip link target is the `main` landmark.
  */
 export function App() {
   return (
-    <main>
-      <h1>Veilo</h1>
-    </main>
+    <>
+      <SiteNav />
+      <main id="main">
+        <Hero />
+      </main>
+    </>
   );
 }

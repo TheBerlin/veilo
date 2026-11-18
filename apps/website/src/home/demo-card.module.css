@@ -1,0 +1,80 @@
+/* Demo: the card and its readout, stacked and centered. */
+.demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+/* Card: the product card of spec 1.2, 320 px wide (the design token), never wider than its
+   column. */
+.card {
+  display: grid;
+  gap: var(--veilo-space-1);
+  width: var(--veilo-size-test-card);
+  max-width: 100%;
+  text-align: left;
+}
+
+/* Photo: square; media inside a card uses the base radius. */
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--veilo-radius-base);
+}
+
+/* Text parts are blocks, so rise and other transforms apply to them. */
+.heading {
+  display: block;
+  margin: var(--veilo-space-1) 0 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.line {
+  display: block;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+.prices {
+  display: flex;
+  align-items: baseline;
+  gap: var(--veilo-space-1);
+}
+
+/* The two prices take 28% and 20% of the row, the bar widths of spec 1.2, so their bars fill
+   them. */
+.price {
+  flex: 0 0 28%;
+  font: var(--veilo-type-label);
+}
+
+.oldPrice {
+  flex: 0 0 20%;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  text-decoration: line-through;
+}
+
+/* Buy: the card's one solid action, 42 px high (the design token). */
+.buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--veilo-size-test-card-button);
+  margin-top: var(--veilo-space-1);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label);
+}
+
+.buy > span {
+  display: block;
+  width: 100%;
+  text-align: center;
+}

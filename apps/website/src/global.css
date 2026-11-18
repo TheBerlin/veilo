@@ -1,0 +1,5 @@
+/* Global: the browser's default body margin goes, so the header spans the full width. The
+   tokens set the page's colors and type. */
+body {
+  margin: 0;
+}

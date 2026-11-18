@@ -1,0 +1,9 @@
+/* Mark: the brand's one-colour logo as a mask, painted in the text color so it follows the theme.
+   32 px high, the logo's minimum size. */
+.mark {
+  display: block;
+  width: var(--veilo-size-control-sm);
+  height: var(--veilo-size-control-sm);
+  background: currentcolor;
+  mask: url("/veilo-mark.svg") center / contain no-repeat;
+}
