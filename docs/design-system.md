@@ -305,9 +305,9 @@ Provide a one to three word label. Status badges take a tone: default, info (Pro
 - Soft style (tinted `*-soft` fill, toned text) for tables and lists; outlined style (`border` hairline, `text` label, toned icon or dot with a soft halo) on busy surfaces.
 - Use "Coming soon" instead of caveats in public copy. A badge is not interactive; use a chip for filters.
 
-### Card _(planned)_
+### Card
 
-Card is a flat container on `card` with a hairline border, in a standard size and a large panel size.
+Card is a flat container on `card` with a hairline border, in a standard size and a large panel size (`Card` in `@veilo/ui`: `size="card" | "panel"`, `raised`, and `as` for `div`, `article`, `section` or `li`).
 
 Provide the content as children. Use the standard card (`radius-lg`, `space-2` padding) for features, tiles and the playground's transport bar and control panel, and the panel (`radius-xl`, `space-4` padding) for the hero demo and the playground stage.
 

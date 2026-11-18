@@ -18,6 +18,8 @@ export type { ThemedColor, TypeStyle } from "./tokens.ts";
 export { TOKEN_PREFIX } from "./tokens-css.ts";
 export { Button } from "./components/button.tsx";
 export type { ButtonProps } from "./components/button.tsx";
+export { Card } from "./components/card.tsx";
+export type { CardProps } from "./components/card.tsx";
 export { Chip, ChipGroup, ChipGroupItem } from "./components/chip.tsx";
 export type { ChipGroupItemProps, ChipGroupProps, ChipProps } from "./components/chip.tsx";
 export { Nav } from "./components/nav.tsx";

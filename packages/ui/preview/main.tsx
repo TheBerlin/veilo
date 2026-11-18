@@ -5,6 +5,7 @@ import { StrictMode, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Button,
+  Card,
   Chip,
   ChipGroup,
   ChipGroupItem,
@@ -123,6 +124,18 @@ function Preview() {
                 </ChipGroup>
               }
             />
+          </Section>
+
+          <Section title="Card">
+            <div className={styles.row}>
+              <Card as="article">Card: 16 px padding, flat</Card>
+              <Card as="article" raised>
+                Card, raised
+              </Card>
+              <Card as="article" size="panel">
+                Panel: 32 px padding
+              </Card>
+            </div>
           </Section>
 
           <Section title="Chip and Toggle">
