@@ -2,11 +2,11 @@
 // bar (playback and image tools) under it.
 
 import type { Reveal, RevealOptions, Settings } from "@veilo/core";
+import { watchTheme } from "@veilo/ui";
 import { useEffect, useRef, useState } from "react";
 import { LOADER_KEYS } from "../panel/controls.ts";
 import { createContentStore, useContent, type ContentStore } from "../state/content-store.ts";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
-import { watchTheme } from "../theme/theme.ts";
 import { ratioValue } from "./aspect-ratio.ts";
 import { CARD_LAYOUTS } from "./card-layouts.ts";
 import { ImagePicker } from "./image-picker.tsx";

@@ -1,7 +1,7 @@
-// theme-switch.tsx: the header's System / Light / Dark chips.
+// theme-switch.tsx: the System / Light / Dark segmented bar.
 
-import { ChipGroup, ChipGroupItem } from "@veilo/ui";
 import { useState } from "react";
+import { ChipGroup, ChipGroupItem } from "../components/chip.tsx";
 import {
   applyThemeChoice,
   readThemeChoice,

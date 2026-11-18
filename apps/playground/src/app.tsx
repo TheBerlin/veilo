@@ -2,7 +2,7 @@
 // starts with.
 
 import { presetSettings } from "@veilo/presets";
-import { TooltipProvider } from "@veilo/ui";
+import { ThemeSwitch, TooltipProvider } from "@veilo/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
 import { PresetChips } from "./header/preset-chips.tsx";
@@ -14,7 +14,6 @@ import { createUserPresetsStore } from "./presets/user-presets-store.ts";
 import { ShareNotice } from "./share/share-notice.tsx";
 import { parseFrameQuery } from "./stage/frame-query.ts";
 import { Stage } from "./stage/stage.tsx";
-import { ThemeSwitch } from "./theme/theme-switch.tsx";
 import { createContentStore } from "./state/content-store.ts";
 import { createSettingsStore } from "./state/settings-store.ts";
 

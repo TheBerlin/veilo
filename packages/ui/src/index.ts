@@ -24,6 +24,16 @@ export { Chip, ChipGroup, ChipGroupItem } from "./components/chip.tsx";
 export type { ChipGroupItemProps, ChipGroupProps, ChipProps } from "./components/chip.tsx";
 export { Nav } from "./components/nav.tsx";
 export type { NavLink, NavProps } from "./components/nav.tsx";
+export {
+  applyThemeChoice,
+  readThemeChoice,
+  THEME_CHOICES,
+  THEME_STORAGE_KEY,
+  toThemeChoice,
+  watchTheme,
+} from "./theme/theme.ts";
+export type { ThemeChoice } from "./theme/theme.ts";
+export { ThemeSwitch } from "./theme/theme-switch.tsx";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs.tsx";
 export type { TabsContentProps, TabsListProps, TabsTriggerProps } from "./components/tabs.tsx";
 export { Toggle } from "./components/toggle.tsx";

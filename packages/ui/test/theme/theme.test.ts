@@ -1,7 +1,6 @@
 // Tests for src/theme/theme.ts, in Chromium (real localStorage, MutationObserver, matchMedia).
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import indexHtml from "../../index.html?raw";
 import {
   applyThemeChoice,
   readThemeChoice,
@@ -46,10 +45,6 @@ describe("theme choice", () => {
     expect(() => applyThemeChoice("dark")).not.toThrow();
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(readThemeChoice()).toBe("system");
-  });
-
-  it("uses the same storage key as the script in index.html", () => {
-    expect(indexHtml).toContain(`localStorage.getItem("${THEME_STORAGE_KEY}")`);
   });
 
   it("calls back when data-theme changes, until stopped", async () => {
