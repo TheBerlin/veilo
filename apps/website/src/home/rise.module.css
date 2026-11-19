@@ -1,0 +1,51 @@
+/* Rise (transitions.dev "Texts reveal"): the direct children of a block rise 12 px out of a 3 px
+   blur and fade in one after another, 400 ms each and 60 ms apart. `backwards` keeps a child
+   hidden during its delay and leaves no style behind at the end. One entrance for every text block
+   on the page, so they all move the same way. */
+
+/* On load: plays as soon as the block exists (the hero). */
+.onLoad > *,
+.onView > * {
+  animation: rise var(--veilo-duration-slow) var(--veilo-ease-out) backwards;
+}
+
+/* On view: the same entrance, held at its first frame until the block has been scrolled into view
+   and carries `data-seen`. */
+.onView > * {
+  animation-play-state: paused;
+}
+
+.onView[data-seen] > * {
+  animation-play-state: running;
+}
+
+.onLoad > :nth-child(2),
+.onView > :nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.onLoad > :nth-child(3),
+.onView > :nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.onLoad > :nth-child(4),
+.onView > :nth-child(4) {
+  animation-delay: 180ms;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--veilo-space-1-5));
+    filter: blur(3px);
+  }
+}
+
+/* Reduced motion: the text is simply there. */
+@media (prefers-reduced-motion: reduce) {
+  .onLoad > *,
+  .onView > * {
+    animation: none;
+  }
+}

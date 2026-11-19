@@ -7,6 +7,7 @@ import { INSTALL_COMMAND, PLAYGROUND_URL } from "../site/links.ts";
 import { DEMO_KINDS, DemoStage, type DemoKind } from "./demo-stage.tsx";
 import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./hero.module.css";
+import rise from "./rise.module.css";
 
 /**
  * The hero section. The copy is on the left in six columns and the demo on the right in five;
@@ -20,7 +21,7 @@ export function Hero() {
     <section className={styles.hero} aria-labelledby="hero-title">
       <Grid rowGap="space-4">
         <GridCell span={6} spanMobile={4}>
-          <div className={styles.copy}>
+          <div className={`${styles.copy} ${rise.onLoad}`}>
             <h1 className={styles.title} id="hero-title">
               Design skeleton loaders and reveal animations, visually.
             </h1>

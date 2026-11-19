@@ -11,41 +11,6 @@
   gap: var(--veilo-space-4);
 }
 
-/* Entrance (transitions.dev "Texts reveal"): the four blocks rise 12 px out of a 3 px blur and fade
-   in one after another, headline first, once on load. Total about 580 ms: 400 ms each, 60 ms
-   apart. `backwards` keeps a block hidden during its delay and leaves no style behind at the end.
-   The demo card has its own motion and is not part of this. */
-.copy > * {
-  animation: hero-rise var(--veilo-duration-slow) var(--veilo-ease-out) backwards;
-}
-
-.copy > :nth-child(2) {
-  animation-delay: 60ms;
-}
-
-.copy > :nth-child(3) {
-  animation-delay: 120ms;
-}
-
-.copy > :nth-child(4) {
-  animation-delay: 180ms;
-}
-
-@keyframes hero-rise {
-  from {
-    opacity: 0;
-    transform: translateY(var(--veilo-space-1-5));
-    filter: blur(3px);
-  }
-}
-
-/* Reduced motion: the copy is simply there. */
-@media (prefers-reduced-motion: reduce) {
-  .copy > * {
-    animation: none;
-  }
-}
-
 /* Headline: the largest type step; it balances across lines. */
 .title {
   margin: 0;
