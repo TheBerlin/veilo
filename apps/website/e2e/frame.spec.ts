@@ -3,7 +3,7 @@
 import { expect, test } from "@playwright/test";
 
 test("a frame request holds the card at that progress", async ({ page }) => {
-  await page.goto("/?preset=hex-from-center&p=0.5");
+  await page.goto("/playground?preset=hex-from-center&p=0.5");
   const card = page.getByRole("button", { name: /Test card/ });
   // The card is marked once the frame is drawn with the final fonts.
   await expect(card).toHaveAttribute("data-frame-ready", "");
@@ -22,7 +22,7 @@ test("a frame request holds the card at that progress", async ({ page }) => {
 });
 
 test("a page without a frame request plays as usual", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/playground");
   await expect(page.getByRole("button", { name: /Test card/ })).not.toHaveAttribute(
     "data-frame-ready",
   );

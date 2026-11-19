@@ -144,7 +144,7 @@ test.describe("with reduced motion", () => {
   });
 
   test("the playground's preview still animates", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/playground");
     // The skeleton too (before 0.6.0 its CSS still followed the preference and stood still).
     // Read once the card has started it, not while the page is still mounting.
     await page.locator('[data-veilo-slot="heading"][data-veilo-skeleton]').waitFor();
@@ -156,7 +156,7 @@ test.describe("with reduced motion", () => {
   });
 
   test("the playground's chrome stands still", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/playground");
     expect(await baseDuration(page)).toBe(0);
   });
 });
@@ -179,12 +179,12 @@ test.describe("without reduced motion (controls)", () => {
   });
 
   test("the playground's chrome moves", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/playground");
     expect(await baseDuration(page)).toBeGreaterThan(0);
   });
 
   test("the playground's reduced-motion preview shows the reduced experience", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/playground");
     // The switch is in the Preview options popover.
     await page.getByRole("button", { name: "Preview options" }).click();
     await page.getByRole("switch", { name: "Reduced motion" }).click();

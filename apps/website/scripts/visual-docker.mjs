@@ -29,7 +29,7 @@ const outputs = {
 };
 for (const path of Object.values(outputs)) mkdirSync(path, { recursive: true });
 
-const work = "/work/apps/playground";
+const work = "/work/apps/website";
 const mounts = Object.entries(outputs).flatMap(([inside, host]) => [
   "-v",
   `${host}:${work}/${inside}`,
@@ -41,15 +41,15 @@ const script = [
   // Copy the sources; the output folders are mounted already and are left out.
   "cd /src",
   "tar -cf - --exclude=node_modules --exclude=dist --exclude=.turbo --exclude=.git" +
-    " --exclude=apps/playground/e2e/__screenshots__ --exclude=apps/playground/playwright-report" +
-    " --exclude=apps/playground/test-results . | tar -xf - -C /work",
+    " --exclude=apps/website/e2e/__screenshots__ --exclude=apps/website/playwright-report" +
+    " --exclude=apps/website/test-results . | tar -xf - -C /work",
   "cd /work",
   `npm install --global --silent ${PNPM}`,
   "pnpm config set store-dir /pnpm-store",
   "pnpm install --frozen-lockfile --reporter=silent",
   // The same Turbo task as CI (`pnpm e2e`), so Turbo's env filtering applies here too; it builds
   // the playground first. Arguments after -- go to `playwright test`.
-  'pnpm exec turbo run e2e --filter=playground --output-logs=new-only -- "$@"',
+  'pnpm exec turbo run e2e --filter=website --output-logs=new-only -- "$@"',
 ].join("\n");
 
 const result = spawnSync(

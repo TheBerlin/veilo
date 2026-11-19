@@ -1,4 +1,4 @@
-// playwright.config.ts: visual and end-to-end tests of the built playground (Playwright Test).
+// playwright.config.ts: visual and end-to-end tests of the built website (Playwright Test).
 // Everything that changes pixels is pinned: browser, viewport, device pixel ratio, fonts (served
 // by the app itself), color scheme per project, and the server.
 

@@ -1,6 +1,6 @@
 // frames.spec.ts: screenshots of the test card for every preset, at five fixed progress values
 // and in the Loading view. The `dark` and `light` projects run each one in both themes.
-// Baselines are made in the Playwright Docker image: `pnpm --filter playground visual:update`.
+// Baselines are made in the Playwright Docker image: `pnpm --filter website visual:update`.
 
 import { expect, test, type Page } from "@playwright/test";
 import { PRESETS } from "@veilo-ui/presets";
@@ -15,7 +15,7 @@ import { frameName, PROGRESS } from "./support/baselines.ts";
  * @returns The test card.
  */
 async function openFrame(page: Page, presetId: string, p: number) {
-  await page.goto(`/?preset=${presetId}&p=${p}`);
+  await page.goto(`/playground?preset=${presetId}&p=${p}`);
   const card = page.getByRole("button", { name: /Test card/ });
   await expect(card).toHaveAttribute("data-frame-ready", "");
   return card;

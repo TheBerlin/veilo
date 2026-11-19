@@ -59,10 +59,10 @@ docs/       SPEC.md, the product specification
 
 ```powershell
 pnpm install
-pnpm --filter playground dev     # run the playground
+pnpm --filter website dev     # run the website (home and playground)
 pnpm test                        # all tests
 pnpm lint; pnpm typecheck; pnpm build
-pnpm --filter playground visual  # screenshot tests in Docker (see CONTRIBUTING.md)
+pnpm --filter website visual  # screenshot tests in Docker (see CONTRIBUTING.md)
 ```
 
 Browser tests need Chromium once per machine: `pnpm --filter @veilo-ui/core exec playwright install chromium`.
