@@ -75,10 +75,10 @@ export function MusicCard(props: DemoCardProps) {
         <div className={styles.head}>
           <div className={styles.titles}>
             <p className={styles.track} data-veilo-slot="track">
-              Static Bloom
+              Glass Horizon
             </p>
             <p className={styles.artist} data-veilo-slot="artist">
-              The Paper Echoes
+              Blue Meridian
             </p>
           </div>
           <Control slot="more">

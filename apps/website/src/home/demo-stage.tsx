@@ -6,6 +6,7 @@ import { Button, Kbd } from "@veilo/ui";
 import { useEffect, useRef, useState } from "react";
 import { VideoCard } from "./demo-cards.tsx";
 import { InboxCard } from "./inbox-card.tsx";
+import { albumCoverLoaded, preloadAlbumCover } from "./demo-scenes.ts";
 import { MusicCard } from "./music-card.tsx";
 import { DemoReadout } from "./demo-readout.tsx";
 import styles from "./demo-stage.module.css";
@@ -42,6 +43,18 @@ export function DemoStage(props: DemoStageProps) {
   const { kind, settings } = props;
   const [reveal, setReveal] = useState<Reveal | null>(null);
   const Card = CARDS[kind];
+
+  // The music card samples its cover when its reveal is created, so it waits for the photograph.
+  const [coverReady, setCoverReady] = useState(albumCoverLoaded);
+  useEffect(() => {
+    if (coverReady) return;
+    let current = true;
+    void preloadAlbumCover().then(() => current && setCoverReady(true));
+    return () => {
+      current = false;
+    };
+  }, [coverReady]);
+  const waiting = kind === "music" && !coverReady;
 
   const replayButton = useRef<HTMLButtonElement>(null);
   const [pressed, setPressed] = useState(false);
@@ -85,7 +98,7 @@ export function DemoStage(props: DemoStageProps) {
       {/* A click anywhere on the component replays it; Replay below is the keyboard way. */}
       <div className={styles.area} onClick={() => reveal?.playSequence()}>
         {/* The key rebuilds the card, and so its reveal, when the kind changes. */}
-        <Card key={kind} settings={settings} onReveal={setReveal} />
+        {waiting ? null : <Card key={kind} settings={settings} onReveal={setReveal} />}
       </div>
       <div className={styles.status}>
         <DemoReadout reveal={reveal} />

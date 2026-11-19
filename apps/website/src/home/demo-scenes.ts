@@ -1,5 +1,8 @@
-// demo-scenes.ts: the demo cards' pictures, drawn in code. Stand-ins until real photographs
-// replace them; the reveal samples whatever the canvas holds.
+// demo-scenes.ts: the demo cards' pictures: the street is drawn in code, the album is a
+// photograph (credits in assets/CREDITS.md) with drawn art as the fallback. The reveal samples
+// whatever the canvas holds.
+
+import albumCoverUrl from "./assets/album-cover.webp";
 
 /** The pictures the demos use. */
 export type SceneId = "street" | "album";
@@ -95,9 +98,65 @@ function drawAlbum(context: CanvasRenderingContext2D, w: number, h: number): voi
   context.fill();
 }
 
+/** The decoded album cover, once loaded; until then the drawn album art stands in. */
+let albumCover: HTMLImageElement | null = null;
+/** The one load of the album cover, shared by every caller. */
+let albumCoverLoad: Promise<void> | null = null;
+
+/**
+ * Loads and decodes the album cover photograph once. A failed load is not an error: the drawn
+ * album art keeps standing in.
+ *
+ * Side effects: starts one image request the first time; later calls share it.
+ *
+ * @returns A promise that resolves when the cover is ready or has failed to load.
+ */
+export function preloadAlbumCover(): Promise<void> {
+  albumCoverLoad ??= new Promise<void>((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      albumCover = image;
+      resolve();
+    };
+    image.onerror = () => resolve();
+    image.src = albumCoverUrl;
+  });
+  return albumCoverLoad;
+}
+
+/**
+ * Tells whether the album cover photograph is loaded.
+ *
+ * @returns True once {@link preloadAlbumCover} has loaded the photograph.
+ */
+export function albumCoverLoaded(): boolean {
+  return albumCover !== null;
+}
+
+/**
+ * Draws a photograph over the whole canvas, scaled to cover it and centered.
+ *
+ * @param context - The canvas context.
+ * @param image - The decoded photograph.
+ * @param w - Width in px.
+ * @param h - Height in px.
+ */
+function drawCover(
+  context: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  w: number,
+  h: number,
+): void {
+  // The larger of the two scales makes the image cover the canvas; the overflow is cropped evenly.
+  const scale = Math.max(w / image.naturalWidth, h / image.naturalHeight);
+  const drawW = image.naturalWidth * scale;
+  const drawH = image.naturalHeight * scale;
+  context.drawImage(image, (w - drawW) / 2, (h - drawH) / 2, drawW, drawH);
+}
+
 /**
  * Draws a scene on a canvas. The reveal samples these pixels, so call it before the reveal is
- * created.
+ * created. The album uses the photograph when it is loaded, and the drawn art otherwise.
  *
  * @param canvas - The picture canvas.
  * @param scene - Which picture to draw.
@@ -108,5 +167,9 @@ export function drawScene(canvas: HTMLCanvasElement, scene: SceneId, ratio: numb
   const context = canvas.getContext("2d");
   if (!context) return;
   if (scene === "street") drawStreet(context, width, height);
+  else if (albumCover) drawCover(context, albumCover, width, height);
   else drawAlbum(context, width, height);
 }
+
+// Start fetching at import, so the cover is usually ready before the music card is chosen.
+if (typeof Image !== "undefined") void preloadAlbumCover();
