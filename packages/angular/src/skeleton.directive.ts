@@ -18,8 +18,8 @@ import {
   type Settings,
   type Skeleton as CoreSkeleton,
   type SkeletonOptions,
-} from "@veilo/core";
-import { configKey, resolveConfig, type LayoutInput, type PresetId } from "@veilo/presets";
+} from "@veilo-ui/core";
+import { configKey, resolveConfig, type LayoutInput, type PresetId } from "@veilo-ui/presets";
 
 /**
  * Runs a Veilo loader (shimmer, wave or pulse) on an element while `loading` is `true`. By

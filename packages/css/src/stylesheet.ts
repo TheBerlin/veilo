@@ -2,7 +2,7 @@
 // Internal, not exported from index.ts. The generate script writes its output to skeleton.css,
 // and a test fails when the committed file differs, so the file never drifts from the generator.
 
-import { defaultSettings, generateLoaderCss } from "@veilo/core/loader";
+import { defaultSettings, generateLoaderCss } from "@veilo-ui/core/loader";
 
 /** The class every skeleton element carries, and the prefix of the effect classes. */
 export const STYLESHEET_CLASS = "veilo";
@@ -45,7 +45,7 @@ export function buildStylesheet(): string {
     ),
   );
   const header = [
-    "/* @veilo/css skeleton.css. Generated from the core loader generator with default settings;",
+    "/* @veilo-ui/css skeleton.css. Generated from the core loader generator with default settings;",
     "   do not edit. Restyle with --veilo-base, --veilo-hi and --veilo-radius. */",
     "",
   ].join("\n");

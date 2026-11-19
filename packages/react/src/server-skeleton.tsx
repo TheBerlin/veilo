@@ -2,7 +2,7 @@
 // and the first client render carry a scoped `<style>` from core's serverSkeletonCss; once the
 // live skeleton runs, the component drops it. Internal, used by Reveal and Skeleton.
 
-import { serverSkeletonCss, type Layout, type Settings } from "@veilo/core";
+import { serverSkeletonCss, type Layout, type Settings } from "@veilo-ui/core";
 import { useCallback, useId, useState, type ReactNode } from "react";
 
 /** The attribute that scopes the server stylesheet to one component. */

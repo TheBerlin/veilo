@@ -1,6 +1,6 @@
 // Tests for src/presets/presets-tab.tsx, in Chromium with real storage.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";

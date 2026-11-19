@@ -2,8 +2,8 @@
 // state, Replay reveal, Loop, the reduced-motion preview, the scrubber, the time readout and the
 // state label.
 
-import type { Reveal, RevealState } from "@veilo/core";
-import { Button, Scrubber, Toggle } from "@veilo/ui";
+import type { Reveal, RevealState } from "@veilo-ui/core";
+import { Button, Scrubber, Toggle } from "@veilo-ui/ui";
 import { useEffect, useState, type ReactNode } from "react";
 import styles from "./transport-bar.module.css";
 

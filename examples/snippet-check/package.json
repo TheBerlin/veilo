@@ -7,10 +7,10 @@
     "e2e": "node check.mjs"
   },
   "dependencies": {
-    "@veilo/core": "workspace:*",
-    "@veilo/element": "workspace:*",
-    "@veilo/presets": "workspace:*",
-    "@veilo/react": "workspace:*"
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/element": "workspace:*",
+    "@veilo-ui/presets": "workspace:*",
+    "@veilo-ui/react": "workspace:*"
   },
   "devDependencies": {
     "playwright": "1.64.1"

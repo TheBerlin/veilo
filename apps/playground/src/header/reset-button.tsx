@@ -2,8 +2,8 @@
 // preview content, then offers Undo until the next change, since both are remembered between
 // visits.
 
-import type { Settings } from "@veilo/core";
-import { Button } from "@veilo/ui";
+import type { Settings } from "@veilo-ui/core";
+import { Button } from "@veilo-ui/ui";
 import { useEffect, useRef, useState } from "react";
 import type { Content, ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";

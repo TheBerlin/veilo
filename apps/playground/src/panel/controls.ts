@@ -2,7 +2,7 @@
 // units, option names and "shown when" rules. Ranges and option lists come from core's settings
 // JSON Schema, so they are never copied here.
 
-import { settingsJsonSchema, type SettingKey, type Settings } from "@veilo/core";
+import { settingsJsonSchema, type SettingKey, type Settings } from "@veilo-ui/core";
 
 /** Keys whose value is a number. */
 export type NumberKey = {

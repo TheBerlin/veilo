@@ -1,7 +1,7 @@
 // use-reveal.ts: runs core's reveal controller on an element for as long as a component is
 // mounted.
 
-import { createReveal, type Layout, type Reveal, type RevealOptions } from "@veilo/core";
+import { createReveal, type Layout, type Reveal, type RevealOptions } from "@veilo-ui/core";
 import { useEffect, useRef, type RefObject } from "react";
 
 /**

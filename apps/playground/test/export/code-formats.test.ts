@@ -1,6 +1,6 @@
 // Tests for src/export/code-formats.ts, in Node.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import { CODE_FORMATS, codeFor, DEFAULT_CODE_FORMAT } from "../../src/export/code-formats.ts";
 import { defaultContent } from "../../src/state/content-store.ts";

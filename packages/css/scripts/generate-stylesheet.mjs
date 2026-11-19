@@ -1,5 +1,5 @@
 // generate-stylesheet.mjs: writes skeleton.css from src/stylesheet.ts.
-// Run with `pnpm --filter @veilo/css generate:stylesheet` after changing the generator.
+// Run with `pnpm --filter @veilo-ui/css generate:stylesheet` after changing the generator.
 
 import { writeFileSync } from "node:fs";
 import { buildStylesheet } from "../src/stylesheet.ts";

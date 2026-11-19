@@ -3,7 +3,7 @@
 // `{ version: 1, settings, content }` under one key (`content` is optional: values saved before
 // it existed still load); both are checked by their stores on the way back in.
 
-import type { Settings } from "@veilo/core";
+import type { Settings } from "@veilo-ui/core";
 import type { Content, ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import type { KeyValueStorage } from "./browser-storage.ts";

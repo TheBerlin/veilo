@@ -1,11 +1,11 @@
-// Tests for src/loader-entry.ts: the `@veilo/core/loader` entry exports exactly the browser-free
+// Tests for src/loader-entry.ts: the `@veilo-ui/core/loader` entry exports exactly the browser-free
 // loader and settings helpers. Runs in Node.
 
 import { describe, expect, it } from "vitest";
 import * as loader from "../src/loader-entry.ts";
 import * as main from "../src/index.ts";
 
-describe("@veilo/core/loader", () => {
+describe("@veilo-ui/core/loader", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(loader).sort()).toEqual([
       "EASING_CURVES",

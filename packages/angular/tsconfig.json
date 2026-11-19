@@ -8,7 +8,7 @@
     "declaration": false,
     "declarationMap": false,
     // The tests import the package as built (see vitest.config.ts), so types come from dist.
-    "paths": { "@veilo/angular": ["./dist/index.d.ts"] }
+    "paths": { "@veilo-ui/angular": ["./dist/index.d.ts"] }
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }

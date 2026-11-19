@@ -1,13 +1,13 @@
 // Tests for src/panel/panel.tsx with its groups and color fields, and how the stage restarts
 // after a change (spec 1.4), in Chromium with a hand-driven clock.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 // Core's hand-driven scheduler, shared so both packages drive time the same way.
 import { fakeScheduler } from "../../../../packages/core/test/support/scheduler.ts";
-import { TooltipProvider } from "@veilo/ui";
+import { TooltipProvider } from "@veilo-ui/ui";
 import { Panel } from "../../src/panel/panel.tsx";
 import { createUserPresetsStore } from "../../src/presets/user-presets-store.ts";
 import { Stage, startAfterChange } from "../../src/stage/stage.tsx";

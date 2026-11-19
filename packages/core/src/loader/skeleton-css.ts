@@ -1,6 +1,6 @@
 // skeleton-css.ts: the skeleton stylesheet as a pure string, for the live skeleton on real
 // elements and for servers that render the skeleton before any script runs.
-// Layer 2. Pure: no DOM access, so it is part of the browser-free `@veilo/core/loader` entry.
+// Layer 2. Pure: no DOM access, so it is part of the browser-free `@veilo-ui/core/loader` entry.
 
 import { cssNumber } from "../math/number.ts";
 import { GUESSED_ROLE_TAGS, parseLayout } from "../schema/layout.ts";

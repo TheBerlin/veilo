@@ -1,7 +1,7 @@
 // setup.ts: runs before every browser test file and loads the real tokens. An agreed exception
-// to the test mirror, as in @veilo/ui.
+// to the test mirror, as in @veilo-ui/ui.
 
-import "@veilo/ui/tokens.css";
+import "@veilo-ui/ui/tokens.css";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeEach } from "vitest";
 

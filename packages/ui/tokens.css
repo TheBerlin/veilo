@@ -1,5 +1,5 @@
 /* Veilo design tokens. Generated from packages/ui/src/tokens.ts; do not edit.
-   Run `pnpm --filter @veilo/ui generate:tokens` after changing the table. */
+   Run `pnpm --filter @veilo-ui/ui generate:tokens` after changing the table. */
 
 :root {
   --veilo-bg: #16161a;

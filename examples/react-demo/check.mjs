@@ -50,8 +50,8 @@ try {
     run("pnpm", ["pack", "--pack-destination", packs, "--silent"], join(repo, "packages", name));
   }
   const tarball = (name) => {
-    const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-${name}-`));
-    if (!file) throw new Error(`no tarball for @veilo/${name}`);
+    const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-ui-${name}-`));
+    if (!file) throw new Error(`no tarball for @veilo-ui/${name}`);
     return `file:${join(packs, file)}`;
   };
 
@@ -60,14 +60,14 @@ try {
     cpSync(join(here, entry), join(app, entry), { recursive: true });
   }
   const own = JSON.parse(readFileSync(join(here, "package.json"), "utf8"));
-  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo/${name}`, tarball(name)]));
+  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo-ui/${name}`, tarball(name)]));
   const pkg = {
     name: "veilo-react-demo-check",
     private: true,
     type: "module",
-    dependencies: { ...own.dependencies, "@veilo/react": local["@veilo/react"] },
+    dependencies: { ...own.dependencies, "@veilo-ui/react": local["@veilo-ui/react"] },
     devDependencies: { ...own.devDependencies, typescript: "^7.0.2" },
-    // The packed @veilo/react asks for @veilo/core at its version, which is not on npm yet:
+    // The packed @veilo-ui/react asks for @veilo-ui/core at its version, which is not on npm yet:
     // point every copy of the internal packages at the local tarballs.
     overrides: local,
   };

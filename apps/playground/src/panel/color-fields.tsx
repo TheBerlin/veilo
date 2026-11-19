@@ -1,8 +1,8 @@
 // color-fields.tsx: the Loader tab's Base and Highlight colors and Reset colors (spec 1.3), and
 // the Reveal tab's Ink color for the dot and character grids.
 
-import type { Settings } from "@veilo/core";
-import { Button, ColorField } from "@veilo/ui";
+import type { Settings } from "@veilo-ui/core";
+import { Button, ColorField } from "@veilo-ui/ui";
 import { useStore } from "zustand";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import styles from "./panel.module.css";

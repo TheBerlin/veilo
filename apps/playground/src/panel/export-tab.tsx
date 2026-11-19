@@ -1,8 +1,8 @@
 // export-tab.tsx: the Export tab (spec 1.6): a share link, the Code section (settings, CSS,
 // layout JSON and the code snippets) and a box to load settings back.
 
-import type { Settings } from "@veilo/core";
-import { Button, CodeBlock, TextArea } from "@veilo/ui";
+import type { Settings } from "@veilo-ui/core";
+import { Button, CodeBlock, TextArea } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { encodeShareLink, shareUrl } from "../share/share-link.ts";

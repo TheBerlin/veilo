@@ -1,7 +1,7 @@
 // panel.tsx: the control panel beside the stage, with the Loader, Reveal, Content, Presets and
 // Export tabs.
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@veilo/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@veilo-ui/ui";
 import { useState } from "react";
 import { PresetsTab } from "../presets/presets-tab.tsx";
 import type { UserPresetsStore } from "../presets/user-presets-store.ts";

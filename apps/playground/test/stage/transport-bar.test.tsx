@@ -1,6 +1,6 @@
 // Tests for src/stage/transport-bar.tsx, through the stage, in Chromium with a hand-driven clock.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";

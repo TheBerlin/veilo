@@ -1,8 +1,15 @@
 // control-groups.tsx: renders a tab's control table: sliders, chips and selects bound to the
 // settings store, with the controls that do not apply hidden.
 
-import { EASING_CURVES, type Settings } from "@veilo/core";
-import { ChipGroup, ChipGroupItem, CurveEditor, Select, Slider, type CurveValue } from "@veilo/ui";
+import { EASING_CURVES, type Settings } from "@veilo-ui/core";
+import {
+  ChipGroup,
+  ChipGroupItem,
+  CurveEditor,
+  Select,
+  Slider,
+  type CurveValue,
+} from "@veilo-ui/ui";
 import { useStore } from "zustand";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import styles from "./panel.module.css";

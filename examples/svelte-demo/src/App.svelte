@@ -3,7 +3,7 @@
   skeleton on the card's own markup; when the data arrives, the reveal plays.
 -->
 <script lang="ts">
-  import { Reveal, skeleton } from "@veilo/svelte";
+  import { Reveal, skeleton } from "@veilo-ui/svelte";
   import { onMount } from "svelte";
   import { fetchProduct, PLACEHOLDER, type Product } from "./product";
 

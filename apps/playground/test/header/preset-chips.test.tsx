@@ -1,6 +1,6 @@
 // Tests for src/header/preset-chips.tsx (spec 1.5), in Chromium with the real components.
 
-import { presetSettings } from "@veilo/presets";
+import { presetSettings } from "@veilo-ui/presets";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";

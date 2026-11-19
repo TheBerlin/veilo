@@ -1,6 +1,6 @@
 // Tests for src/state/settings-store.ts: one checked, serializable settings object.
 
-import { defaultSettings, SETTINGS_VERSION, type Settings } from "@veilo/core";
+import { defaultSettings, SETTINGS_VERSION, type Settings } from "@veilo-ui/core";
 import { describe, expect, it, vi } from "vitest";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 

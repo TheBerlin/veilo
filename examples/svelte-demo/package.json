@@ -1,7 +1,7 @@
 {
   "name": "example-svelte-demo",
   "private": true,
-  "description": "Minimal Svelte 5 app that reveals a product card with @veilo/svelte when its data arrives.",
+  "description": "Minimal Svelte 5 app that reveals a product card with @veilo-ui/svelte when its data arrives.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "e2e": "node check.mjs"
   },
   "dependencies": {
-    "@veilo/svelte": "workspace:*",
+    "@veilo-ui/svelte": "workspace:*",
     "svelte": "^5.57.3"
   },
   "devDependencies": {

@@ -50,7 +50,7 @@ const PACKAGES = ["core", "presets", "react", "vue", "svelte", "angular", "eleme
 const PORT = 4177;
 const ORIGIN = `http://localhost:${PORT}`;
 /** The address the CDN snippet loads its script from; the check serves the packed file there. */
-const CDN_URL = "https://cdn.jsdelivr.net/npm/@veilo/element";
+const CDN_URL = "https://cdn.jsdelivr.net/npm/@veilo-ui/element";
 
 /**
  * Settings per layout, so every image effect and several text effects run. Hold and duration are
@@ -139,8 +139,8 @@ try {
     run("pnpm", ["pack", "--pack-destination", packs, "--silent"], join(repo, "packages", name));
   }
   const tarball = (name) => {
-    const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-${name}-`));
-    if (!file) throw new Error(`no tarball for @veilo/${name}`);
+    const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-ui-${name}-`));
+    if (!file) throw new Error(`no tarball for @veilo-ui/${name}`);
     return `file:${join(packs, file)}`;
   };
 
@@ -149,7 +149,7 @@ try {
   const reactDemo = JSON.parse(
     readFileSync(join(repo, "examples/react-demo/package.json"), "utf8"),
   );
-  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo/${name}`, tarball(name)]));
+  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo-ui/${name}`, tarball(name)]));
   const vueDemo = JSON.parse(readFileSync(join(repo, "examples/vue-demo/package.json"), "utf8"));
   // vue-tsc needs TypeScript 5 or 6 (it uses the compiler's JavaScript API), so every snippet,
   // the React ones too, is checked with the version the Vue demo uses.
@@ -173,11 +173,11 @@ try {
       ...reactDemo.dependencies,
       vue: vueDemo.dependencies.vue,
       svelte: svelteDemo.dependencies.svelte,
-      "@veilo/core": local["@veilo/core"],
-      "@veilo/react": local["@veilo/react"],
-      "@veilo/vue": local["@veilo/vue"],
-      "@veilo/svelte": local["@veilo/svelte"],
-      "@veilo/element": local["@veilo/element"],
+      "@veilo-ui/core": local["@veilo-ui/core"],
+      "@veilo-ui/react": local["@veilo-ui/react"],
+      "@veilo-ui/vue": local["@veilo-ui/vue"],
+      "@veilo-ui/svelte": local["@veilo-ui/svelte"],
+      "@veilo-ui/element": local["@veilo-ui/element"],
     },
     devDependencies,
     // The packed packages ask for each other at versions not on npm yet: point every copy of
@@ -339,7 +339,7 @@ try {
           name: "veilo-snippet-check-ng-app",
           private: true,
           type: "module",
-          dependencies: { ...ownNg.dependencies, "@veilo/angular": local["@veilo/angular"] },
+          dependencies: { ...ownNg.dependencies, "@veilo-ui/angular": local["@veilo-ui/angular"] },
           devDependencies: ngDevDependencies,
           overrides: local,
         },
@@ -377,8 +377,8 @@ try {
   }
   const cdnFile = join(
     app,
-    "node_modules/@veilo/element",
-    JSON.parse(readFileSync(join(app, "node_modules/@veilo/element/package.json"), "utf8"))
+    "node_modules/@veilo-ui/element",
+    JSON.parse(readFileSync(join(app, "node_modules/@veilo-ui/element/package.json"), "utf8"))
       .jsdelivr,
   );
 

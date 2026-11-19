@@ -1,10 +1,10 @@
 // Tests for src/panel/content-tab.tsx and the card layouts it chooses, in Chromium.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { TooltipProvider } from "@veilo/ui";
+import { TooltipProvider } from "@veilo-ui/ui";
 import { Panel } from "../../src/panel/panel.tsx";
 import { createUserPresetsStore } from "../../src/presets/user-presets-store.ts";
 import { CARD_LAYOUTS, LAYOUT_IDS } from "../../src/stage/card-layouts.ts";

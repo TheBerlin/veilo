@@ -7,20 +7,21 @@ import { fileURLToPath } from "node:url";
 const html = readFileSync(new URL("index.html", import.meta.url), "utf8");
 const problems = [];
 
-// The <link> must point at the file the package exports as @veilo/css/skeleton.css.
+// The <link> must point at the file the package exports as @veilo-ui/css/skeleton.css.
 const href = html.match(/<link rel="stylesheet" href="([^"]+)"/)?.[1];
 const linked = href && new URL(href, import.meta.url);
-const exported = fileURLToPath(import.meta.resolve("@veilo/css/skeleton.css"));
+const exported = fileURLToPath(import.meta.resolve("@veilo-ui/css/skeleton.css"));
 if (!linked || !existsSync(linked)) {
   problems.push(`stylesheet link ${href} does not exist`);
 } else if (realpathSync(linked) !== realpathSync(exported)) {
-  problems.push(`stylesheet link ${href} is not the exported @veilo/css/skeleton.css`);
+  problems.push(`stylesheet link ${href} is not the exported @veilo-ui/css/skeleton.css`);
 }
 
 // Every veilo class the page uses must exist in the stylesheet.
 const css = readFileSync(exported, "utf8");
-// The lookbehind skips custom properties such as --veilo-base.
-const used = new Set(html.match(/(?<![-\w])veilo(?:-[a-z]+)?\b/g));
+// The lookbehind skips custom properties such as --veilo-base and the package scope in
+// "@veilo-ui/css".
+const used = new Set(html.match(/(?<![-\w@])veilo(?:-[a-z]+)?\b/g));
 for (const name of used) {
   if (!css.includes(`.${name}`)) problems.push(`class ${name} is not in skeleton.css`);
 }
@@ -29,4 +30,4 @@ if (problems.length > 0) {
   console.error(problems.join("\n"));
   process.exit(1);
 }
-console.log(`css-demo: link and ${used.size} classes match @veilo/css`);
+console.log(`css-demo: link and ${used.size} classes match @veilo-ui/css`);

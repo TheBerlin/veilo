@@ -3,8 +3,8 @@ import { sharedOptions } from "../../tsdown.shared.ts";
 
 // Two builds. tsconfig.build.json covers src only, so test helpers never reach either.
 export default defineConfig([
-  // The npm entries `@veilo/element` and `@veilo/element/define`. Lit, @veilo/core and
-  // @veilo/presets are dependencies, so they stay external and apps share one copy.
+  // The npm entries `@veilo-ui/element` and `@veilo-ui/element/define`. Lit, @veilo-ui/core and
+  // @veilo-ui/presets are dependencies, so they stay external and apps share one copy.
   {
     ...sharedOptions,
     entry: { index: "src/index.ts", define: "src/define-entry.ts" },

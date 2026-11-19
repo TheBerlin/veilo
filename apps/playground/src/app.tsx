@@ -1,8 +1,8 @@
 // app.tsx: the playground's root component. Owns the one settings store and decides what it
 // starts with.
 
-import { presetSettings } from "@veilo/presets";
-import { TooltipProvider } from "@veilo/ui";
+import { presetSettings } from "@veilo-ui/presets";
+import { TooltipProvider } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
 import { PresetChips } from "./header/preset-chips.tsx";

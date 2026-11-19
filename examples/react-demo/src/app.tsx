@@ -1,7 +1,7 @@
 // app.tsx: a product card whose data loads like a real fetch. While it loads, Veilo shows the
 // skeleton on the card's own markup; when the data arrives, the reveal plays.
 
-import { Reveal, Skeleton } from "@veilo/react";
+import { Reveal, Skeleton } from "@veilo-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { fetchProduct, PLACEHOLDER, type Product } from "./product";
 

@@ -14,8 +14,8 @@ import {
   signal,
   untracked,
 } from "@angular/core";
-import { createReveal, type Reveal, type RevealOptions, type Settings } from "@veilo/core";
-import { configKey, resolveConfig, type LayoutInput, type PresetId } from "@veilo/presets";
+import { createReveal, type Reveal, type RevealOptions, type Settings } from "@veilo-ui/core";
+import { configKey, resolveConfig, type LayoutInput, type PresetId } from "@veilo-ui/presets";
 
 /**
  * Runs a Veilo reveal on an element that holds `data-veilo-slot` parts. While `ready` is

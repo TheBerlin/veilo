@@ -3,8 +3,8 @@
   data loads, and plays the reveal when it arrives. A thin wrapper over the `reveal` action.
 -->
 <script lang="ts" module>
-  import type { RevealOptions, Settings } from "@veilo/core";
-  import type { LayoutInput, PresetId } from "@veilo/presets";
+  import type { RevealOptions, Settings } from "@veilo-ui/core";
+  import type { LayoutInput, PresetId } from "@veilo-ui/presets";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
 

@@ -1,7 +1,7 @@
 // Tests for src/presets/presets-file.ts (all but downloadText, which the tab test covers), in
 // Node.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import {
   importMessage,

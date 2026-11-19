@@ -1,7 +1,7 @@
 // card-layouts.ts: the playground's card layouts as one table: slots, bar widths, default text
 // and default width. The card, the Content tab and the layout JSON export all read it.
 
-import type { Layout } from "@veilo/core";
+import type { Layout } from "@veilo-ui/core";
 
 /** The id of a card layout. */
 export type CardLayoutId = "product" | "list" | "profile" | "article" | "table";

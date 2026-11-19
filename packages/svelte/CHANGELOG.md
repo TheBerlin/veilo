@@ -1,4 +1,4 @@
-# @veilo/svelte
+# @veilo-ui/svelte
 
 ## 0.7.0
 

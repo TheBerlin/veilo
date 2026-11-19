@@ -1,5 +1,5 @@
 {
-  "name": "@veilo/element",
+  "name": "@veilo-ui/element",
   "version": "0.7.0",
   "private": true,
   "description": "Web components for Veilo skeleton loaders and reveal animations, for plain HTML and any framework.",
@@ -44,8 +44,8 @@
   },
   "dependencies": {
     "@lit/reactive-element": "^2.1.2",
-    "@veilo/core": "workspace:*",
-    "@veilo/presets": "workspace:*"
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/presets": "workspace:*"
   },
   "devDependencies": {
     "@vitest/browser-playwright": "5.1.0",
