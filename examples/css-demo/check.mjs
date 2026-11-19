@@ -19,8 +19,9 @@ if (!linked || !existsSync(linked)) {
 
 // Every veilo class the page uses must exist in the stylesheet.
 const css = readFileSync(exported, "utf8");
-// The lookbehind skips custom properties such as --veilo-base.
-const used = new Set(html.match(/(?<![-\w])veilo(?:-[a-z]+)?\b/g));
+// The lookbehind skips custom properties such as --veilo-base and the package scope in
+// "@veilo-ui/css".
+const used = new Set(html.match(/(?<![-\w@])veilo(?:-[a-z]+)?\b/g));
 for (const name of used) {
   if (!css.includes(`.${name}`)) problems.push(`class ${name} is not in skeleton.css`);
 }

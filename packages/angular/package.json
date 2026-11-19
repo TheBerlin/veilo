@@ -5,7 +5,7 @@
   "description": "Angular standalone components and directives for Veilo skeleton loaders and reveal animations.",
   "type": "module",
   "sideEffects": false,
-  "module": "./dist/fesm2022/veilo-angular.mjs",
+  "module": "./dist/fesm2022/veilo-ui-angular.mjs",
   "typings": "./dist/index.d.ts",
   "files": [
     "dist"
@@ -37,5 +37,5 @@
     "typescript": "~5.9.3",
     "vite": "^8.3.5"
   },
-  "main": "./dist/fesm2022/veilo-angular.mjs"
+  "main": "./dist/fesm2022/veilo-ui-angular.mjs"
 }

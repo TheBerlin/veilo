@@ -53,7 +53,7 @@ try {
     run("pnpm", ["pack", "--pack-destination", packs, "--silent"], join(repo, "packages", name));
   }
   const tarball = (name) => {
-    const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-${name}-`));
+    const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-ui-${name}-`));
     if (!file) throw new Error(`no tarball for @veilo-ui/${name}`);
     return `file:${join(packs, file)}`;
   };

@@ -11,7 +11,7 @@ export default defineProject({
   resolve: {
     alias: {
       "@veilo-ui/angular": fileURLToPath(
-        new URL("./dist/fesm2022/veilo-angular.mjs", import.meta.url),
+        new URL("./dist/fesm2022/veilo-ui-angular.mjs", import.meta.url),
       ),
     },
   },
