@@ -16,6 +16,8 @@ export {
 } from "./tokens.ts";
 export type { ThemedColor, TypeStyle } from "./tokens.ts";
 export { TOKEN_PREFIX } from "./tokens-css.ts";
+export { Badge } from "./components/badge.tsx";
+export type { BadgeProps } from "./components/badge.tsx";
 export { Button } from "./components/button.tsx";
 export type { ButtonProps } from "./components/button.tsx";
 export { Card } from "./components/card.tsx";

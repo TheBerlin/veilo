@@ -299,9 +299,9 @@ Provide a label, `min`, `max`, `step`, and the unit or end values (`0.5x` and `2
 
 Toggle is an on/off switch (Radix Switch) with a visible label, for settings such as Loop. Use a toggle chip instead when the setting sits among chips.
 
-### Badge _(planned)_
+### Badge _(compact variant built; status badges planned)_
 
-Badge is a small label for versions and status. Status badges use a soft or outlined style and a dot or an icon.
+Badge is a small label for versions and status. The compact badge is built (`Badge` in `@veilo-ui/ui`, `outline` or `solid`); the status badges below are not. Status badges use a soft or outlined style and a dot or an icon.
 
 Provide a one to three word label. Status badges take a tone: default, info (Processing), success, warning, danger (Error), in a soft or outlined style, with a dot or a 16 px icon before the label.
 

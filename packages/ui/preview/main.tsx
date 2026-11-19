@@ -17,6 +17,7 @@ import {
   CurveEditor,
   Grid,
   GridCell,
+  Badge,
   Kbd,
   Nav,
   Tabs,
@@ -134,6 +135,13 @@ function Preview() {
               </Button>
               <Kbd>Esc</Kbd>
               <Kbd>⌘</Kbd>
+            </div>
+          </Section>
+
+          <Section title="Badge">
+            <div className={styles.row}>
+              <Badge>How it works</Badge>
+              <Badge variant="solid">Coming soon</Badge>
             </div>
           </Section>
 
