@@ -1,6 +1,6 @@
 // Tests for src/use-reveal.ts, in Chromium.
 
-import type { Reveal } from "@veilo/core";
+import type { Reveal } from "@veilo-ui/core";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { describe, expect, it } from "vitest";
 import { useReveal } from "../src/use-reveal.ts";

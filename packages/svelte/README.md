@@ -1,15 +1,15 @@
-# @veilo/svelte
+# @veilo-ui/svelte
 
 Svelte 5 components and actions for [Veilo](../../README.md): show a skeleton on your own component while its data loads, then reveal it with a dot, character or mosaic grid and scrambled or typed text.
 
 > **Status:** in development, not published yet. The API can still change before 1.0.
 
-Works with Svelte 5 (runes), in plain Vite apps and in SvelteKit, and reads the same `data-veilo-slot` markup as [`@veilo/react`](../react/README.md) and [`@veilo/vue`](../vue/README.md). It is a thin layer over [`@veilo/core`](../core/README.md), which does all the drawing. The logic lives in two Svelte actions, `reveal` and `skeleton`; the components `Reveal` and `Skeleton` are small wrappers over them.
+Works with Svelte 5 (runes), in plain Vite apps and in SvelteKit, and reads the same `data-veilo-slot` markup as [`@veilo-ui/react`](../react/README.md) and [`@veilo-ui/vue`](../vue/README.md). It is a thin layer over [`@veilo-ui/core`](../core/README.md), which does all the drawing. The logic lives in two Svelte actions, `reveal` and `skeleton`; the components `Reveal` and `Skeleton` are small wrappers over them.
 
 ## Install
 
 ```sh
-npm install @veilo/svelte
+npm install @veilo-ui/svelte
 ```
 
 Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`; without it a monospace fallback is used.
@@ -20,7 +20,7 @@ Mark the parts of your component with `data-veilo-slot`, wrap it in `Reveal`, an
 
 ```svelte
 <script lang="ts">
-  import { Reveal } from "@veilo/svelte";
+  import { Reveal } from "@veilo-ui/svelte";
 
   let { product }: { product: Product | null } = $props(); // null while loading
   const shown = $derived(product ?? PLACEHOLDER);
@@ -47,7 +47,7 @@ Slots are `img` or `canvas` for the photo, `button` for the button, `video` for 
 | Prop            | Default  | What it does                                                                                                                              |
 | --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                              |
-| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo/presets`).                                                |
+| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo-ui/presets`).                                             |
 | `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped by core.                                      |
 | `layout`        | none     | Slot roles and bar hints, plus base settings (only the keys you change). A `preset` replaces its settings; `settings` still apply on top. |
 | `revealOnMount` | `false`  | Play when `ready` is already `true` at mount. Off by default: content that was there from the start just shows.                           |
@@ -81,7 +81,7 @@ Put an action on any element when you do not want a wrapper element, or to wrap 
 
 ```svelte
 <script lang="ts">
-  import { reveal, skeleton } from "@veilo/svelte";
+  import { reveal, skeleton } from "@veilo-ui/svelte";
 </script>
 
 <!-- The element is the container. -->

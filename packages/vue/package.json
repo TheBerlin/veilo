@@ -1,5 +1,5 @@
 {
-  "name": "@veilo/vue",
+  "name": "@veilo-ui/vue",
   "version": "0.7.0",
   "private": true,
   "description": "Vue 3 components and a composable for Veilo skeleton loaders and reveal animations.",
@@ -29,8 +29,8 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
-    "@veilo/core": "workspace:*",
-    "@veilo/presets": "workspace:*"
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/presets": "workspace:*"
   },
   "devDependencies": {
     "@vitest/browser-playwright": "5.1.0",

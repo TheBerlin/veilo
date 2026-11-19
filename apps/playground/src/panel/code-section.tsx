@@ -1,7 +1,7 @@
 // code-section.tsx: the Export tab's Code section: a format select and one code block that shows
 // the chosen format for the current settings and card.
 
-import { CodeBlock, Select } from "@veilo/ui";
+import { CodeBlock, Select } from "@veilo-ui/ui";
 import { useState } from "react";
 import {
   CODE_FORMATS,
@@ -10,7 +10,7 @@ import {
   type CodeFormatId,
 } from "../export/code-formats.ts";
 import type { Content } from "../state/content-store.ts";
-import type { Settings } from "@veilo/core";
+import type { Settings } from "@veilo-ui/core";
 import { themeColor } from "./color-fields.tsx";
 import styles from "./panel.module.css";
 

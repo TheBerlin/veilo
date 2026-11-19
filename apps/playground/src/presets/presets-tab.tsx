@@ -2,7 +2,7 @@
 // update or delete saved presets; export and import them as a file. Delete, Update and Import
 // offer Undo until the next action here.
 
-import { Button, TextField } from "@veilo/ui";
+import { Button, TextField } from "@veilo-ui/ui";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useStore } from "zustand";
 import styles from "../panel/panel.module.css";

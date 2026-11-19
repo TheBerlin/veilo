@@ -1,15 +1,15 @@
 {
   "name": "example-element-demo",
   "private": true,
-  "description": "Plain HTML page that reveals a product card with the @veilo/element CDN bundle. No build step.",
+  "description": "Plain HTML page that reveals a product card with the @veilo-ui/element CDN bundle. No build step.",
   "type": "module",
   "scripts": {
     "dev": "node serve.mjs",
     "e2e": "node check.mjs"
   },
   "dependencies": {
-    "@veilo/css": "workspace:*",
-    "@veilo/element": "workspace:*"
+    "@veilo-ui/css": "workspace:*",
+    "@veilo-ui/element": "workspace:*"
   },
   "devDependencies": {
     "playwright": "1.64.1"

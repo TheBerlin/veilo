@@ -10,7 +10,7 @@ const card = createRawSnippet(() => ({
   render: () => '<h2 data-veilo-slot="title">Title</h2>',
 }));
 
-describe("@veilo/svelte", () => {
+describe("@veilo-ui/svelte", () => {
   it("exports the two components and the two actions, nothing else at run time", () => {
     expect(Object.keys(api).sort()).toEqual(["Reveal", "Skeleton", "reveal", "skeleton"]);
   });

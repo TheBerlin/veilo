@@ -1,5 +1,5 @@
 {
-  "name": "@veilo/react",
+  "name": "@veilo-ui/react",
   "version": "0.7.0",
   "private": true,
   "description": "React components and a hook for Veilo skeleton loaders and reveal animations.",
@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.5.0",
-    "@veilo/core": "workspace:*",
-    "@veilo/presets": "workspace:*"
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/presets": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.3",

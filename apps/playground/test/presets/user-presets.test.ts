@@ -1,6 +1,6 @@
 // Tests for src/presets/user-presets.ts, in Node.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import {
   cleanName,

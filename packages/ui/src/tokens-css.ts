@@ -49,7 +49,7 @@ function staticLines(): string[] {
     ...Object.entries(SPACE).map(([name, px]): [string, string] => [name, `${px}px`]),
     ...Object.entries(SIZES).map(([name, px]): [string, string] => [name, `${px}px`]),
     ...Object.entries(RADIUS).map(([name, px]): [string, string] => [name, `${px}px`]),
-    // Skeletons from @veilo/css follow the control radius on the site.
+    // Skeletons from @veilo-ui/css follow the control radius on the site.
     ["radius", `var(${TOKEN_PREFIX}radius-base)`],
     ["shadow-soft", SHADOW_SOFT],
     ...Object.entries(DURATIONS).map(([name, ms]): [string, string] => [name, `${ms}ms`]),
@@ -80,7 +80,7 @@ export function buildTokensCss(): string {
   const durationsOff = Object.keys(DURATIONS).map((name) => `    ${TOKEN_PREFIX}${name}: 0ms;`);
   return [
     "/* Veilo design tokens. Generated from packages/ui/src/tokens.ts; do not edit.",
-    "   Run `pnpm --filter @veilo/ui generate:tokens` after changing the table. */",
+    "   Run `pnpm --filter @veilo-ui/ui generate:tokens` after changing the table. */",
     "",
     ":root {",
     ...colorLines("dark", "  "),

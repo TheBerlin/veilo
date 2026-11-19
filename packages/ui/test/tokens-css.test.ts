@@ -2,7 +2,7 @@
 
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-// The strict CSS checker from @veilo/css's tests, so both packages check CSS the same way.
+// The strict CSS checker from @veilo-ui/css's tests, so both packages check CSS the same way.
 import { cssProblems } from "../../css/test/support/parse-css.ts";
 import { buildTokensCss } from "../src/tokens-css.ts";
 import { COLORS, DURATIONS, RADIUS, SIZES, SPACE, TYPE } from "../src/tokens.ts";
@@ -21,7 +21,7 @@ function block(start: string): string {
 }
 
 describe("tokens.css", () => {
-  it("is up to date; run `pnpm --filter @veilo/ui generate:tokens` if not", () => {
+  it("is up to date; run `pnpm --filter @veilo-ui/ui generate:tokens` if not", () => {
     expect(committed).toBe(buildTokensCss());
   });
 
@@ -63,7 +63,7 @@ describe("tokens.css", () => {
     for (const name of Object.keys(DURATIONS)) expect(reduced).toContain(`--veilo-${name}: 0ms;`);
   });
 
-  it("gives @veilo/css skeletons the control radius", () => {
+  it("gives @veilo-ui/css skeletons the control radius", () => {
     expect(committed).toContain("--veilo-radius: var(--veilo-radius-base);");
   });
 });

@@ -1,4 +1,4 @@
-# @veilo/presets
+# @veilo-ui/presets
 
 The named presets of [Veilo](../../README.md), as typed data.
 
@@ -7,8 +7,8 @@ The named presets of [Veilo](../../README.md), as typed data.
 ## Use
 
 ```ts
-import { createReveal } from "@veilo/core";
-import { PRESETS, presetSettings } from "@veilo/presets";
+import { createReveal } from "@veilo-ui/core";
+import { PRESETS, presetSettings } from "@veilo-ui/presets";
 
 const reveal = createReveal(card, presetSettings("hex-from-center"));
 ```

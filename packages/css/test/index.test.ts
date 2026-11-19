@@ -1,12 +1,12 @@
 // Tests for src/index.ts: the public API is a re-export of core, not a second copy.
 
-import * as core from "@veilo/core/loader";
+import * as core from "@veilo-ui/core/loader";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import * as api from "../src/index.ts";
 import type { LoaderCssOptions, Settings } from "../src/index.ts";
 import { cssProblems } from "./support/parse-css.ts";
 
-describe("@veilo/css public API", () => {
+describe("@veilo-ui/css public API", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(api).sort()).toEqual([
       "defaultSettings",

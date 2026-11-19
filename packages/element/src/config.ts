@@ -1,5 +1,5 @@
 // config.ts: reads the JSON attributes (`settings`, `layout`) of the elements. The rules that
-// combine a preset, settings and a layout are shared with the other wrappers, in @veilo/presets.
+// combine a preset, settings and a layout are shared with the other wrappers, in @veilo-ui/presets.
 
 /**
  * Parses a JSON attribute (`settings`, `layout`). Invalid JSON, or JSON that is not an object,

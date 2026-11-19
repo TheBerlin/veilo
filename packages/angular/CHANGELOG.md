@@ -1,4 +1,4 @@
-# @veilo/angular
+# @veilo-ui/angular
 
 ## 0.7.0
 

@@ -6,7 +6,7 @@ import { createSSRApp, h } from "vue";
 import { describe, expect, it } from "vitest";
 import * as api from "../src/index.ts";
 
-describe("@veilo/vue", () => {
+describe("@veilo-ui/vue", () => {
   it("exports the two components and the composable, nothing else at run time", () => {
     expect(Object.keys(api).sort()).toEqual(["Reveal", "Skeleton", "useReveal"]);
   });

@@ -1,7 +1,7 @@
 // image-picker.tsx: the controls under the test card that choose its photo: sample thumbnails,
 // the viewer's own file, Reset, and the image area's ratio.
 
-import { Button, Select } from "@veilo/ui";
+import { Button, Select } from "@veilo-ui/ui";
 import { useRef, type ChangeEvent } from "react";
 import { ASPECT_RATIOS, toRatioId, type AspectRatioId } from "./aspect-ratio.ts";
 import { SAMPLE_IMAGES } from "./image-source.ts";

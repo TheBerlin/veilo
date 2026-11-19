@@ -1,7 +1,7 @@
 // stage.tsx: the area that shows the test card on the dotted background, with the transport
 // bar (playback and image tools) under it.
 
-import type { Reveal, RevealOptions, Settings } from "@veilo/core";
+import type { Reveal, RevealOptions, Settings } from "@veilo-ui/core";
 import { useEffect, useRef, useState } from "react";
 import { LOADER_KEYS } from "../panel/controls.ts";
 import { createContentStore, useContent, type ContentStore } from "../state/content-store.ts";

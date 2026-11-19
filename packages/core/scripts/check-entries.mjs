@@ -1,7 +1,7 @@
 // Checks the built package the way users load it: every public entry is imported in plain Node by
 // its package name (so the exports map is tested too), as ESM and as CommonJS, while any access to
 // window or document throws. Also checks that the grid code stays out of the main entry's static
-// imports. Run after `pnpm build`: `pnpm --filter @veilo/core check:entries`.
+// imports. Run after `pnpm build`: `pnpm --filter @veilo-ui/core check:entries`.
 
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";

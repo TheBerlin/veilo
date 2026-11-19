@@ -1,6 +1,6 @@
 // theme-switch.tsx: the header's System / Light / Dark chips.
 
-import { ChipGroup, ChipGroupItem } from "@veilo/ui";
+import { ChipGroup, ChipGroupItem } from "@veilo-ui/ui";
 import { useState } from "react";
 import {
   applyThemeChoice,

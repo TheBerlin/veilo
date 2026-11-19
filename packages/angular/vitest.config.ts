@@ -10,7 +10,7 @@ import shared from "../../vitest.shared.ts";
 export default defineProject({
   resolve: {
     alias: {
-      "@veilo/angular": fileURLToPath(
+      "@veilo-ui/angular": fileURLToPath(
         new URL("./dist/fesm2022/veilo-angular.mjs", import.meta.url),
       ),
     },

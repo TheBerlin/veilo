@@ -54,18 +54,21 @@ try {
   }
   const tarball = (name) => {
     const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-${name}-`));
-    if (!file) throw new Error(`no tarball for @veilo/${name}`);
+    if (!file) throw new Error(`no tarball for @veilo-ui/${name}`);
     return `file:${join(packs, file)}`;
   };
 
   // 2. A copy of the page with the tarballs instead of the workspace links.
   for (const file of ["index.html", "serve.mjs"]) copyFileSync(join(here, file), join(app, file));
-  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo/${name}`, tarball(name)]));
+  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo-ui/${name}`, tarball(name)]));
   const pkg = {
     name: "veilo-element-demo-check",
     private: true,
     type: "module",
-    dependencies: { "@veilo/css": local["@veilo/css"], "@veilo/element": local["@veilo/element"] },
+    dependencies: {
+      "@veilo-ui/css": local["@veilo-ui/css"],
+      "@veilo-ui/element": local["@veilo-ui/element"],
+    },
     // The packed packages ask for each other at versions not on npm yet: point every copy of
     // the internal packages at the local tarballs.
     overrides: local,
@@ -125,8 +128,8 @@ try {
   // The page needs nothing besides itself, the bundle and the stylesheet.
   const expected = [
     `${ORIGIN}/`,
-    `${ORIGIN}/node_modules/@veilo/css/skeleton.css`,
-    `${ORIGIN}/node_modules/@veilo/element/dist/cdn.js`,
+    `${ORIGIN}/node_modules/@veilo-ui/css/skeleton.css`,
+    `${ORIGIN}/node_modules/@veilo-ui/element/dist/cdn.js`,
   ];
   const fetched = [...new Set(requests.filter((url) => !url.startsWith("data:")))].sort();
   if (JSON.stringify(fetched) !== JSON.stringify(expected)) {
@@ -148,8 +151,8 @@ try {
 // Keep the page and this check in step: the page must load the packages from these paths.
 const html = readFileSync(join(here, "index.html"), "utf8");
 for (const path of [
-  "node_modules/@veilo/element/dist/cdn.js",
-  "node_modules/@veilo/css/skeleton.css",
+  "node_modules/@veilo-ui/element/dist/cdn.js",
+  "node_modules/@veilo-ui/css/skeleton.css",
 ]) {
   if (!html.includes(path)) throw new Error(`index.html no longer loads ${path}`);
 }

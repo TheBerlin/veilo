@@ -1,7 +1,7 @@
 // code-formats.ts: the formats of the Export tab's Code section and the text each one shows for
 // the current settings and card. Pure: the theme colors the CSS needs come in as an argument.
 
-import { defaultSettings, generateLoaderCss, type Settings } from "@veilo/core";
+import { defaultSettings, generateLoaderCss, type Settings } from "@veilo-ui/core";
 import { CARD_LAYOUTS } from "../stage/card-layouts.ts";
 import type { Content } from "../state/content-store.ts";
 import {

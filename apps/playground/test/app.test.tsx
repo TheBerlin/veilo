@@ -1,7 +1,7 @@
 // Tests for src/app.tsx: the page layout of spec 1.1, in Chromium at desktop and phone widths,
 // and what the page starts with (frame request, share link, last session, defaults).
 
-import { findPreset, presetSettings, type PresetId } from "@veilo/presets";
+import { findPreset, presetSettings, type PresetId } from "@veilo-ui/presets";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { page } from "vitest/browser";

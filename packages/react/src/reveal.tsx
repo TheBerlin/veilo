@@ -1,9 +1,9 @@
 // reveal.tsx: the `Reveal` component. Wraps a whole component, shows the skeleton on its
 // `data-veilo-slot` parts while data loads, and plays the reveal when it arrives.
 
-import type { RevealOptions } from "@veilo/core";
+import type { RevealOptions } from "@veilo-ui/core";
 import { createElement, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
-import { resolveConfig, type RevealConfig } from "@veilo/presets";
+import { resolveConfig, type RevealConfig } from "@veilo-ui/presets";
 import { useServerSkeleton } from "./server-skeleton.tsx";
 import { useReveal } from "./use-reveal.ts";
 

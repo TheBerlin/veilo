@@ -1,4 +1,4 @@
-# @veilo/css
+# @veilo-ui/css
 
 ## 0.7.0
 

@@ -1,4 +1,4 @@
-// index.ts: the public API, `@veilo/core`. One of the two public entries, with loader-entry.ts;
+// index.ts: the public API, `@veilo-ui/core`. One of the two public entries, with loader-entry.ts;
 // everything else is internal, so it can change without breaking users. Adding or removing an
 // export here is an API change: update the README and test/index.test.ts with it.
 

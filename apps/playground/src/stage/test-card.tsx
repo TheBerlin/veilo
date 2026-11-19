@@ -1,7 +1,7 @@
 // test-card.tsx: the card the playground animates: the product card of spec 1.2 or one of the
 // other layouts of card-layouts.ts, with its slot markup and layout hints.
 
-import type { Reveal, RevealOptions, Settings } from "@veilo/core";
+import type { Reveal, RevealOptions, Settings } from "@veilo-ui/core";
 import {
   useEffect,
   useLayoutEffect,

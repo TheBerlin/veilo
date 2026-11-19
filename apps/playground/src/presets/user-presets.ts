@@ -2,7 +2,7 @@
 // current settings, and reading a saved list back. No storage or React here; see
 // user-presets-store.ts for those.
 
-import { parseSettings, type Settings } from "@veilo/core";
+import { parseSettings, type Settings } from "@veilo-ui/core";
 
 /** A preset the user saved. */
 export interface UserPreset {

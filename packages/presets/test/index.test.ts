@@ -1,6 +1,6 @@
 // Tests for src/index.ts: the presets match spec section 1.5, and every value is one core accepts.
 
-import { defaultSettings, parseSettings } from "@veilo/core/loader";
+import { defaultSettings, parseSettings } from "@veilo-ui/core/loader";
 import { describe, expect, it } from "vitest";
 import * as api from "../src/index.ts";
 import { PRESETS, findPreset, matchingPreset, presetSettings } from "../src/index.ts";
@@ -88,7 +88,7 @@ const SPEC: Record<string, Record<string, unknown>> = {
   },
 };
 
-describe("@veilo/presets", () => {
+describe("@veilo-ui/presets", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(api).sort()).toEqual([
       "PRESETS",

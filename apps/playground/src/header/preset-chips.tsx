@@ -1,8 +1,8 @@
 // preset-chips.tsx: the header's preset chips (spec 1.3 and 1.5). Choosing a preset loads its
 // settings over the defaults, which also clears custom colors and plays the full sequence.
 
-import { PRESETS, matchingPreset } from "@veilo/presets";
-import { ChipGroup, ChipGroupItem } from "@veilo/ui";
+import { PRESETS, matchingPreset } from "@veilo-ui/presets";
+import { ChipGroup, ChipGroupItem } from "@veilo-ui/ui";
 import { useStore } from "zustand";
 import type { SettingsStore } from "../state/settings-store.ts";
 

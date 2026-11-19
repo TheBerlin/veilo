@@ -3,7 +3,7 @@
 // __screenshots__ is missing from this list (an orphan left by a renamed or removed preset) or the
 // list names a file that does not exist.
 
-import { PRESETS } from "@veilo/presets";
+import { PRESETS } from "@veilo-ui/presets";
 
 /** The theme projects in playwright.config.ts. */
 export const THEMES = ["dark", "light"] as const;

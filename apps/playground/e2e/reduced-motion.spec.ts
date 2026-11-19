@@ -1,5 +1,5 @@
 // reduced-motion.spec.ts: what changes when the viewer prefers reduced motion (spec 3.7).
-// Loaders from @veilo/css stop, core's reveal jumps to the end without being told, the
+// Loaders from @veilo-ui/css stop, core's reveal jumps to the end without being told, the
 // playground's preview keeps animating on purpose, and the playground's own chrome stands still.
 // Its Reduced motion switch shows the reduced experience on demand.
 // Each check that expects stillness has a control without the preference, so it cannot pass

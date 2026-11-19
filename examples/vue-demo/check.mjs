@@ -51,7 +51,7 @@ try {
   }
   const tarball = (name) => {
     const file = readdirSync(packs).find((entry) => entry.startsWith(`veilo-${name}-`));
-    if (!file) throw new Error(`no tarball for @veilo/${name}`);
+    if (!file) throw new Error(`no tarball for @veilo-ui/${name}`);
     return `file:${join(packs, file)}`;
   };
 
@@ -60,14 +60,14 @@ try {
     cpSync(join(here, entry), join(app, entry), { recursive: true });
   }
   const own = JSON.parse(readFileSync(join(here, "package.json"), "utf8"));
-  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo/${name}`, tarball(name)]));
+  const local = Object.fromEntries(PACKAGES.map((name) => [`@veilo-ui/${name}`, tarball(name)]));
   const pkg = {
     name: "veilo-vue-demo-check",
     private: true,
     type: "module",
-    dependencies: { ...own.dependencies, "@veilo/vue": local["@veilo/vue"] },
+    dependencies: { ...own.dependencies, "@veilo-ui/vue": local["@veilo-ui/vue"] },
     devDependencies: { ...own.devDependencies },
-    // The packed @veilo/vue asks for @veilo/core at its version, which is not on npm yet:
+    // The packed @veilo-ui/vue asks for @veilo-ui/core at its version, which is not on npm yet:
     // point every copy of the internal packages at the local tarballs.
     overrides: local,
   };

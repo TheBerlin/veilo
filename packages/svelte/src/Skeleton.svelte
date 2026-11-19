@@ -3,8 +3,8 @@
   loads, with no reveal afterwards. A thin wrapper over the `skeleton` action.
 -->
 <script lang="ts" module>
-  import type { Settings, SkeletonOptions } from "@veilo/core";
-  import type { LayoutInput, PresetId } from "@veilo/presets";
+  import type { Settings, SkeletonOptions } from "@veilo-ui/core";
+  import type { LayoutInput, PresetId } from "@veilo-ui/presets";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import type { RevealElement } from "./Reveal.svelte";

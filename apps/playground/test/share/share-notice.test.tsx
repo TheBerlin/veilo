@@ -1,6 +1,6 @@
 // Tests for src/share/share-notice.tsx: loading a link when the page opens, in Chromium.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { encodeShareLink } from "../../src/share/share-link.ts";

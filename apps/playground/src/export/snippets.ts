@@ -3,7 +3,7 @@
 // snippets built on them. Pure text in, text out: no DOM, no React, so a Node script can build
 // the same snippets and run them.
 
-import type { Layout, Settings } from "@veilo/core";
+import type { Layout, Settings } from "@veilo-ui/core";
 import { CARD_LAYOUTS, defaultText, type CardLayoutId } from "../stage/card-layouts.ts";
 
 /** What a snippet is built from: the layout, the user's text and width, and the settings. */
@@ -259,7 +259,7 @@ export function vanillaSnippet(input: SnippetInput): string {
     "</article>",
     "",
     '<script type="module">',
-    '  import { createReveal } from "@veilo/core";',
+    '  import { createReveal } from "@veilo-ui/core";',
     "",
     `  const layout = ${indentAfterFirst(layoutJson(input), 1)};`,
     "",
@@ -279,7 +279,7 @@ export function vanillaSnippet(input: SnippetInput): string {
  */
 export function reactSnippet(input: SnippetInput): string {
   return [
-    'import { Reveal, type RevealProps } from "@veilo/react";',
+    'import { Reveal, type RevealProps } from "@veilo-ui/react";',
     "",
     `const layout: RevealProps["layout"] = ${layoutJson(input)};`,
     "",
@@ -304,7 +304,7 @@ export function reactSnippet(input: SnippetInput): string {
 export function vueSnippet(input: SnippetInput): string {
   return [
     '<script setup lang="ts">',
-    'import { Reveal, type LayoutInput } from "@veilo/vue";',
+    'import { Reveal, type LayoutInput } from "@veilo-ui/vue";',
     "",
     "// `ready` is false while your data loads: the skeleton shows. When it turns true, the",
     "// reveal plays.",
@@ -330,7 +330,7 @@ export function vueSnippet(input: SnippetInput): string {
 export function svelteSnippet(input: SnippetInput): string {
   return [
     '<script lang="ts">',
-    '  import { Reveal, type LayoutInput } from "@veilo/svelte";',
+    '  import { Reveal, type LayoutInput } from "@veilo-ui/svelte";',
     "",
     "  // `ready` is false while your data loads: the skeleton shows. When it turns true, the",
     "  // reveal plays.",
@@ -355,7 +355,7 @@ export function svelteSnippet(input: SnippetInput): string {
 export function angularSnippet(input: SnippetInput): string {
   return [
     'import { Component, input } from "@angular/core";',
-    'import { VeiloReveal, type LayoutInput } from "@veilo/angular";',
+    'import { VeiloReveal, type LayoutInput } from "@veilo-ui/angular";',
     "",
     `const layout: LayoutInput = ${layoutJson(input)};`,
     "",
@@ -424,7 +424,7 @@ export function elementSnippet(input: SnippetInput): string {
   return [
     ...elementMarkup(input),
     "",
-    ...loadingScript(['import "@veilo/element/define";', ""]),
+    ...loadingScript(['import "@veilo-ui/element/define";', ""]),
   ].join("\n");
 }
 
@@ -436,7 +436,7 @@ export function elementSnippet(input: SnippetInput): string {
  */
 export function cdnSnippet(input: SnippetInput): string {
   return [
-    '<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo/element"></script>',
+    '<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo-ui/element"></script>',
     "",
     ...elementMarkup(input),
     "",

@@ -8,7 +8,7 @@ import {
   type ColorKey,
   type SettingKey,
   type Settings,
-} from "@veilo/core";
+} from "@veilo-ui/core";
 import { useStore } from "zustand";
 import { createStore, type StoreApi } from "zustand/vanilla";
 

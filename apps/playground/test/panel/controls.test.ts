@@ -1,6 +1,6 @@
 // Tests for src/panel/controls.ts: the control table matches core's settings and spec 1.3/1.4.
 
-import { defaultSettings, type Settings } from "@veilo/core";
+import { defaultSettings, type Settings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import {
   boundsOf,

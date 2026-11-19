@@ -1,4 +1,4 @@
-// define-entry.ts: the entry `@veilo/element/define`. Importing it registers the elements, for
+// define-entry.ts: the entry `@veilo-ui/element/define`. Importing it registers the elements, for
 // apps that use them as plain tags and never touch the classes.
 
 import { defineVeiloElements } from "./define.ts";

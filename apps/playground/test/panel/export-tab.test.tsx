@@ -1,6 +1,6 @@
 // Tests for src/panel/export-tab.tsx (spec 1.6), in Chromium with the real tokens.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -92,11 +92,11 @@ describe("ExportTab", () => {
     const expected: Record<string, string> = {
       layout: '"slots"',
       vanilla: "createReveal",
-      react: "@veilo/react",
-      vue: "@veilo/vue",
-      svelte: "@veilo/svelte",
-      angular: "@veilo/angular",
-      element: "@veilo/element/define",
+      react: "@veilo-ui/react",
+      vue: "@veilo-ui/vue",
+      svelte: "@veilo-ui/svelte",
+      angular: "@veilo-ui/angular",
+      element: "@veilo-ui/element/define",
       cdn: "cdn.jsdelivr.net",
     };
     for (const [value, text] of Object.entries(expected)) {

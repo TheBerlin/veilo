@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CodeBlock, COPIED_MS } from "../../src/components/code-block.tsx";
 
-const COMMAND = "pnpm add @veilo/css";
+const COMMAND = "pnpm add @veilo-ui/css";
 
 afterEach(() => {
   vi.restoreAllMocks();

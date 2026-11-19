@@ -1,4 +1,4 @@
-# @veilo/core
+# @veilo-ui/core
 
 The framework-agnostic engine behind [Veilo](../../README.md): skeleton loaders and reveal animations (dot, character and mosaic grids, blur, zoom, wipe, text scramble and typewriter) for real elements on a page.
 
@@ -20,7 +20,7 @@ Mark the parts of your component with `data-veilo-slot`, then pass the container
 ```
 
 ```ts
-import { createReveal } from "@veilo/core";
+import { createReveal } from "@veilo-ui/core";
 
 const card = document.querySelector<HTMLElement>(".card")!;
 const reveal = createReveal(card, { imageFx: "dots", origin: "left", textFx: "scramble" });
@@ -87,7 +87,7 @@ The image is sampled once and cached; frames only draw. It is sampled again when
 Shows the loader (shimmer, wave or pulse) on real elements while their content loads.
 
 ```ts
-import { createSkeleton } from "@veilo/core";
+import { createSkeleton } from "@veilo-ui/core";
 
 const skeleton = createSkeleton(card, { effect: "wave", stagger: 0.12 });
 skeleton.start(); // also restarts the animation if it already shows
@@ -98,16 +98,16 @@ Given a container, every slot in it is a placeholder, in page order; given a lis
 
 ## `serverSkeletonCss(settings | layout, scope, options?)`
 
-The skeleton stylesheet for server-rendered markup, so the page shows the skeleton before any script runs. It is the same CSS the live skeleton uses, scoped to a selector. Also exported from `@veilo/core/loader`, which loads without a browser.
+The skeleton stylesheet for server-rendered markup, so the page shows the skeleton before any script runs. It is the same CSS the live skeleton uses, scoped to a selector. Also exported from `@veilo-ui/core/loader`, which loads without a browser.
 
 ```ts
-import { serverSkeletonCss } from "@veilo/core/loader";
+import { serverSkeletonCss } from "@veilo-ui/core/loader";
 
 const css = serverSkeletonCss(layout, '[data-skeleton="card-1"]');
 // <style>{css}</style><article data-skeleton="card-1">...slots...</article>
 ```
 
-Every `data-veilo-slot` element inside the scope is a placeholder; text slots show line bars with the layout's `width` and `lines` hints. With `{ self: true }` the scope element itself is one solid placeholder. When `createSkeleton` or `createReveal` takes over, remove the `<style>` and the scope attribute. Until then the wave runs in step (its index is set by script), unnamed slots are guessed from their tag alone, and placeholders are not yet `aria-hidden`. Options: `self`, and fallback `base` and `highlight` colors. `@veilo/react` does all of this for you.
+Every `data-veilo-slot` element inside the scope is a placeholder; text slots show line bars with the layout's `width` and `lines` hints. With `{ self: true }` the scope element itself is one solid placeholder. When `createSkeleton` or `createReveal` takes over, remove the `<style>` and the scope attribute. Until then the wave runs in step (its index is set by script), unnamed slots are guessed from their tag alone, and placeholders are not yet `aria-hidden`. Options: `self`, and fallback `base` and `highlight` colors. `@veilo-ui/react` does all of this for you.
 
 ## Slots and the layout JSON
 
@@ -152,7 +152,7 @@ Mismatches never throw; in development builds they print a `Veilo:` warning. A l
 One flat object with a `version` field. Unknown keys are ignored, values of the wrong type fall back to the default, and numbers are clamped to their range, so imported or shared settings are always safe to use.
 
 ```ts
-import { defaultSettings, parseSettings, settingsJsonSchema } from "@veilo/core";
+import { defaultSettings, parseSettings, settingsJsonSchema } from "@veilo-ui/core";
 
 const { settings, applied } = parseSettings(JSON.parse(text)); // applied: the keys that were used
 ```
@@ -167,14 +167,14 @@ const { settings, applied } = parseSettings(JSON.parse(text)); // applied: the k
 
 The named easings (`out`, `outSoft`, `inOut`, `in`, `linear`, `back`) are exported as `EASING_CURVES`, each the four numbers of a CSS `cubic-bezier()`, for example to draw them in a curve editor. With `custom`, the curve comes from `lx1`…`ly2` or `rx1`…`ry2`.
 
-Ranges and defaults are in the JSON Schema, also published as a file: `@veilo/core/settings.schema.json`.
+Ranges and defaults are in the JSON Schema, also published as a file: `@veilo-ui/core/settings.schema.json`.
 
 ## `generateLoaderCss(settings, options?)`
 
 Returns the loader as plain CSS (one rule and its `@keyframes`), for use without JavaScript at runtime.
 
 ```ts
-import { generateLoaderCss } from "@veilo/core";
+import { generateLoaderCss } from "@veilo-ui/core";
 
 const css = generateLoaderCss(settings, { selector: ".skeleton" });
 ```
@@ -209,11 +209,11 @@ Hex and binary grids measure and draw their characters in IBM Plex Mono. The pac
 
 ## Entry points and size
 
-| Import                             | Contents                                                                                                                        | Minified + gzip |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `@veilo/core`                      | Everything above                                                                                                                | 8.6 KB          |
-| `@veilo/core/loader`               | `generateLoaderCss`, `parseSettings`, `defaultSettings`, `settingsJsonSchema`, `SETTINGS_VERSION`, `EASING_CURVES`; no DOM code | 2.3 KB          |
-| `@veilo/core/settings.schema.json` | The settings JSON Schema                                                                                                        |                 |
+| Import                                | Contents                                                                                                                        | Minified + gzip |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `@veilo-ui/core`                      | Everything above                                                                                                                | 8.6 KB          |
+| `@veilo-ui/core/loader`               | `generateLoaderCss`, `parseSettings`, `defaultSettings`, `settingsJsonSchema`, `SETTINGS_VERSION`, `EASING_CURVES`; no DOM code | 2.3 KB          |
+| `@veilo-ui/core/settings.schema.json` | The settings JSON Schema                                                                                                        |                 |
 
 The grid effects (`dots`, `hex`, `binary`, `mosaic`) are loaded on demand: `createReveal` imports them only when one is used, and bundlers put them in a separate file of about 1.8 KB. `reveal.ready` waits for it. The package has no side effects on import (`"sideEffects": false`), so unused code is dropped.
 

@@ -1,6 +1,6 @@
 // Tests for src/export/snippets.ts, in Node.
 
-import { defaultSettings, parseLayout } from "@veilo/core";
+import { defaultSettings, parseLayout } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import {
   angularSnippet,
@@ -103,7 +103,7 @@ describe("snippets", () => {
   it("vanilla JS imports core and plays the sequence with the layout", () => {
     const code = vanillaSnippet(input("list", { width: 500 }));
     expect(code).toContain('<article class="card" style="width: 500px">');
-    expect(code).toContain('import { createReveal } from "@veilo/core";');
+    expect(code).toContain('import { createReveal } from "@veilo-ui/core";');
     expect(code).toContain("createReveal(card, layout)");
     expect(code).toContain("reveal.playSequence()");
     expect(code).toContain('"imageFx": "hex"');
@@ -114,9 +114,9 @@ describe("snippets", () => {
     expect(reactSnippet(input("article"))).toContain("style={{ width: 360 }}");
   });
 
-  it("React imports from @veilo/react and takes the layout as a prop", () => {
+  it("React imports from @veilo-ui/react and takes the layout as a prop", () => {
     const code = reactSnippet(input("product"));
-    expect(code).toContain('import { Reveal, type RevealProps } from "@veilo/react";');
+    expect(code).toContain('import { Reveal, type RevealProps } from "@veilo-ui/react";');
     expect(code).toContain('const layout: RevealProps["layout"] = {');
     expect(code).toContain("ready={ready} layout={layout}>");
   });
@@ -124,7 +124,7 @@ describe("snippets", () => {
   it("Vue is a script-setup component with the layout as a prop, and escapes interpolation", () => {
     const code = vueSnippet(input("product", { texts: { heading: "A {{ b }} <c>" } }));
     expect(code.startsWith('<script setup lang="ts">')).toBe(true);
-    expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo/vue";');
+    expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo-ui/vue";');
     expect(code).toContain("defineProps<{ ready: boolean }>();");
     expect(code).toContain(':ready="ready" :layout="layout"');
     // An absolute path: a relative one would be compiled into a module import.
@@ -136,7 +136,7 @@ describe("snippets", () => {
   it("Svelte is a runes component with the layout as a prop, and escapes braces", () => {
     const code = svelteSnippet(input("product", { texts: { heading: "A {b} <c>" } }));
     expect(code.startsWith('<script lang="ts">')).toBe(true);
-    expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo/svelte";');
+    expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo-ui/svelte";');
     expect(code).toContain("let { ready }: { ready: boolean } = $props();");
     expect(code).toContain("{ready} {layout}>");
     expect(code).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
@@ -146,7 +146,7 @@ describe("snippets", () => {
 
   it("Angular is a standalone component with the layout as an input, and escapes its template", () => {
     const code = angularSnippet(input("product", { texts: { heading: "A {b} @c `d` ${e} <f>" } }));
-    expect(code).toContain('import { VeiloReveal, type LayoutInput } from "@veilo/angular";');
+    expect(code).toContain('import { VeiloReveal, type LayoutInput } from "@veilo-ui/angular";');
     expect(code).toContain("imports: [VeiloReveal],");
     expect(code).toContain("readonly ready = input.required<boolean>();");
     expect(code).toContain('[ready]="ready()" [layout]="layout">');
@@ -159,7 +159,7 @@ describe("snippets", () => {
 
   it("the web component snippet registers the element and ends loading", () => {
     const code = elementSnippet(input("profile"));
-    expect(code).toContain('import "@veilo/element/define";');
+    expect(code).toContain('import "@veilo-ui/element/define";');
     expect(code).toContain("<veilo-reveal");
     expect(code).toContain("card.loading = false;");
     expect(code).not.toContain("cdn.jsdelivr.net");
@@ -168,7 +168,9 @@ describe("snippets", () => {
   it("the CDN snippet loads the script by URL and has no import", () => {
     const code = cdnSnippet(input("profile"));
     expect(
-      code.startsWith('<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo/element">'),
+      code.startsWith(
+        '<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo-ui/element">',
+      ),
     ).toBe(true);
     expect(code).not.toContain("import ");
   });

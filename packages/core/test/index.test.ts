@@ -22,7 +22,7 @@ import type {
   SlotRole,
 } from "../src/index.ts";
 
-describe("@veilo/core public API", () => {
+describe("@veilo-ui/core public API", () => {
   it("exports exactly these values; changing the list is an API change", () => {
     expect(Object.keys(api).sort()).toEqual([
       "EASING_CURVES",

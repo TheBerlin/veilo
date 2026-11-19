@@ -1,5 +1,5 @@
 {
-  "name": "@veilo/angular",
+  "name": "@veilo-ui/angular",
   "version": "0.7.0",
   "private": true,
   "description": "Angular standalone components and directives for Veilo skeleton loaders and reveal animations.",
@@ -19,8 +19,8 @@
     "@angular/core": "^20.0.0 || ^21.0.0 || ^22.0.0"
   },
   "dependencies": {
-    "@veilo/core": "workspace:*",
-    "@veilo/presets": "workspace:*",
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/presets": "workspace:*",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
