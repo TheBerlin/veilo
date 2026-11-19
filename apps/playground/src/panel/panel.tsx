@@ -36,9 +36,9 @@ export function Panel(props: PanelProps) {
   const [content] = useState(() => props.content ?? createContentStore());
   return (
     <aside className={styles.panel} aria-label="Settings">
-      <Tabs defaultValue="loader">
+      <Tabs defaultValue="loader" className={styles.tabs}>
         {/* Stretched: five tabs fit on one row in the panel only this way. */}
-        <TabsList aria-label="Settings sections" stretch>
+        <TabsList aria-label="Settings sections" stretch className={styles.tabBar}>
           <TabsTrigger value="loader">Loader</TabsTrigger>
           <TabsTrigger value="reveal">Reveal</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>

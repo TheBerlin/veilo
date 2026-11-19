@@ -1,5 +1,5 @@
 // app.tsx: the playground's root component. Owns the one settings store and decides what it
-// starts with.
+// starts with, and lays out the app: a top bar, the stage and the panel.
 
 import { presetSettings } from "@veilo-ui/presets";
 import { ThemeSwitch, TooltipProvider } from "@veilo-ui/ui";
@@ -50,27 +50,19 @@ export function App() {
     <TooltipProvider delayDuration={200}>
       <main className={styles.app}>
         <header className={styles.header}>
-          <div className={styles.titleRow}>
-            <h1 className={styles.title}>Veilo playground</h1>
-            <ThemeSwitch />
-          </div>
-          <p className={styles.description}>
-            Design skeleton loaders and image and text reveals, then export the settings or the CSS.
-          </p>
-          <div className={styles.presetRow}>
+          <h1 className={styles.title}>Veilo playground</h1>
+          <div className={styles.presets}>
             <PresetChips store={store} />
-            <ResetButton
-              store={store}
-              content={content}
-              buttonClassName={styles.resetButton}
-              messageClassName={styles.rowNotice}
-            />
+          </div>
+          <div className={styles.actions}>
+            <ResetButton store={store} content={content} messageClassName={styles.rowNotice} />
+            <ThemeSwitch />
           </div>
           {/* A frame request is for the visual tests and wins over a shared link. */}
           {frame ? null : <ShareNotice store={store} content={content} className={styles.notice} />}
         </header>
         <div className={styles.workspace}>
-          {/* Sticky on wide screens, so the preview stays in view while the panel scrolls. */}
+          {/* The stage takes the height left under the top bar; the panel scrolls on its own. */}
           <div className={styles.stageColumn}>
             <Stage store={store} content={content} frame={frame?.p} />
           </div>

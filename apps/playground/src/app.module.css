@@ -1,116 +1,175 @@
-/* App shell: the page background and text, with the sections stacked. */
+/* App shell: the page background and text. */
 :global(body) {
   margin: 0;
   background: var(--veilo-bg);
 }
 
+/* The app fills the screen, as a tool does: a top bar, then the workspace in the rest of the
+   height. The page itself never scrolls; the panel scrolls inside. Side gutters are at least
+   space-2 (16 px), wider where a phone's safe area needs it. */
 .app {
   display: grid;
-  gap: var(--veilo-space-4);
-  align-content: start;
-  min-height: 100vh;
-  /* Side gutters: at least space-2 (16 px), wider where a phone's safe area needs it. */
-  padding: var(--veilo-space-4) max(var(--veilo-space-2), env(safe-area-inset-right))
-    max(var(--veilo-space-4), env(safe-area-inset-bottom))
+  /* One column that is exactly as wide as the screen allows; without it the column grows to its
+     widest content and the panel runs past the edge. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--veilo-space-2);
+  box-sizing: border-box;
+  height: 100dvh;
+  padding: var(--veilo-space-2) max(var(--veilo-space-2), env(safe-area-inset-right))
+    max(var(--veilo-space-2), env(safe-area-inset-bottom))
     max(var(--veilo-space-2), env(safe-area-inset-left));
+  overflow: hidden;
   color: var(--veilo-text);
   font: var(--veilo-type-body);
 }
 
-/* Header: the title above the preset chips. */
+/* Top bar: one row. The title, the preset chips (they take the free width and scroll sideways
+   when they do not fit), then Reset and the theme switch at the end. The notices hang below it,
+   so it never changes height. */
 .header {
-  display: grid;
-  gap: var(--veilo-space-2);
-}
-
-/* Title row: the title on the left, the theme switch on the right (below it when narrow). */
-.titleRow {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--veilo-space-2);
-}
-
-.description {
-  margin: 0;
-  color: var(--veilo-text-muted);
-}
-
-/* Preset row: the preset chips, then Reset to defaults; wraps on narrow screens. */
-.presetRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--veilo-space-1);
-}
-
-/* Reset to defaults sits at the far right, apart from the presets. */
-.resetButton {
-  margin-left: auto;
-}
-
-/* The reset message takes a line of its own under the row. */
-.rowNotice {
-  display: flex;
-  flex-basis: 100%;
-  align-items: center;
-  gap: var(--veilo-space-1);
-  margin: 0;
-  color: var(--veilo-text-muted);
-  font: var(--veilo-type-caption);
-  letter-spacing: var(--veilo-type-caption-tracking);
-}
-
-/* Empty: out of the flow, as for .notice below. */
-.rowNotice:empty {
-  position: absolute;
-}
-
-/* Share link notice: one caption line under the preset chips; empty (no height) without a link. */
-.notice {
-  margin: 0;
-  color: var(--veilo-text-muted);
-  font: var(--veilo-type-caption);
-  letter-spacing: var(--veilo-type-caption-tracking);
-}
-
-/* Empty: out of the grid flow, so it adds no gap, but still rendered. A live region hidden with
-   display: none is often not read out when its text arrives. */
-.notice:empty {
-  position: absolute;
+  gap: var(--veilo-space-3);
 }
 
 .title {
+  flex: 0 0 auto;
   margin: 0;
   font: var(--veilo-type-h3);
   letter-spacing: var(--veilo-type-h3-tracking);
 }
 
-/* Workspace: stage and panel side by side, one column on narrow screens. The full layout
-   (sticky stage, fixed panel width) comes with the Layout task. */
+/* The chips sit in one row that scrolls sideways, fading out at both ends to show there is more.
+   The padding keeps the focus rings of the first and last chip from being clipped. */
+.presets {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: calc(var(--veilo-space-0-5) * -1);
+  padding: var(--veilo-space-0-5);
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--veilo-space-1-5),
+    black calc(100% - var(--veilo-space-3)),
+    transparent
+  );
+}
+
+.presets::-webkit-scrollbar {
+  display: none;
+}
+
+.presets > * {
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+/* Actions: Reset to defaults and the theme switch; the reset message hangs under them. */
+.actions {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  margin-left: auto;
+}
+
+/* A notice: a small raised line under the top bar, over the workspace (the reset message under
+   the actions, the share-link caption under the title). Empty, it has no size, but it is still
+   rendered: a live region that is hidden with display: none is often not read out when its text
+   arrives. */
+.rowNotice,
+.notice {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + var(--veilo-space-1));
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-1);
+  margin: 0;
+  padding: var(--veilo-space-0-5) var(--veilo-space-1-5);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-card);
+  box-shadow: var(--veilo-shadow-soft);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+  white-space: nowrap;
+}
+
+.rowNotice {
+  right: 0;
+}
+
+.notice {
+  left: 0;
+}
+
+.rowNotice:empty,
+.notice:empty {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+/* Workspace: the stage and the panel side by side, each as tall as the space left. */
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, var(--veilo-size-panel));
   gap: var(--veilo-space-2);
-  align-items: start;
+  min-height: 0;
 }
 
-/* Stage column: sticks to the top gutter while the panel scrolls past (spec 1.1). */
 .stageColumn {
-  position: sticky;
-  top: var(--veilo-space-2);
   min-width: 0;
+  min-height: 0;
 }
 
-/* Custom properties do not work in media queries; 900 px is the spec's breakpoint.
-   One column, stage first, and the stage scrolls with the page. */
+/* Custom properties do not work in media queries; 900 px is the spec's breakpoint. On a narrow
+   screen it is a page again: the bar, the stage, then the panel, scrolling together. */
 @media (max-width: 900px) {
-  .workspace {
-    grid-template-columns: minmax(0, 1fr);
+  .app {
+    grid-template-rows: none;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
   }
 
-  .stageColumn {
-    position: static;
+  /* The bar wraps: the title and the actions on the first row, the chips below, wrapping too. */
+  .header {
+    flex-wrap: wrap;
+    gap: var(--veilo-space-2);
+  }
+
+  .presets {
+    order: 3;
+    flex-basis: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    mask-image: none;
+  }
+
+  .presets > * {
+    flex-wrap: wrap;
+    width: auto;
+  }
+
+  /* The actions may shrink and wrap (Reset above the theme switch) instead of pushing the page
+     wider than the screen. */
+  .actions {
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    min-width: 0;
+    margin-left: 0;
+  }
+
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

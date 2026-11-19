@@ -15,7 +15,7 @@ import {
 import { encodeShareLink } from "../src/share/share-link.ts";
 
 /**
- * The element that wraps the stage, whose position decides whether it sticks.
+ * The element that wraps the stage, the transport bar and nothing else: the stage's column.
  *
  * @returns The stage column.
  */
@@ -26,29 +26,70 @@ function stageColumn(): HTMLElement {
 describe("App layout", () => {
   afterEach(() => page.viewport(1440, 900));
 
-  it("shows the title, the description and the preset chips in the header", () => {
+  it("shows the title and the preset chips in one top bar", () => {
     render(<App />);
     const header = screen.getByRole("banner");
     expect(header.textContent).toContain("Veilo playground");
-    expect(header.querySelector("p")?.textContent).toMatch(/skeleton loaders/);
     expect(screen.getByRole("radiogroup", { name: "Presets" })).toBeTruthy();
+    // The reset button and the theme switch are in the same bar.
+    expect(within(header).getByRole("button", { name: "Reset to defaults" })).toBeTruthy();
   });
 
-  it("keeps the stage sticky beside the panel on wide screens", async () => {
+  it("fills the screen on a wide screen: the page never scrolls, the panel is beside the stage", async () => {
     await page.viewport(1440, 900);
     render(<App />);
-    expect(getComputedStyle(stageColumn()).position).toBe("sticky");
+    expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight);
     const stage = stageColumn().getBoundingClientRect();
-    const panel = screen.getByRole("tablist").getBoundingClientRect();
+    const panel = screen.getByRole("complementary", { name: "Settings" }).getBoundingClientRect();
     expect(panel.left).toBeGreaterThan(stage.right);
+    // The panel is as tall as the workspace, down to the bottom gutter.
+    expect(window.innerHeight - panel.bottom).toBe(16);
+    // The playback controls are in view on the first screen, not below the fold.
+    const bar = screen.getByRole("toolbar", { name: "Playback" }).getBoundingClientRect();
+    expect(bar.bottom).toBeLessThanOrEqual(window.innerHeight);
   });
 
-  it("stacks stage then panel below 900 px, not sticky, with 16 px gutters", async () => {
+  it("scrolls the open tab inside the panel, not the page", async () => {
+    await page.viewport(1440, 900);
+    render(<App />);
+    const open = document.querySelector('[role="tabpanel"]:not([hidden])') as HTMLElement;
+    expect(open.scrollHeight).toBeGreaterThan(open.clientHeight);
+    expect(getComputedStyle(open).overflowY).toBe("auto");
+    expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight);
+  });
+
+  it("leaves no space for the tabs that are closed", async () => {
+    await page.viewport(1440, 900);
+    render(<App />);
+    const closed = [...document.querySelectorAll('[role="tabpanel"][hidden]')];
+    expect(closed.length).toBeGreaterThan(0);
+    for (const panel of closed) expect(panel.getBoundingClientRect().height).toBe(0);
+  });
+
+  it("keeps the top bar one row at 1440 and 1024 px, so the stage does not move", async () => {
+    for (const width of [1440, 1024]) {
+      await page.viewport(width, 800);
+      const { unmount } = render(<App />);
+      expect(screen.getByRole("banner").getBoundingClientRect().height).toBeLessThan(64);
+      unmount();
+    }
+  });
+
+  it("shows the reset message under the bar without changing its height", async () => {
+    await page.viewport(1440, 900);
+    render(<App />);
+    const header = screen.getByRole("banner");
+    const before = header.getBoundingClientRect().height;
+    await userEvent.click(screen.getByRole("button", { name: "Reset to defaults" }));
+    await screen.findByText(/reset to the defaults/);
+    expect(header.getBoundingClientRect().height).toBe(before);
+  });
+
+  it("is a page again below 900 px: stage, then panel, with 16 px gutters and no sideways scroll", async () => {
     await page.viewport(375, 800);
     render(<App />);
-    expect(getComputedStyle(stageColumn()).position).toBe("static");
     const stage = stageColumn().getBoundingClientRect();
-    const panel = screen.getByRole("tablist").getBoundingClientRect();
+    const panel = screen.getByRole("complementary", { name: "Settings" }).getBoundingClientRect();
     expect(panel.top).toBeGreaterThan(stage.bottom);
     expect(stage.left).toBe(16);
     expect(document.documentElement.clientWidth - stage.right).toBe(16);

@@ -1,21 +1,46 @@
-/* Column: the stage with the transport bar under it. */
+/* Column: the stage, then the transport bar docked under it; together they are as tall as the
+   workspace. */
 .column {
   display: grid;
   /* A wide card (the table row is 640 px) must not widen the column: it shrinks instead. */
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: var(--veilo-space-2);
+  height: 100%;
+  min-height: 0;
 }
 
-/* Stage: the card centered on a calm page-colored surface. */
+/* Stage: the canvas. The card sits centered on the page itself, with no panel of its own, so
+   there is one surface under it, not two. If the card is taller than the space, the stage
+   scrolls instead of cutting it off. */
 .stage {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: center;
-  justify-items: center;
-  gap: var(--veilo-space-3);
-  min-height: calc(var(--veilo-size-test-card) * 1.75);
-  padding: var(--veilo-space-4) var(--veilo-space-2);
-  border: 1px solid var(--veilo-border);
-  border-radius: var(--veilo-radius-xl);
-  background: var(--veilo-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 0;
+  padding: var(--veilo-space-2);
+  overflow: auto;
+}
+
+/* Centering that survives overflow: auto margins center the card while it fits and fall back to
+   the top edge when it does not (centering with align-items would cut off the top). */
+.stage > * {
+  margin-block: auto;
+}
+
+/* Narrow screen: the stage is a framed block in the page again. */
+@media (max-width: 900px) {
+  .column {
+    grid-template-rows: none;
+    height: auto;
+  }
+
+  .stage {
+    min-height: calc(var(--veilo-size-test-card) * 1.75);
+    padding: var(--veilo-space-4) var(--veilo-space-2);
+    overflow: visible;
+    border: 1px solid var(--veilo-border);
+    border-radius: var(--veilo-radius-xl);
+    background: var(--veilo-bg);
+  }
 }

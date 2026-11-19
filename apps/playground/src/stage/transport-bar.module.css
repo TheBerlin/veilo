@@ -1,22 +1,51 @@
-/* Bar: a card-surface strip under the stage; rows of controls around the full-width scrubber. */
+/* Bar: a raised strip docked under the stage, as wide as the controls need and centered. The
+   playback row is on top; the preview tools are a quieter row below it. */
 .bar {
   display: grid;
-  gap: var(--veilo-space-2);
-  padding: var(--veilo-space-2);
+  /* The track may be narrower than its content, which then wraps; without this it grows to the
+     width of the three buttons and pushes a phone's page sideways. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1-5);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 840px;
+  justify-self: center;
+  padding: var(--veilo-space-1-5) var(--veilo-space-2);
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-lg);
   background: var(--veilo-card);
+  box-shadow: var(--veilo-shadow-soft);
 }
 
-.row {
+/* Playback: the buttons, the scrubber taking the free width, then the time and the state. */
+.main {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--veilo-space-1-5);
 }
 
+.buttons {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-1);
+}
+
 .scrubber {
-  width: 100%;
+  flex: 1 1 12rem;
+  min-width: 8rem;
+}
+
+/* Preview tools: Loop, Reduced motion and the image picker, under a hairline. */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-1) var(--veilo-space-2);
+  padding-top: var(--veilo-space-1-5);
+  border-top: 1px solid var(--veilo-border);
 }
 
 /* Readout and label: monospace digits, so the numbers do not jitter while playing. */
@@ -26,10 +55,11 @@
   font: var(--veilo-type-code);
   letter-spacing: var(--veilo-type-code-tracking);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-/* The label sits after the readout; the extra tools are pushed to the end of the row. */
+/* The label has a fixed width, so the scrubber does not change length as the words change. */
 .state {
-  margin-right: auto;
+  min-width: 14ch;
   color: var(--veilo-text);
 }

@@ -1,6 +1,6 @@
-// transport-bar.tsx: the playback controls under the stage (spec 1.4): Play sequence, Loading
-// state, Replay reveal, Loop, the reduced-motion preview, the scrubber, the time readout and the
-// state label.
+// transport-bar.tsx: the playback controls under the stage (spec 1.4): Play sequence, Replay
+// reveal, Loading state, the scrubber, the time readout and the state label on top, and below them
+// Loop, the reduced-motion preview and the extra tools.
 
 import type { Reveal, RevealState } from "@veilo-ui/core";
 import { Button, Scrubber, Toggle } from "@veilo-ui/ui";
@@ -86,21 +86,36 @@ export function TransportBar(props: TransportBarProps) {
 
   return (
     <div className={styles.bar} role="toolbar" aria-label="Playback">
-      <div className={styles.row}>
-        <Button
-          variant="primary"
-          size="sm"
+      <div className={styles.main}>
+        <div className={styles.buttons}>
+          <Button
+            variant="primary"
+            size="sm"
+            disabled={!reveal}
+            onClick={() => reveal?.playSequence({ loop })}
+          >
+            Play sequence
+          </Button>
+          <Button size="sm" disabled={!reveal} onClick={() => void reveal?.play()}>
+            Replay reveal
+          </Button>
+          <Button size="sm" disabled={!reveal} onClick={() => reveal?.showLoading()}>
+            Loading state
+          </Button>
+        </div>
+        <Scrubber
+          className={styles.scrubber}
+          aria-label="Reveal progress"
+          value={progress}
           disabled={!reveal}
-          onClick={() => reveal?.playSequence({ loop })}
-        >
-          Play sequence
-        </Button>
-        <Button size="sm" disabled={!reveal} onClick={() => reveal?.showLoading()}>
-          Loading state
-        </Button>
-        <Button size="sm" disabled={!reveal} onClick={() => void reveal?.play()}>
-          Replay reveal
-        </Button>
+          onValueChange={(p) => reveal?.seek(p)}
+        />
+        <span className={styles.readout}>{timeReadout(progress, duration)}</span>
+        <span className={styles.state} role="status">
+          {stateLabel(state, progress)}
+        </span>
+      </div>
+      <div className={styles.tools}>
         <Toggle label="Loop" checked={loop} onCheckedChange={onLoop} disabled={!reveal} />
         {/* Not disabled without a reveal: it rebuilds the card, which makes a new one. */}
         <Toggle
@@ -108,19 +123,6 @@ export function TransportBar(props: TransportBarProps) {
           checked={props.reducedMotion}
           onCheckedChange={props.onReducedMotionChange}
         />
-      </div>
-      <Scrubber
-        className={styles.scrubber}
-        aria-label="Reveal progress"
-        value={progress}
-        disabled={!reveal}
-        onValueChange={(p) => reveal?.seek(p)}
-      />
-      <div className={styles.row}>
-        <span className={styles.readout}>{timeReadout(progress, duration)}</span>
-        <span className={styles.state} role="status">
-          {stateLabel(state, progress)}
-        </span>
         {props.children}
       </div>
     </div>

@@ -1,17 +1,49 @@
-/* Panel: a card surface beside the stage. */
+/* Panel: a card surface beside the stage, as tall as the workspace. The tab bar stays put and the
+   open tab scrolls inside it, so the page itself never scrolls. */
 .panel {
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
-  padding: var(--veilo-space-2);
+  height: 100%;
+  min-height: 0;
+  padding: var(--veilo-space-2) 0 0;
+  overflow: hidden;
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-lg);
   background: var(--veilo-card);
 }
 
-/* Tab content: the groups stacked. */
+/* The tabs fill the panel: the bar above, the open tab taking the rest. */
+.tabs {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabBar {
+  flex: 0 0 auto;
+  margin: 0 var(--veilo-space-2);
+}
+
+/* Tab content: the groups stacked, scrolling inside the panel with a slim scrollbar. A closed tab
+   is a hidden, empty block that Radix leaves in the page; it must stay hidden, or each would
+   leave a strip of padding. */
 .content {
   display: grid;
+  flex: 1 1 auto;
+  align-content: start;
   gap: var(--veilo-space-3);
-  padding-top: var(--veilo-space-2);
+  min-height: 0;
+  padding: var(--veilo-space-2) var(--veilo-space-2) var(--veilo-space-3);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--veilo-border-strong) transparent;
+  scrollbar-width: thin;
+}
+
+.content[hidden] {
+  display: none;
 }
 
 /* Group: a titled stack of controls, without the browser's fieldset frame. */
@@ -50,4 +82,16 @@
   color: var(--veilo-text-muted);
   font: var(--veilo-type-caption);
   letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* Narrow screen: the panel is part of the page and grows with its content. */
+@media (max-width: 900px) {
+  .panel {
+    height: auto;
+    overflow: visible;
+  }
+
+  .content {
+    overflow-y: visible;
+  }
 }
