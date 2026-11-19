@@ -30,6 +30,7 @@ export default defineProject({
             "@testing-library/user-event",
             ...Object.keys(pkg.dependencies).filter((name) => name.startsWith("@radix-ui/")),
             "vaul",
+            "sonner",
           ],
         },
         test: {

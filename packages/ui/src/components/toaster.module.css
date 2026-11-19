@@ -1,0 +1,24 @@
+/* Toaster: Sonner draws the messages from its own custom properties, which the design tokens set
+   here, so a message is a raised card in the page's colors in both themes. Sonner sets its own
+   light and dark values on the same element with two attributes, so this selector has three. */
+.toaster[data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--veilo-card);
+  --normal-border: var(--veilo-border);
+  --normal-text: var(--veilo-text);
+  --border-radius: var(--veilo-radius-base);
+  font-family: var(--veilo-font-sans);
+}
+
+.toast {
+  box-shadow: var(--veilo-shadow-soft);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}
+
+/* The action (Undo): the accent fill, as a primary button has. The selector is the more specific
+   one, so Sonner's own button colors do not win. */
+.toast .action[data-button] {
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label-sm);
+}

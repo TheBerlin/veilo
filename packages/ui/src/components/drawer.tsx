@@ -1,5 +1,6 @@
-// drawer.tsx: a panel that slides in from the side or the bottom over the page, on Vaul. It holds
-// a task of its own (export, a phone's settings) and can be dragged away.
+// drawer.tsx: a modal panel that slides in from the side or the bottom over the page, on Vaul. It
+// holds a task of its own (export) and can be dragged away. A tool that sits next to the preview it
+// changes is a DockedSheet instead.
 
 import { useRef, type ReactNode } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
