@@ -1,0 +1,202 @@
+/* How it works. At rest (a small or short screen, reduced motion): plain stacked steps, 128 px below
+   like the hero. */
+.rest {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+/* Live: three screens tall (the stage's one plus a hold of two). The stage sticks to the top of the
+   screen for the whole stretch and the page scrolls through it. */
+.live {
+  height: 300svh;
+}
+
+.stick {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 100svh;
+  overflow: clip;
+}
+
+.stick > * {
+  width: 100%;
+}
+
+.pinGrid {
+  /* Both columns hang from the top of the stage. The step list changes height as the steps open
+     and close, so centering it would make the heading drift; this keeps it still. */
+  align-items: start;
+}
+
+.list {
+  display: grid;
+  gap: var(--veilo-space-4);
+}
+
+/* The heading sits over the list, left-aligned; the shared heading block is centered, so its
+   contents are pulled to the start here. */
+.headLeft > div {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.steps {
+  display: grid;
+  gap: var(--veilo-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A step: a rule on its left that takes the text color when the step is open. The padding above
+   and below makes the rule taller than the title, so the steps read as separate blocks with air
+   between them. */
+.step {
+  display: grid;
+  gap: var(--veilo-space-1);
+  padding: var(--veilo-space-1) 0 var(--veilo-space-1) var(--veilo-space-3);
+  border-left: 2px solid var(--veilo-border);
+  transition: border-color var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+.step[data-open] {
+  border-left-color: var(--veilo-text);
+}
+
+.stepTitle {
+  margin: 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+/* The title is a button that scrolls to its step; it looks like the heading it holds. */
+.stepButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--veilo-text-muted);
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+.stepButton:hover,
+.step[data-open] .stepButton {
+  color: var(--veilo-text);
+}
+
+.stepButton:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+/* A closed step's text collapses to nothing: the grid row goes to 0fr and the inner block, which
+   may shrink to nothing, clips what is left. */
+.fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  filter: blur(3px);
+  transition:
+    grid-template-rows var(--veilo-duration-slow) var(--veilo-ease-out),
+    opacity var(--veilo-duration-base) var(--veilo-ease-out),
+    filter var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+.step[data-open] .fold {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  filter: blur(0);
+}
+
+.foldInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.body {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body-lg);
+  text-wrap: pretty;
+}
+
+.more {
+  margin: var(--veilo-space-2) 0 0;
+  font: var(--veilo-type-label);
+}
+
+/* The stage: one frame of a fixed size, so nothing moves when the step changes. The examples on it
+   are scaled up by overriding the card-size tokens for this subtree (the video tile 320 to 392 px,
+   the music player 480 to 588 px with its cover) so they fill the six columns. Layers stack in the
+   frame; each is centered. */
+.stage {
+  --veilo-size-test-card: 392px;
+  --veilo-size-card-thumb: 78px;
+  position: relative;
+  height: calc(var(--veilo-size-test-card) * 1.6);
+  max-height: calc(100svh - var(--veilo-space-16));
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Arrival and departure: the panel-reveal pattern of transitions.dev. The arriving example rises in
+   out of a small blur from the direction the visitor is going (--dir is 1 forward and -1 back);
+   the leaving one fades out toward the other side, faster, so the two do not fight. */
+.layer[data-phase="enter"] {
+  animation: layer-in var(--veilo-duration-slow) var(--veilo-ease-out) backwards;
+}
+
+.layer[data-phase="leave"] {
+  animation: layer-out var(--veilo-duration-base) var(--veilo-ease-out) forwards;
+  pointer-events: none;
+}
+
+@keyframes layer-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--veilo-space-2) * var(--dir)));
+    filter: blur(3px);
+  }
+}
+
+@keyframes layer-out {
+  to {
+    opacity: 0;
+    transform: translateY(calc(var(--veilo-space-2) * var(--dir) * -1));
+    filter: blur(3px);
+  }
+}
+
+/* A short screen (under 760 px tall): the pinned stage must fit the screen, so the air between the
+   steps and under the heading is tighter. */
+@media (max-height: 760px) {
+  .list {
+    gap: var(--veilo-space-2);
+  }
+
+  .steps {
+    gap: var(--veilo-space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer,
+  .fold,
+  .step,
+  .stepButton {
+    animation: none;
+    transition: none;
+  }
+}

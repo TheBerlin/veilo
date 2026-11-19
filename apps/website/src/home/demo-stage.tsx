@@ -6,10 +6,10 @@ import { Button, Kbd } from "@veilo-ui/ui";
 import { useEffect, useRef, useState } from "react";
 import { VideoCard } from "./demo-cards.tsx";
 import { InboxCard } from "./inbox-card.tsx";
-import { albumCoverLoaded, preloadAlbumCover } from "./demo-scenes.ts";
 import { MusicCard } from "./music-card.tsx";
 import { DemoReadout } from "./demo-readout.tsx";
 import styles from "./demo-stage.module.css";
+import { useAlbumCover } from "./use-album-cover.ts";
 
 /** The components the hero can show, with their labels. */
 export const DEMO_KINDS = [
@@ -45,15 +45,7 @@ export function DemoStage(props: DemoStageProps) {
   const Card = CARDS[kind];
 
   // The music card samples its cover when its reveal is created, so it waits for the photograph.
-  const [coverReady, setCoverReady] = useState(albumCoverLoaded);
-  useEffect(() => {
-    if (coverReady) return;
-    let current = true;
-    void preloadAlbumCover().then(() => current && setCoverReady(true));
-    return () => {
-      current = false;
-    };
-  }, [coverReady]);
+  const coverReady = useAlbumCover();
   const waiting = kind === "music" && !coverReady;
 
   const replayButton = useRef<HTMLButtonElement>(null);

@@ -1,6 +1,7 @@
 // app.tsx: root of the website: the header and the home page.
 
 import { Hero } from "./home/hero.tsx";
+import { HowItWorks } from "./home/how-it-works.tsx";
 import { SiteNav } from "./site/site-nav.tsx";
 
 /**
@@ -14,6 +15,7 @@ export function App() {
       <SiteNav />
       <main id="main">
         <Hero />
+        <HowItWorks />
       </main>
     </>
   );
