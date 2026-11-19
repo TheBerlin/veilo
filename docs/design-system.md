@@ -75,7 +75,7 @@ No icon set is chosen yet. When one is, use single-ink line icons at 24 px, inli
 
 ## Footer
 
-Author name placeholder linking to the GitHub profile, navigation links (Playground, Gallery, GitHub), and the license line "MIT License". MIT is a permissive open-source license: anyone may use, change, distribute and sell the software, including in commercial projects, as long as the copyright and license notice are kept.
+The footer is built (`apps/website/src/site/site-footer.tsx`): "Made by" and the author's name linking to the GitHub profile, navigation links (Playground, Gallery, GitHub), and the license line "MIT License". One row above 900 px, wrapping on a phone; side padding matches the Nav's. MIT is a permissive open-source license: anyone may use, change, distribute and sell the software, including in commercial projects, as long as the copyright and license notice are kept.
 
 ## Tokens
 
@@ -266,7 +266,7 @@ Tabs is a segmented bar for switching between views of the same content (the pla
 Provide the tab list with an `aria-label`, one trigger per view and the matching content panels. Radix handles `role="tablist"`, `aria-selected`, arrow keys, Home and End.
 
 - The bar is a `card` with a `border` hairline, `radius-md` and `shadow-soft`. Tabs are `size-tab` (40 px) high with `radius-base`, so the bar is 8 + 8 padding = 16.
-- The selected tab has a `secondary` fill, `text` color and a `border` hairline; unselected tabs are `text-muted` and become `text` on hover. State never rests on color alone: the fill marks the selected tab.
+- The selected tab is `text`; its `secondary` fill with a `border` hairline is a pill that slides to the newly selected tab (`duration-base`, `ease-out`; the first placement has no motion). Unselected tabs are `text-muted` and become `text` on hover. State never rests on color alone: the pill marks the selected tab. Segmented chip groups use the same pill. The open panel arrives with a short rise out of a 2 px blur; under reduced motion all of it is instant, because the duration tokens are 0.
 - `TabsList stretch` spans the container and the tabs share it evenly, like a segmented control, with `space-0-5` side padding (16 otherwise), `label-sm` labels and `space-0-5` gaps, at every width. The playground panel uses it, because its five tabs do not fit the 380 px panel (or the 375 px layout) at the usual size. Other bars keep the usual size.
 - The bar is never wider than its container: tabs that still do not fit wrap onto a second row. It does not scroll, because a scrolling bar would clip the focus ring.
 - Keep labels to one or two words and the count to five or fewer. For page navigation use the Nav, not Tabs.
@@ -331,6 +331,7 @@ Provide the text. Add the `$` prompt only for shell commands. The Copy button co
 - Fill is `secondary` with a `border` hairline and `radius-md`, because the copy button sits 8 px inside the corner (8 + 8 = 16); type is `code` in `text`, the prompt in `text-muted`.
 - Long lines scroll horizontally inside the block; never wrap a command. Inside a grid the block keeps `min-width: 0`, so it never widens its cell.
 - The success label uses `success` together with the word "Copied", never color alone.
+- The label swaps from Copy to Copied with a short fade out of a 2 px blur (`duration-fast`).
 
 ### TextArea, TextField and ColorField
 
@@ -343,6 +344,22 @@ CurveEditor edits a `cubic-bezier()` easing on a square graph. The playground sh
 - The box is square and as wide as the field. The unit square fills most of it, with y from -0.1 to 1.1 around it for overshoot. A handle beyond that range (for example from imported settings) is drawn at the edge and keeps its real value until moved.
 - Drag a handle (pointer capture, a hit area about 32 px across), or focus it and use the arrow keys: 0.01 per press, 0.1 with Shift. Each handle is a slider read as "x 0.22, y 1.00".
 - The curve is `accent`, the unit square `border-strong`, the linear diagonal `border`, the box `secondary` with a `border` hairline and `radius-base`. Inside the unit square only, a dot grid in `grid-dot` (`size-grid-dot`) marks every 0.1 of x and y (0.1 to 0.9; none on the square's edges). The CSS value is in a tooltip on an info button in the label row.
+
+### Popover
+
+Popover (Radix Popover, `Popover`, `PopoverTrigger`, `PopoverContent`) holds a small group of related controls that open from a button and close on outside click or Escape, such as the playground's saved presets and Preview options. It is `card` with a `border` hairline, `radius-md` and `shadow-soft`; focus moves into it on open and back to the trigger on close. Keep it to one short task; anything longer belongs in a Drawer.
+
+### Drawer
+
+Drawer (Vaul, `Drawer`) is a modal panel that slides in from the edge for a longer task, such as the playground's Export and Share. It dims the page, traps focus, closes on Escape, overlay click or Close, and returns focus to the opener. Use it when the page behind should not be used meanwhile; otherwise use DockedSheet.
+
+### DockedSheet
+
+DockedSheet (`DockedSheet`) is a non-modal bottom sheet for phones: the page behind stays visible and usable, nothing is hidden from screen readers, and it is a labelled `section`. It takes a `title` and `height` (a share of the screen), slides in with `duration-slow` and `ease-out`, moves focus to Close on open, back to the opener on close, and closes on Escape. The playground uses it for the settings so a slider can be moved while the card stays in view.
+
+### Toaster
+
+Toaster (Sonner, `Toaster` and `toast`) shows short messages that need no decision, with an optional Undo action, such as "Settings reset to the defaults." Render one `Toaster` outside any CSS grid. A message stays up to 10 seconds when it has Undo; never put the only copy of important information in a toast.
 
 ### Tooltip
 
@@ -368,7 +385,7 @@ Grid is the website's column grid: `Grid` (the row container, full width with it
 - `Grid` takes `rowGap` as a spacing token name (such as `space-4`); columns always use the grid gutters.
 - `as` picks the element: `Grid as="ul"` with `GridCell as="li"` for lists such as gallery tiles, `section`, `header` or `footer` for page blocks.
 - Use one `Grid` per page block, directly under the page, not inside a card: its margins are the page margins. The widths it follows are in the Layout section.
-- The playground does not use it: it is a tool with its own fluid two-column layout.
+- The playground page does not use it: it is a tool with its own fluid, full-screen layout under the site header.
 
 ### VideoFrame _(planned)_
 
