@@ -1,0 +1,98 @@
+/* Drawer: the page behind is dimmed with the page's own color, and the panel is a card on the
+   edge. Vaul places the panel with transforms and injects its own durations; the selectors below
+   are more specific than its, so the motion follows the design tokens (and so reduced motion). */
+.overlay {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  background: var(--veilo-bg);
+}
+
+/* Vaul drives the overlay's opacity from several of its own rules (an animation to 1, and a rule
+   for its snap-point mode) that normal specificity cannot beat, so the dimming is set with
+   !important: 70% while open, then a fade to 0 over the duration token while it closes. */
+.overlay[data-vaul-overlay] {
+  transition: opacity var(--veilo-duration-slow) var(--veilo-ease-out);
+}
+
+.overlay[data-vaul-overlay][data-state="open"] {
+  opacity: 0.7 !important;
+}
+
+.overlay[data-vaul-overlay][data-state="closed"] {
+  opacity: 0 !important;
+}
+
+.content {
+  position: fixed;
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  background: var(--veilo-card);
+  box-shadow: var(--veilo-shadow-soft);
+  color: var(--veilo-text);
+  outline: none;
+}
+
+/* From the right: the full height, as wide as three and a half of the largest space step. */
+.right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(100vw, calc(var(--veilo-space-16) * 3.5));
+  border-width: 0 0 0 1px;
+}
+
+/* From the bottom: the full width, never taller than most of the screen, rounded on top. */
+.bottom {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-height: 88dvh;
+  border-width: 1px 0 0;
+  border-radius: var(--veilo-radius-xl) var(--veilo-radius-xl) 0 0;
+}
+
+.content[data-vaul-drawer][data-vaul-drawer-direction] {
+  transition-duration: var(--veilo-duration-slow);
+  transition-timing-function: var(--veilo-ease-out);
+}
+
+/* Title row: the heading and the close button. */
+.head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2);
+  margin-bottom: var(--veilo-space-2);
+}
+
+.title {
+  margin: 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+.description {
+  margin: 0 0 var(--veilo-space-2);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* Body: the content, scrolling inside the drawer with a slim scrollbar. */
+.body {
+  display: grid;
+  flex: 1 1 auto;
+  align-content: start;
+  gap: var(--veilo-space-3);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--veilo-border-strong) transparent;
+  scrollbar-width: thin;
+}
