@@ -1,4 +1,4 @@
-# @veilo/css
+# @veilo-ui/css
 
 CSS skeleton loaders from [Veilo](../../README.md): shimmer, wave and pulse, with no JavaScript needed at runtime.
 
@@ -9,11 +9,11 @@ CSS skeleton loaders from [Veilo](../../README.md): shimmer, wave and pulse, wit
 Load `skeleton.css` and add the classes. `veilo` alone is a still placeholder; add one effect class to animate it.
 
 ```html
-<link rel="stylesheet" href="node_modules/@veilo/css/skeleton.css" />
+<link rel="stylesheet" href="node_modules/@veilo-ui/css/skeleton.css" />
 <div class="veilo veilo-shimmer" style="width: 200px; height: 20px"></div>
 ```
 
-With a bundler, `import "@veilo/css/skeleton.css";` does the same.
+With a bundler, `import "@veilo-ui/css/skeleton.css";` does the same.
 
 | Class           | Effect                                                                             |
 | --------------- | ---------------------------------------------------------------------------------- |
@@ -42,7 +42,7 @@ The stylesheet does not switch colors with the system theme, because a page's ow
 
 ## Accessibility
 
-The stylesheet only paints. What a screen reader hears comes from your markup, so add these yourself (`createSkeleton` in `@veilo/core` sets them for you).
+The stylesheet only paints. What a screen reader hears comes from your markup, so add these yourself (`createSkeleton` in `@veilo-ui/core` sets them for you).
 
 **Mark the loading region busy.** Put `aria-busy="true"` on the element that holds the content being loaded, and remove it (or set `"false"`) when the real content is in. Screen readers then wait instead of reading a half-loaded region.
 
@@ -74,10 +74,10 @@ WCAG's 3:1 for non-text contrast covers graphics needed to understand the conten
 ## Generate the CSS
 
 ```ts
-import { generateLoaderCss, parseSettings } from "@veilo/css";
+import { generateLoaderCss, parseSettings } from "@veilo-ui/css";
 
 const { settings } = parseSettings({ effect: "wave", lDur: 1.6 });
 const css = generateLoaderCss(settings);
 ```
 
-The generator is the one in `@veilo/core`, re-exported here, so the CSS always matches what the core engine draws. See the [core README](../core/README.md) for the settings and `LoaderCssOptions`.
+The generator is the one in `@veilo-ui/core`, re-exported here, so the CSS always matches what the core engine draws. See the [core README](../core/README.md) for the settings and `LoaderCssOptions`.

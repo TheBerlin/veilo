@@ -32,13 +32,13 @@ jobs:
       - run: pnpm check:layers
       - run: pnpm typecheck
       - name: Install Chromium for browser tests
-        run: pnpm --filter @veilo/core exec playwright install --with-deps chromium
+        run: pnpm --filter @veilo-ui/core exec playwright install --with-deps chromium
       - run: pnpm test
       - run: pnpm build
       - name: Check built entry points
-        run: pnpm --filter @veilo/core check:entries
+        run: pnpm --filter @veilo-ui/core check:entries
       - name: Check the element entries and the CDN bundle
-        run: pnpm --filter @veilo/element check:entries
+        run: pnpm --filter @veilo-ui/element check:entries
 
   # Playwright tests of the built playground, in the same image `pnpm --filter playground visual`
   # uses locally, so screenshots match. Keep the tag equal to the `playwright` version.

@@ -234,7 +234,7 @@ function Preview() {
           </Section>
 
           <Section title="Code block">
-            <CodeBlock code="pnpm add @veilo/css" prompt aria-label="Install command" />
+            <CodeBlock code="pnpm add @veilo-ui/css" prompt aria-label="Install command" />
             <CodeBlock
               code={
                 ".skeleton {\n  border-radius: 6px;\n  animation: veilo-sweep 1.4s infinite;\n}"

@@ -1,7 +1,7 @@
 // Tests for src/share/share-link.ts: the `#v1.` link format, in Node (CompressionStream, atob
 // and btoa are globals there too).
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import {
   decodeShareLink,

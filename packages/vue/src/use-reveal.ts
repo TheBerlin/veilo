@@ -1,8 +1,8 @@
 // use-reveal.ts: the composable every component builds on. Runs core's reveal on one element
 // for as long as it is mounted, and rebuilds it when the effect config changes.
 
-import { createReveal, type Reveal, type RevealOptions, type RevealState } from "@veilo/core";
-import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+import { createReveal, type Reveal, type RevealOptions, type RevealState } from "@veilo-ui/core";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo-ui/presets";
 import {
   computed,
   ref,

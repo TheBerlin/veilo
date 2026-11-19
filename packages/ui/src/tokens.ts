@@ -13,7 +13,7 @@ export interface ThemedColor {
  * Colors. Calm near-black and near-white surfaces on one faint cool hue, never pure black or white;
  * text is softened (about 14:1 on bg) to cut glare and every text tone keeps WCAG AAA (7:1) on `bg`
  * and `card`. The accent is monochrome: the text color, with `bg` on it. `base` and `hi` are the
- * skeleton colors and use the exact names `@veilo/css` reads (`--veilo-base`, `--veilo-hi`), so the
+ * skeleton colors and use the exact names `@veilo-ui/css` reads (`--veilo-base`, `--veilo-hi`), so the
  * site's skeletons sit on its own surfaces; the packages keep neutral gray fallbacks of their own.
  */
 export const COLORS = {

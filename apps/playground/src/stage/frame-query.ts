@@ -1,7 +1,7 @@
 // frame-query.ts: reads a fixed-frame request (`?preset=<id>&p=<0..1>`) from the page URL, so
 // visual tests can open the playground paused at an exact progress.
 
-import { findPreset, type Preset } from "@veilo/presets";
+import { findPreset, type Preset } from "@veilo-ui/presets";
 
 /** A request to open the playground on one preset, paused at one progress. */
 export interface FrameRequest {

@@ -68,9 +68,9 @@ When the `e2e` job fails in CI, open the run's summary and download the `playwri
 
 - `schema` and `math` may share types, but not values.
 - Folders in the same layer stay independent.
-- `src/index.ts` (`@veilo/core`) and `src/loader-entry.ts` (`@veilo/core/loader`) are the only
+- `src/index.ts` (`@veilo-ui/core`) and `src/loader-entry.ts` (`@veilo-ui/core/loader`) are the only
   public entries, and nothing inside `src` imports them. The grid renderer is loaded with
-  `import()` so it stays out of the main entry; `pnpm --filter @veilo/core check:entries` checks
+  `import()` so it stays out of the main entry; `pnpm --filter @veilo-ui/core check:entries` checks
   the built entries in Node.
 - Only `src/dom/` may touch `window` or `document`.
 - "State" means the animation: the clock, timers, the sequence and the cached prepared grid live
@@ -112,7 +112,7 @@ A `commit-msg` hook checks every message with [commitlint](https://commitlint.js
 
 ## Releases
 
-Versioning and changelogs use [Changesets](https://changesets.dev/). All `@veilo/*` packages share one version. If your change affects a package, run `pnpm changeset`, choose the bump type, and commit the file it creates in `.changeset/`.
+Versioning and changelogs use [Changesets](https://changesets.dev/). All `@veilo-ui/*` packages share one version. If your change affects a package, run `pnpm changeset`, choose the bump type, and commit the file it creates in `.changeset/`.
 
 While the version is below 1.0.0, a breaking change is a `minor` bump, not a `major` one.
 

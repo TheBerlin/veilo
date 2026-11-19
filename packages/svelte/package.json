@@ -1,5 +1,5 @@
 {
-  "name": "@veilo/svelte",
+  "name": "@veilo-ui/svelte",
   "version": "0.7.0",
   "private": true,
   "description": "Svelte 5 components and actions for Veilo skeleton loaders and reveal animations.",
@@ -26,8 +26,8 @@
     "svelte": "^5.0.0"
   },
   "dependencies": {
-    "@veilo/core": "workspace:*",
-    "@veilo/presets": "workspace:*"
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/presets": "workspace:*"
   },
   "devDependencies": {
     "@sveltejs/package": "^3.0.3",

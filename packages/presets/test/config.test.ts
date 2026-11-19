@@ -1,6 +1,6 @@
 // Tests for the shared config helpers of src/index.ts: how a preset, settings and a layout combine.
 
-import { LAYOUT_VERSION, defaultSettings, type Layout } from "@veilo/core";
+import { LAYOUT_VERSION, defaultSettings, type Layout } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import { configKey, presetSettings, resolveConfig, type LayoutInput } from "../src/index.ts";
 

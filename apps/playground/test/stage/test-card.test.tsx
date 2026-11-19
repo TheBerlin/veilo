@@ -1,6 +1,6 @@
 // Tests for src/stage/test-card.tsx and the reveal it runs, in Chromium with a hand-driven clock.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";

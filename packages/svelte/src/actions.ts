@@ -9,8 +9,8 @@ import {
   type Settings,
   type Skeleton,
   type SkeletonOptions,
-} from "@veilo/core";
-import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+} from "@veilo-ui/core";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo-ui/presets";
 import type { Action } from "svelte/action";
 
 /** Parameters of the {@link reveal} action. */

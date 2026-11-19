@@ -2,7 +2,7 @@
 
 import { Component, signal } from "@angular/core";
 import { describe, expect, it } from "vitest";
-import { VeiloSkeleton, VeiloSkeletonDirective } from "@veilo/angular";
+import { VeiloSkeleton, VeiloSkeletonDirective } from "@veilo-ui/angular";
 import { create, settle } from "./support/harness";
 
 /** Elements core adds to the document head (the skeleton stylesheet). */

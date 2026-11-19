@@ -3,7 +3,7 @@
 // Baselines are made in the Playwright Docker image: `pnpm --filter playground visual:update`.
 
 import { expect, test, type Page } from "@playwright/test";
-import { PRESETS } from "@veilo/presets";
+import { PRESETS } from "@veilo-ui/presets";
 import { frameName, PROGRESS } from "./support/baselines.ts";
 
 /**

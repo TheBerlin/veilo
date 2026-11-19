@@ -2,7 +2,7 @@
 // skeleton on the card's own markup; when the data arrives, the reveal plays.
 
 import { Component, computed, signal } from "@angular/core";
-import { VeiloReveal, VeiloSkeletonDirective } from "@veilo/angular";
+import { VeiloReveal, VeiloSkeletonDirective } from "@veilo-ui/angular";
 import { fetchProduct, PLACEHOLDER, type Product } from "./product";
 
 /** The demo page: the card, a seller avatar, a status line and a Reload button. */

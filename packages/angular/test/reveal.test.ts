@@ -3,7 +3,7 @@
 
 import { Component, signal } from "@angular/core";
 import { describe, expect, it } from "vitest";
-import { VeiloReveal, VeiloRevealDirective } from "@veilo/angular";
+import { VeiloReveal, VeiloRevealDirective } from "@veilo-ui/angular";
 import { clock, create, settle } from "./support/harness";
 
 /** The card as a user's template would write it, inside the component. */

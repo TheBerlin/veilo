@@ -1,8 +1,8 @@
 // use-live-reveal.ts: plays a demo card's reveal once, as the site's own demos do.
 
-import type { Reveal, Settings } from "@veilo/core";
-import { useReveal, type LayoutInput } from "@veilo/react";
-import { watchTheme } from "@veilo/ui";
+import type { Reveal, Settings } from "@veilo-ui/core";
+import { useReveal, type LayoutInput } from "@veilo-ui/react";
+import { watchTheme } from "@veilo-ui/ui";
 import { useEffect, type RefCallback } from "react";
 
 /**

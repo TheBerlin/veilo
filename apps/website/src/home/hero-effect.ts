@@ -1,6 +1,6 @@
 // hero-effect.ts: the effect the hero's demo cards play: a skeleton loader and a reveal.
 
-import type { Settings } from "@veilo/core";
+import type { Settings } from "@veilo-ui/core";
 
 /**
  * The hero's effect, exported from the playground's "My presets" (the preset named "cool

@@ -6,8 +6,8 @@ import {
   type Settings,
   type Skeleton as CoreSkeleton,
   type SkeletonOptions,
-} from "@veilo/core";
-import { configKey, resolveConfig, type LayoutInput, type PresetId } from "@veilo/presets";
+} from "@veilo-ui/core";
+import { configKey, resolveConfig, type LayoutInput, type PresetId } from "@veilo-ui/presets";
 import {
   cloneVNode,
   computed,

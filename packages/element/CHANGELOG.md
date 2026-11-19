@@ -1,4 +1,4 @@
-# @veilo/element
+# @veilo-ui/element
 
 ## 0.7.0
 

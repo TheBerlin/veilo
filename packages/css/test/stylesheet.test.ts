@@ -8,7 +8,7 @@ import { cssProblems } from "./support/parse-css.ts";
 const committed = readFileSync(new URL("../skeleton.css", import.meta.url), "utf8");
 
 describe("skeleton.css", () => {
-  it("is up to date; run `pnpm --filter @veilo/css generate:stylesheet` if not", () => {
+  it("is up to date; run `pnpm --filter @veilo-ui/css generate:stylesheet` if not", () => {
     expect(committed).toBe(buildStylesheet());
   });
 

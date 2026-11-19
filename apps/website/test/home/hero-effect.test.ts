@@ -1,6 +1,6 @@
 // Tests for src/home/hero-effect.ts: the effect exported from the playground.
 
-import { parseSettings } from "@veilo/core";
+import { parseSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import { HERO_SETTINGS } from "../../src/home/hero-effect.ts";
 

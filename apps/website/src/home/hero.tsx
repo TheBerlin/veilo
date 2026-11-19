@@ -1,7 +1,7 @@
 // hero.tsx: the top of the home page: the pitch, the two actions, the install command and a live
 // card that plays a reveal.
 
-import { Button, ChipGroup, ChipGroupItem, CodeBlock, Grid, GridCell } from "@veilo/ui";
+import { Button, ChipGroup, ChipGroupItem, CodeBlock, Grid, GridCell } from "@veilo-ui/ui";
 import { useState } from "react";
 import { INSTALL_COMMAND, PLAYGROUND_URL } from "../site/links.ts";
 import { DEMO_KINDS, DemoStage, type DemoKind } from "./demo-stage.tsx";

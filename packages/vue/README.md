@@ -1,15 +1,15 @@
-# @veilo/vue
+# @veilo-ui/vue
 
 Vue 3 components and a composable for [Veilo](../../README.md): show a skeleton on your own component while its data loads, then reveal it with a dot, character or mosaic grid and scrambled or typed text.
 
 > **Status:** in development, not published yet. The API can still change before 1.0.
 
-Works with Vue 3.4 and later, in the Options API, `<script setup>` and render functions, and with server rendering. It is a thin layer over [`@veilo/core`](../core/README.md), which does all the drawing, and it reads the same `data-veilo-slot` markup as [`@veilo/react`](../react/README.md).
+Works with Vue 3.4 and later, in the Options API, `<script setup>` and render functions, and with server rendering. It is a thin layer over [`@veilo-ui/core`](../core/README.md), which does all the drawing, and it reads the same `data-veilo-slot` markup as [`@veilo-ui/react`](../react/README.md).
 
 ## Install
 
 ```sh
-npm install @veilo/vue
+npm install @veilo-ui/vue
 ```
 
 Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`; without it a monospace fallback is used.
@@ -20,7 +20,7 @@ Mark the parts of your component with `data-veilo-slot`, wrap it in `Reveal`, an
 
 ```vue
 <script setup lang="ts">
-import { Reveal } from "@veilo/vue";
+import { Reveal } from "@veilo-ui/vue";
 import { computed } from "vue";
 
 const props = defineProps<{ product: Product | null }>(); // null while loading
@@ -50,7 +50,7 @@ Slots are `img` or `canvas` for the photo, `button` for the button, `video` for 
 | Prop            | Default  | What it does                                                                                                                              |
 | --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                              |
-| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo/presets`).                                                |
+| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo-ui/presets`).                                             |
 | `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped by core.                                      |
 | `layout`        | none     | Slot roles and bar hints, plus base settings (only the keys you change). A `preset` replaces its settings; `settings` still apply on top. |
 | `revealOnMount` | `false`  | Play when `ready` is already `true` at mount. Off by default: content that was there from the start just shows.                           |
@@ -90,7 +90,7 @@ For imperative control. Bind the returned `el` to the container, then call metho
 
 ```vue
 <script setup lang="ts">
-import { useReveal } from "@veilo/vue";
+import { useReveal } from "@veilo-ui/vue";
 
 const { el, reveal, state } = useReveal({ preset: "matrix-columns" });
 </script>

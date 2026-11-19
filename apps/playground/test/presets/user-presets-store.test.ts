@@ -1,6 +1,6 @@
 // Tests for src/presets/user-presets-store.ts, in Node with a fake storage.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
 import type { KeyValueStorage } from "../../src/presets/browser-storage.ts";
 import {

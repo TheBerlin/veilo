@@ -1,8 +1,8 @@
 // demo-cards.tsx: the video tile the hero plays the reveal on, and the props every demo card
 // shares. The wide music player and the inbox are in their own files. Names are invented.
 
-import type { Reveal, Settings } from "@veilo/core";
-import { Card } from "@veilo/ui";
+import type { Reveal, Settings } from "@veilo-ui/core";
+import { Card } from "@veilo-ui/ui";
 import { DemoPhoto } from "./demo-photo.tsx";
 import styles from "./demo-cards.module.css";
 import { useLiveReveal } from "./use-live-reveal.ts";

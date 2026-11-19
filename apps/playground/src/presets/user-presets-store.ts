@@ -2,7 +2,7 @@
 // one versioned key. Without storage (blocked, or a frame request) the list lives in memory for
 // the visit only.
 
-import type { Settings } from "@veilo/core";
+import type { Settings } from "@veilo-ui/core";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import type { KeyValueStorage } from "./browser-storage.ts";
 import {

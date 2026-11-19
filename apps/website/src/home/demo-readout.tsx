@@ -1,6 +1,6 @@
 // demo-readout.tsx: the state and progress shown under a live card, as data.
 
-import type { Reveal, RevealState } from "@veilo/core";
+import type { Reveal, RevealState } from "@veilo-ui/core";
 import { useEffect, useRef } from "react";
 import styles from "./demo-readout.module.css";
 

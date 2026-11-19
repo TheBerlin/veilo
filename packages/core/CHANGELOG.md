@@ -1,4 +1,4 @@
-# @veilo/core
+# @veilo-ui/core
 
 ## 0.7.0
 

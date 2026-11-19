@@ -1,17 +1,17 @@
-# @veilo/angular
+# @veilo-ui/angular
 
 Angular standalone components and directives for [Veilo](../../README.md): show a skeleton on your own component while its data loads, then reveal it with a dot, character or mosaic grid and scrambled or typed text.
 
 > **Status:** in development, not published yet. The API can still change before 1.0.
 
-Works with Angular 20, 21 and 22, with zone.js and zoneless, and reads the same `data-veilo-slot` markup as [`@veilo/react`](../react/README.md), [`@veilo/vue`](../vue/README.md) and [`@veilo/svelte`](../svelte/README.md). It is a thin layer over [`@veilo/core`](../core/README.md), which does all the drawing. The logic lives in two directives, `veiloReveal` and `veiloSkeleton`; the components `<veilo-reveal>` and `<veilo-skeleton>` apply them to their own element. Everything is standalone: no NgModule.
+Works with Angular 20, 21 and 22, with zone.js and zoneless, and reads the same `data-veilo-slot` markup as [`@veilo-ui/react`](../react/README.md), [`@veilo-ui/vue`](../vue/README.md) and [`@veilo-ui/svelte`](../svelte/README.md). It is a thin layer over [`@veilo-ui/core`](../core/README.md), which does all the drawing. The logic lives in two directives, `veiloReveal` and `veiloSkeleton`; the components `<veilo-reveal>` and `<veilo-skeleton>` apply them to their own element. Everything is standalone: no NgModule.
 
 The package is built with Angular 20 in partial-compilation mode, so an app on Angular 20 or later links it with its own compiler.
 
 ## Install
 
 ```sh
-npm install @veilo/angular
+npm install @veilo-ui/angular
 ```
 
 Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`; without it a monospace fallback is used.
@@ -22,7 +22,7 @@ Mark the parts of your component with `data-veilo-slot`, wrap it in `<veilo-reve
 
 ```ts
 import { Component, computed, input } from "@angular/core";
-import { VeiloReveal } from "@veilo/angular";
+import { VeiloReveal } from "@veilo-ui/angular";
 
 @Component({
   selector: "app-product-card",
@@ -55,7 +55,7 @@ Slots are `img` or `canvas` for the photo, `button` for the button, `video` for 
 | Input           | Default  | What it does                                                                                                                              |
 | --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                              |
-| `preset`        | none     | A built-in preset, such as `'dot-upscale'` or `'hex-from-center'` (from `@veilo/presets`).                                                |
+| `preset`        | none     | A built-in preset, such as `'dot-upscale'` or `'hex-from-center'` (from `@veilo-ui/presets`).                                             |
 | `settings`      | none     | Settings to apply on top, such as `{ imageFx: 'mosaic', rDur: 1.6 }`. Validated and clamped by core.                                      |
 | `layout`        | none     | Slot roles and bar hints, plus base settings (only the keys you change). A `preset` replaces its settings; `settings` still apply on top. |
 | `revealOnMount` | `false`  | Play when `ready` is already `true` at the start. Off by default: content that was there from the start just shows.                       |

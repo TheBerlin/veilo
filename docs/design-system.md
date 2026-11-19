@@ -2,7 +2,7 @@
 
 Veilo is the design system for the Veilo website and playground: a tech, black-dominant, monochrome interface on calm near-black and near-white surfaces, with no decoration of its own: the only color and texture come from the images and effects it shows. Build every page from the tokens and components here, and never add a new color, size or radius.
 
-The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token table, `tokens.css` is generated from it (`pnpm --filter @veilo/ui generate:tokens`), and `src/components/` holds the React components (Radix UI and CSS Modules). Every token is a CSS custom property with the `--veilo-` prefix, for example `--veilo-bg` or `--veilo-space-2`. This document names tokens without the prefix for readability.
+The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token table, `tokens.css` is generated from it (`pnpm --filter @veilo-ui/ui generate:tokens`), and `src/components/` holds the React components (Radix UI and CSS Modules). Every token is a CSS custom property with the `--veilo-` prefix, for example `--veilo-bg` or `--veilo-space-2`. This document names tokens without the prefix for readability.
 
 ## Principles
 
@@ -41,13 +41,13 @@ The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token
 | `radius-lg`   | 24    | base + `space-2` (16) | Cards                                                                                                |
 | `radius-xl`   | 40    | base + `space-4` (32) | Panels such as the hero demo and the playground stage                                                |
 
-When the padding is uneven, use the smallest side. A surface placed inside another subtracts the padding instead: media in a card is 24 - 16 = 8, so it uses `radius-base`. Do not nest a card in a card. To change the look, change `radius-base` and recompute the three steps; with 12 px they become 20, 28 and 44. `radius-pill` is only for dots and avatars, and slider tracks and thumbs are round by shape. Focus outlines follow the element's radius, so they need no value of their own. Skeletons made with `@veilo/css` read `--veilo-radius`, which `tokens.css` sets to `radius-base`.
+When the padding is uneven, use the smallest side. A surface placed inside another subtracts the padding instead: media in a card is 24 - 16 = 8, so it uses `radius-base`. Do not nest a card in a card. To change the look, change `radius-base` and recompute the three steps; with 12 px they become 20, 28 and 44. `radius-pill` is only for dots and avatars, and slider tracks and thumbs are round by shape. Focus outlines follow the element's radius, so they need no value of their own. Skeletons made with `@veilo-ui/css` read `--veilo-radius`, which `tokens.css` sets to `radius-base`.
 
 **Borders and elevation.** `border` hairlines (1 px) for decoration; `border-strong` for control outlines and slider tracks. There is one soft shadow, `shadow-soft` (x 0, y 4, blur 64, 10% black), for raised bars such as tabs, segmented bars and pagination, popovers and the hero demo; do not put it on every card. In dark mode it is barely visible, so keep the `border` hairline.
 
 **Imagery and background.** No background decoration: no dot grid, gradients or patterns. Pages and sections sit on plain `bg`; a closing section may sit on a `card`-colored band. Imagery is the product itself: live skeletons and reveals and the photos they draw. The dotted ghost logo is the one dotted mark.
 
-**Layout.** The website (Home, Gallery, 404) is designed on two frames and built on two column grids (`Grid` and `GridCell` in `@veilo/ui`). Desktop is designed at 1440 px (frame 1440 x 1024): a 12-column stretch grid with 120 px margins and 20 px gutters, so content is 1200 px and a column is about 81.7 px. Mobile is designed at 375 px (frame 375 x 812): a 4-column stretch grid with 20 px margins and 8 px gutters, so content is 335 px and a column is about 77.8 px. Between and beyond the frames the column counts stay fixed and the space flexes, so the page never scrolls sideways:
+**Layout.** The website (Home, Gallery, 404) is designed on two frames and built on two column grids (`Grid` and `GridCell` in `@veilo-ui/ui`). Desktop is designed at 1440 px (frame 1440 x 1024): a 12-column stretch grid with 120 px margins and 20 px gutters, so content is 1200 px and a column is about 81.7 px. Mobile is designed at 375 px (frame 375 x 812): a 4-column stretch grid with 20 px margins and 8 px gutters, so content is 335 px and a column is about 77.8 px. Between and beyond the frames the column counts stay fixed and the space flexes, so the page never scrolls sideways:
 
 | Viewport          | Grid                      | Side margins                                                                    |
 | ----------------- | ------------------------- | ------------------------------------------------------------------------------- |
@@ -94,7 +94,7 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | `--veilo-text-muted`    | `#A9A8B6`   | `#4A4A53`   | Captions, helper text and labels on bg, card and secondary (AAA, at least 7:1, on bg and card; at least 4.9:1 on secondary; a test enforces both).             |
 | `--veilo-accent`        | `#E2E2E7`   | `#1E1E22`   | The one accent, monochrome: the text color (the 10%). Primary button fill, chosen chip fill, focus ring, logo dots. Keep solid fills to a few places per page. |
 | `--veilo-on-accent`     | `#16161A`   | `#F1F1F3`   | Text and icons on an accent fill.                                                                                                                              |
-| `--veilo-base`          | `#26262C`   | `#DDDDE1`   | Resting color of skeleton placeholders, equal to secondary. The same custom property `@veilo/core` and `@veilo/css` read.                                      |
+| `--veilo-base`          | `#26262C`   | `#DDDDE1`   | Resting color of skeleton placeholders, equal to secondary. The same custom property `@veilo-ui/core` and `@veilo-ui/css` read.                                |
 | `--veilo-hi`            | `#33333A`   | `#F8F8F9`   | Highlight band of the skeleton shimmer. The same custom property the packages read. Raise it slightly if the sweep looks faint.                                |
 | `--veilo-grid-dot`      | `#3A3A42`   | `#B8B8BF`   | Grid dots inside the curve editor's unit square. Decorative only; never carries text.                                                                          |
 | `--veilo-danger`        | `#E5857F`   | `#B3261E`   | Error text and icon on bg, card and secondary (at least 4.8:1). Always paired with an icon and a word such as 'Error'; never color alone.                      |
@@ -167,7 +167,7 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | `radius-lg`   | `24px`                     | radius-base + space-2 (16 px). Cards, which have 16 px padding.                                                                                                                                                                                     |
 | `radius-xl`   | `40px`                     | radius-base + space-4 (32 px). Panels such as the hero demo and the playground stage, which have 32 px padding.                                                                                                                                     |
 | `radius-pill` | `999px`                    | Round dots and avatars only.                                                                                                                                                                                                                        |
-| `radius`      | `var(--veilo-radius-base)` | Read by `@veilo/css` skeletons, so they follow radius-base.                                                                                                                                                                                         |
+| `radius`      | `var(--veilo-radius-base)` | Read by `@veilo-ui/css` skeletons, so they follow radius-base.                                                                                                                                                                                      |
 
 ### Shadow
 
@@ -211,13 +211,13 @@ Components marked _(planned)_ are specified here but not built yet in `packages/
 
 ### Kbd
 
-Kbd is a keycap (`Kbd` in `@veilo/ui`) that shows a keyboard shortcut next to a control, for example `R` on a Replay button. It is a 20 px square (`size-icon-md`) with a `border-strong` hairline, `text-muted` mono type and `radius-base`.
+Kbd is a keycap (`Kbd` in `@veilo-ui/ui`) that shows a keyboard shortcut next to a control, for example `R` on a Replay button. It is a 20 px square (`size-icon-md`) with a `border-strong` hairline, `text-muted` mono type and `radius-base`.
 
 It only shows the hint. The caller handles the key and names it for assistive technology with `aria-keyshortcuts` on the control. Ignore the shortcut while the user types in a field, and when Ctrl, Cmd or Alt are held (the browser owns those).
 
 ### Nav
 
-Nav is the top header (`Nav` in `@veilo/ui`): the brand link, the page links and a trailing slot for controls such as the theme switch.
+Nav is the top header (`Nav` in `@veilo-ui/ui`): the brand link, the page links and a trailing slot for controls such as the theme switch.
 
 Pass the current page with `current: true` on one link, which sets `aria-current="page"`. The header is `space-8` (64 px) high with the grid margin as side padding (the same margins as `Grid`: 120 px at 1440, at least 32 px down to 901 px, 20 px at 900 px and below) and a `border` hairline below. The brand is a `brand` node (logo and wordmark) plus a `brandLabel` that names the home link.
 
@@ -228,7 +228,7 @@ Pass the current page with `current: true` on one link, which sets `aria-current
 
 ### Button
 
-Button is the action control, in primary, secondary and ghost variants and three sizes (`Button` in `@veilo/ui`).
+Button is the action control, in primary, secondary and ghost variants and three sizes (`Button` in `@veilo-ui/ui`).
 
 Provide a visible text label (a verb or short phrase: "Open Playground", "Browse gallery"), or an `aria-label` for an icon-only button (the types require it). Use a `<button>` for actions and `asChild` with an `<a>` for navigation. Corners use `radius-base`.
 
@@ -313,18 +313,18 @@ Provide a one to three word label. Status badges take a tone: default, info (Pro
 
 ### Card
 
-Card is a flat container on `card` with a hairline border, in a standard size and a large panel size (`Card` in `@veilo/ui`: `size="card" | "panel"`, `raised`, and `as` for `div`, `article`, `section` or `li`).
+Card is a flat container on `card` with a hairline border, in a standard size and a large panel size (`Card` in `@veilo-ui/ui`: `size="card" | "panel"`, `raised`, and `as` for `div`, `article`, `section` or `li`).
 
 Provide the content as children. Use the standard card (`radius-lg`, `space-2` padding) for features, tiles and the playground's transport bar and control panel, and the panel (`radius-xl`, `space-4` padding) for the hero demo and the playground stage.
 
 - Cards are always lighter or darker than `bg` by fill; in dark mode the step is small, so keep the `border` hairline.
 - Flat by default; add `shadow-soft` only for floating or raised panels. No colored left borders. Do not nest a card inside a card; use `secondary` fills for inner groups.
 - Corners follow outer = inner + padding: 8 + 16 = 24 for a card, 8 + 32 = 40 for a panel. Media inside either one uses `radius-base` (outer minus padding).
-- A card that waits for content shows a skeleton from `@veilo/css` in the shape of the real content and keeps its final size.
+- A card that waits for content shows a skeleton from `@veilo-ui/css` in the shape of the real content and keeps its final size.
 
 ### CodeBlock
 
-CodeBlock shows one command or snippet in monospace with a copy button (`CodeBlock` in `@veilo/ui`).
+CodeBlock shows one command or snippet in monospace with a copy button (`CodeBlock` in `@veilo-ui/ui`).
 
 Provide the text. Add the `$` prompt only for shell commands. The Copy button copies the text and shows "Copied" for about 1.6 seconds; if the clipboard is blocked it shows "Press Ctrl+C" and selects the text.
 
@@ -362,7 +362,7 @@ Tooltip (Radix Tooltip, inside one `TooltipProvider`) explains an icon-only cont
 
 ### Grid
 
-Grid is the website's column grid: `Grid` (the row container, full width with its own side margins) and `GridCell` (one block on whole columns), in `@veilo/ui`.
+Grid is the website's column grid: `Grid` (the row container, full width with its own side margins) and `GridCell` (one block on whole columns), in `@veilo-ui/ui`.
 
 - `GridCell` takes `span` and `start` for desktop (1 to 12; default full width) and `spanMobile` and `startMobile` for mobile (1 to 4; default full width). Out-of-range values are clamped, so a cell never adds a column. A start that would push the span past the edge moves left until it fits.
 - `Grid` takes `rowGap` as a spacing token name (such as `space-4`); columns always use the grid gutters.
@@ -377,13 +377,13 @@ VideoFrame is the rounded frame for looping demo videos and gallery tiles, 16:9 
 Provide a `<video>` (muted, loop, playsinline, with a `poster`) or an `<img>`, and an optional `<figcaption>`. Videos autoplay only when the viewer has not asked for reduced motion; otherwise they show the poster.
 
 - The frame is `card` with a `border` hairline and `radius-md`; inside a card or panel it uses `radius-base` instead (outer radius minus padding). It always reserves its aspect ratio, so the page never shifts when the video loads.
-- While loading, fill the frame with a skeleton from `@veilo/css` (the same shimmer the package ships).
+- While loading, fill the frame with a skeleton from `@veilo-ui/css` (the same shimmer the package ships).
 - Captions are `caption` in `text-muted`, centered when the frame is centered under a step title.
 - Do not add play overlays or shadows. Every video has an accessible text equivalent in the nearby heading and caption.
 
 ### Skeleton
 
-Skeletons on the site and in the playground come from `@veilo/css` (classes `veilo`, `veilo-shimmer`, `veilo-wave`, `veilo-pulse`, or CSS from its generator). They read `--veilo-base`, `--veilo-hi` and `--veilo-radius` from the tokens, stop under reduced motion, and are never hand-written.
+Skeletons on the site and in the playground come from `@veilo-ui/css` (classes `veilo`, `veilo-shimmer`, `veilo-wave`, `veilo-pulse`, or CSS from its generator). They read `--veilo-base`, `--veilo-hi` and `--veilo-radius` from the tokens, stop under reduced motion, and are never hand-written.
 
 ### Motion
 
@@ -406,6 +406,6 @@ Add the logo as a single-ink SVG on a transparent background, 512x512. Because S
 
 ## Code
 
-- Tokens: `packages/ui/src/tokens.ts` (edit) and `packages/ui/tokens.css` (generated; import `@veilo/ui/tokens.css` once per app).
-- Components: `packages/ui/src/components/`, exported from `@veilo/ui`. Preview them with `pnpm --filter @veilo/ui dev`.
-- Skeletons: `@veilo/css`.
+- Tokens: `packages/ui/src/tokens.ts` (edit) and `packages/ui/tokens.css` (generated; import `@veilo-ui/ui/tokens.css` once per app).
+- Components: `packages/ui/src/components/`, exported from `@veilo-ui/ui`. Preview them with `pnpm --filter @veilo-ui/ui dev`.
+- Skeletons: `@veilo-ui/css`.

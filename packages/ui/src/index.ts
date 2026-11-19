@@ -1,4 +1,4 @@
-// index.ts: the entry of the internal `@veilo/ui` package. Apps import its source directly.
+// index.ts: the entry of the internal `@veilo-ui/ui` package. Apps import its source directly.
 
 export {
   COLORS,

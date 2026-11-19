@@ -1,6 +1,6 @@
 // Tests for src/presets/last-session.ts, in Node with a fake storage and fake timers.
 
-import { defaultSettings } from "@veilo/core";
+import { defaultSettings } from "@veilo-ui/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { KeyValueStorage } from "../../src/presets/browser-storage.ts";
 import {

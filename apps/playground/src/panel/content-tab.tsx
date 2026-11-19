@@ -1,7 +1,7 @@
 // content-tab.tsx: the Content tab: what the preview card shows. The layout picker and one text
 // field per part of the layout, the card width and a button that resets them.
 
-import { Button, Select, Slider, TextField } from "@veilo/ui";
+import { Button, Select, Slider, TextField } from "@veilo-ui/ui";
 import type { ContentStore } from "../state/content-store.ts";
 import { useContent } from "../state/content-store.ts";
 import {

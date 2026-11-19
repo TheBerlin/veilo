@@ -1,15 +1,15 @@
-# @veilo/react
+# @veilo-ui/react
 
 React components for [Veilo](../../README.md): show a skeleton on your own component while its data loads, then reveal it with a dot, character or mosaic grid and scrambled or typed text.
 
 > **Status:** in development, not published yet. The API can still change before 1.0.
 
-Works with React 18.3 and 19, with Strict Mode, and with server rendering. It is a thin layer over [`@veilo/core`](../core/README.md), which does all the drawing.
+Works with React 18.3 and 19, with Strict Mode, and with server rendering. It is a thin layer over [`@veilo-ui/core`](../core/README.md), which does all the drawing.
 
 ## Install
 
 ```sh
-npm install @veilo/react
+npm install @veilo-ui/react
 ```
 
 Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`; without it a monospace fallback is used.
@@ -19,7 +19,7 @@ Hex and binary grids draw their characters in IBM Plex Mono, which the package d
 Mark the parts of your component with `data-veilo-slot`, wrap it in `Reveal`, and say when the data is ready:
 
 ```tsx
-import { Reveal } from "@veilo/react";
+import { Reveal } from "@veilo-ui/react";
 
 function ProductCard({ product }: { product: Product }) {
   return (
@@ -55,7 +55,7 @@ Slots are `img` or `canvas` for the photo, `button` for the button, `video` for 
 | Prop            | Default  | What it does                                                                                                                              |
 | --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                              |
-| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo/presets`).                                                |
+| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"` (from `@veilo-ui/presets`).                                             |
 | `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped by core.                                      |
 | `layout`        | none     | Slot roles and bar hints, plus base settings (only the keys you change). A `preset` replaces its settings; `settings` still apply on top. |
 | `revealOnMount` | `false`  | Play when `ready` is already `true` at mount. Off by default: content that was there from the start just shows.                           |
@@ -70,7 +70,7 @@ Any other prop, such as `className`, `style`, `id` or `data-*`, goes to the cont
 A loader without a reveal: shimmer, wave or pulse while `loading` is `true`.
 
 ```tsx
-import { Skeleton } from "@veilo/react";
+import { Skeleton } from "@veilo-ui/react";
 
 <Skeleton loading={!user} effect="wave">
   <h3 data-veilo-slot="name">{user?.name ?? "Placeholder name"}</h3>
@@ -95,7 +95,7 @@ import { Skeleton } from "@veilo/react";
 For imperative control: play, seek, events.
 
 ```tsx
-import { useReveal } from "@veilo/react";
+import { useReveal } from "@veilo-ui/react";
 
 function Card() {
   const { ref, reveal, state } = useReveal<HTMLDivElement>({ preset: "hex-from-center" });

@@ -1,6 +1,6 @@
 // site-nav.tsx: the site header: the mark, the wordmark, the page links and the theme switch.
 
-import { Nav, ThemeSwitch } from "@veilo/ui";
+import { Nav, ThemeSwitch } from "@veilo-ui/ui";
 import { GITHUB_URL, PLAYGROUND_URL } from "./links.ts";
 import styles from "./site-nav.module.css";
 

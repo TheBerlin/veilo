@@ -1,4 +1,4 @@
-# @veilo/vue
+# @veilo-ui/vue
 
 ## 0.7.0
 

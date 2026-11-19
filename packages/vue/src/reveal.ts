@@ -1,8 +1,8 @@
 // reveal.ts: the `Reveal` component. Wraps a whole component, shows the skeleton on its
 // `data-veilo-slot` parts while data loads, and plays the reveal when it arrives.
 
-import type { RevealOptions, Settings } from "@veilo/core";
-import type { LayoutInput, PresetId } from "@veilo/presets";
+import type { RevealOptions, Settings } from "@veilo-ui/core";
+import type { LayoutInput, PresetId } from "@veilo-ui/presets";
 import { defineComponent, h, watch, type PropType } from "vue";
 import { useReveal } from "./use-reveal.ts";
 

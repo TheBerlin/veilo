@@ -4,5 +4,5 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "allowedNonPeerDependencies": ["@veilo/core", "@veilo/presets", "tslib"]
+  "allowedNonPeerDependencies": ["@veilo-ui/core", "@veilo-ui/presets", "tslib"]
 }

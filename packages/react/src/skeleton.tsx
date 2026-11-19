@@ -6,7 +6,7 @@ import {
   type Settings,
   type Skeleton as CoreSkeleton,
   type SkeletonOptions,
-} from "@veilo/core";
+} from "@veilo-ui/core";
 import { Slot } from "@radix-ui/react-slot";
 import {
   createElement,
@@ -16,7 +16,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo-ui/presets";
 import type { RevealElement } from "./reveal.tsx";
 import { useServerSkeleton } from "./server-skeleton.tsx";
 

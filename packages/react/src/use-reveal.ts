@@ -1,9 +1,9 @@
 // use-reveal.ts: the hook every component builds on. Runs core's reveal on one element for as
 // long as it is mounted, safely under React Strict Mode.
 
-import { createReveal, type Reveal, type RevealOptions, type RevealState } from "@veilo/core";
+import { createReveal, type Reveal, type RevealOptions, type RevealState } from "@veilo-ui/core";
 import { useEffect, useRef, useState, type RefCallback } from "react";
-import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo-ui/presets";
 
 /** What {@link useReveal} returns. */
 export interface UseRevealResult<T extends HTMLElement> {

@@ -1,8 +1,8 @@
 // demo-stage.tsx: the hero's demo: one of the three cards with a status row under it. The card
 // plays once; a click on it, on Replay, or the R key (held, then released) plays it again.
 
-import type { Reveal, Settings } from "@veilo/core";
-import { Button, Kbd } from "@veilo/ui";
+import type { Reveal, Settings } from "@veilo-ui/core";
+import { Button, Kbd } from "@veilo-ui/ui";
 import { useEffect, useRef, useState } from "react";
 import { VideoCard } from "./demo-cards.tsx";
 import { InboxCard } from "./inbox-card.tsx";

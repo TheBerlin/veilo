@@ -1,4 +1,4 @@
-# @veilo/presets
+# @veilo-ui/presets
 
 ## 0.7.0
 

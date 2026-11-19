@@ -1,7 +1,7 @@
 // music-card.tsx: a wide music player the hero plays the reveal on: cover art flush on the left,
 // then the track, the artist, a progress bar and the playback controls. Names are invented.
 
-import { Card } from "@veilo/ui";
+import { Card } from "@veilo-ui/ui";
 import type { ReactNode } from "react";
 import type { DemoCardProps } from "./demo-cards.tsx";
 import { DemoPhoto } from "./demo-photo.tsx";

@@ -1,4 +1,4 @@
-// loader-entry.ts: the public entry `@veilo/core/loader`. The loader CSS generator and the
+// loader-entry.ts: the public entry `@veilo-ui/core/loader`. The loader CSS generator and the
 // settings helpers, with no DOM or canvas code, for build tools, servers and CSS-only use.
 // Like index.ts, nothing inside src imports it; changing its exports is an API change.
 

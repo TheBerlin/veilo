@@ -1,6 +1,6 @@
-// Tests that the website's first-paint theme script reads the key @veilo/ui saves under.
+// Tests that the website's first-paint theme script reads the key @veilo-ui/ui saves under.
 
-import { THEME_STORAGE_KEY } from "@veilo/ui";
+import { THEME_STORAGE_KEY } from "@veilo-ui/ui";
 import { describe, expect, it } from "vitest";
 import indexHtml from "../../index.html?raw";
 

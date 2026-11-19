@@ -1,9 +1,9 @@
-// index.ts: the public entry `@veilo/presets`. The named presets of spec section 1.5 as data,
+// index.ts: the public entry `@veilo-ui/presets`. The named presets of spec section 1.5 as data,
 // plus helpers that turn a preset into complete settings and find the preset that matches some.
 // Settings are checked by core's parseSettings, so a preset can never hold a value core rejects.
 
-import { LAYOUT_VERSION, type Layout } from "@veilo/core";
-import { parseSettings, type Settings } from "@veilo/core/loader";
+import { LAYOUT_VERSION, type Layout } from "@veilo-ui/core";
+import { parseSettings, type Settings } from "@veilo-ui/core/loader";
 
 /** The id of a built-in preset, in kebab case (used in URLs and the `preset` attribute later). */
 export type PresetId =

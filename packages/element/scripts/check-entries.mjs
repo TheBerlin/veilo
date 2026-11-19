@@ -3,7 +3,7 @@
 // to window or document throws; `/define` must register nothing there. The CDN bundle must be
 // one self-contained file, and in Chromium a bare page that loads only it must register both
 // elements, run a skeleton, and make no other request. Run after `pnpm build`:
-// `pnpm --filter @veilo/element check:entries`.
+// `pnpm --filter @veilo-ui/element check:entries`.
 
 // The page.evaluate callback below runs in the browser, where these exist.
 /* global customElements, document */

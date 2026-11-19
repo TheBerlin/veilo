@@ -7,14 +7,14 @@ import {
   type Reveal,
   type RevealOptions,
   type Settings,
-} from "@veilo/core";
-import type { PresetId } from "@veilo/presets";
+} from "@veilo-ui/core";
+import type { PresetId } from "@veilo-ui/presets";
 import {
   ReactiveElement,
   type PropertyDeclarations,
   type PropertyValues,
 } from "@lit/reactive-element";
-import { configKey, resolveConfig, type RevealConfig } from "@veilo/presets";
+import { configKey, resolveConfig, type RevealConfig } from "@veilo-ui/presets";
 import { jsonAttribute } from "./config.ts";
 
 /** Name of the DOM event fired each time a reveal finishes. */

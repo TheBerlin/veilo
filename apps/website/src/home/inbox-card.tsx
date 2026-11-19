@@ -2,7 +2,7 @@
 // messages, each with an avatar, sender, date, subject, preview and a star. Senders and subjects
 // are invented.
 
-import { Card } from "@veilo/ui";
+import { Card } from "@veilo-ui/ui";
 import type { DemoCardProps } from "./demo-cards.tsx";
 import styles from "./inbox-card.module.css";
 import { useLiveReveal } from "./use-live-reveal.ts";

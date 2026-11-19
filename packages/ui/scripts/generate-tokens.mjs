@@ -1,5 +1,5 @@
 // generate-tokens.mjs: writes tokens.css from src/tokens-css.ts.
-// Run with `pnpm --filter @veilo/ui generate:tokens` after changing src/tokens.ts.
+// Run with `pnpm --filter @veilo-ui/ui generate:tokens` after changing src/tokens.ts.
 
 import { writeFileSync } from "node:fs";
 import { buildTokensCss } from "../src/tokens-css.ts";
