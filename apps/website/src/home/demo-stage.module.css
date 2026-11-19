@@ -17,6 +17,27 @@
   justify-content: center;
 }
 
+/* Hover: the card (the area's one child) grows 3% while the pointer is on it and eases back when
+   it leaves. Only for real hover devices, so a tap on a touch screen does not leave it scaled. The
+   same duration and curve both ways; the transform does not move the layout. */
+@media (hover: hover) {
+  .area > * {
+    transition: transform var(--veilo-duration-base) var(--veilo-ease-out);
+    will-change: transform;
+  }
+
+  .area > *:hover {
+    transform: scale(1.03);
+  }
+}
+
+/* Reduced motion: no scale at all (the duration tokens would only make it jump). */
+@media (prefers-reduced-motion: reduce) {
+  .area > *:hover {
+    transform: none;
+  }
+}
+
 /* Status: the readout (state and a small progress bar) with the Replay pill beside it, centered
    under the card; on a very narrow screen the pill wraps below the readout. */
 .status {
