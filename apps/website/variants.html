@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <title>Veilo: How it works, design variants</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- A reference page for comparing designs of one section. The dev server serves it at
+         /variants.html; the production build does not include it (only index.html is built). -->
+    <script>
+      try {
+        var theme = localStorage.getItem("veilo-theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/variants/variants-main.tsx"></script>
+  </body>
+</html>

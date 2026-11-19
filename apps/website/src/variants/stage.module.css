@@ -1,0 +1,117 @@
+/* Variant C: no space above (the hero ends with 128 px) and 128 px below, like the section it
+   would replace. */
+.section {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+/* The tab bar, then the open panel. */
+.tabs {
+  display: grid;
+  gap: var(--veilo-space-4);
+}
+
+.bar {
+  display: flex;
+  justify-content: center;
+}
+
+/* The tab bar itself: its look comes from the design system. */
+.list {
+  max-width: 100%;
+}
+
+/* The panel (Radix keeps the closed ones in the page as hidden, empty blocks, so `hidden` must
+   win over the grid below): the text on 4 of the 12 columns and the example on 7, one empty column between. All
+   panels share one minimum height (the video-tile example is the tallest, about 1.5 test cards),
+   so the page below does not move when the step changes. It arrives with a short rise out of a
+   small blur. */
+.panel {
+  display: grid;
+  grid-template-columns: repeat(var(--veilo-grid-desktop-columns), minmax(0, 1fr));
+  column-gap: var(--veilo-grid-desktop-gutter);
+  align-items: center;
+  min-height: calc(var(--veilo-size-test-card) * 1.75);
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.panel[data-state="active"] {
+  animation: panel-in var(--veilo-duration-slow) var(--veilo-ease-out) backwards;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--veilo-space-1-5));
+    filter: blur(3px);
+  }
+}
+
+.copy {
+  grid-column: 1 / span 4;
+  display: grid;
+  justify-items: start;
+  gap: var(--veilo-space-2);
+}
+
+.visual {
+  grid-column: 6 / span 7;
+  min-width: 0;
+}
+
+.stepTitle {
+  margin: 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+.body {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body-lg);
+  text-wrap: pretty;
+}
+
+.more {
+  margin: 0;
+  font: var(--veilo-type-label);
+}
+
+/* Narrow layout: the tab bar takes the width and the three tabs share one row; the text above the
+   example. */
+@media (max-width: 900px) {
+  .bar,
+  .list {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .list > * {
+    flex: 1 1 0;
+    padding-inline: var(--veilo-space-1);
+  }
+
+  .section {
+    padding-block: 0 var(--veilo-space-8);
+  }
+
+  .panel {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--veilo-space-3);
+    min-height: 0;
+  }
+
+  .copy,
+  .visual {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel[data-state="active"] {
+    animation: none;
+  }
+}

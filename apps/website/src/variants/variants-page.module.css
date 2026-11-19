@@ -1,0 +1,54 @@
+/* Variants page: a plain top bar and a label bar over each design. None of it belongs to the
+   designs. */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2);
+  padding: var(--veilo-space-2) var(--veilo-space-4);
+  border-bottom: 1px solid var(--veilo-border);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--veilo-space-2);
+  font: var(--veilo-type-label);
+}
+
+.links a {
+  color: var(--veilo-text);
+  text-decoration: underline;
+  text-underline-offset: var(--veilo-space-0-5);
+}
+
+.block {
+  scroll-margin-top: 0;
+}
+
+/* The label over a design: a hairline, the name and one sentence. */
+.label {
+  display: grid;
+  gap: var(--veilo-space-0-5);
+  margin: var(--veilo-space-8) var(--veilo-space-4) var(--veilo-space-8);
+  padding-top: var(--veilo-space-2);
+  border-top: 1px solid var(--veilo-border-strong);
+}
+
+.name {
+  margin: 0;
+  font: var(--veilo-type-label);
+}
+
+.note {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* The note shown while no design is on the page. */
+.empty {
+  margin: var(--veilo-space-8) var(--veilo-space-4);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body);
+}
