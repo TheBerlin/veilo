@@ -5,7 +5,11 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { Toaster, toast } from "@veilo-ui/ui";
 import { afterEach, describe, expect, it } from "vitest";
 import { encodeShareLink } from "../../../src/playground/share/share-link.ts";
-import { LINK_ERRORS, LINK_LOADED, ShareNotice } from "../../../src/playground/share/share-notice.tsx";
+import {
+  LINK_ERRORS,
+  LINK_LOADED,
+  ShareNotice,
+} from "../../../src/playground/share/share-notice.tsx";
 import { createContentStore } from "../../../src/playground/state/content-store.ts";
 import { createSettingsStore } from "../../../src/playground/state/settings-store.ts";
 

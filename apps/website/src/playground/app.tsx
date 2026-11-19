@@ -3,7 +3,7 @@
 // the stage with a bottom row and the panel in a sheet.
 
 import { presetSettings } from "@veilo-ui/presets";
-import { Button, DockedSheet, ThemeSwitch, Toaster, TooltipProvider } from "@veilo-ui/ui";
+import { Button, DockedSheet, Toaster, TooltipProvider } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
 import { ExportButton } from "./header/export-drawer.tsx";
@@ -63,18 +63,13 @@ export function App() {
   );
   return (
     <TooltipProvider delayDuration={200}>
-      <main className={styles.app}>
+      <div className={styles.app}>
         <header className={styles.header}>
           <h1 className={styles.title}>Veilo playground</h1>
           <div className={styles.presets}>
             <PresetChips store={store} />
           </div>
-          {narrow ? null : (
-            <div className={styles.actions}>
-              {actions}
-              <ThemeSwitch />
-            </div>
-          )}
+          {narrow ? null : <div className={styles.actions}>{actions}</div>}
           {/* A frame request is for the visual tests and wins over a shared link. */}
           {frame ? null : <ShareNotice store={store} content={content} />}
         </header>
@@ -102,16 +97,15 @@ export function App() {
               height={0.55}
             >
               <div className={styles.sheet}>
-                <ThemeSwitch />
                 <Panel store={store} content={content} embedded />
               </div>
             </DockedSheet>
           </>
         ) : null}
-      </main>
+      </div>
       {/* Messages (the reset with its Undo, a shared link) appear under the top bar. Outside the
           app's grid, so the toaster's own element is not one more row in it. */}
-      <Toaster position="top-center" offset={narrow ? 100 : 72} />
+      <Toaster position="top-center" offset={narrow ? 164 : 136} />
     </TooltipProvider>
   );
 }

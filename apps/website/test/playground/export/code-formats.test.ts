@@ -2,7 +2,11 @@
 
 import { defaultSettings } from "@veilo-ui/core";
 import { describe, expect, it } from "vitest";
-import { CODE_FORMATS, codeFor, DEFAULT_CODE_FORMAT } from "../../../src/playground/export/code-formats.ts";
+import {
+  CODE_FORMATS,
+  codeFor,
+  DEFAULT_CODE_FORMAT,
+} from "../../../src/playground/export/code-formats.ts";
 import { defaultContent } from "../../../src/playground/state/content-store.ts";
 
 const context = {

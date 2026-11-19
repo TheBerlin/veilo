@@ -7,7 +7,11 @@ import { describe, expect, it } from "vitest";
 // Core's hand-driven scheduler, shared so both packages drive time the same way.
 import { fakeScheduler } from "../../../../../packages/core/test/support/scheduler.ts";
 import { loaderCss, settingsJson } from "../../../src/playground/export/code-formats.ts";
-import { appliedMessage, ExportTab, INVALID_JSON } from "../../../src/playground/panel/export-tab.tsx";
+import {
+  appliedMessage,
+  ExportTab,
+  INVALID_JSON,
+} from "../../../src/playground/panel/export-tab.tsx";
 import { decodeShareLink } from "../../../src/playground/share/share-link.ts";
 import { Stage } from "../../../src/playground/stage/stage.tsx";
 import { createContentStore } from "../../../src/playground/state/content-store.ts";

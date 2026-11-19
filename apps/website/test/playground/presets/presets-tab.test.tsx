@@ -5,10 +5,16 @@ import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { browserStorage } from "../../../src/playground/presets/browser-storage.ts";
-import { PRESETS_FILE_ERRORS, PRESETS_FILE_NAME } from "../../../src/playground/presets/presets-file.ts";
+import {
+  PRESETS_FILE_ERRORS,
+  PRESETS_FILE_NAME,
+} from "../../../src/playground/presets/presets-file.ts";
 import { EMPTY_LIST, NOT_KEPT, PresetsTab } from "../../../src/playground/presets/presets-tab.tsx";
 import { NAME_ERRORS } from "../../../src/playground/presets/user-presets.ts";
-import { createUserPresetsStore, USER_PRESETS_KEY } from "../../../src/playground/presets/user-presets-store.ts";
+import {
+  createUserPresetsStore,
+  USER_PRESETS_KEY,
+} from "../../../src/playground/presets/user-presets-store.ts";
 import { createSettingsStore } from "../../../src/playground/state/settings-store.ts";
 
 /**

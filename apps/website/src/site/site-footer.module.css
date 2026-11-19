@@ -1,0 +1,54 @@
+/* Footer: a hairline above, then one row: author, links, license. Side padding is the header's,
+   so the two line up; on a phone the parts stack. */
+.footer {
+  border-top: 1px solid var(--veilo-border);
+  background: var(--veilo-bg);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2) var(--veilo-space-4);
+  box-sizing: border-box;
+  padding: var(--veilo-space-4)
+    max(
+      var(--veilo-space-4),
+      env(safe-area-inset-right),
+      (100% - var(--veilo-grid-desktop-width) + 2 * var(--veilo-grid-desktop-margin)) / 2
+    )
+    max(var(--veilo-space-4), env(safe-area-inset-bottom))
+    max(
+      var(--veilo-space-4),
+      env(safe-area-inset-left),
+      (100% - var(--veilo-grid-desktop-width) + 2 * var(--veilo-grid-desktop-margin)) / 2
+    );
+}
+
+.author,
+.license {
+  margin: 0;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--veilo-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer a {
+  color: var(--veilo-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  border-radius: var(--veilo-radius-base);
+}
+
+.footer a:hover {
+  text-decoration-thickness: 2px;
+}

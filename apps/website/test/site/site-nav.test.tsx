@@ -3,7 +3,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { SiteNav } from "../../src/site/site-nav.tsx";
-import { GITHUB_URL, PLAYGROUND_URL } from "../../src/site/links.ts";
+import { GALLERY_URL, GITHUB_URL, PLAYGROUND_URL } from "../../src/site/links.ts";
 
 describe("SiteNav", () => {
   it("names the home link and carries the wordmark", () => {
@@ -15,11 +15,17 @@ describe("SiteNav", () => {
     render(<SiteNav />);
     // At the narrow test viewport the links wait behind the menu, so read them from the DOM.
     const hrefs = [...document.querySelectorAll("nav a")].map((a) => a.getAttribute("href"));
-    expect(hrefs).toEqual([PLAYGROUND_URL, "#gallery", GITHUB_URL]);
+    expect(hrefs).toEqual([PLAYGROUND_URL, GALLERY_URL, GITHUB_URL]);
   });
 
   it("has the theme switch", () => {
     render(<SiteNav />);
     expect(document.querySelector('[role="radiogroup"][aria-label="Theme"]')).toBeTruthy();
+  });
+
+  it("marks the page being shown as current", () => {
+    render(<SiteNav path={PLAYGROUND_URL} />);
+    const current = document.querySelectorAll('nav a[aria-current="page"]');
+    expect([...current].map((a) => a.textContent)).toEqual(["Playground"]);
   });
 });

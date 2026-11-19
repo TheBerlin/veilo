@@ -42,8 +42,9 @@ describe("App layout", () => {
     const stage = stageColumn().getBoundingClientRect();
     const panel = screen.getByRole("complementary", { name: "Settings" }).getBoundingClientRect();
     expect(panel.left).toBeGreaterThan(stage.right);
-    // The panel is as tall as the workspace, down to the bottom gutter.
-    expect(window.innerHeight - panel.bottom).toBe(16);
+    // The panel is as tall as the workspace, down to the bottom gutter. The app leaves room for the
+    // site header above it (64 px and a hairline), which these tests do not render.
+    expect(window.innerHeight - panel.bottom).toBe(16 + 64 + 1);
     // The playback controls are in view on the first screen, not below the fold.
     const bar = screen.getByRole("toolbar", { name: "Playback" }).getBoundingClientRect();
     expect(bar.bottom).toBeLessThanOrEqual(window.innerHeight);

@@ -168,8 +168,8 @@ describe("narrow screens", () => {
 });
 
 describe("links", () => {
-  it("point at the playground and the repository", () => {
-    expect(PLAYGROUND_URL).toMatch(/^https:\/\//);
+  it("point at the playground page and the repository", () => {
+    expect(PLAYGROUND_URL).toBe("/playground");
     expect(GITHUB_URL).toBe("https://github.com/TheBerlin/veilo");
   });
 });

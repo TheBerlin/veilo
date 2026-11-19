@@ -1,7 +1,7 @@
 // site-nav.tsx: the site header: the mark, the wordmark, the page links and the theme switch.
 
 import { Nav, ThemeSwitch } from "@veilo-ui/ui";
-import { GITHUB_URL, PLAYGROUND_URL } from "./links.ts";
+import { GALLERY_URL, GITHUB_URL, PLAYGROUND_URL } from "./links.ts";
 import styles from "./site-nav.module.css";
 
 /** The GitHub mark, shown beside its link's label. */
@@ -11,13 +11,21 @@ const githubIcon = (
   </svg>
 );
 
+/** Props of {@link SiteNav}. */
+export interface SiteNavProps {
+  /** The page being shown, so its link is marked as current. */
+  path?: string;
+}
+
 /**
  * The site header. The logo is the brand's single-ink mark, drawn as a mask over the text
  * color, so one file follows the light and dark themes.
  *
+ * @param props - The page being shown.
  * @returns The Nav with the site's links and the theme switch.
  */
-export function SiteNav() {
+export function SiteNav(props: SiteNavProps) {
+  const { path } = props;
   return (
     <Nav
       brand={
@@ -28,8 +36,8 @@ export function SiteNav() {
       }
       brandLabel="Veilo home"
       links={[
-        { label: "Playground", href: PLAYGROUND_URL },
-        { label: "Gallery", href: "#gallery" },
+        { label: "Playground", href: PLAYGROUND_URL, current: path === PLAYGROUND_URL },
+        { label: "Gallery", href: GALLERY_URL },
         { label: "GitHub", href: GITHUB_URL, icon: githubIcon },
       ]}
       trailing={<ThemeSwitch />}

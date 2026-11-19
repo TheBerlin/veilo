@@ -1,7 +1,11 @@
 // Tests for src/state/content-store.ts, in Node.
 
 import { describe, expect, it, vi } from "vitest";
-import { createContentStore, defaultContent, parseContent } from "../../../src/playground/state/content-store.ts";
+import {
+  createContentStore,
+  defaultContent,
+  parseContent,
+} from "../../../src/playground/state/content-store.ts";
 
 describe("parseContent", () => {
   it("keeps valid parts and defaults the rest", () => {
