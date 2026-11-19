@@ -56,7 +56,17 @@ export function ControlGroups(props: ControlGroupsProps) {
         if (visible.length === 0) return null;
         return (
           <fieldset key={group.title} className={styles.group}>
-            <legend className={styles.legend}>{group.title}</legend>
+            {/* A title that only repeats its one control's label ("Effect" over "Effect") is kept
+                for screen readers and not shown twice. */}
+            <legend
+              className={
+                group.controls.length === 1 && group.controls[0]?.label === group.title
+                  ? styles.legendHidden
+                  : styles.legend
+              }
+            >
+              {group.title}
+            </legend>
             {visible.map((control) =>
               control.kind === "number" ? (
                 <NumberField key={control.key} store={store} control={control} />

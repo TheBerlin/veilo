@@ -1,5 +1,5 @@
-/* Bar: a raised strip docked under the stage, as wide as the controls need and centered. The
-   playback row is on top; the preview tools are a quieter row below it. */
+/* Bar: a raised strip docked under the stage, as wide as the controls need and centered: one row of
+   playback controls that wraps on a narrow screen. */
 .bar {
   display: grid;
   /* The track may be narrower than its content, which then wraps; without this it grows to the
@@ -8,7 +8,7 @@
   gap: var(--veilo-space-1-5);
   box-sizing: border-box;
   width: 100%;
-  max-width: 840px;
+  max-width: 960px;
   justify-self: center;
   padding: var(--veilo-space-1-5) var(--veilo-space-2);
   border: 1px solid var(--veilo-border);
@@ -34,18 +34,24 @@
 }
 
 .scrubber {
-  flex: 1 1 12rem;
-  min-width: 8rem;
+  flex: 1 1 6rem;
+  min-width: 6rem;
 }
 
-/* Preview tools: Loop, Reduced motion and the image picker, under a hairline. */
-.tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--veilo-space-1) var(--veilo-space-2);
-  padding-top: var(--veilo-space-1-5);
-  border-top: 1px solid var(--veilo-border);
+/* Preview options: the popover holds the two switches stacked, then a quiet hint. Its selector is
+   the more specific one, so the popover's own width does not win. */
+.options[data-state] {
+  display: grid;
+  gap: var(--veilo-space-2);
+  width: auto;
+  max-width: calc(var(--veilo-space-16) * 3);
+}
+
+.hint {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
 }
 
 /* Readout and label: monospace digits, so the numbers do not jitter while playing. */
@@ -60,6 +66,6 @@
 
 /* The label has a fixed width, so the scrubber does not change length as the words change. */
 .state {
-  min-width: 14ch;
+  min-width: 12ch;
   color: var(--veilo-text);
 }

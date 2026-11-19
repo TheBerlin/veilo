@@ -6,6 +6,13 @@ import { useStore } from "zustand";
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { DEFAULT_RATIO, toRatioId, type AspectRatioId } from "../stage/aspect-ratio.ts";
 import {
+  loadImageFile,
+  loadImageUrl,
+  NOT_AN_IMAGE,
+  SAMPLE_IMAGES,
+  type CardImage,
+} from "../stage/image-source.ts";
+import {
   CARD_LAYOUTS,
   cleanText,
   cleanWidth,
@@ -33,10 +40,33 @@ export interface Content {
   widths: Partial<Record<CardLayoutId, number>>;
 }
 
-/** The store's state: the content plus the actions that change it. */
+/**
+ * The photo on the card. It is the user's own file or one of the samples, so it is never saved or
+ * shared: only the content above is.
+ */
+export interface PhotoSource {
+  /** The decoded picture, or `null` for the drawn placeholder. */
+  image: CardImage | null;
+  /** The id of the chosen sample, or `null` for the placeholder or the user's own file. */
+  sample: string | null;
+  /** The message for a file that was not an image, or `null`. */
+  error: string | null;
+  /** Counts the pictures that arrived, so a listener knows to rebuild the card. */
+  loads: number;
+}
+
+/** The store's state: the content, the photo, and the actions that change them. */
 export interface ContentState {
   /** The current content. */
   content: Content;
+  /** The photo on the card. */
+  photo: PhotoSource;
+  /** Shows one of the samples; an unknown id does nothing. */
+  pickSample: (id: string) => void;
+  /** Shows the user's own image file; a file that is not an image sets `photo.error`. */
+  pickFile: (file: File) => void;
+  /** Goes back to the drawn placeholder. */
+  clearPhoto: () => void;
   /** Changes the image area's ratio. */
   setRatio: (ratio: AspectRatioId) => void;
   /** Changes the card layout. */
@@ -149,56 +179,83 @@ export function parseContent(input: unknown): Content {
  * @returns The store.
  */
 export function createContentStore(initial?: unknown): ContentStore {
-  return createStore<ContentState>()((setState) => ({
-    content: initial === undefined ? defaultContent() : parseContent(initial),
-    setRatio: (ratio) =>
-      setState((state) =>
-        // The same state object when nothing changes, so subscribers stay asleep.
-        state.content.ratio === ratio ? state : { content: { ...state.content, ratio } },
-      ),
-    setLayout: (layout) =>
-      setState((state) =>
-        state.content.layout === layout ? state : { content: { ...state.content, layout } },
-      ),
-    setText: (layout, slot, text) =>
-      setState((state) => {
-        const part = CARD_LAYOUTS[layout].texts.find((item) => item.slot === slot);
-        if (!part) return state;
-        const cleaned = cleanText(text);
-        const edits = { ...state.content.texts[layout] };
-        if (cleaned === part.text) delete edits[slot];
-        else edits[slot] = cleaned;
-        const before = state.content.texts[layout]?.[slot];
-        // The same state object when nothing changes, so subscribers stay asleep.
-        if (before === edits[slot]) return state;
-        const texts = { ...state.content.texts };
-        if (Object.keys(edits).length > 0) texts[layout] = edits;
-        else delete texts[layout];
-        return { content: { ...state.content, texts } };
-      }),
-    setWidth: (layout, width) =>
-      setState((state) => {
-        const cleaned = cleanWidth(width);
-        const widths = { ...state.content.widths };
-        if (cleaned === CARD_LAYOUTS[layout].width) delete widths[layout];
-        else widths[layout] = cleaned;
-        // The same state object when nothing changes, so subscribers stay asleep.
-        if (widths[layout] === state.content.widths[layout]) return state;
-        return { content: { ...state.content, widths } };
-      }),
-    resetLayout: (layout) =>
-      setState((state) => {
-        if (!state.content.texts[layout] && state.content.widths[layout] === undefined) {
-          return state;
-        }
-        const texts = { ...state.content.texts };
-        const widths = { ...state.content.widths };
-        delete texts[layout];
-        delete widths[layout];
-        return { content: { ...state.content, texts, widths } };
-      }),
-    load: (input) => setState({ content: parseContent(input) }),
-  }));
+  return createStore<ContentState>()((setState) => {
+    // Only the latest request may win when loads overlap. Per store, so nothing is shared.
+    let request = 0;
+    const show = (load: Promise<CardImage | null>, sample: string | null) => {
+      const id = ++request;
+      load.then(
+        (image) => {
+          if (id !== request) return;
+          setState((state) => ({
+            photo: { image, sample, error: null, loads: state.photo.loads + 1 },
+          }));
+        },
+        () => {
+          if (id === request) {
+            setState((state) => ({ photo: { ...state.photo, error: NOT_AN_IMAGE } }));
+          }
+        },
+      );
+    };
+    return {
+      photo: { image: null, sample: null, error: null, loads: 0 },
+      pickSample: (id) => {
+        const sample = SAMPLE_IMAGES.find((item) => item.id === id);
+        if (sample) show(loadImageUrl(sample.url), id);
+      },
+      pickFile: (file) => show(loadImageFile(file), null),
+      clearPhoto: () => show(Promise.resolve(null), null),
+      content: initial === undefined ? defaultContent() : parseContent(initial),
+      setRatio: (ratio) =>
+        setState((state) =>
+          // The same state object when nothing changes, so subscribers stay asleep.
+          state.content.ratio === ratio ? state : { content: { ...state.content, ratio } },
+        ),
+      setLayout: (layout) =>
+        setState((state) =>
+          state.content.layout === layout ? state : { content: { ...state.content, layout } },
+        ),
+      setText: (layout, slot, text) =>
+        setState((state) => {
+          const part = CARD_LAYOUTS[layout].texts.find((item) => item.slot === slot);
+          if (!part) return state;
+          const cleaned = cleanText(text);
+          const edits = { ...state.content.texts[layout] };
+          if (cleaned === part.text) delete edits[slot];
+          else edits[slot] = cleaned;
+          const before = state.content.texts[layout]?.[slot];
+          // The same state object when nothing changes, so subscribers stay asleep.
+          if (before === edits[slot]) return state;
+          const texts = { ...state.content.texts };
+          if (Object.keys(edits).length > 0) texts[layout] = edits;
+          else delete texts[layout];
+          return { content: { ...state.content, texts } };
+        }),
+      setWidth: (layout, width) =>
+        setState((state) => {
+          const cleaned = cleanWidth(width);
+          const widths = { ...state.content.widths };
+          if (cleaned === CARD_LAYOUTS[layout].width) delete widths[layout];
+          else widths[layout] = cleaned;
+          // The same state object when nothing changes, so subscribers stay asleep.
+          if (widths[layout] === state.content.widths[layout]) return state;
+          return { content: { ...state.content, widths } };
+        }),
+      resetLayout: (layout) =>
+        setState((state) => {
+          if (!state.content.texts[layout] && state.content.widths[layout] === undefined) {
+            return state;
+          }
+          const texts = { ...state.content.texts };
+          const widths = { ...state.content.widths };
+          delete texts[layout];
+          delete widths[layout];
+          return { content: { ...state.content, texts, widths } };
+        }),
+      load: (input) => setState({ content: parseContent(input) }),
+    };
+  });
 }
 
 /**

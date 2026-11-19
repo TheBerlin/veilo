@@ -1,7 +1,7 @@
 // Tests for src/stage/transport-bar.tsx, through the stage, in Chromium with a hand-driven clock.
 
 import { defaultSettings } from "@veilo-ui/core";
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 // Core's hand-driven scheduler, shared so both packages drive time the same way.
@@ -101,10 +101,11 @@ describe("TransportBar", () => {
     expect(status()).toBe("Revealing 3%");
   });
 
-  it("Play sequence restarts from Loading, and Loop repeats the sequence", async () => {
+  it("Play sequence restarts from Loading, and Loop preview repeats the sequence", async () => {
     const { status, clock } = renderStage();
     await runUntil(clock, () => status() === "Revealed");
-    await userEvent.click(screen.getByRole("switch", { name: "Loop" }));
+    await userEvent.click(screen.getByRole("button", { name: "Preview options" }));
+    await userEvent.click(screen.getByRole("switch", { name: "Loop preview" }));
     expect(status()).toBe("Loading");
     await run(clock, (settings.hold + settings.rDur) * 1000 + 600);
     await waitFor(() => expect(status()).toBe("Revealed"));
@@ -117,6 +118,7 @@ describe("TransportBar", () => {
 
   it("previews reduced motion: a still skeleton, then the content at once", async () => {
     const { card, status, clock } = renderStage();
+    await userEvent.click(screen.getByRole("button", { name: "Preview options" }));
     const motion = screen.getByRole("switch", { name: "Reduced motion" });
     expect(motion.getAttribute("aria-checked")).toBe("false");
     await userEvent.click(motion);
@@ -139,6 +141,7 @@ describe("TransportBar", () => {
 
   it("animates again when the preview is turned off", async () => {
     const { card, status } = renderStage();
+    await userEvent.click(screen.getByRole("button", { name: "Preview options" }));
     const motion = screen.getByRole("switch", { name: "Reduced motion" });
     await userEvent.click(motion);
     await userEvent.click(motion);
@@ -153,5 +156,21 @@ describe("TransportBar", () => {
       .filter((text) => text.includes("data-veilo-skeleton"));
     expect(skeletonCss).toHaveLength(1);
     expect(skeletonCss[0]).not.toContain("prefers-reduced-motion");
+  });
+});
+
+describe("TransportBar options", () => {
+  it("keeps Loop preview and Reduced motion in a popover, so the bar is one row", async () => {
+    const { clock } = renderStage();
+    expect(clock).toBeTruthy();
+    expect(screen.queryByRole("switch", { name: "Loop preview" })).toBeNull();
+    const bar = screen.getByRole("toolbar", { name: "Playback" });
+    const row = bar.getBoundingClientRect().height;
+    await userEvent.click(screen.getByRole("button", { name: "Preview options" }));
+    const popover = await screen.findByRole("dialog", { name: "Preview options" });
+    expect(within(popover).getByRole("switch", { name: "Loop preview" })).toBeTruthy();
+    expect(within(popover).getByRole("switch", { name: "Reduced motion" })).toBeTruthy();
+    // The popover floats: the bar does not grow.
+    expect(bar.getBoundingClientRect().height).toBe(row);
   });
 });

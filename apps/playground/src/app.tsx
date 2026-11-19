@@ -5,6 +5,8 @@ import { presetSettings } from "@veilo-ui/presets";
 import { ThemeSwitch, TooltipProvider } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
+import { ExportButton } from "./header/export-drawer.tsx";
+import { MyPresetsMenu } from "./header/my-presets-menu.tsx";
 import { PresetChips } from "./header/preset-chips.tsx";
 import { ResetButton } from "./header/reset-button.tsx";
 import { Panel } from "./panel/panel.tsx";
@@ -55,7 +57,9 @@ export function App() {
             <PresetChips store={store} />
           </div>
           <div className={styles.actions}>
+            <MyPresetsMenu store={store} presets={presets} />
             <ResetButton store={store} content={content} messageClassName={styles.rowNotice} />
+            <ExportButton store={store} content={content} />
             <ThemeSwitch />
           </div>
           {/* A frame request is for the visual tests and wins over a shared link. */}
@@ -66,7 +70,7 @@ export function App() {
           <div className={styles.stageColumn}>
             <Stage store={store} content={content} frame={frame?.p} />
           </div>
-          <Panel store={store} content={content} presets={presets} />
+          <Panel store={store} content={content} />
         </div>
       </main>
     </TooltipProvider>

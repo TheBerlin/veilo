@@ -3,20 +3,12 @@
 
 import type { Reveal, RevealOptions, Settings } from "@veilo-ui/core";
 import { watchTheme } from "@veilo-ui/ui";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { LOADER_KEYS } from "../panel/controls.ts";
 import { createContentStore, useContent, type ContentStore } from "../state/content-store.ts";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import { ratioValue } from "./aspect-ratio.ts";
-import { CARD_LAYOUTS } from "./card-layouts.ts";
-import { ImagePicker } from "./image-picker.tsx";
-import {
-  loadImageFile,
-  loadImageUrl,
-  NOT_AN_IMAGE,
-  SAMPLE_IMAGES,
-  type CardImage,
-} from "./image-source.ts";
+import { type CardImage } from "./image-source.ts";
 import styles from "./stage.module.css";
 import { TestCard } from "./test-card.tsx";
 import { TransportBar } from "./transport-bar.tsx";
@@ -82,7 +74,6 @@ export function Stage(props: StageProps) {
     // A fixed-frame request holds the first card only; any later change plays as usual.
     start: props.frame === undefined ? "sequence" : "frame",
   });
-  const [error, setError] = useState<string | null>(null);
   const [reveal, setReveal] = useState<Reveal | null>(null);
   const [content] = useState(() => props.content ?? createContentStore());
   const ratioId = useContent(content, "ratio");
@@ -94,8 +85,6 @@ export function Stage(props: StageProps) {
   // the full effect by default (the spec's rule), whatever the viewer's own setting.
   const [reducedMotion, setReducedMotion] = useState(false);
   const duration = useSetting(store, "rDur");
-  // Only the latest request may win when loads overlap.
-  const request = useRef(0);
 
   // Collect the keys changed within one frame, then rebuild the card once.
   useEffect(() => {
@@ -126,19 +115,17 @@ export function Stage(props: StageProps) {
     };
   }, [store]);
 
-  const show = (load: Promise<CardImage | null>, sample: string | null) => {
-    const id = ++request.current;
-    load.then(
-      (image) => {
-        if (id !== request.current) return;
-        setError(null);
+  // A new picture (a sample, the user's file, or the placeholder again) needs a new card, which
+  // plays the full sequence. The Content tab picks it; the store decodes it.
+  useEffect(
+    () =>
+      content.subscribe((next, previous) => {
+        if (next.photo.loads === previous.photo.loads) return;
+        const { image, sample } = next.photo;
         setPhoto((current) => ({ key: current.key + 1, image, sample, start: "sequence" }));
-      },
-      () => {
-        if (id === request.current) setError(NOT_AN_IMAGE);
-      },
-    );
-  };
+      }),
+    [content],
+  );
 
   // A new ratio or layout needs a new card (both are read at mount), which plays the full
   // sequence.
@@ -181,12 +168,6 @@ export function Stage(props: StageProps) {
   // A theme change recolors the grid canvas in place (spec 1.4); CSS handles the rest.
   useEffect(() => (reveal ? watchTheme(() => reveal.redraw()) : undefined), [reveal]);
 
-  const onSample = (id: string) => {
-    const sample = SAMPLE_IMAGES.find((item) => item.id === id);
-    if (sample) show(loadImageUrl(sample.url), id);
-  };
-  const onFile = (file: File) => show(loadImageFile(file), null);
-  const onReset = () => show(Promise.resolve(null), null);
   // The option is read when a reveal is created, so a new card plays the full sequence with it.
   const onReducedMotion = (next: boolean) => {
     setReducedMotion(next);
@@ -206,7 +187,7 @@ export function Stage(props: StageProps) {
           width={widths[layoutId]}
           image={photo.image}
           ratio={ratioValue(ratioId, photo.image)}
-          onImageDrop={onFile}
+          onImageDrop={(file) => content.getState().pickFile(file)}
           start={photo.start}
           frame={props.frame}
           loop={loop}
@@ -220,18 +201,7 @@ export function Stage(props: StageProps) {
         onLoopChange={setLoop}
         reducedMotion={reducedMotion}
         onReducedMotionChange={onReducedMotion}
-      >
-        <ImagePicker
-          selectedSample={photo.sample}
-          error={error}
-          onSample={onSample}
-          onFile={onFile}
-          onReset={onReset}
-          // Only layouts with a large image have a ratio to choose.
-          ratio={CARD_LAYOUTS[layoutId].hasRatio ? ratioId : undefined}
-          onRatioChange={(ratio) => content.getState().setRatio(ratio)}
-        />
-      </TransportBar>
+      />
     </div>
   );
 }

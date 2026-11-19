@@ -1,16 +1,13 @@
-// panel.tsx: the control panel beside the stage, with the Loader, Reveal, Content, Presets and
-// Export tabs.
+// panel.tsx: the control panel beside the stage, with the Loader, Reveal and Content tabs. Saved
+// presets and export are not tabs: they are opened from the top bar.
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@veilo-ui/ui";
 import { useState } from "react";
-import { PresetsTab } from "../presets/presets-tab.tsx";
-import type { UserPresetsStore } from "../presets/user-presets-store.ts";
 import { createContentStore, type ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { ColorFields, InkColorField } from "./color-fields.tsx";
 import { ContentTab } from "./content-tab.tsx";
 import { ControlGroups } from "./control-groups.tsx";
-import { ExportTab } from "./export-tab.tsx";
 import { LOADER_GROUPS, REVEAL_GROUPS } from "./controls.ts";
 import styles from "./panel.module.css";
 
@@ -18,17 +15,15 @@ import styles from "./panel.module.css";
 export interface PanelProps {
   /** The settings store the controls read and write. */
   store: SettingsStore;
-  /** The user's saved presets, for the Presets tab. */
-  presets: UserPresetsStore;
-  /** The preview content, for the Export tab's share link. */
+  /** The preview content (card, image and text) the Content tab edits. */
   content?: ContentStore;
 }
 
 /**
- * The control panel. Side effects: writes settings to the store as controls change, and saved
- * presets to their store from the Presets tab.
+ * The control panel. Side effects: writes settings to the store as controls change, and the
+ * content to its store from the Content tab.
  *
- * @param props - The settings store and the saved presets.
+ * @param props - The settings store and the content store.
  * @returns The panel.
  */
 export function Panel(props: PanelProps) {
@@ -37,13 +32,11 @@ export function Panel(props: PanelProps) {
   return (
     <aside className={styles.panel} aria-label="Settings">
       <Tabs defaultValue="loader" className={styles.tabs}>
-        {/* Stretched: five tabs fit on one row in the panel only this way. */}
+        {/* Stretched: the tabs share the panel's width. */}
         <TabsList aria-label="Settings sections" stretch className={styles.tabBar}>
           <TabsTrigger value="loader">Loader</TabsTrigger>
           <TabsTrigger value="reveal">Reveal</TabsTrigger>
           <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="presets">Presets</TabsTrigger>
-          <TabsTrigger value="export">Export</TabsTrigger>
         </TabsList>
         <TabsContent value="loader" className={styles.content}>
           <ControlGroups store={props.store} groups={LOADER_GROUPS} />
@@ -55,12 +48,6 @@ export function Panel(props: PanelProps) {
         </TabsContent>
         <TabsContent value="content" className={styles.content}>
           <ContentTab content={content} />
-        </TabsContent>
-        <TabsContent value="presets" className={styles.content}>
-          <PresetsTab store={props.store} presets={props.presets} />
-        </TabsContent>
-        <TabsContent value="export" className={styles.content}>
-          <ExportTab store={props.store} content={content} />
         </TabsContent>
       </Tabs>
     </aside>

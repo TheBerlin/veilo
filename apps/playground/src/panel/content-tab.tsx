@@ -1,9 +1,12 @@
-// content-tab.tsx: the Content tab: what the preview card shows. The layout picker and one text
-// field per part of the layout, the card width and a button that resets them.
+// content-tab.tsx: the Content tab: what the preview card shows. The card (layout and width), the
+// image (a sample, the user's own file, and its ratio), one text field per part of the layout, and
+// a button that resets the text and width.
 
 import { Button, Select, Slider, TextField } from "@veilo-ui/ui";
+import { useStore } from "zustand";
 import type { ContentStore } from "../state/content-store.ts";
 import { useContent } from "../state/content-store.ts";
+import { ImagePicker } from "../stage/image-picker.tsx";
 import {
   CARD_LAYOUTS,
   LAYOUT_IDS,
@@ -37,6 +40,8 @@ export function ContentTab(props: ContentTabProps) {
   const edits = useContent(props.content, "texts")[layoutId];
   const width = useContent(props.content, "widths")[layoutId];
   const layout = CARD_LAYOUTS[layoutId];
+  const photo = useStore(props.content, (state) => state.photo);
+  const ratio = useContent(props.content, "ratio");
   return (
     <>
       <fieldset className={styles.group}>
@@ -58,6 +63,19 @@ export function ContentTab(props: ContentTabProps) {
           step={WIDTH_STEP}
           formatValue={(value) => `${value} px`}
           onValueChange={(next) => props.content.getState().setWidth(layoutId, next)}
+        />
+      </fieldset>
+      <fieldset className={styles.group}>
+        <legend className={styles.legend}>Image</legend>
+        <ImagePicker
+          selectedSample={photo.sample}
+          error={photo.error}
+          onSample={(id) => props.content.getState().pickSample(id)}
+          onFile={(file) => props.content.getState().pickFile(file)}
+          onReset={() => props.content.getState().clearPhoto()}
+          // Only layouts with a large image have a ratio to choose.
+          ratio={layout.hasRatio ? ratio : undefined}
+          onRatioChange={(next) => props.content.getState().setRatio(next)}
         />
       </fieldset>
       <fieldset className={styles.group}>

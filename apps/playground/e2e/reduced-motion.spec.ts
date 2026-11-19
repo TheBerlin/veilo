@@ -185,6 +185,8 @@ test.describe("without reduced motion (controls)", () => {
 
   test("the playground's reduced-motion preview shows the reduced experience", async ({ page }) => {
     await page.goto("/");
+    // The switch is in the Preview options popover.
+    await page.getByRole("button", { name: "Preview options" }).click();
     await page.getByRole("switch", { name: "Reduced motion" }).click();
     await expect(page.getByRole("status")).toHaveText("Loading");
     await page.locator('[data-veilo-slot="heading"][data-veilo-skeleton]').waitFor();

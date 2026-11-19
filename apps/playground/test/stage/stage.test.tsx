@@ -1,23 +1,35 @@
-// Tests for src/stage/stage.tsx: choosing the card's photo, in Chromium with a hand-driven clock.
+// Tests for src/stage/stage.tsx: choosing the card's photo (from the Content tab) and its ratio,
+// in Chromium with a hand-driven clock.
 
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { TooltipProvider } from "@veilo-ui/ui";
 import { describe, expect, it } from "vitest";
 // Core's hand-driven scheduler, shared so both packages drive time the same way.
 import { fakeScheduler } from "../../../../packages/core/test/support/scheduler.ts";
+import { Panel } from "../../src/panel/panel.tsx";
 import { NOT_AN_IMAGE } from "../../src/stage/image-source.ts";
 import { Stage } from "../../src/stage/stage.tsx";
 import { createContentStore } from "../../src/state/content-store.ts";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
 /**
- * Renders the stage with a fake clock and lets the first sequence's hold run out.
+ * Renders the stage with the panel beside it, as the app does, with a fake clock, and opens the
+ * Content tab, where the image controls are.
  *
- * @returns The card's photo getter and the clock.
+ * @param content - The content store both share. Defaults to a fresh one.
+ * @returns The card and photo getters and the clock.
  */
-function renderStage() {
+async function renderStage(content = createContentStore()) {
   const clock = fakeScheduler();
-  render(<Stage store={createSettingsStore()} revealOptions={{ scheduler: clock.scheduler }} />);
+  const store = createSettingsStore();
+  render(
+    <TooltipProvider>
+      <Stage store={store} content={content} revealOptions={{ scheduler: clock.scheduler }} />
+      <Panel store={store} content={content} />
+    </TooltipProvider>,
+  );
+  await userEvent.click(screen.getByRole("tab", { name: "Content" }));
   const card = () => screen.getByRole("button", { name: /Test card/ });
   const photo = () => card().querySelector<HTMLCanvasElement>("[data-veilo-slot=photo]")!;
   return { card, photo, clock };
@@ -64,7 +76,7 @@ describe("Stage image ratio", () => {
 
   it("starts square, and a chosen ratio rebuilds the card in that shape", async () => {
     const content = createContentStore();
-    render(<Stage store={createSettingsStore()} content={content} />);
+    await renderStage(content);
     const card = () => screen.getByRole("button", { name: /Test card/ });
     const photo = () => card().querySelector<HTMLCanvasElement>("[data-veilo-slot=photo]")!;
     expect(shape(photo())).toBeCloseTo(1, 2);
@@ -78,7 +90,7 @@ describe("Stage image ratio", () => {
 
   it("follows the image's own shape, kept within 3:1", async () => {
     const content = createContentStore({ ratio: "image" });
-    render(<Stage store={createSettingsStore()} content={content} />);
+    await renderStage(content);
     const photo = () =>
       screen
         .getByRole("button", { name: /Test card/ })
@@ -98,8 +110,8 @@ describe("Stage image ratio", () => {
 });
 
 describe("Stage image source", () => {
-  it("starts on the placeholder with no sample chosen", () => {
-    renderStage();
+  it("starts on the placeholder with no sample chosen", async () => {
+    await renderStage();
     expect(screen.getByRole("button", { name: /Sample/ }).getAttribute("aria-pressed")).toBe(
       "false",
     );
@@ -107,7 +119,7 @@ describe("Stage image source", () => {
   });
 
   it("shows a sample on a new card that restarts in the Loading view", async () => {
-    const { card, photo, clock } = renderStage();
+    const { card, photo, clock } = await renderStage();
     const first = card();
     clock.advance(10_000);
     await userEvent.click(screen.getByRole("button", { name: /Sample/ }));
@@ -124,7 +136,7 @@ describe("Stage image source", () => {
   });
 
   it("draws a chosen file, and Reset goes back to the placeholder", async () => {
-    const { photo } = renderStage();
+    const { photo } = await renderStage();
     const placeholder = center(photo());
     const input = document.querySelector<HTMLInputElement>("input[type=file]")!;
     await userEvent.upload(input, await pngFile("rgb(0, 255, 0)"));
@@ -134,7 +146,7 @@ describe("Stage image source", () => {
   });
 
   it("loads a file dropped on the image area", async () => {
-    const { photo } = renderStage();
+    const { photo } = await renderStage();
     const transfer = new DataTransfer();
     transfer.items.add(await pngFile("rgb(0, 0, 255)"));
     photo().dispatchEvent(new DragEvent("drop", { bubbles: true, dataTransfer: transfer }));
@@ -142,7 +154,7 @@ describe("Stage image source", () => {
   });
 
   it("says when a file is not an image and keeps the current photo", async () => {
-    const { card } = renderStage();
+    const { card } = await renderStage();
     const before = card();
     const input = document.querySelector<HTMLInputElement>("input[type=file]")!;
     // applyAccept off: the picker's filter is only a hint, a dropped or forced file can be anything.

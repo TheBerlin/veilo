@@ -6,7 +6,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { TooltipProvider } from "@veilo-ui/ui";
 import { Panel } from "../../src/panel/panel.tsx";
-import { createUserPresetsStore } from "../../src/presets/user-presets-store.ts";
 import { CARD_LAYOUTS, LAYOUT_IDS } from "../../src/stage/card-layouts.ts";
 import { Stage } from "../../src/stage/stage.tsx";
 import { TestCard } from "../../src/stage/test-card.tsx";
@@ -51,7 +50,7 @@ describe("Content tab text", () => {
       <>
         <Stage store={store} content={content} />
         <TooltipProvider>
-          <Panel store={store} presets={createUserPresetsStore(null)} content={content} />
+          <Panel store={store} content={content} />
         </TooltipProvider>
       </>,
     );
@@ -135,13 +134,12 @@ describe("Content tab", () => {
       <>
         <Stage store={store} content={content} />
         <TooltipProvider>
-          <Panel store={store} presets={createUserPresetsStore(null)} content={content} />
+          <Panel store={store} content={content} />
         </TooltipProvider>
       </>,
     );
-    expect(screen.getByLabelText("Image ratio")).toBeTruthy();
-
     await user.click(screen.getByRole("tab", { name: "Content" }));
+    expect(screen.getByLabelText("Image ratio")).toBeTruthy();
     await user.selectOptions(screen.getByLabelText("Layout"), "list");
 
     expect(content.getState().content.layout).toBe("list");
@@ -151,5 +149,29 @@ describe("Content tab", () => {
 
     await user.selectOptions(screen.getByLabelText("Layout"), "article");
     expect(screen.getByLabelText("Image ratio")).toBeTruthy();
+  });
+});
+
+describe("Content tab image", () => {
+  it("offers the samples, the user's own file and the ratio, and shows the chosen sample", async () => {
+    const user = userEvent.setup();
+    const store = createSettingsStore();
+    const content = createContentStore();
+    render(
+      <TooltipProvider>
+        <Panel store={store} content={content} />
+      </TooltipProvider>,
+    );
+    await user.click(screen.getByRole("tab", { name: "Content" }));
+    // The tab's "Image" group and the picker row inside it have the same name.
+    const group = screen.getAllByRole("group", { name: "Image" }).at(-1)!;
+    expect(within(group).getByRole("button", { name: "Use my own image" })).toBeTruthy();
+    expect(screen.getByLabelText("Image ratio")).toBeTruthy();
+    const sample = within(group).getAllByRole("button", { pressed: false })[0]!;
+    await user.click(sample);
+    await waitFor(() => expect(content.getState().photo.sample).not.toBeNull());
+    expect(content.getState().photo.loads).toBe(1);
+    await user.click(within(group).getByRole("button", { name: "Reset" }));
+    await waitFor(() => expect(content.getState().photo.sample).toBeNull());
   });
 });

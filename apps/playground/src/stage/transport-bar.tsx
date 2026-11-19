@@ -1,10 +1,10 @@
-// transport-bar.tsx: the playback controls under the stage (spec 1.4): Play sequence, Replay
-// reveal, Loading state, the scrubber, the time readout and the state label on top, and below them
-// Loop, the reduced-motion preview and the extra tools.
+// transport-bar.tsx: the playback controls under the stage (spec 1.4), in one row: Play sequence,
+// Replay reveal, Loading state, the scrubber, the time readout and the state label, then an
+// Options button that opens Loop and the reduced-motion preview.
 
 import type { Reveal, RevealState } from "@veilo-ui/core";
-import { Button, Scrubber, Toggle } from "@veilo-ui/ui";
-import { useEffect, useState, type ReactNode } from "react";
+import { Button, Popover, PopoverContent, PopoverTrigger, Scrubber, Toggle } from "@veilo-ui/ui";
+import { useEffect, useState } from "react";
 import styles from "./transport-bar.module.css";
 
 /** Props of {@link TransportBar}. */
@@ -21,8 +21,6 @@ export interface TransportBarProps {
   reducedMotion: boolean;
   /** Called with the new reduced-motion flag; the stage then rebuilds the card. */
   onReducedMotionChange: (reducedMotion: boolean) => void;
-  /** Extra tools shown at the end of the bar, such as the image picker. */
-  children?: ReactNode;
 }
 
 /**
@@ -53,7 +51,7 @@ export function timeReadout(progress: number, duration: number): string {
 /**
  * The transport bar. Side effects: listens to the reveal's events and drives it.
  *
- * @param props - The reveal, duration, loop and reduced-motion flags, and extra tools.
+ * @param props - The reveal, duration, and the loop and reduced-motion flags.
  * @returns The toolbar.
  */
 export function TransportBar(props: TransportBarProps) {
@@ -114,16 +112,30 @@ export function TransportBar(props: TransportBarProps) {
         <span className={styles.state} role="status">
           {stateLabel(state, progress)}
         </span>
-      </div>
-      <div className={styles.tools}>
-        <Toggle label="Loop" checked={loop} onCheckedChange={onLoop} disabled={!reveal} />
-        {/* Not disabled without a reveal: it rebuilds the card, which makes a new one. */}
-        <Toggle
-          label="Reduced motion"
-          checked={props.reducedMotion}
-          onCheckedChange={props.onReducedMotionChange}
-        />
-        {props.children}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button size="sm" variant="ghost">
+              Preview options
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent aria-label="Preview options" side="top" className={styles.options}>
+            <Toggle
+              label="Loop preview"
+              checked={loop}
+              onCheckedChange={onLoop}
+              disabled={!reveal}
+            />
+            {/* Not disabled without a reveal: it rebuilds the card, which makes a new one. */}
+            <Toggle
+              label="Reduced motion"
+              checked={props.reducedMotion}
+              onCheckedChange={props.onReducedMotionChange}
+            />
+            <p className={styles.hint}>
+              Reduced motion shows what visitors who ask for it will see.
+            </p>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

@@ -9,7 +9,6 @@ import { describe, expect, it } from "vitest";
 import { fakeScheduler } from "../../../../packages/core/test/support/scheduler.ts";
 import { TooltipProvider } from "@veilo-ui/ui";
 import { Panel } from "../../src/panel/panel.tsx";
-import { createUserPresetsStore } from "../../src/presets/user-presets-store.ts";
 import { Stage, startAfterChange } from "../../src/stage/stage.tsx";
 import { createSettingsStore } from "../../src/state/settings-store.ts";
 
@@ -27,7 +26,7 @@ function renderApp() {
     <>
       <Stage store={store} revealOptions={{ scheduler: clock.scheduler }} />
       <TooltipProvider>
-        <Panel store={store} presets={createUserPresetsStore(null)} />
+        <Panel store={store} />
       </TooltipProvider>
     </>,
   );
@@ -189,5 +188,28 @@ describe("restart after a change", () => {
     const second = card();
     await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 20)));
     expect(card()).toBe(second);
+  });
+});
+
+describe("Panel group titles", () => {
+  it("does not draw a title that only repeats its one control's label", () => {
+    const store = createSettingsStore();
+    render(
+      <TooltipProvider>
+        <Panel store={store} />
+      </TooltipProvider>,
+    );
+    // The Loader tab's first group is "Effect" with one control, also labelled "Effect".
+    const legend = [...document.querySelectorAll("legend")].find(
+      (item) => item.textContent === "Effect",
+    )!;
+    const hidden = getComputedStyle(legend);
+    expect(hidden.position).toBe("absolute");
+    expect(hidden.width).toBe("1px");
+    // A title with several controls is still drawn.
+    const timing = [...document.querySelectorAll("legend")].find(
+      (item) => item.textContent === "Timing",
+    )!;
+    expect(getComputedStyle(timing).position).not.toBe("absolute");
   });
 });

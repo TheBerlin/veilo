@@ -1,0 +1,5 @@
+/* The stacked sections inside the My presets popover, spaced as the tab's groups were. */
+.stack {
+  display: grid;
+  gap: var(--veilo-space-3);
+}
