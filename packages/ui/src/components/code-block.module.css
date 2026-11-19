@@ -78,3 +78,17 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* The button's label arrives with a short fade out of a small blur ("Text swap soft" of
+   transitions.dev) when Copy becomes Copied. */
+.label {
+  display: inline-block;
+  animation: label-in var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+@keyframes label-in {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}

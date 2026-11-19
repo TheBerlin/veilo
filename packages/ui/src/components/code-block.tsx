@@ -77,7 +77,10 @@ export function CodeBlock(props: CodeBlockProps) {
         </code>
       </pre>
       <button type="button" className={styles.copy} data-state={state} onClick={copy}>
-        {LABELS[state]}
+        {/* Keyed by the state, so each new label mounts and plays its own entrance. */}
+        <span key={state} className={styles.label}>
+          {LABELS[state]}
+        </span>
       </button>
       <span className={styles.status} role="status">
         {state === "copied" ? "Copied to the clipboard" : state === "blocked" ? LABELS.blocked : ""}

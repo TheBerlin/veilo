@@ -100,7 +100,8 @@ describe("ChipGroup", () => {
     // The chosen chip is transparent; the sliding pill under it carries the tab's selected fill.
     const pill = group.querySelector("span[aria-hidden]") as Element;
     const fill = ["border-color", "background-color"];
-    expect(style(pill, fill)).toEqual(style(screen.getByRole("tab", { name: "A" }), fill));
+    const tabPill = screen.getByRole("tablist").querySelector("span[aria-hidden]") as Element;
+    expect(style(pill, fill)).toEqual(style(tabPill, fill));
     expect(style(screen.getByRole("radio", { name: "Light" }), ["color"])).toEqual(
       style(screen.getByRole("tab", { name: "A" }), ["color"]),
     );
