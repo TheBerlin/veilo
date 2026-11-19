@@ -1,5 +1,11 @@
 # @veilo-ui/ui
 
+## 0.7.1
+
+### Patch Changes
+
+- fc06d4e: The packages are now named `@veilo-ui/*` (for example `@veilo-ui/core`), because the `@veilo` scope is taken on npm. Only the package names change: no API, behavior, CSS name or setting changes, and nothing was published under the old names.
+
 ## 0.7.0
 
 ### Minor Changes
