@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/vue",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "description": "Vue 3 components and a composable for Veilo skeleton loaders and reveal animations.",
   "type": "module",

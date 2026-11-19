@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/svelte",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "description": "Svelte 5 components and actions for Veilo skeleton loaders and reveal animations.",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/ui",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "description": "Internal design system for the Veilo playground and website. Never published.",
   "type": "module",
