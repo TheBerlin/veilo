@@ -14,6 +14,10 @@ export interface MyPresetsMenuProps {
   store: SettingsStore;
   /** The saved presets. */
   presets: UserPresetsStore;
+  /** The button's size. Defaults to `sm`; a phone's bottom row uses `md` for a bigger target. */
+  size?: "sm" | "md";
+  /** Shows the short label "Saved" (the full name stays as the accessible name), for a phone. */
+  compact?: boolean;
 }
 
 /**
@@ -27,7 +31,9 @@ export function MyPresetsMenu(props: MyPresetsMenuProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm">My presets</Button>
+        <Button size={props.size ?? "sm"} aria-label={props.compact ? "My presets" : undefined}>
+          {props.compact ? "Saved" : "My presets"}
+        </Button>
       </PopoverTrigger>
       <PopoverContent aria-label="My presets">
         <div className={styles.stack}>

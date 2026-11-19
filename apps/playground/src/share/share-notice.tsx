@@ -1,7 +1,8 @@
 // share-notice.tsx: loads a shared link's settings when the page opens, removes the fragment
-// from the address bar, and says what happened.
+// from the address bar, and says what happened in a message.
 
-import { useEffect, useState } from "react";
+import { toast } from "@veilo-ui/ui";
+import { useEffect } from "react";
 import type { ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
 import { decodeShareLink, type ShareError } from "./share-link.ts";
@@ -22,24 +23,21 @@ export interface ShareNoticeProps {
   store: SettingsStore;
   /** The content store the link's preview content (image ratio) is loaded into. */
   content?: ContentStore;
-  /** Class for the message line. */
-  className?: string;
 }
 
 /**
  * Reads `window.location.hash` once at mount. A link's settings are loaded into the store, which
  * replays the full sequence, and its content into the content store; an unreadable link leaves
- * both as they are. Either way the
- * fragment is removed with `history.replaceState`, so a reload shows the current state, not the
- * link again. Renders a polite live region with the result (empty when there was no fragment).
- * Side effects: changes the store and the address bar.
+ * both as they are. Either way the fragment is removed with `history.replaceState`, so a reload
+ * shows the current state, not the link again, and a message says what happened (nothing is shown
+ * when there was no fragment). It draws nothing itself: the message is a toast, which the app's
+ * Toaster shows. Side effects: changes the stores, the address bar, and shows a message.
  *
- * @param props - The stores and a class name.
- * @returns The message line.
+ * @param props - The stores.
+ * @returns Nothing.
  */
 export function ShareNotice(props: ShareNoticeProps) {
-  const { store, content, className } = props;
-  const [message, setMessage] = useState("");
+  const { store, content } = props;
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -54,9 +52,9 @@ export function ShareNotice(props: ShareNoticeProps) {
         // A link from before content existed restores the defaults, which its sender saw.
         content?.getState().load(result.payload.content);
         store.getState().load(result.payload.settings);
-        setMessage(LINK_LOADED);
+        toast(LINK_LOADED);
       } else {
-        setMessage(LINK_ERRORS[result.error]);
+        toast(LINK_ERRORS[result.error]);
       }
       const { pathname, search } = window.location;
       window.history.replaceState(window.history.state, "", pathname + search);
@@ -64,11 +62,7 @@ export function ShareNotice(props: ShareNoticeProps) {
     return () => {
       cancelled = true;
     };
-  }, [store]);
+  }, [store, content]);
 
-  return (
-    <p className={className} aria-live="polite">
-      {message}
-    </p>
-  );
+  return null;
 }

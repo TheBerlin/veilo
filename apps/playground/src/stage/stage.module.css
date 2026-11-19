@@ -27,20 +27,3 @@
 .stage > * {
   margin-block: auto;
 }
-
-/* Narrow screen: the stage is a framed block in the page again. */
-@media (max-width: 900px) {
-  .column {
-    grid-template-rows: none;
-    height: auto;
-  }
-
-  .stage {
-    min-height: calc(var(--veilo-size-test-card) * 1.75);
-    padding: var(--veilo-space-4) var(--veilo-space-2);
-    overflow: visible;
-    border: 1px solid var(--veilo-border);
-    border-radius: var(--veilo-radius-xl);
-    background: var(--veilo-bg);
-  }
-}

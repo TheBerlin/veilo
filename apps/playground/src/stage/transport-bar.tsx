@@ -5,6 +5,7 @@
 import type { Reveal, RevealState } from "@veilo-ui/core";
 import { Button, Popover, PopoverContent, PopoverTrigger, Scrubber, Toggle } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
+import { useNarrow } from "../state/use-narrow.ts";
 import styles from "./transport-bar.module.css";
 
 /** Props of {@link TransportBar}. */
@@ -56,6 +57,9 @@ export function timeReadout(progress: number, duration: number): string {
  */
 export function TransportBar(props: TransportBarProps) {
   const { reveal, duration, loop } = props;
+  // A phone gets short labels (the full names stay as the accessible names) and no time readout,
+  // so the controls fit in two rows.
+  const narrow = useNarrow();
   const [state, setState] = useState<RevealState>("idle");
   const [progress, setProgress] = useState(0);
 
@@ -89,16 +93,27 @@ export function TransportBar(props: TransportBarProps) {
           <Button
             variant="primary"
             size="sm"
+            aria-label="Play sequence"
             disabled={!reveal}
             onClick={() => reveal?.playSequence({ loop })}
           >
-            Play sequence
+            {narrow ? "Play" : "Play sequence"}
           </Button>
-          <Button size="sm" disabled={!reveal} onClick={() => void reveal?.play()}>
-            Replay reveal
+          <Button
+            size="sm"
+            aria-label="Replay reveal"
+            disabled={!reveal}
+            onClick={() => void reveal?.play()}
+          >
+            {narrow ? "Replay" : "Replay reveal"}
           </Button>
-          <Button size="sm" disabled={!reveal} onClick={() => reveal?.showLoading()}>
-            Loading state
+          <Button
+            size="sm"
+            aria-label="Loading state"
+            disabled={!reveal}
+            onClick={() => reveal?.showLoading()}
+          >
+            {narrow ? "Loading" : "Loading state"}
           </Button>
         </div>
         <Scrubber
@@ -108,14 +123,14 @@ export function TransportBar(props: TransportBarProps) {
           disabled={!reveal}
           onValueChange={(p) => reveal?.seek(p)}
         />
-        <span className={styles.readout}>{timeReadout(progress, duration)}</span>
+        {narrow ? null : <span className={styles.readout}>{timeReadout(progress, duration)}</span>}
         <span className={styles.state} role="status">
           {stateLabel(state, progress)}
         </span>
         <Popover>
           <PopoverTrigger asChild>
-            <Button size="sm" variant="ghost">
-              Preview options
+            <Button size="sm" variant="ghost" aria-label="Preview options">
+              {narrow ? "Options" : "Preview options"}
             </Button>
           </PopoverTrigger>
           <PopoverContent aria-label="Preview options" side="top" className={styles.options}>

@@ -78,45 +78,6 @@
   margin-left: auto;
 }
 
-/* A notice: a small raised line under the top bar, over the workspace (the reset message under
-   the actions, the share-link caption under the title). Empty, it has no size, but it is still
-   rendered: a live region that is hidden with display: none is often not read out when its text
-   arrives. */
-.rowNotice,
-.notice {
-  position: absolute;
-  z-index: 2;
-  top: calc(100% + var(--veilo-space-1));
-  display: flex;
-  align-items: center;
-  gap: var(--veilo-space-1);
-  margin: 0;
-  padding: var(--veilo-space-0-5) var(--veilo-space-1-5);
-  border: 1px solid var(--veilo-border);
-  border-radius: var(--veilo-radius-base);
-  background: var(--veilo-card);
-  box-shadow: var(--veilo-shadow-soft);
-  color: var(--veilo-text-muted);
-  font: var(--veilo-type-caption);
-  letter-spacing: var(--veilo-type-caption-tracking);
-  white-space: nowrap;
-}
-
-.rowNotice {
-  right: 0;
-}
-
-.notice {
-  left: 0;
-}
-
-.rowNotice:empty,
-.notice:empty {
-  padding: 0;
-  border: 0;
-  box-shadow: none;
-}
-
 /* Workspace: the stage and the panel side by side, each as tall as the space left. */
 .workspace {
   display: grid;
@@ -130,43 +91,40 @@
   min-height: 0;
 }
 
-/* Custom properties do not work in media queries; 900 px is the spec's breakpoint. On a narrow
-   screen it is a page again: the bar, the stage, then the panel, scrolling together. */
+/* Bottom row (a phone): the settings button and the three others, as big as a finger needs. */
+.dock {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--veilo-space-1);
+}
+
+.dock > button {
+  width: 100%;
+  padding-inline: var(--veilo-space-1);
+}
+
+/* The settings sheet: the theme switch above the panel. */
+.sheet {
+  display: grid;
+  gap: var(--veilo-space-2);
+}
+
+/* Custom properties do not work in media queries; 900 px is the spec's breakpoint. On a phone it is
+   still an app that fills the screen: the top bar (the title, then the chips on their own row),
+   the stage with the playback bar, and the bottom row. The panel is in a sheet, not beside the
+   stage. */
 @media (max-width: 900px) {
   .app {
-    grid-template-rows: none;
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
+    grid-template-rows: auto minmax(0, 1fr) auto;
   }
 
-  /* The bar wraps: the title and the actions on the first row, the chips below, wrapping too. */
   .header {
     flex-wrap: wrap;
-    gap: var(--veilo-space-2);
+    gap: var(--veilo-space-1);
   }
 
   .presets {
-    order: 3;
     flex-basis: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    mask-image: none;
-  }
-
-  .presets > * {
-    flex-wrap: wrap;
-    width: auto;
-  }
-
-  /* The actions may shrink and wrap (Reset above the theme switch) instead of pushing the page
-     wider than the screen. */
-  .actions {
-    flex: 0 1 auto;
-    flex-wrap: wrap;
-    min-width: 0;
-    margin-left: 0;
   }
 
   .workspace {

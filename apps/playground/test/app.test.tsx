@@ -118,15 +118,61 @@ describe("App layout", () => {
     await waitFor(() => expect(document.activeElement).toBe(opener));
   });
 
-  it("is a page again below 900 px: stage, then panel, with 16 px gutters and no sideways scroll", async () => {
+  it("is still an app on a phone: it does not scroll, and the settings are in a sheet", async () => {
     await page.viewport(375, 800);
     render(<App />);
+    expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight);
+    expect(document.documentElement.scrollWidth).toBe(document.documentElement.clientWidth);
+    // No panel beside the stage: the bottom row has its button.
+    expect(screen.queryByRole("tablist")).toBeNull();
+    expect(screen.queryByRole("complementary", { name: "Settings" })).toBeNull();
     const stage = stageColumn().getBoundingClientRect();
-    const panel = screen.getByRole("complementary", { name: "Settings" }).getBoundingClientRect();
-    expect(panel.top).toBeGreaterThan(stage.bottom);
     expect(stage.left).toBe(16);
     expect(document.documentElement.clientWidth - stage.right).toBe(16);
-    expect(document.documentElement.scrollWidth).toBe(document.documentElement.clientWidth);
+  });
+
+  it("gives the bottom row four buttons, each at least 44 px tall for a finger", async () => {
+    await page.viewport(375, 800);
+    render(<App />);
+    for (const name of ["Settings", "My presets", "Reset to defaults", "Export"]) {
+      const button = screen.getByRole("button", { name });
+      expect(button.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+    }
+  });
+
+  it("opens the settings in a docked sheet that leaves the card in view and usable", async () => {
+    await page.viewport(375, 800);
+    const user = userEvent.setup();
+    render(<App />);
+    const opener = screen.getByRole("button", { name: "Settings" });
+    expect(opener.getAttribute("aria-expanded")).toBe("false");
+    await user.click(opener);
+    const sheet = await screen.findByRole("region", { name: "Settings" });
+    expect(within(sheet).getByRole("tablist")).toBeTruthy();
+    expect(opener.getAttribute("aria-expanded")).toBe("true");
+    // Not a dialog: nothing dims or hides the page, and the card is still in view above the sheet.
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.querySelector("[data-vaul-overlay]")).toBeNull();
+    const card = screen.getByRole("button", { name: /Test card/ }).getBoundingClientRect();
+    await expect.poll(() => card.top < sheet.getBoundingClientRect().top).toBe(true);
+    // The page behind still answers: a preset chosen with the sheet open takes effect.
+    await user.click(screen.getByRole("radio", { name: "Hex from center" }));
+    expect(
+      within(screen.getByRole("radiogroup", { name: "Presets" })).getByRole("radio", {
+        checked: true,
+      }).textContent,
+    ).toBe("Hex from center");
+    await user.click(within(sheet).getByRole("button", { name: "Close" }));
+    await waitFor(() => expect(screen.queryByRole("region", { name: "Settings" })).toBeNull());
+    expect(opener.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("shows the reset message as a toast with Undo, on any screen", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Reset to defaults" }));
+    expect(await screen.findByText(/reset to the defaults/)).toBeTruthy();
+    expect(await screen.findByRole("button", { name: "Undo" })).toBeTruthy();
   });
 });
 

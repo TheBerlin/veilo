@@ -17,6 +17,11 @@ export interface PanelProps {
   store: SettingsStore;
   /** The preview content (card, image and text) the Content tab edits. */
   content?: ContentStore;
+  /**
+   * Draws the panel without its own card (border, radius, fill and fixed height), for use inside
+   * a sheet that is the card. The tab bar then sticks to the top of the sheet as it scrolls.
+   */
+  embedded?: boolean;
 }
 
 /**
@@ -30,7 +35,12 @@ export function Panel(props: PanelProps) {
   // The app passes its store; tests that leave it out get a private one.
   const [content] = useState(() => props.content ?? createContentStore());
   return (
-    <aside className={styles.panel} aria-label="Settings">
+    <aside
+      className={[styles.panel, props.embedded ? styles.embedded : undefined]
+        .filter(Boolean)
+        .join(" ")}
+      aria-label="Settings"
+    >
       <Tabs defaultValue="loader" className={styles.tabs}>
         {/* Stretched: the tabs share the panel's width. */}
         <TabsList aria-label="Settings sections" stretch className={styles.tabBar}>

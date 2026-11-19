@@ -1,8 +1,9 @@
 // app.tsx: the playground's root component. Owns the one settings store and decides what it
-// starts with, and lays out the app: a top bar, the stage and the panel.
+// starts with, and lays out the app: a top bar, the stage and the panel beside it, or on a phone
+// the stage with a bottom row and the panel in a sheet.
 
 import { presetSettings } from "@veilo-ui/presets";
-import { ThemeSwitch, TooltipProvider } from "@veilo-ui/ui";
+import { Button, DockedSheet, ThemeSwitch, Toaster, TooltipProvider } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
 import { ExportButton } from "./header/export-drawer.tsx";
@@ -18,6 +19,7 @@ import { parseFrameQuery } from "./stage/frame-query.ts";
 import { Stage } from "./stage/stage.tsx";
 import { createContentStore } from "./state/content-store.ts";
 import { createSettingsStore } from "./state/settings-store.ts";
+import { useNarrow } from "./state/use-narrow.ts";
 
 /**
  * The playground page. A `?preset=<id>&p=<0..1>` query opens it on that preset, paused at that
@@ -48,6 +50,17 @@ export function App() {
   );
   // Saved presets: kept in the same storage, or in memory only when there is none.
   const [presets] = useState(() => createUserPresetsStore(storage));
+  // A phone gets a different set of parts: a bottom row, and the settings in a sheet.
+  const narrow = useNarrow();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const size = narrow ? "md" : "sm";
+  const actions = (
+    <>
+      <MyPresetsMenu store={store} presets={presets} size={size} compact={narrow} />
+      <ResetButton store={store} content={content} size={size} compact={narrow} />
+      <ExportButton store={store} content={content} size={size} />
+    </>
+  );
   return (
     <TooltipProvider delayDuration={200}>
       <main className={styles.app}>
@@ -56,23 +69,49 @@ export function App() {
           <div className={styles.presets}>
             <PresetChips store={store} />
           </div>
-          <div className={styles.actions}>
-            <MyPresetsMenu store={store} presets={presets} />
-            <ResetButton store={store} content={content} messageClassName={styles.rowNotice} />
-            <ExportButton store={store} content={content} />
-            <ThemeSwitch />
-          </div>
+          {narrow ? null : (
+            <div className={styles.actions}>
+              {actions}
+              <ThemeSwitch />
+            </div>
+          )}
           {/* A frame request is for the visual tests and wins over a shared link. */}
-          {frame ? null : <ShareNotice store={store} content={content} className={styles.notice} />}
+          {frame ? null : <ShareNotice store={store} content={content} />}
         </header>
         <div className={styles.workspace}>
           {/* The stage takes the height left under the top bar; the panel scrolls on its own. */}
           <div className={styles.stageColumn}>
             <Stage store={store} content={content} frame={frame?.p} />
           </div>
-          <Panel store={store} content={content} />
+          {narrow ? null : <Panel store={store} content={content} />}
         </div>
+        {narrow ? (
+          <>
+            <div className={styles.dock}>
+              <Button size="md" aria-expanded={settingsOpen} onClick={() => setSettingsOpen(true)}>
+                Settings
+              </Button>
+              {actions}
+            </div>
+            {/* Docked, not a modal: the card stays in view and in reach above the sheet while a slider
+                moves, and nothing on the page is hidden from a screen reader. */}
+            <DockedSheet
+              open={settingsOpen}
+              onOpenChange={setSettingsOpen}
+              title="Settings"
+              height={0.55}
+            >
+              <div className={styles.sheet}>
+                <ThemeSwitch />
+                <Panel store={store} content={content} embedded />
+              </div>
+            </DockedSheet>
+          </>
+        ) : null}
       </main>
+      {/* Messages (the reset with its Undo, a shared link) appear under the top bar. Outside the
+          app's grid, so the toaster's own element is not one more row in it. */}
+      <Toaster position="top-center" offset={narrow ? 100 : 72} />
     </TooltipProvider>
   );
 }

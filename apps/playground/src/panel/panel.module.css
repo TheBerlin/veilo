@@ -96,14 +96,26 @@
   letter-spacing: var(--veilo-type-caption-tracking);
 }
 
-/* Narrow screen: the panel is part of the page and grows with its content. */
-@media (max-width: 900px) {
-  .panel {
-    height: auto;
-    overflow: visible;
-  }
+/* Embedded: inside a sheet, which is the card. The panel grows with its content and the sheet
+   scrolls; the tab bar sticks to the top of the sheet so the tabs stay in reach. */
+.embedded {
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
 
-  .content {
-    overflow-y: visible;
-  }
+.embedded .tabBar {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  margin: 0;
+  background: var(--veilo-card);
+}
+
+.embedded .content {
+  padding-inline: 0;
+  overflow-y: visible;
 }

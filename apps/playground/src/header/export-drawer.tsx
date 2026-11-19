@@ -14,6 +14,8 @@ export interface ExportButtonProps {
   store: SettingsStore;
   /** The preview content, for the share link. */
   content?: ContentStore;
+  /** The button's size. Defaults to `sm`; a phone's bottom row uses `md` for a bigger target. */
+  size?: "sm" | "md";
 }
 
 /**
@@ -27,7 +29,7 @@ export function ExportButton(props: ExportButtonProps) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button size="sm" variant="primary" onClick={() => setOpen(true)}>
+      <Button size={props.size ?? "sm"} variant="primary" onClick={() => setOpen(true)}>
         Export
       </Button>
       <Drawer
