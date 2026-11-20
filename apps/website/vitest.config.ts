@@ -5,7 +5,11 @@ import shared from "../../vitest.shared.ts";
 
 // Page tests need a real DOM, canvas and CSS, so they run in headless Chromium. The playground's
 // state, export and storage tests are plain data and stay in Node.
-const NODE_TESTS = ["test/playground/{state,export,stage,presets,share,panel}/**/*.test.ts"];
+const NODE_TESTS = [
+  "test/playground/{state,export,stage,presets,share,panel}/**/*.test.ts",
+  // Reads the packages' files from disk.
+  "test/home/framework-snippets.test.ts",
+];
 
 export default defineProject({
   plugins: [react()],

@@ -25,7 +25,7 @@
   display: grid;
   /* One column that may shrink, so a demo's own width (a canvas) cannot widen the tile. */
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto auto;
+  grid-template-rows: minmax(auto, 1fr) auto auto;
   gap: var(--veilo-space-1);
   height: 100%;
 }
@@ -42,16 +42,14 @@
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-lg);
   background: var(--veilo-card);
-  overflow: hidden;
+  /* Not clipped: a frame whose demo needs more height than its ratio gives grows, instead of cutting
+     the demo off (an aspect-ratio box with overflow set would not grow). */
 }
 
-/* The wide tile sets its row's height from a viewport width where its frame is at least 760 px
-   wide: twice as wide as tall. The narrow tile beside it stretches to it. Below that, the frame is
-   as tall as its demo needs. */
+/* A wide tile's frame is as tall as its demo needs, and never shorter than a card with its name and
+   a button. The narrow tile beside it stretches to the same height. */
 @media (min-width: 1214px) {
   .tile[data-wide] .frame {
-    aspect-ratio: 2 / 1;
-    /* Never shorter than the demos in it need (a card, its name and a button). */
     min-height: calc(var(--veilo-size-test-card) + var(--veilo-space-8));
   }
 }

@@ -31,22 +31,3 @@
 .wide {
   height: var(--veilo-space-3);
 }
-
-/* Your framework: six short labels in two columns. */
-.chips {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--veilo-space-1);
-  width: min(100%, var(--veilo-size-test-card));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chip {
-  padding: var(--veilo-space-1) var(--veilo-space-1-5);
-  border: 1px solid var(--veilo-border);
-  border-radius: var(--veilo-radius-base);
-  font: var(--veilo-type-label-sm);
-  text-align: center;
-}

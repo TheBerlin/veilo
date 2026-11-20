@@ -1,0 +1,35 @@
+/* "Your framework": the switcher, the code of the chosen way in and a note. */
+.demo {
+  display: grid;
+  gap: var(--veilo-space-2);
+  width: 100%;
+  /* The code lines never wrap, so the block is only as wide as the longest line needs. */
+  max-width: calc(var(--veilo-size-test-card) * 2);
+  min-width: 0;
+}
+
+/* Every panel sits in the same cell, so the cell is as tall as the tallest and the chosen one is
+   the only visible one. */
+.stack {
+  display: grid;
+  min-width: 0;
+}
+
+.panel {
+  display: grid;
+  grid-area: 1 / 1;
+  gap: var(--veilo-space-1);
+  align-content: start;
+  min-width: 0;
+  visibility: hidden;
+}
+
+.panel[data-chosen] {
+  visibility: visible;
+}
+
+.note {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}

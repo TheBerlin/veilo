@@ -1,7 +1,7 @@
 // Tests for src/home/why-tiles.tsx: the tiles' copy and their demos, in Chromium with the real
 // engine and the real stylesheet.
 
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { WHY_TILES } from "../../src/home/why-tiles.tsx";
 
@@ -48,12 +48,5 @@ describe("WHY_TILES", () => {
     const [moving, resting] = [...container.querySelectorAll(".veilo")];
     expect(getComputedStyle(moving!).animationName).toBe("veilo-shimmer");
     expect(getComputedStyle(resting!).animationName).toBe("none");
-  });
-
-  it("Your framework: lists the six ways in that exist as packages", () => {
-    demo("framework", false);
-    for (const name of ["React", "Vue", "Svelte", "Angular", "Web components", "Plain HTML"]) {
-      expect(screen.getByText(name)).toBeTruthy();
-    }
   });
 });

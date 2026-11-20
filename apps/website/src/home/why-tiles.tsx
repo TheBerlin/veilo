@@ -2,12 +2,10 @@
 // claim is true of the code today (see the notes on each demo); the demos are the real engine and
 // the real @veilo-ui/css classes, not pictures.
 
-import type { Settings } from "@veilo-ui/core";
-import type { LayoutInput } from "@veilo-ui/presets";
 import "@veilo-ui/css/skeleton.css";
 import type { CSSProperties, ReactNode } from "react";
 import { ShiftDemo } from "./shift-demo.tsx";
-import { useLoopingReveal } from "./use-looping-reveal.ts";
+import { FrameworkDemo } from "./framework-demo.tsx";
 import styles from "./why-tiles.module.css";
 
 /** One tile: what it says and what it shows. */
@@ -31,16 +29,6 @@ export interface DemoProps {
   /** True once the tile has been scrolled into view. */
   active: boolean;
 }
-
-/** Settings shared by the looping demos: a plain shimmer, then a quick fade. */
-const LOOP_SETTINGS: Partial<Settings> = {
-  version: 1,
-  effect: "shimmer",
-  lDur: 1.2,
-  imageFx: "crossfade",
-  textFx: "fade",
-  rDur: 0.8,
-};
 
 /**
  * CSS-only loaders: the three classes of the CSS package on plain elements. No script runs in this
@@ -71,38 +59,6 @@ function CssOnlyDemo() {
         </div>
       ))}
     </div>
-  );
-}
-
-/** The six ways to use Veilo that exist as packages today. */
-const FRAMEWORKS = ["React", "Vue", "Svelte", "Angular", "Web components", "Plain HTML"] as const;
-
-/** Slot hints of the framework list: six short texts. */
-const FRAMEWORK_LAYOUT: LayoutInput = {
-  version: 1,
-  slots: Object.fromEntries(FRAMEWORKS.map((_, index) => [`f${index}`, { role: "text" as const }])),
-};
-
-/**
- * Your framework: the six ways in, revealed one after another with the text effect.
- *
- * @param props - Whether the tile is active.
- * @returns The demo.
- */
-function FrameworkDemo(props: DemoProps) {
-  const { ref } = useLoopingReveal(
-    { ...LOOP_SETTINGS, textFx: "scramble", charset: "binary", rDur: 1.2 },
-    FRAMEWORK_LAYOUT,
-    props.active,
-  );
-  return (
-    <ul ref={ref as never} className={styles.chips}>
-      {FRAMEWORKS.map((name, index) => (
-        <li key={name} className={styles.chip} data-veilo-slot={`f${index}`}>
-          {name}
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -151,9 +107,10 @@ export const WHY_TILES: readonly WhyTile[] = [
   {
     id: "framework",
     wide: true,
+    interactive: true,
     title: "Your framework.",
     caption: "React, Vue, Svelte, Angular or HTML.",
-    demo: (props) => <FrameworkDemo active={props.active} />,
+    demo: () => <FrameworkDemo />,
   },
   {
     id: "motion",

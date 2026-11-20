@@ -26,16 +26,26 @@ describe("WhyUseful", () => {
     }
   });
 
-  it("hides the demos from assistive technology, except the one that can be operated", () => {
+  it("hides the demos from assistive technology, except the two that can be operated", () => {
     render(<WhyUseful />);
-    const [layout, ...others] = screen.getAllByRole("article") as [HTMLElement, ...HTMLElement[]];
-    // The layout tile's frame holds the divider, a slider, so the frame is exposed.
+    const [layout, css, framework, motion] = screen.getAllByRole("article") as [
+      HTMLElement,
+      HTMLElement,
+      HTMLElement,
+      HTMLElement,
+    ];
+    // The layout tile's frame holds the divider, a slider; the framework tile's holds the choice of
+    // framework, a group of radios. Their frames are exposed.
     expect(within(layout).getByRole("slider")).toBeTruthy();
-    expect(layout.querySelector(":scope > div > [aria-hidden=true]")).toBeNull();
-    // The others are decoration: their frame is hidden and the text carries the message.
-    for (const tile of others) {
+    expect(within(framework).getByRole("radiogroup", { name: "Framework" })).toBeTruthy();
+    for (const tile of [layout, framework]) {
+      expect(tile.querySelector(":scope > div > [aria-hidden=true]")).toBeNull();
+    }
+    // The other two are decoration: their frame is hidden and the text carries the message.
+    for (const tile of [css, motion]) {
       expect(tile.querySelector("[aria-hidden=true]")).not.toBeNull();
       expect(within(tile).queryByRole("slider")).toBeNull();
+      expect(within(tile).queryByRole("radiogroup")).toBeNull();
     }
     expect(screen.getAllByRole("slider")).toHaveLength(1);
   });
