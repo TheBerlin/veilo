@@ -330,6 +330,7 @@ Provide the text. Add the `$` prompt only for shell commands. The Copy button co
 
 - Fill is `secondary` with a `border` hairline and `radius-md`, because the copy button sits 8 px inside the corner (8 + 8 = 16); type is `code` in `text`, the prompt in `text-muted`.
 - Long lines scroll horizontally inside the block; never wrap a command. Inside a grid the block keeps `min-width: 0`, so it never widens its cell.
+- For an example a reader should see in full on a phone, `narrow="wrap"` changes the narrow layout (900 px and below): the Copy button moves above the code, which takes the block's whole width and wraps. Wider screens still scroll. The playground's export blocks keep the default.
 - The success label uses `success` together with the word "Copied", never color alone.
 - The label swaps from Copy to Copied with a short fade out of a 2 px blur (`duration-fast`).
 

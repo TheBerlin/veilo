@@ -12,6 +12,13 @@ export interface CodeBlockProps {
   code: string;
   /** Shows a `$` before the code, for one shell command. The `$` is not copied. */
   prompt?: boolean;
+  /**
+   * What a long line does on a narrow screen (900 px and below). `scroll` (default): it scrolls
+   * inside the block, next to the Copy button. `wrap`: the Copy button goes above the code, which
+   * takes the block's whole width and wraps. For examples a reader should see in full on a phone.
+   * On wider screens both scroll.
+   */
+  narrow?: "scroll" | "wrap";
   /** Names the block for screen readers, such as "Install command" or "Loader CSS". */
   "aria-label"?: string;
   /** Extra class for the block. */
@@ -33,11 +40,12 @@ const LABELS: Record<CopyState, string> = {
  * Ctrl+C" instead. Side effects: writes to the clipboard, changes the page selection when
  * blocked, and runs a timer that is cleared on unmount.
  *
- * @param props - The code, whether to show a prompt, and a label.
+ * @param props - The code, whether to show a prompt, what a long line does on a narrow screen, and
+ * a label.
  * @returns The block element.
  */
 export function CodeBlock(props: CodeBlockProps) {
-  const { code, prompt = false, className } = props;
+  const { code, prompt = false, narrow = "scroll", className } = props;
   const [state, setState] = useState<CopyState>("idle");
   const codeRef = useRef<HTMLElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -64,7 +72,7 @@ export function CodeBlock(props: CodeBlockProps) {
   }
 
   return (
-    <div className={[styles.block, className].filter(Boolean).join(" ")}>
+    <div className={[styles.block, className].filter(Boolean).join(" ")} data-narrow={narrow}>
       {/* Focusable, so keyboard users can scroll a long line. */}
       <pre className={styles.pre} tabIndex={0} aria-label={props["aria-label"]}>
         {prompt ? (

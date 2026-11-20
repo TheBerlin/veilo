@@ -92,3 +92,25 @@
     filter: blur(2px);
   }
 }
+
+/* Narrow, `narrow="wrap"`: the Copy button moves above the code, which then has the block's whole
+   width and wraps instead of scrolling. */
+@media (max-width: 900px) {
+  .block[data-narrow="wrap"] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--veilo-space-1);
+    padding: var(--veilo-space-1) var(--veilo-space-2) var(--veilo-space-2);
+  }
+
+  .block[data-narrow="wrap"] .copy {
+    order: -1;
+    align-self: flex-end;
+  }
+
+  .block[data-narrow="wrap"] .pre {
+    overflow-x: visible;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+}
