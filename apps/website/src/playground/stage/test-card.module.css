@@ -1,6 +1,8 @@
 /* Card: a card surface; 16 px padding gives the large radius. Its width is set inline from the
-   layout (the product card is 320 px, spec 1.2). */
+   layout (the product card is 320 px, spec 1.2). It is the positioning context of its overlays
+   anyway, and the stage nudges it onto a whole pixel with `top` (see snap-to-pixel.ts). */
 .card {
+  position: relative;
   display: grid;
   gap: var(--veilo-space-1);
   box-sizing: border-box;

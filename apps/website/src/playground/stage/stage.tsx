@@ -3,12 +3,13 @@
 
 import type { Reveal, RevealOptions, Settings } from "@veilo-ui/core";
 import { watchTheme } from "@veilo-ui/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LOADER_KEYS } from "../panel/controls.ts";
 import { createContentStore, useContent, type ContentStore } from "../state/content-store.ts";
 import { useSetting, type SettingsStore } from "../state/settings-store.ts";
 import { ratioValue } from "./aspect-ratio.ts";
 import { type CardImage } from "./image-source.ts";
+import { watchWholePixel } from "./snap-to-pixel.ts";
 import styles from "./stage.module.css";
 import { TestCard } from "./test-card.tsx";
 import { TransportBar } from "./transport-bar.tsx";
@@ -174,9 +175,14 @@ export function Stage(props: StageProps) {
     setPhoto((current) => ({ ...current, key: current.key + 1, start: "sequence" }));
   };
 
+  // Centering can leave the card on a half pixel; a new card (new key) is a new element, so the
+  // watch restarts with it.
+  const stageRef = useRef<HTMLElement>(null);
+  useEffect(() => (stageRef.current ? watchWholePixel(stageRef.current) : undefined), [photo.key]);
+
   return (
     <div className={styles.column}>
-      <section className={styles.stage} aria-label="Preview">
+      <section ref={stageRef} className={styles.stage} aria-label="Preview">
         <TestCard
           key={photo.key}
           settings={store.getState().settings}
