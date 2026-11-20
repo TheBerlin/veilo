@@ -1,7 +1,7 @@
 // export-tab.tsx: the Export tab (spec 1.6): a share link, the Code section (settings, CSS,
 // layout JSON and the code snippets) and a box to load settings back.
 
-import type { Settings } from "@veilo-ui/core";
+import { parseSettings, type Settings } from "@veilo-ui/core";
 import { Button, CodeBlock, TextArea } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import { useStore } from "zustand";
@@ -18,11 +18,17 @@ export const INVALID_JSON = "That is not valid JSON.";
  * The message after applying pasted text.
  *
  * @param count - How many settings were applied.
+ * @param newer - Whether the settings came from a newer version of Veilo, which adds a note.
  * @returns For example "3 settings applied."
  */
-export function appliedMessage(count: number): string {
-  return `${count} ${count === 1 ? "setting" : "settings"} applied.`;
+export function appliedMessage(count: number, newer = false): string {
+  const applied = `${count} ${count === 1 ? "setting" : "settings"} applied.`;
+  return newer ? `${applied} ${NEWER_VERSION_NOTE}` : applied;
 }
+
+/** Said after loading settings that a newer version of Veilo made. */
+export const NEWER_VERSION_NOTE =
+  "These settings were made by a newer version of Veilo, so some may look different.";
 
 /**
  * The share link for the current settings and preview content. Encoding is async, so the link
@@ -78,7 +84,8 @@ export function ExportTab(props: ExportTabProps) {
       setMessage(INVALID_JSON);
       return;
     }
-    setMessage(appliedMessage(store.getState().load(input).length));
+    const newer = parseSettings(input).newerVersion !== undefined;
+    setMessage(appliedMessage(store.getState().load(input).length, newer));
   };
 
   return (

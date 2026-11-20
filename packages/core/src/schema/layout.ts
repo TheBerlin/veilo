@@ -43,6 +43,13 @@ export interface Layout {
   settings: Settings;
   /** Slot hints by the slot name used in the `data-veilo-slot` attribute. */
   slots: Record<string, SlotHint>;
+  /**
+   * The newest version found in the input, when it is newer than this package reads: the layout's
+   * own `version` or its settings' `version`. The input is still read leniently, but it may mean
+   * something different, so a caller can warn that it was made by a newer version of Veilo.
+   * Absent otherwise.
+   */
+  newerVersion?: number;
 }
 
 const MAX_LINES = 20;
@@ -85,7 +92,8 @@ export function parseLayout(input: unknown): Layout {
       ? (input as Record<string, unknown>)
       : {};
   const isLayout = "settings" in source || "slots" in source;
-  const settings = parseSettings(isLayout ? source.settings : source).settings;
+  const parsed = parseSettings(isLayout ? source.settings : source);
+  const settings = parsed.settings;
 
   const rawSlots = isLayout ? source.slots : undefined;
   const slots =
@@ -98,5 +106,10 @@ export function parseLayout(input: unknown): Layout {
         )
       : {};
 
-  return { version: LAYOUT_VERSION, settings, slots };
+  const layout: Layout = { version: LAYOUT_VERSION, settings, slots };
+  const own =
+    typeof source.version === "number" && Number.isFinite(source.version) ? source.version : 0;
+  const newest = Math.max(own > LAYOUT_VERSION ? own : 0, parsed.newerVersion ?? 0);
+  if (newest > 0) layout.newerVersion = newest;
+  return layout;
 }

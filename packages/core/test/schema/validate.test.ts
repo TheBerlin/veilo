@@ -45,6 +45,20 @@ describe("parseSettings", () => {
     expect(parseSettings({ cols: 64.5 }).applied).toEqual(["cols"]);
   });
 
+  it("reports a newer version and still reads the input", () => {
+    const result = parseSettings({ version: SETTINGS_VERSION + 1, effect: "wave", future: true });
+    expect(result.newerVersion).toBe(SETTINGS_VERSION + 1);
+    expect(result.settings.effect).toBe("wave");
+    expect(result.settings.version).toBe(SETTINGS_VERSION);
+  });
+
+  it("reports nothing for the current version, an older or missing one, or a wrong type", () => {
+    for (const version of [SETTINGS_VERSION, 0, undefined, "2", Number.NaN, null]) {
+      expect(parseSettings({ version }).newerVersion, String(version)).toBeUndefined();
+    }
+    expect("newerVersion" in parseSettings({})).toBe(false);
+  });
+
   it("ignores unknown keys", () => {
     const { settings, applied } = parseSettings({ nope: 1 });
     expect(settings).toEqual(defaultSettings());

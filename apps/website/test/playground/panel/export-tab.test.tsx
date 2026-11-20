@@ -9,6 +9,7 @@ import { fakeScheduler } from "../../../../../packages/core/test/support/schedul
 import { loaderCss, settingsJson } from "../../../src/playground/export/code-formats.ts";
 import {
   appliedMessage,
+  NEWER_VERSION_NOTE,
   ExportTab,
   INVALID_JSON,
 } from "../../../src/playground/panel/export-tab.tsx";
@@ -64,6 +65,11 @@ describe("export helpers", () => {
   it("count applied settings in words", () => {
     expect(appliedMessage(1)).toBe("1 setting applied.");
     expect(appliedMessage(3)).toBe("3 settings applied.");
+  });
+
+  it("add a note when the settings came from a newer version", () => {
+    expect(appliedMessage(1, true)).toBe(`1 setting applied. ${NEWER_VERSION_NOTE}`);
+    expect(appliedMessage(1, false)).toBe("1 setting applied.");
   });
 });
 
@@ -157,6 +163,13 @@ describe("ExportTab", () => {
     expect(store.getState().settings.effect).toBe("wave");
     expect(store.getState().settings.cols).toBe(40);
     expect(screen.getByText("2 settings applied.")).toBeTruthy();
+  });
+
+  it("applies settings from a newer version and says so", async () => {
+    const { store } = renderTab();
+    await apply('{ "version": 2, "effect": "wave" }');
+    expect(store.getState().settings.effect).toBe("wave");
+    expect(screen.getByText(`1 setting applied. ${NEWER_VERSION_NOTE}`)).toBeTruthy();
   });
 
   it("rejects text that is not JSON and keeps the settings", async () => {
