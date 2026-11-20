@@ -39,7 +39,7 @@
         "back",
         "custom"
       ],
-      "default": "out"
+      "default": "inOut"
     },
     "lx1": {
       "type": "number",

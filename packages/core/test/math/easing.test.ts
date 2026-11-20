@@ -102,7 +102,7 @@ describe("cubicBezier", () => {
 describe("resolveEasing", () => {
   it("uses the default curve of each target", () => {
     const settings = defaultSettings();
-    expect(resolveEasing(settings, "l")(0.4)).toBe(cubicBezier(...EASING_CURVES.out)(0.4));
+    expect(resolveEasing(settings, "l")(0.4)).toBe(cubicBezier(...EASING_CURVES.inOut)(0.4));
     expect(resolveEasing(settings, "r")(0.4)).toBe(cubicBezier(...EASING_CURVES.outSoft)(0.4));
   });
 
@@ -138,7 +138,7 @@ describe("resolveEasing", () => {
 
   it("ignores stored curve points while a preset is selected", () => {
     const settings = { ...defaultSettings(), lx1: 0.9, ly1: 0.1 };
-    expect(resolveEasing(settings, "l")(0.4)).toBe(cubicBezier(...EASING_CURVES.out)(0.4));
+    expect(resolveEasing(settings, "l")(0.4)).toBe(cubicBezier(...EASING_CURVES.inOut)(0.4));
   });
 });
 

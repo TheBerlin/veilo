@@ -47,7 +47,7 @@ export const SETTINGS_SPEC = {
   effect: choice(["shimmer", "wave", "pulse"], "shimmer"),
   lDur: num(1.2, 0.3, 4, 0.05),
   lGap: num(0.2, 0, 2, 0.05),
-  lEase: choice(EASING_KEYS, "out"),
+  lEase: choice(EASING_KEYS, "inOut"),
   lx1: num(0.22, 0, 1, 0.01),
   ly1: num(1, -0.6, 1.6, 0.01),
   lx2: num(0.36, 0, 1, 0.01),

@@ -10,6 +10,7 @@ const settings = (overrides: object = {}) => ({ ...defaultSettings(), ...overrid
 const THEME = { base: "#dde5e6", highlight: "#f6fafa" };
 
 describe("generateLoaderCss", () => {
+  // The default loader easing is in-out (changed from the spec's ease out in the freeze review, D4).
   it("matches the spec's shimmer for the default settings", () => {
     expect(generateLoaderCss(settings(), THEME)).toBe(`.skeleton {
   color: transparent;
@@ -17,7 +18,7 @@ describe("generateLoaderCss", () => {
   background: linear-gradient(100deg, #dde5e6 0%, #dde5e6 35%, #f6fafa 50%, #dde5e6 65%, #dde5e6 100%);
   background-size: 300% 100%;
   background-position: 100% 0;
-  animation: veilo-sweep 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0s infinite both;
+  animation: veilo-sweep 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0s infinite both;
 }
 
 @keyframes veilo-sweep {

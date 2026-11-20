@@ -28,16 +28,16 @@ The file is generated from the default settings, so it always matches the core e
 
 | Custom property  | Default   | Veilo dark theme | Used for          |
 | ---------------- | --------- | ---------------- | ----------------- |
-| `--veilo-base`   | `#dcdcdc` | `#171717`        | Placeholder color |
-| `--veilo-hi`     | `#f7f7f7` | `#262626`        | Highlight band    |
+| `--veilo-base`   | `#d4d4d4` | `#26262c`        | Placeholder color |
+| `--veilo-hi`     | `#f8f8f8` | `#33333a`        | Highlight band    |
 | `--veilo-radius` | `6px`     |                  | Corner radius     |
 
 The stylesheet does not switch colors with the system theme, because a page's own theme may differ from it. Set the properties where your page sets its theme:
 
 ```css
 [data-theme="dark"] {
-  --veilo-base: #171717;
-  --veilo-hi: #262626;
+  --veilo-base: #26262c;
+  --veilo-hi: #33333a;
 }
 ```
 
@@ -61,7 +61,7 @@ When the content arrives, replace the placeholders and drop `aria-busy` in the s
 
 **Reduced motion is built in.** Under `prefers-reduced-motion: reduce` every effect class stops and shows a still base-color placeholder. There is nothing to add.
 
-**Contrast.** Placeholders are meant to be quiet. The default colors are low contrast against the Veilo backgrounds, between 1.08 and 1.37 as WCAG contrast ratios. WCAG's 3:1 for non-text contrast covers graphics needed to understand the content, and hidden placeholders are not such graphics, so these values are allowed, but they can look faint, most of all on a card in dark mode. If the bars are hard to see on your background, darken `--veilo-base` in light themes or lighten it in dark themes, and keep `--veilo-hi` a step beyond it so the sweep stays visible.
+**Contrast.** Placeholders are meant to be quiet. The default colors are low contrast against the Veilo backgrounds, between 1.12 and 1.48 as WCAG contrast ratios. WCAG's 3:1 for non-text contrast covers graphics needed to understand the content, and hidden placeholders are not such graphics, so these values are allowed, but they can look faint, most of all on a card in dark mode. If the bars are hard to see on your background, darken `--veilo-base` in light themes or lighten it in dark themes, and keep `--veilo-hi` a step beyond it so the sweep stays visible.
 
 ## Generate the CSS
 

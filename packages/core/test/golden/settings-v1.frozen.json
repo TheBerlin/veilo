@@ -20,7 +20,7 @@
     },
     "lEase": {
       "kind": "enum",
-      "default": "out",
+      "default": "inOut",
       "options": ["out", "outSoft", "inOut", "in", "linear", "back", "custom"]
     },
     "lx1": {

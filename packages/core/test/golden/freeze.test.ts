@@ -3,6 +3,9 @@
 // not generated and must not be regenerated to make a test pass. A change that breaks one of these
 // tests breaks users' saved settings, share links or layouts, and needs a new settings version and a
 // migration (see docs/schema-freeze-review.md). Not a mirror of one source file, by design.
+//
+// One deliberate edit was made before the freeze: the loader's default easing `lEase` went from
+// `out` to `inOut` (decision D4), and the frozen copy was updated with it.
 
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";

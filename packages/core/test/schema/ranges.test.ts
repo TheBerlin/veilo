@@ -29,7 +29,8 @@ const options = (list: string[], value: string) => ({
 
 /**
  * A count: the spec's range, but read as a whole number (decided in the schema freeze review, D2).
- * One of the two deliberate differences from the spec's tables; the other is the `lEase` default.
+ * One of the two deliberate differences from the spec's tables; the other is the `lEase` default,
+ * changed from `out` to `inOut` (D4), because the sweep read as a flash followed by a long still.
  */
 const count = (min: number, max: number, step: number, value: number) => ({
   ...range(min, max, step, value),
@@ -44,7 +45,7 @@ const SPEC = {
   effect: options(["shimmer", "wave", "pulse"], "shimmer"),
   lDur: range(0.3, 4, 0.05, 1.2),
   lGap: range(0, 2, 0.05, 0.2),
-  lEase: options(EASINGS, "out"),
+  lEase: options(EASINGS, "inOut"),
   lx1: range(0, 1, 0.01, 0.22),
   ly1: range(-0.6, 1.6, 0.01, 1),
   lx2: range(0, 1, 0.01, 0.36),

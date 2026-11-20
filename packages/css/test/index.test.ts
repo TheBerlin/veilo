@@ -47,7 +47,7 @@ describe("@veilo-ui/css public API", () => {
     (input) => {
       const { settings } = api.parseSettings(input);
       expect(cssProblems(api.generateLoaderCss(settings))).toEqual([]);
-      const hex = { base: "#dcdcdc", highlight: "#f7f7f7", selector: ".card > .bar" };
+      const hex = { base: "#d4d4d4", highlight: "#f8f8f8", selector: ".card > .bar" };
       expect(cssProblems(api.generateLoaderCss(settings, hex))).toEqual([]);
     },
   );

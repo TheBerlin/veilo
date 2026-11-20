@@ -9,7 +9,7 @@ The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token
 - Monochrome. Color never carries meaning on its own; the only hues are the status colors, which always come with an icon or dot and a word. Hierarchy comes from fill, shape and size: only the primary action is a solid `accent` fill.
 - Flat and quiet. Separate surfaces with `card` fills and `border` hairlines. The only shadow is `shadow-soft`, for raised bars (tabs, segmented bars, pagination) and floating elements; no gradients or blur.
 - Content stays put. Placeholders and reveals never change layout; every media frame reserves its final size.
-- One system for site and package. The skeleton colors `--veilo-base` and `--veilo-hi` are the same names the packages read, so the site's skeletons sit on its own surfaces. The packages keep neutral gray fallbacks of their own (`#DCDCDC` / `#F7F7F7`), because they must suit any site.
+- One system for site and package. The skeleton colors `--veilo-base` and `--veilo-hi` are the same names the packages read, so the site's skeletons sit on its own surfaces. The packages keep neutral gray fallbacks of their own (`#D4D4D4` / `#F8F8F8`), because they must suit any site.
 
 ## Content fundamentals
 
