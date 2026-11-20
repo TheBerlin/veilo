@@ -7,23 +7,16 @@
 // One deliberate edit was made before the freeze: the loader's default easing `lEase` went from
 // `out` to `inOut` (decision D4), and the frozen copy was updated with it.
 
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import frozenFile from "./settings-v1.frozen.json";
+import fullFile from "./settings-v1.full.json";
+import lenientFile from "./settings-v1.lenient.json";
+import layoutFile from "./layout-v1.json";
 import { defaultSettings } from "../../src/schema/defaults.ts";
 import { parseLayout } from "../../src/schema/layout.ts";
 import { SETTINGS_SPEC } from "../../src/schema/ranges.ts";
 import { SETTINGS_VERSION } from "../../src/schema/version.ts";
 import { parseSettings } from "../../src/schema/validate.ts";
-
-/**
- * Reads a golden file.
- *
- * @param name - The file name in this folder.
- * @returns The parsed JSON.
- */
-function golden<T>(name: string): T {
-  return JSON.parse(readFileSync(new URL(name, import.meta.url), "utf8")) as T;
-}
 
 interface FrozenKey {
   kind: "enum" | "number";
@@ -34,9 +27,11 @@ interface FrozenKey {
   integer?: true;
 }
 
-const frozen = golden<{ version: number; keys: Record<string, FrozenKey>; colors: string[] }>(
-  "settings-v1.frozen.json",
-);
+const frozen = frozenFile as {
+  version: number;
+  keys: Record<string, FrozenKey>;
+  colors: string[];
+};
 
 describe("settings format, frozen at version 1", () => {
   it("is still version 1 until a migration exists", () => {
@@ -85,18 +80,18 @@ describe("settings format, frozen at version 1", () => {
   });
 
   it("reads a settings object with every key set back unchanged, in the table's order", () => {
-    const full = golden<Record<string, unknown>>("settings-v1.full.json");
+    const full: Record<string, unknown> = fullFile;
     const { settings, applied } = parseSettings(full);
     expect(settings).toEqual(full);
     expect(applied).toEqual([...Object.keys(frozen.keys), ...frozen.colors]);
   });
 
   it("is lenient the same way: clamps numbers, drops unknown keys and wrong types", () => {
-    const file = golden<{
+    const file = lenientFile as {
       input: unknown;
       expectedChanges: Record<string, unknown>;
       expectedApplied: string[];
-    }>("settings-v1.lenient.json");
+    };
     const { settings, applied } = parseSettings(file.input);
     expect(settings).toEqual({ ...defaultSettings(), ...file.expectedChanges });
     expect(applied).toEqual(file.expectedApplied);
@@ -107,11 +102,11 @@ describe("settings format, frozen at version 1", () => {
 
 describe("layout format, frozen at version 1", () => {
   it("reads a layout the same way: roles, clamped hints, dropped bad entries", () => {
-    const file = golden<{
+    const file = layoutFile as {
       input: unknown;
       expectedSlots: Record<string, unknown>;
       expectedSettingChanges: Record<string, unknown>;
-    }>("layout-v1.json");
+    };
     const layout = parseLayout(file.input);
     expect(layout.version).toBe(1);
     expect(layout.slots).toEqual(file.expectedSlots);
