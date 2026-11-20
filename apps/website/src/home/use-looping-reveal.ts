@@ -21,8 +21,6 @@ const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
  * @param settings - The effect.
  * @param layout - The slot hints.
  * @param active - Whether the demo has been scrolled into view.
- * @param rest - What a visitor who asks for less motion is left looking at: the finished content
- * (the default), or the still loading state, for a demo whose point is how loading looks.
  * @returns A ref for the container that holds the slots, and the reveal's state (`idle` until it
  * exists), for a demo that shows something beside it that follows the same cycle.
  */
@@ -30,7 +28,6 @@ export function useLoopingReveal(
   settings: Partial<Settings>,
   layout: LayoutInput,
   active: boolean,
-  rest: "revealed" | "loading" = "revealed",
 ) {
   const { ref, reveal } = useReveal<HTMLDivElement>({ settings, layout });
   const [state, setState] = useState<RevealState>("idle");
@@ -42,11 +39,10 @@ export function useLoopingReveal(
   useEffect(() => {
     if (!active || !reveal) return;
     if (matchMedia(REDUCED_MOTION).matches) {
-      if (rest === "loading") reveal.showLoading();
-      else void reveal.play();
+      void reveal.play();
     } else {
       reveal.playSequence({ loop: true });
     }
-  }, [active, reveal, rest]);
+  }, [active, reveal]);
   return { ref, state };
 }

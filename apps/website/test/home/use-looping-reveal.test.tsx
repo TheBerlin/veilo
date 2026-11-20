@@ -50,9 +50,16 @@ describe("useLoopingReveal", () => {
 
   it("under reduced motion: lands on the content and stays there", async () => {
     const real = window.matchMedia.bind(window);
+    // A media query list's methods need the real object as `this`.
+    const bound = (media: MediaQueryList, key: string | symbol) => {
+      const value = Reflect.get(media, key);
+      return typeof value === "function" ? value.bind(media) : value;
+    };
     vi.spyOn(window, "matchMedia").mockImplementation((query: string) =>
       query.includes("prefers-reduced-motion")
-        ? ({ ...real(query), matches: true } as MediaQueryList)
+        ? (new Proxy(real(query), {
+            get: (media, key) => (key === "matches" ? true : bound(media, key)),
+          }) as MediaQueryList)
         : real(query),
     );
     const { container } = render(<Demo active />);

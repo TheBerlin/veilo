@@ -42,6 +42,12 @@
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-lg);
   background: var(--veilo-card);
+  /* The placeholders in every demo (the CSS package's classes and the engine's own skeleton read
+     these properties) are set a notch stronger than the package's faint defaults, so a sweep and
+     the lines of a skeleton can be seen on the card surface: the base is the border color and the
+     highlight blends toward the strong border. */
+  --veilo-base: var(--veilo-border);
+  --veilo-hi: color-mix(in srgb, var(--veilo-border) 45%, var(--veilo-border-strong));
   /* Not clipped: a frame whose demo needs more height than its ratio gives grows, instead of cutting
      the demo off (an aspect-ratio box with overflow set would not grow). */
 }

@@ -1,15 +1,12 @@
 /* Demo frame content for "Why it's useful": the small things the two skeleton tiles show. Both use
    the same placeholder item, so they share one look. */
 
-/* Labeled rows of placeholders. The placeholders use the CSS package's custom properties, set a
-   notch stronger than its faint defaults so the sweep can be seen on the card surface: the base is
-   the border color and the highlight blends toward the strong border. */
+/* Labeled rows of placeholders. The sweep colors come from the frame (see why-useful.module.css);
+   the corners are the base radius. */
 .rows {
   display: grid;
   width: 100%;
   gap: var(--veilo-space-3);
-  --veilo-base: var(--veilo-border);
-  --veilo-hi: color-mix(in srgb, var(--veilo-border) 45%, var(--veilo-border-strong));
   --veilo-radius: var(--veilo-radius-base);
 }
 

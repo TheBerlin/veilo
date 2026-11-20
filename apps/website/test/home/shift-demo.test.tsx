@@ -34,9 +34,16 @@ async function watchButtons(ms: number) {
 /** Makes the page ask for less motion. */
 function reduceMotion() {
   const real = window.matchMedia.bind(window);
+  // A media query list's methods need the real object as `this`.
+  const bound = (media: MediaQueryList, key: string | symbol) => {
+    const value = Reflect.get(media, key);
+    return typeof value === "function" ? value.bind(media) : value;
+  };
   vi.spyOn(window, "matchMedia").mockImplementation((query: string) =>
     query.includes("prefers-reduced-motion")
-      ? ({ ...real(query), matches: true } as MediaQueryList)
+      ? (new Proxy(real(query), {
+          get: (media, key) => (key === "matches" ? true : bound(media, key)),
+        }) as MediaQueryList)
       : real(query),
   );
 }
@@ -50,13 +57,13 @@ describe("ShiftDemo", () => {
     expect(seen.typical.size, "the typical loader's button jumps").toBeGreaterThan(1);
   }, 15000);
 
-  it("under reduced motion: rests on the loading state, where the two sides differ", async () => {
+  it("under reduced motion: one still picture, Veilo's finished card beside a typical loader still loading", async () => {
     reduceMotion();
     render(<ShiftDemo active />);
     const seen = await watchButtons(3000);
     expect(seen.veilo.size).toBe(1);
     expect(seen.typical.size).toBe(1);
-    // The typical loader's button sits higher than Veilo's: that is the whole point.
+    // The typical loader's button sits higher than Veilo's finished one: that is the whole point.
     expect([...seen.typical][0]!).toBeLessThan([...seen.veilo][0]!);
   }, 15000);
 

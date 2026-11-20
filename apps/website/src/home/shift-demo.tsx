@@ -18,6 +18,7 @@ import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./shift-demo.module.css";
 import { useAlbumCover } from "./use-album-cover.ts";
 import { useLoopingReveal } from "./use-looping-reveal.ts";
+import { useReducedMotion } from "./use-reduced-motion.ts";
 import type { DemoProps } from "./why-tiles.tsx";
 
 /** Slot hints of the card: the photo and two lines of text. */
@@ -25,8 +26,9 @@ const CARD_LAYOUT = {
   version: 1,
   slots: {
     photo: { role: "image" },
-    title: { role: "text", width: 70 },
-    meta: { role: "text", width: 45 },
+    // Wide enough that, with the divider in the middle, both reserved lines show on its right.
+    title: { role: "text", width: 90 },
+    meta: { role: "text", width: 65 },
   },
 } as const;
 
@@ -100,15 +102,15 @@ interface VeiloLayerProps {
 
 /**
  * The Veilo layer: a real reveal on the card, looping, with the button below it outside the card,
- * never touched. A visitor who asks for less motion is left on the still loading state, which is
- * where the two sides differ.
+ * never touched. A visitor who asks for less motion gets the finished card, and the typical layer
+ * stays on its loading state (see {@link ShiftDemo}).
  *
  * @param props - Whether the tile is active, and the callback for the cycle.
  * @returns The card and the button.
  */
 function VeiloLayer(props: VeiloLayerProps) {
   const { active, onLoaded } = props;
-  const { ref, state } = useLoopingReveal(HERO_SETTINGS, CARD_LAYOUT, active, "loading");
+  const { ref, state } = useLoopingReveal(HERO_SETTINGS, CARD_LAYOUT, active);
   // Loading is the only state without content; idle is before anything has started.
   useEffect(() => onLoaded(state !== "loading"), [state, onLoaded]);
   return (
@@ -215,8 +217,12 @@ function useDivider() {
  * for bigger steps, Home and End for the ends). The two layers are decoration, hidden from
  * assistive technology; the slider has a name and a value.
  *
+ * A visitor who asks for less motion gets one still picture, composed to carry the point: Veilo's
+ * finished card on the right, and on the left a typical loader that is still loading, so its button
+ * sits higher than Veilo's, which is where it ends up. Everyone else gets the loop.
+ *
  * Side effects: loads the shared cover photograph; keeps the typical layer in step with the
- * reveal; captures the pointer while dragging.
+ * reveal; captures the pointer while dragging; follows the motion preference.
  *
  * @param props - Whether the tile has come into view.
  * @returns The captions and the card with its divider.
@@ -224,6 +230,7 @@ function useDivider() {
 export function ShiftDemo(props: DemoProps) {
   const ready = useAlbumCover();
   const [loaded, setLoaded] = useState(true);
+  const reduced = useReducedMotion();
   const divider = useDivider();
   const shown = Math.round(divider.position);
   return (
@@ -246,7 +253,7 @@ export function ShiftDemo(props: DemoProps) {
             {ready ? <VeiloLayer active={props.active} onLoaded={setLoaded} /> : null}
           </div>
           <div className={`${styles.layer} ${styles.before}`} aria-hidden="true">
-            <TypicalLayer loaded={loaded} />
+            <TypicalLayer loaded={loaded && !reduced} />
           </div>
           <div className={styles.divider} aria-hidden="true" />
           <div
