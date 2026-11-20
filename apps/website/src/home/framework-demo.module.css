@@ -8,31 +8,38 @@
   min-width: 0;
 }
 
-/* The six choices. Below about 1100 px they do not fit one row (the frame is narrower than their
+/* The six choices. Below about 1100 px they may not fit one row (the frame is narrower than their
    650 px), and wrapped rows push the code down by about 45 px each, so they stay in one row that
-   scrolls sideways, fading at the edge to show there is
-   more. The end padding lets the last choice clear the fade when scrolled to the end. The sliding
-   pill scrolls with the choices, as it sits inside the group. */
+   scrolls sideways. The sliding pill scrolls with them, as it sits inside the group. */
+.bar {
+  min-width: 0;
+}
+
 @media (max-width: 1100px) {
   .switcher {
     display: flex;
     flex-wrap: nowrap;
     max-width: 100%;
     min-width: 0;
-    padding-inline-end: var(--veilo-space-4);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
+  }
+
+  .switcher::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Only when something runs past the edge: a fade there says there is more, and end padding lets
+     the last choice clear the fade when scrolled to the end. */
+  .bar[data-scrolls] .switcher {
+    padding-inline-end: var(--veilo-space-4);
     -webkit-mask-image: linear-gradient(
       to right,
       black calc(100% - var(--veilo-space-4)),
       transparent
     );
     mask-image: linear-gradient(to right, black calc(100% - var(--veilo-space-4)), transparent);
-  }
-
-  .switcher::-webkit-scrollbar {
-    display: none;
   }
 }
 

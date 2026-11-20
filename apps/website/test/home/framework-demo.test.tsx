@@ -2,7 +2,7 @@
 
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { FrameworkDemo } from "../../src/home/framework-demo.tsx";
 import { FRAMEWORK_SNIPPETS } from "../../src/home/framework-snippets.ts";
@@ -116,6 +116,25 @@ describe("FrameworkDemo", () => {
     // Wholly inside the group's visible part.
     expect(chip.left).toBeGreaterThanOrEqual(group.left - 1);
     expect(chip.right).toBeLessThanOrEqual(group.right + 1);
+  });
+
+  it("fades the end of the choices only where they actually scroll", async () => {
+    const bar = () => screen.getByRole("radiogroup").parentElement!;
+    const fade = () => getComputedStyle(screen.getByRole("radiogroup")).maskImage;
+    // On a phone they run past the edge: a fade says there is more.
+    await page.viewport(375, 800);
+    const phone = render(<FrameworkDemo />);
+    await vi.waitFor(() => expect(bar().dataset.scrolls).toBe("true"));
+    expect(fade()).not.toBe("none");
+    phone.unmount();
+    // Where they fit (a tablet's width, a desktop's) there is no fade over a choice that is whole.
+    for (const width of [1100, 1440]) {
+      await page.viewport(width, 900);
+      const view = render(<FrameworkDemo />);
+      await vi.waitFor(() => expect(bar().dataset.scrolls).toBeUndefined());
+      expect(fade(), `at ${width}`).toBe("none");
+      view.unmount();
+    }
   });
 
   it("keeps the six choices in one row at tablet widths too", async () => {

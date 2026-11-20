@@ -77,4 +77,53 @@ describe("WhyUseful", () => {
     const tops = screen.getAllByRole("article").map((tile) => tile.getBoundingClientRect().top);
     expect(new Set(tops).size).toBe(4);
   });
+
+  describe("the frames' spacing", () => {
+    /**
+     * How far a frame's content is from its padded edges, top and bottom.
+     *
+     * @param tile - The tile element.
+     * @returns The air above and below the content, in px.
+     */
+    function airIn(tile: HTMLElement) {
+      const frame = tile.firstElementChild!.firstElementChild as HTMLElement;
+      const box = frame.getBoundingClientRect();
+      const style = getComputedStyle(frame);
+      let top = Infinity;
+      let bottom = -Infinity;
+      for (const element of frame.querySelectorAll("*")) {
+        const rect = element.getBoundingClientRect();
+        if (!rect.width || !rect.height || getComputedStyle(element).visibility === "hidden")
+          continue;
+        top = Math.min(top, rect.top);
+        bottom = Math.max(bottom, rect.bottom);
+      }
+      return {
+        above: top - box.top - parseFloat(style.paddingTop),
+        below: box.bottom - bottom - parseFloat(style.paddingBottom),
+        width: box.width,
+        height: box.height,
+      };
+    }
+
+    it.each([1100, 960, 700, 375])(
+      "the CSS-only tile's rows fill their frame, with no band above or below, at %i px",
+      async (width) => {
+        await page.viewport(width, 900);
+        render(<WhyUseful />);
+        const { above, below } = airIn(screen.getAllByRole("article")[1]!);
+        expect(above).toBeLessThanOrEqual(2);
+        expect(below).toBeLessThanOrEqual(2);
+      },
+    );
+
+    it("a full-width tile on a small screen is no taller than its demo needs, not a square", async () => {
+      await page.viewport(700, 900);
+      render(<WhyUseful />);
+      for (const tile of screen.getAllByRole("article")) {
+        const { width, height } = airIn(tile);
+        expect(height, "shorter than it is wide").toBeLessThan(width);
+      }
+    });
+  });
 });

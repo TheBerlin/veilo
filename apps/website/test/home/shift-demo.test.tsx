@@ -73,6 +73,22 @@ describe("ShiftDemo", () => {
     expect(getComputedStyle(guide).pointerEvents).toBe("none");
   });
 
+  it("makes the card wider where the notes sit under it than where they sit beside it", async () => {
+    const widthAt = async (viewport: number) => {
+      await page.viewport(viewport, 900);
+      const view = render(<ShiftDemo active={false} />);
+      const width = Math.round(
+        screen.getByRole("slider").parentElement!.getBoundingClientRect().width,
+      );
+      view.unmount();
+      return width;
+    };
+    // Beside: 352 px, which leaves the room the notes need. Under: more, so the frame's side bands shrink.
+    expect(await widthAt(1440)).toBe(352);
+    expect(await widthAt(1100)).toBeGreaterThan(352);
+    expect(await widthAt(960)).toBeGreaterThan(352);
+  });
+
   describe("the notes by width", () => {
     /**
      * The first problem tag and the first solution tag.

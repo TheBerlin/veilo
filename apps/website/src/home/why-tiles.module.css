@@ -6,8 +6,21 @@
 .rows {
   display: grid;
   width: 100%;
+  /* As wide as the cards of the other tiles, so a full-width frame (on a small screen) does not
+     stretch the bars across it. */
+  max-width: calc(var(--veilo-size-test-card) + var(--veilo-space-4));
   gap: var(--veilo-space-3);
   --veilo-radius: var(--veilo-radius-base);
+}
+
+/* In a frame taller than the rows need (it is stretched to its neighbor's height, from 901 px) the
+   rows spread over it, between the first and last, and do not float in the middle with a band above
+   and below. On a phone the frame is as tall as its rows, so there is nothing to spread. */
+@media (min-width: 901px) {
+  .rows {
+    align-self: stretch;
+    align-content: space-between;
+  }
 }
 
 .row {

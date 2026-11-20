@@ -78,14 +78,3 @@
     letter-spacing: var(--veilo-type-h2-mobile-tracking);
   }
 }
-
-/* A phone: every tile has its own row, so each frame is square. */
-@media (max-width: 900px) {
-  .frame {
-    aspect-ratio: 1;
-  }
-
-  .tile[data-wide] .frame {
-    aspect-ratio: auto;
-  }
-}

@@ -3,7 +3,16 @@
 .compare {
   display: grid;
   gap: var(--veilo-space-1);
-  width: min(100%, calc(var(--veilo-size-test-card) + var(--veilo-space-4)));
+  width: min(100%, calc(var(--veilo-size-test-card) + var(--veilo-space-8) + var(--veilo-space-4)));
+}
+
+/* With the notes beside the card (the wide layout, below) the card is 352 px, which leaves room
+   for them. Where they sit under it there is no one to leave room for, so the card takes more of
+   its frame, and the lead tile's side bands shrink. */
+@media (min-width: 1214px) {
+  .compare {
+    width: min(100%, calc(var(--veilo-size-test-card) + var(--veilo-space-4)));
+  }
 }
 
 /* The two names, over the two sides: plain text at the card's edges. */
