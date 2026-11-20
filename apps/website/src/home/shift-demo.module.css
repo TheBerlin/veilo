@@ -100,7 +100,8 @@
 .placeholder {
   aspect-ratio: 2 / 1;
   border-radius: var(--veilo-radius-base);
-  background: var(--veilo-border);
+  /* The same gray as Veilo's skeleton, so the two meet at the divider without a seam. */
+  background: var(--veilo-base);
 }
 
 /* The neighbour that must stay put. */

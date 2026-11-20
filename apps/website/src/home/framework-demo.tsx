@@ -57,6 +57,9 @@ export function FrameworkDemo() {
           // Pressing the chosen item keeps it: one is always chosen.
           onValueChange={(value) => value && setChosen(value)}
           variant="segmented"
+          // An arrow key chooses the item it lands on, as a native radio group does: choosing here
+          // only swaps a code block, so there is no cost to arrowing past one.
+          followFocus
           className={styles.switcher}
         >
           {FRAMEWORK_SNIPPETS.map((item) => (

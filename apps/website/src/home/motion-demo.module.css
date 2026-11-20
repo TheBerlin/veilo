@@ -7,6 +7,16 @@
   min-width: 0;
 }
 
+/* In a frame stretched to its neighbor's height (from 901 px) the label, the card, the controls and
+   the line spread over it, and do not float in the middle with a band above and below, as the
+   CSS-only rows do. On a phone the frame is as tall as its content. */
+@media (min-width: 901px) {
+  .demo {
+    align-self: stretch;
+    align-content: space-between;
+  }
+}
+
 .label {
   color: var(--veilo-text-muted);
   font: var(--veilo-type-code);

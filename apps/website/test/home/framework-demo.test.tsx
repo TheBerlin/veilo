@@ -149,14 +149,32 @@ describe("FrameworkDemo", () => {
     }
   });
 
-  it("can be used from the keyboard: arrows move focus, Enter chooses", async () => {
+  it("can be used from the keyboard: an arrow key chooses the next way in, as a radio group does", async () => {
     render(<FrameworkDemo />);
     screen.getByRole("radio", { name: "React" }).focus();
     await userEvent.keyboard("{ArrowRight}");
     const vue = screen.getByRole("radio", { name: "Vue" });
     expect(document.activeElement).toBe(vue);
-    await userEvent.keyboard("{Enter}");
     expect(vue.getAttribute("aria-checked")).toBe("true");
     expect(visible("Vue")).toBe(true);
+    expect(visible("React")).toBe(false);
+    await userEvent.keyboard("{ArrowLeft}");
+    expect(screen.getByRole("radio", { name: "React" }).getAttribute("aria-checked")).toBe("true");
+    await userEvent.keyboard("{End}");
+    expect(screen.getByRole("radio", { name: "HTML" }).getAttribute("aria-checked")).toBe("true");
+    expect(visible("HTML")).toBe(true);
   });
+
+  it.each([1440, 1100, 960])(
+    "shows every example's whole lines, with nothing to scroll sideways, at %i px",
+    async (width) => {
+      await page.viewport(width, 900);
+      render(<FrameworkDemo />);
+      for (const item of FRAMEWORK_SNIPPETS) {
+        await userEvent.click(screen.getByRole("radio", { name: item.label }));
+        const pre = screen.getByLabelText(`${item.label} example`);
+        expect(pre.scrollWidth, `${item.id} at ${width}`).toBeLessThanOrEqual(pre.clientWidth);
+      }
+    },
+  );
 });

@@ -77,3 +77,26 @@
   color: var(--veilo-text-muted);
   font: var(--veilo-type-caption);
 }
+
+/* Below about 1000 px the frame is too narrow for the longest example lines beside the Copy button,
+   and they would scroll sideways. The code block's own narrow layout (Copy above, lines wrapping)
+   starts at 900 px, a fixed design-system breakpoint; this band between 900 and 1000 px asks for the
+   same layout, by the block's data attribute, so a reader sees whole lines there too. */
+@media (max-width: 1000px) {
+  .stack [data-narrow="wrap"] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--veilo-space-1);
+  }
+
+  .stack [data-narrow="wrap"] button {
+    order: -1;
+    align-self: flex-end;
+  }
+
+  .stack [data-narrow="wrap"] pre {
+    overflow-x: visible;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+}

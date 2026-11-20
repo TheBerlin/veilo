@@ -107,13 +107,72 @@ describe("WhyUseful", () => {
     }
 
     it.each([1100, 960, 700, 375])(
-      "the CSS-only tile's rows fill their frame, with no band above or below, at %i px",
+      "the CSS-only tile's rows and the reduced motion tile's content fill their frames, at %i px",
       async (width) => {
         await page.viewport(width, 900);
         render(<WhyUseful />);
-        const { above, below } = airIn(screen.getAllByRole("article")[1]!);
-        expect(above).toBeLessThanOrEqual(2);
-        expect(below).toBeLessThanOrEqual(2);
+        const tiles = screen.getAllByRole("article");
+        for (const [index, name] of [
+          [1, "CSS-only"],
+          [3, "reduced motion"],
+        ] as const) {
+          const { above, below } = airIn(tiles[index]!);
+          expect(above, `${name} above`).toBeLessThanOrEqual(2);
+          expect(below, `${name} below`).toBeLessThanOrEqual(2);
+        }
+      },
+    );
+
+    /**
+     * Reads a computed CSS color as sRGB, whatever way the browser writes it.
+     *
+     * @param value - A computed color: `rgb(...)` or `color(srgb r g b)`.
+     * @returns Red, green and blue, 0 to 255.
+     */
+    function srgb(value: string): [number, number, number] {
+      const numbers = (value.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+      const scale = value.startsWith("color(") ? 255 : 1;
+      return [numbers[0]! * scale, numbers[1]! * scale, numbers[2]! * scale];
+    }
+
+    /**
+     * The WCAG contrast ratio of two colors.
+     *
+     * @param a - One color.
+     * @param b - The other.
+     * @returns The ratio, 1 or more.
+     */
+    function contrast(a: [number, number, number], b: [number, number, number]): number {
+      const luminance = (rgb: [number, number, number]) => {
+        const [r, g, bl] = rgb.map((channel) => {
+          const c = channel / 255;
+          return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+        }) as [number, number, number];
+        return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+      };
+      const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
+      return (light + 0.05) / (dark + 0.05);
+    }
+
+    it.each(["dark", "light"])(
+      "in %s: the placeholders' base is visibly off the frame, and the sweep's highlight clearly so",
+      (theme) => {
+        document.documentElement.dataset.theme = theme;
+        render(<WhyUseful />);
+        const frame = screen.getAllByRole("article")[1]!.firstElementChild!
+          .firstElementChild as HTMLElement;
+        // Resolve the custom properties through a real element, so color-mix is computed.
+        const probe = (property: string) => {
+          const element = document.createElement("span");
+          element.style.background = `var(${property})`;
+          frame.append(element);
+          const color = getComputedStyle(element).backgroundColor;
+          element.remove();
+          return srgb(color);
+        };
+        const surface = srgb(getComputedStyle(frame).backgroundColor);
+        expect(contrast(probe("--veilo-base"), surface)).toBeGreaterThanOrEqual(1.8);
+        expect(contrast(probe("--veilo-hi"), surface)).toBeGreaterThanOrEqual(3);
       },
     );
 
