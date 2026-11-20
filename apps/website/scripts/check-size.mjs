@@ -12,7 +12,11 @@ import { gzipSync } from "node:zlib";
 const dist = join(dirname(fileURLToPath(import.meta.url)), "..", "dist");
 const KB = 1000;
 
-/** Limits in bytes. Gzip sizes for text, plain file sizes for media (already compressed). */
+/**
+ * Limits in bytes. Gzip sizes for text, plain file sizes for media (already compressed).
+ *
+ * @type {Record<string, number>}
+ */
 const LIMITS = {
   // Everything the first page load runs: the entry script and the stylesheet from index.html.
   "first-load JavaScript (gzip)": 160 * KB,
@@ -28,8 +32,8 @@ const LIMITS = {
 /**
  * Gzip size of a built file.
  *
- * @param file - Path inside dist.
- * @returns Bytes.
+ * @param {string} file - Path inside dist.
+ * @returns {number} Bytes.
  */
 const gzipped = (file) => gzipSync(readFileSync(join(dist, file)), { level: 9 }).length;
 
@@ -56,6 +60,7 @@ for (const name of readdirSync(join(dist, "assets"))) {
 let failed = false;
 for (const [rule, file, size] of checks) {
   const limit = LIMITS[rule];
+  if (limit === undefined) throw new Error(`No limit for ${rule}`);
   const over = size > limit;
   failed ||= over;
   console.log(

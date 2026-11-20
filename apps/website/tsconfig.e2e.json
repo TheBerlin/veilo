@@ -3,5 +3,8 @@
   // Playwright specs, their config and the Docker runner run on Node, so they get Node's types;
   // the app (tsconfig.json) does not, so browser code cannot reach for `process` by accident.
   "compilerOptions": { "types": ["node"], "allowJs": true, "checkJs": true },
-  "include": ["e2e", "playwright.config.ts", "scripts"]
+  // The clip recorder is a manual tool whose page.evaluate callbacks run in the browser, so it is not
+  // checked with Node types.
+  "include": ["e2e", "playwright.config.ts", "scripts"],
+  "exclude": ["scripts/record-clips.mjs"]
 }
