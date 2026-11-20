@@ -14,7 +14,7 @@ export function SiteFooter() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <p className={styles.author}>
-          Made by <a href={AUTHOR_URL}>Bohdan</a>
+          Made by <a href={AUTHOR_URL}>Bohdan Samishchenko</a>
         </p>
         <nav aria-label="Footer">
           <ul className={styles.links}>
