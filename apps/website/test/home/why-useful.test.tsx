@@ -26,7 +26,7 @@ describe("WhyUseful", () => {
     }
   });
 
-  it("hides the demos from assistive technology, except the two that can be operated", () => {
+  it("hides the one decorative demo from assistive technology and exposes the three that can be operated", () => {
     render(<WhyUseful />);
     const [layout, css, framework, motion] = screen.getAllByRole("article") as [
       HTMLElement,
@@ -35,18 +35,17 @@ describe("WhyUseful", () => {
       HTMLElement,
     ];
     // The layout tile's frame holds the divider, a slider; the framework tile's holds the choice of
-    // framework, a group of radios. Their frames are exposed.
+    // framework, a group of radios; the motion tile's holds a switch. Their frames are exposed.
     expect(within(layout).getByRole("slider")).toBeTruthy();
     expect(within(framework).getByRole("radiogroup", { name: "Framework" })).toBeTruthy();
-    for (const tile of [layout, framework]) {
+    expect(within(motion).getByRole("switch", { name: "Reduced motion" })).toBeTruthy();
+    for (const tile of [layout, framework, motion]) {
       expect(tile.querySelector(":scope > div > [aria-hidden=true]")).toBeNull();
     }
-    // The other two are decoration: their frame is hidden and the text carries the message.
-    for (const tile of [css, motion]) {
-      expect(tile.querySelector("[aria-hidden=true]")).not.toBeNull();
-      expect(within(tile).queryByRole("slider")).toBeNull();
-      expect(within(tile).queryByRole("radiogroup")).toBeNull();
-    }
+    // The CSS-only tile is decoration: its frame is hidden and the text carries the message.
+    expect(css.querySelector("[aria-hidden=true]")).not.toBeNull();
+    expect(within(css).queryByRole("slider")).toBeNull();
+    expect(within(css).queryByRole("switch")).toBeNull();
     expect(screen.getAllByRole("slider")).toHaveLength(1);
   });
 

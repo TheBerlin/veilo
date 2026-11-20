@@ -4,6 +4,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ShiftDemo } from "../../src/home/shift-demo.tsx";
+import { reduceMotion } from "../support/media.ts";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -31,23 +32,6 @@ async function watchButtons(ms: number) {
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
   return seen;
-}
-
-/** Makes the page ask for less motion. */
-function reduceMotion() {
-  const real = window.matchMedia.bind(window);
-  // A media query list's methods need the real object as `this`.
-  const bound = (media: MediaQueryList, key: string | symbol) => {
-    const value = Reflect.get(media, key);
-    return typeof value === "function" ? value.bind(media) : value;
-  };
-  vi.spyOn(window, "matchMedia").mockImplementation((query: string) =>
-    query.includes("prefers-reduced-motion")
-      ? (new Proxy(real(query), {
-          get: (media, key) => (key === "matches" ? true : bound(media, key)),
-        }) as MediaQueryList)
-      : real(query),
-  );
 }
 
 describe("ShiftDemo", () => {

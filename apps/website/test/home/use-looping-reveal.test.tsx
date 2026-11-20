@@ -3,6 +3,7 @@
 import { render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useLoopingReveal } from "../../src/home/use-looping-reveal.ts";
+import { reduceMotion } from "../support/media.ts";
 
 /** A one-line card: a text slot the demo reveals. */
 function Demo(props: { active: boolean }) {
@@ -49,19 +50,7 @@ describe("useLoopingReveal", () => {
   });
 
   it("under reduced motion: lands on the content and stays there", async () => {
-    const real = window.matchMedia.bind(window);
-    // A media query list's methods need the real object as `this`.
-    const bound = (media: MediaQueryList, key: string | symbol) => {
-      const value = Reflect.get(media, key);
-      return typeof value === "function" ? value.bind(media) : value;
-    };
-    vi.spyOn(window, "matchMedia").mockImplementation((query: string) =>
-      query.includes("prefers-reduced-motion")
-        ? (new Proxy(real(query), {
-            get: (media, key) => (key === "matches" ? true : bound(media, key)),
-          }) as MediaQueryList)
-        : real(query),
-    );
+    reduceMotion();
     const { container } = render(<Demo active />);
     // Longer than a whole looping cycle (0.3 + 0.2 + 0.9 s), sampled throughout.
     for (let index = 0; index < 20; index += 1) {

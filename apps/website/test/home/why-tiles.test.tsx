@@ -55,15 +55,4 @@ describe("WHY_TILES", () => {
     const delays = parts.map((part) => getComputedStyle(part).animationDelay);
     expect(new Set(delays).size).toBe(3);
   });
-
-  it("Reduced motion: one placeholder moves, the other rests, and the media query is named", () => {
-    const container = demo("motion", false);
-    const items = [...container.querySelectorAll("[aria-hidden=true]")];
-    const [moving, resting] = items.map((item) => [...item.querySelectorAll("span")]);
-    expect(moving).toHaveLength(3);
-    expect(resting).toHaveLength(3);
-    for (const part of moving!) expect(getComputedStyle(part).animationName).toBe("veilo-shimmer");
-    for (const part of resting!) expect(getComputedStyle(part).animationName).toBe("none");
-    expect(container.textContent).toContain("@media (prefers-reduced-motion: reduce)");
-  });
 });

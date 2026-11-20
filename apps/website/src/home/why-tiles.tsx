@@ -6,6 +6,7 @@ import "@veilo-ui/css/skeleton.css";
 import type { CSSProperties, ReactNode } from "react";
 import { ShiftDemo } from "./shift-demo.tsx";
 import { FrameworkDemo } from "./framework-demo.tsx";
+import { MotionDemo } from "./motion-demo.tsx";
 import styles from "./why-tiles.module.css";
 
 /** One tile: what it says and what it shows. */
@@ -30,17 +31,16 @@ export interface DemoProps {
   active: boolean;
 }
 
-/** The animation class of each way a skeleton item can behave in the small demos. */
+/** The animation class of each loader of the CSS package. */
 const EFFECT_CLASS = {
   shimmer: "veilo-shimmer",
   wave: "veilo-wave",
   pulse: "veilo-pulse",
-  still: "",
 } as const;
 
 /** Props of {@link SkeletonItem}. */
 interface SkeletonItemProps {
-  /** How it moves: one of the three loaders of the CSS package, or `still` for none. */
+  /** How it moves: one of the three loaders of the CSS package. */
   effect: keyof typeof EFFECT_CLASS;
 }
 
@@ -90,28 +90,6 @@ function CssOnlyDemo() {
   );
 }
 
-/**
- * Reduced motion: the same placeholder moving and at rest, and the media query that stills it,
- * which is built into the stylesheet. For a visitor who asks for less motion, both rest.
- *
- * @returns The demo.
- */
-function ReducedMotionDemo() {
-  return (
-    <div className={styles.rows}>
-      <div className={styles.row}>
-        <span className={styles.label}>Motion on</span>
-        <SkeletonItem effect="shimmer" />
-      </div>
-      <div className={styles.row}>
-        <span className={styles.label}>Reduced motion</span>
-        <SkeletonItem effect="still" />
-      </div>
-      <code className={styles.label}>@media (prefers-reduced-motion: reduce)</code>
-    </div>
-  );
-}
-
 /** The tiles, in reading order. */
 export const WHY_TILES: readonly WhyTile[] = [
   {
@@ -140,8 +118,9 @@ export const WHY_TILES: readonly WhyTile[] = [
   {
     id: "motion",
     wide: false,
+    interactive: true,
     title: "Reduced motion.",
     caption: "Effects calm down when users ask.",
-    demo: () => <ReducedMotionDemo />,
+    demo: (props) => <MotionDemo active={props.active} />,
   },
 ];
