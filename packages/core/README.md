@@ -234,7 +234,7 @@ Importing either entry touches no browser globals, so both are safe in server co
 The specification sketches `createReveal(container, { image: {}, text: {}, duration, easing })` and a `presets` export. The current API follows it with a container, and differs in these points:
 
 - The container's parts are found from `data-veilo-slot` markup, and explicit targets are accepted too.
-- Settings are the flat object that the playground exports. Grouped `image` and `text` options are an open decision.
+- Settings are the flat object that the playground exports. This is the final form: a grouped `image` and `text` input could be added later as an alternative that maps onto it, but the flat object is what the format promises.
 - Presets will come in their own package.
 - `createSkeleton` uses `start()` and `stop()` as sketched, and adds `destroy()`.
 

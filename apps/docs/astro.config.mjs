@@ -46,7 +46,11 @@ export default defineConfig({
         { label: "Effects", items: [{ autogenerate: { directory: "effects" } }] },
         {
           label: "Reference",
-          items: [{ slug: "reference/settings" }, { slug: "reference/changelog" }],
+          items: [
+            { slug: "reference/settings" },
+            { slug: "reference/stability" },
+            { slug: "reference/changelog" },
+          ],
         },
       ],
     }),

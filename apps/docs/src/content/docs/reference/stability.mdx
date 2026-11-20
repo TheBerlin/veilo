@@ -1,0 +1,69 @@
+---
+title: Stability and versioning
+description: What Veilo promises not to break, what is internal, and how the settings format and its versions work.
+---
+
+Veilo follows [semantic versioning](https://semver.org/), and all its packages share one version number. This page says what that covers.
+
+## Where we are
+
+Before 1.0.0, a breaking change raises the **minor** version, and the changelog says so. The settings format (version 1) has been reviewed and is a **candidate for freezing at 1.0.0**: the rules below already apply to how we change it, and 1.0.0 will be cut after real use, once the Skeleton builder has shown whether the layout format needs anything.
+
+## What is covered
+
+At 1.0.0 these stop changing in breaking ways. A breaking change to any of them needs a new major version.
+
+- **The settings format.** Every key, its type, its default and its range, as listed in the [settings reference](/reference/settings/).
+- **The layout format**: `{ version, settings, slots }`, the slot roles `image`, `text`, `button` and `block`, and the `lines` and `width` hints.
+- **Preset ids and what they set.** `dot-upscale`, `hex-from-center`, `matrix-columns`, `cascade-wave`, `soft-pulse`, `compact-shimmer` and `mosaic-from-edge`. New presets can be added; an existing one does not change.
+- **Share links** (`#v1.…`), and **presets files** (`veilo-presets`, version 1). A link or file made today must still open.
+- **The markup and styling hooks**: `data-veilo-slot`; the CSS classes `veilo`, `veilo-shimmer`, `veilo-wave` and `veilo-pulse`; the custom properties `--veilo-base`, `--veilo-hi`, `--veilo-radius`, `--veilo-ink`, `--veilo-bg-a` and `--i`.
+- **The web components**: the tags `veilo-reveal` and `veilo-skeleton`, their attributes `loading`, `reveal-on-connect`, `preset`, `settings`, `layout` and `effect`, and the `veilo-complete` event.
+- **The programming interface**: the exports of each package, the methods `play`, `pause`, `resume`, `seek`, `showLoading`, `redraw`, `playSequence`, `on` and `destroy`, the states `idle`, `loading`, `revealing` and `revealed`, and the events `progress`, `state` and `complete`.
+- **Defaults and output.** A missing key takes its default, so a default is part of the format. At a given progress, an effect draws the same frame, which the tests lock with screenshots.
+
+## What may be added
+
+None of these need a new settings version:
+
+- A new optional key, a new option on an existing key, or a wider numeric range.
+- A new preset.
+- A new optional field in a layout.
+
+Older files and links read back exactly as before.
+
+## What needs a new version and a migration
+
+- Renaming or removing a key, or removing an option.
+- Narrowing a range, or changing a default.
+- Changing what a key means, or what a preset sets.
+
+When that happens, the `version` field goes up and Veilo reads older files by migrating them step by step to the current version.
+
+## What is internal
+
+These exist and a page may see them, but they are not promised and can change in any release:
+
+- `--veilo-last`, `--veilo-lines`, `--veilo-bar-r`, `--veilo-bar-top` and `--veilo-bar-bottom`, which build the line bars.
+- The attributes `data-veilo-bars`, `data-veilo-skeleton` and `data-veilo-ssr`, which mark Veilo's own work.
+- The playground's saved state in the browser's storage, apart from reading old data.
+- Anything in a package marked private, such as the design system package.
+
+Do not select on them or set them yourself.
+
+## How the settings are read
+
+- **Unknown keys are ignored.** A value of the wrong type falls back to the default, and a number outside its range is clamped. Counts, such as `cols`, are rounded to a whole number first.
+- **The step of a slider is not part of the format.** A value between steps is accepted.
+- **A newer version is read, and reported.** If a file's `version` is newer than the package reads, the known keys are used and the result carries `newerVersion`, so an app can say the file was made by a newer version of Veilo. Share links and presets files do the same.
+- **The published JSON Schema is stricter than the reader.** It flags unknown keys and out-of-range values, where the reader ignores or clamps them.
+
+## What is not covered
+
+- The playground's interface, this site and the website.
+- The pixels an effect draws in different browsers and operating systems. The output is exact for a given browser, and tested in Chromium.
+- The wording of messages and warnings.
+
+## How we keep the promise
+
+Golden tests copy what version 1 accepts: the settings table, a settings object with every key set, how bad input is handled, a layout, share links and a presets file. They fail if a key, default, option or range would break saved data. They are meant to change only when a new format version is introduced on purpose.

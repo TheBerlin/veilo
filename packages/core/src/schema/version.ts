@@ -5,6 +5,9 @@
 // unchanged (a missing key takes its default); a key that is renamed, removed or changes meaning
 // bumps it and needs a migration.
 // - 1: first format (0.1.0). `inkColor` was added in 0.3.0 as an optional key, still version 1.
+//   Before the freeze at 1.0 (the review in docs/schema-freeze-review.md) two things changed and the
+//   version stayed 1, because no release had been frozen yet: `cols` is read as a whole number, and
+//   the loader's default easing `lEase` went from `out` to `inOut`. From 1.0 on, such changes bump it.
 
 /** Current version of the settings format, stored in the `version` field of every settings object. */
 export const SETTINGS_VERSION = 1;
