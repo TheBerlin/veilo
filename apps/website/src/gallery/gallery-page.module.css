@@ -1,0 +1,46 @@
+/* The gallery page: 64 px below the header, 128 px above the footer, as the home page's sections. */
+.page {
+  display: grid;
+  gap: var(--veilo-space-4);
+  padding-block: var(--veilo-space-8) var(--veilo-space-16);
+}
+
+/* The title is the page's h1 in the section-title step; the caption is the body color, muted. */
+.head {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.title {
+  margin: 0;
+  font: var(--veilo-type-h2);
+  letter-spacing: var(--veilo-type-h2-tracking);
+}
+
+.caption {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body);
+}
+
+@media (max-width: 900px) {
+  .title {
+    font: var(--veilo-type-h2-mobile);
+    letter-spacing: var(--veilo-type-h2-mobile-tracking);
+  }
+}
+
+/* The empty result: a centered line and the way out. */
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--veilo-space-2);
+  padding-block: var(--veilo-space-8);
+  text-align: center;
+}
+
+.emptyText {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body-lg);
+}

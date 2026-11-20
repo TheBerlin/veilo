@@ -3,7 +3,7 @@
 
 import { Button, ChipGroup, ChipGroupItem, CodeBlock, Grid, GridCell } from "@veilo-ui/ui";
 import { useState } from "react";
-import { INSTALL_COMMAND, PLAYGROUND_URL } from "../site/links.ts";
+import { GALLERY_URL, INSTALL_COMMAND, PLAYGROUND_URL } from "../site/links.ts";
 import { DEMO_KINDS, DemoStage, type DemoKind } from "./demo-stage.tsx";
 import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./hero.module.css";
@@ -35,7 +35,7 @@ export function Hero() {
                 <a href={PLAYGROUND_URL}>Open the playground</a>
               </Button>
               <Button asChild size="lg">
-                <a href="#gallery">Browse presets</a>
+                <a href={GALLERY_URL}>Browse presets</a>
               </Button>
             </div>
             <div className={styles.install}>

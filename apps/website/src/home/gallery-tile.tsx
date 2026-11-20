@@ -11,6 +11,7 @@ import { DemoPhoto } from "./demo-photo.tsx";
 import { presetBadges, type GalleryTileSpec } from "./gallery-tiles.ts";
 import styles from "./gallery-tile.module.css";
 import { useAlbumCover } from "./use-album-cover.ts";
+import { useSeen } from "./use-seen.ts";
 
 /** Slot hints of the demo card: the photo and two lines of text. */
 const CARD_LAYOUT = {
@@ -86,7 +87,8 @@ function DemoCard(props: DemoCardProps) {
  * leaving or blurring returns it to its resting frame. The link under it opens the effect in the
  * playground.
  *
- * Side effects: loads the shared cover photograph.
+ * Side effects: loads the shared cover photograph; creates the tile's engine once the tile has been
+ * scrolled into view.
  *
  * @param props - The tile's spec.
  * @returns The tile's article.
@@ -95,10 +97,13 @@ export function GalleryTile(props: GalleryTileProps) {
   const { spec } = props;
   const preset = findPreset(spec.id)!;
   const ready = useAlbumCover();
+  // The engine starts only once the tile has been scrolled near, so a page of many tiles does not
+  // start them all at once.
+  const { ref, seen } = useSeen<HTMLElement>();
   const [playing, setPlaying] = useState(false);
   const [run, setRun] = useState(0);
   return (
-    <Card as="article" className={styles.tile} aria-label={preset.name}>
+    <Card as="article" ref={ref} className={styles.tile} aria-label={preset.name}>
       <button
         type="button"
         className={styles.frame}
@@ -121,7 +126,7 @@ export function GalleryTile(props: GalleryTileProps) {
           setRun((count) => count + 1);
         }}
       >
-        {ready ? <DemoCard spec={spec} playing={playing} run={run} /> : null}
+        {ready && seen ? <DemoCard spec={spec} playing={playing} run={run} /> : null}
       </button>
       <h3 className={styles.name}>{preset.name}</h3>
       <ul className={styles.badges} aria-label="Effects">

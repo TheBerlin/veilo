@@ -19,15 +19,33 @@ export interface GalleryTileSpec {
 }
 
 /**
- * The three effects of the preview: a grid reveal of characters, a loader with a sweep, and a
- * grid of tiles, so the range shows. Hex and mosaic rest on a frame near the middle of the reveal,
- * where their pattern is plain; the wave rests on its still skeleton.
+ * The image effects drawn on a grid of cells (dots, hex characters, binary characters, mosaic
+ * squares). Their pattern is plain in the middle of the reveal, so a tile of one rests on a frame
+ * from there. Every other effect is mostly its loader, so its tile rests on the still skeleton.
  */
-export const GALLERY_PREVIEW: readonly GalleryTileSpec[] = [
-  { id: "hex-from-center", rest: 0.45 },
-  { id: "cascade-wave", rest: "loading" },
-  { id: "mosaic-from-edge", rest: 0.45 },
-];
+const GRID_IMAGE_EFFECTS: ReadonlySet<string> = new Set(["dots", "hex", "binary", "mosaic"]);
+
+/** The progress a grid effect's tile rests on: near the middle of the reveal. */
+const REST_PROGRESS = 0.45;
+
+/**
+ * The spec of a tile for a preset: how it rests follows from the preset's own image effect.
+ *
+ * @param id - The preset.
+ * @returns The tile's spec.
+ */
+export function tileSpec(id: PresetId): GalleryTileSpec {
+  const settings = presetSettings(id)!;
+  return { id, rest: GRID_IMAGE_EFFECTS.has(settings.imageFx) ? REST_PROGRESS : "loading" };
+}
+
+/**
+ * The three effects of the home page's preview: a grid reveal of characters, a loader with a
+ * sweep, and a grid of squares, so the range shows.
+ */
+export const GALLERY_PREVIEW: readonly GalleryTileSpec[] = (
+  ["hex-from-center", "cascade-wave", "mosaic-from-edge"] as const
+).map(tileSpec);
 
 /** The settings a badge can name, in the order the badges are shown. */
 export type BadgeKey = "effect" | "imageFx" | "textFx";

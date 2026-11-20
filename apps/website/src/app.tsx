@@ -1,13 +1,14 @@
 // app.tsx: root of the website: the header, the page for the current address and the footer.
 
 import { useEffect } from "react";
+import { GalleryPage } from "./gallery/gallery-page.tsx";
 import { FinalCta } from "./home/final-cta.tsx";
 import { GalleryPreview } from "./home/gallery-preview.tsx";
 import { Hero } from "./home/hero.tsx";
 import { HowItWorks } from "./home/how-it-works.tsx";
 import { WhyUseful } from "./home/why-useful.tsx";
 import { App as Playground } from "./playground/app.tsx";
-import { PLAYGROUND_URL } from "./site/links.ts";
+import { GALLERY_URL, PLAYGROUND_URL } from "./site/links.ts";
 import { usePath } from "./site/router.tsx";
 import { SiteFooter } from "./site/site-footer.tsx";
 import { SiteNav } from "./site/site-nav.tsx";
@@ -16,6 +17,7 @@ import { SiteNav } from "./site/site-nav.tsx";
 const TITLES: Record<string, string> = {
   "/": "Veilo UI: skeleton loaders and reveal animations",
   [PLAYGROUND_URL]: "Playground · Veilo UI",
+  [GALLERY_URL]: "Gallery · Veilo UI",
 };
 
 /**
@@ -27,16 +29,19 @@ const TITLES: Record<string, string> = {
  */
 export function App() {
   const path = usePath();
-  const playground = path === PLAYGROUND_URL;
+  // An address the site does not know shows the home page.
+  const page = path === PLAYGROUND_URL || path === GALLERY_URL ? path : "/";
   useEffect(() => {
-    document.title = TITLES[playground ? PLAYGROUND_URL : "/"] ?? TITLES["/"]!;
-  }, [playground]);
+    document.title = TITLES[page]!;
+  }, [page]);
   return (
     <>
       <SiteNav path={path} />
       <main id="main" tabIndex={-1}>
-        {playground ? (
+        {page === PLAYGROUND_URL ? (
           <Playground />
+        ) : page === GALLERY_URL ? (
+          <GalleryPage />
         ) : (
           <>
             <Hero />

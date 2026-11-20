@@ -11,6 +11,7 @@ const NODE_TESTS = [
   "test/home/framework-snippets.test.ts",
   "test/home/why-copy.test.ts",
   "test/home/gallery-tiles.test.ts",
+  "test/gallery/gallery-filter.test.ts",
 ];
 
 export default defineProject({

@@ -3,8 +3,8 @@
 /** The playground, a page of this site. */
 export const PLAYGROUND_URL = "/playground";
 
-/** The gallery. Not built yet. */
-export const GALLERY_URL = "#gallery";
+/** The gallery, a page of this site. */
+export const GALLERY_URL = "/gallery";
 
 /** The source repository. */
 export const GITHUB_URL = "https://github.com/TheBerlin/veilo";

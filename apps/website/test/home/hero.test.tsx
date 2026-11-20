@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { Hero } from "../../src/home/hero.tsx";
-import { GITHUB_URL, INSTALL_COMMAND, PLAYGROUND_URL } from "../../src/site/links.ts";
+import { GALLERY_URL, GITHUB_URL, INSTALL_COMMAND, PLAYGROUND_URL } from "../../src/site/links.ts";
 
 describe("Hero", () => {
   it("has the page's one h1 and the two actions as links", () => {
@@ -15,7 +15,7 @@ describe("Hero", () => {
       PLAYGROUND_URL,
     );
     expect(screen.getByRole("link", { name: "Browse presets" }).getAttribute("href")).toBe(
-      "#gallery",
+      GALLERY_URL,
     );
   });
 

@@ -8,6 +8,7 @@ import {
   BADGE_NAMES,
   GALLERY_PREVIEW,
   presetBadges,
+  tileSpec,
   type BadgeKey,
 } from "../../src/home/gallery-tiles.ts";
 
@@ -32,6 +33,18 @@ describe("GALLERY_PREVIEW", () => {
     // The wave is mostly about its loader, so it rests on the still skeleton; the two grid
     // effects rest in the middle of their reveal, where the pattern is plain.
     expect(GALLERY_PREVIEW.map((spec) => spec.rest)).toEqual([0.45, "loading", 0.45]);
+  });
+});
+
+describe("tileSpec", () => {
+  it("rests a tile of a grid effect on a frame of its reveal, and every other on the still skeleton", () => {
+    const grid = new Set(["dots", "hex", "binary", "mosaic"]);
+    for (const preset of PRESETS) {
+      const settings = presetSettings(preset.id)!;
+      const { rest } = tileSpec(preset.id);
+      if (grid.has(settings.imageFx)) expect(rest, preset.id).toBe(0.45);
+      else expect(rest, preset.id).toBe("loading");
+    }
   });
 });
 

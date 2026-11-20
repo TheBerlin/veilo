@@ -37,7 +37,7 @@ export function SiteNav(props: SiteNavProps) {
       brandLabel="Veilo home"
       links={[
         { label: "Playground", href: PLAYGROUND_URL, current: path === PLAYGROUND_URL },
-        { label: "Gallery", href: GALLERY_URL },
+        { label: "Gallery", href: GALLERY_URL, current: path === GALLERY_URL },
         { label: "GitHub", href: GITHUB_URL, icon: githubIcon },
       ]}
       trailing={<ThemeSwitch />}

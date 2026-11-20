@@ -56,12 +56,16 @@ describe("GalleryTile", () => {
     expect(playgroundLinkFor("cascade-wave")).toBe("/playground?preset=cascade-wave");
   });
 
-  it("has a frame that is a button naming what it does, with the picture hidden from assistive technology", () => {
+  it("has a frame that is a button naming what it does, with the picture hidden from assistive technology", async () => {
     render(<GalleryTile spec={HEX} />);
     const frame = screen.getByRole("button", { name: "Play the Hex from center effect" });
-    expect(frame.querySelector("[aria-hidden=true]")).not.toBeNull();
-    // Nothing else in the frame is announced: the name above says it all.
-    expect(frame.textContent).toBe("Aero desk lamp$48 · In stock");
+    // The card, made once the tile has been seen and the photograph is ready.
+    await vi.waitFor(() => expect(frame.querySelector("[aria-hidden=true]")).not.toBeNull(), POLL);
+    // Nothing in the frame is announced: take away what is hidden and no text is left. (The engine's
+    // own text overlays are hidden too, so this holds while an effect scrambles the lines.)
+    const visible = frame.cloneNode(true) as HTMLElement;
+    visible.querySelectorAll("[aria-hidden=true]").forEach((hidden) => hidden.remove());
+    expect(visible.textContent).toBe("");
   });
 
   it("a grid effect rests on a held frame of its reveal and stays there", async () => {
