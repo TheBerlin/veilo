@@ -4,6 +4,7 @@ import { PRESETS } from "@veilo-ui/presets";
 import { describe, expect, it } from "vitest";
 import {
   countText,
+  filtersToSearch,
   filterEntries,
   galleryEntries,
   GROUPS,
@@ -11,6 +12,7 @@ import {
   matches,
   NO_FILTERS,
   optionsFor,
+  parseFilters,
   toggleOption,
   type FilterState,
 } from "../../src/gallery/gallery-filter.ts";
@@ -150,5 +152,35 @@ describe("countText", () => {
     expect(countText(3, 7, true)).toBe("3 of 7 effects");
     expect(countText(0, 7, true)).toBe("0 of 7 effects");
     expect(countText(1, 1, false)).toBe("1 effect");
+  });
+});
+
+describe("filters in the address", () => {
+  it("reads the search and the chosen options from a query", () => {
+    const state = parseFilters("?q=hex%20cen&loader=wave,shimmer&text=scramble", entries);
+    expect(state.query).toBe("hex cen");
+    // In the row's order, not the link's.
+    expect(state.chosen.effect).toEqual(["shimmer", "wave"]);
+    expect(state.chosen.textFx).toEqual(["scramble"]);
+    expect(state.chosen.imageFx).toEqual([]);
+  });
+
+  it("ignores options that are not offered, and repeats", () => {
+    const state = parseFilters("loader=wave,wave,bogus&image=nope", entries);
+    expect(state.chosen.effect).toEqual(["wave"]);
+    expect(state.chosen.imageFx).toEqual([]);
+  });
+
+  it("an empty or unrelated query is no filters", () => {
+    expect(parseFilters("", entries)).toEqual(NO_FILTERS);
+    expect(parseFilters("?utm=1", entries)).toEqual(NO_FILTERS);
+  });
+
+  it("writes a state back, and nothing for no filters", () => {
+    expect(filtersToSearch(NO_FILTERS)).toBe("");
+    expect(filtersToSearch({ ...NO_FILTERS, query: "   " })).toBe("");
+    const state = toggleOption({ ...NO_FILTERS, query: "a b" }, "effect", "wave");
+    expect(filtersToSearch(state)).toBe("?q=a+b&loader=wave");
+    expect(parseFilters(filtersToSearch(state), entries)).toEqual(state);
   });
 });

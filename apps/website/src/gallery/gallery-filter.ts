@@ -167,3 +167,50 @@ export function countText(shown: number, total: number, filtered: boolean): stri
   const noun = (n: number) => (n === 1 ? "effect" : "effects");
   return filtered ? `${shown} of ${total} ${noun(total)}` : `${total} ${noun(total)}`;
 }
+
+/** The address parameter of each filter row. */
+const PARAMS: Readonly<Record<GroupKey, string>> = {
+  effect: "loader",
+  imageFx: "image",
+  textFx: "text",
+};
+
+/**
+ * Reads the search and the chosen options from a query string, so a filtered view can be opened
+ * from a link. An option the gallery does not offer is ignored, and so is a repeat of one, so a
+ * broken or edited link opens the gallery with whatever in it is valid.
+ *
+ * @param search - The query string, with or without the leading `?`, such as `q=hex&loader=wave,pulse`.
+ * @param entries - The gallery's effects, which decide which options exist.
+ * @returns The state the query asks for.
+ */
+export function parseFilters(search: string, entries: readonly GalleryEntry[]): FilterState {
+  const params = new URLSearchParams(search);
+  const chosen = { ...NO_FILTERS.chosen };
+  for (const { key } of GROUPS) {
+    const offered = new Set(optionsFor(entries, key).map((option) => option.value));
+    const wanted = (params.get(PARAMS[key]) ?? "").split(",").filter((value) => offered.has(value));
+    // The row's order, not the link's, and each option once.
+    chosen[key] = optionsFor(entries, key)
+      .map((option) => option.value)
+      .filter((value) => wanted.includes(value));
+  }
+  return { query: params.get("q") ?? "", chosen };
+}
+
+/**
+ * The query string for a state: the inverse of {@link parseFilters}. Nothing chosen and no text
+ * give an empty string, so an unfiltered gallery has a plain address.
+ *
+ * @param state - The search and choices.
+ * @returns A query string with its leading `?`, or an empty string.
+ */
+export function filtersToSearch(state: FilterState): string {
+  const params = new URLSearchParams();
+  if (state.query.trim() !== "") params.set("q", state.query);
+  for (const { key } of GROUPS) {
+    if (state.chosen[key].length > 0) params.set(PARAMS[key], state.chosen[key].join(","));
+  }
+  const text = params.toString();
+  return text === "" ? "" : `?${text}`;
+}

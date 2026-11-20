@@ -7,6 +7,7 @@ import { page } from "vitest/browser";
 import { GalleryPage } from "../../src/gallery/gallery-page.tsx";
 
 afterEach(async () => {
+  window.history.replaceState(null, "", "/");
   await page.viewport(414, 896);
 });
 
@@ -172,5 +173,19 @@ describe("GalleryPage", () => {
     const boxes = screen.getAllByRole("article").map((tile) => tile.getBoundingClientRect());
     expect(new Set(boxes.map((box) => Math.round(box.top))).size).toBe(7);
     for (const box of boxes) expect(box.width).toBeCloseTo(335, 0);
+  });
+
+  it("starts from the address, and writes changes back without adding history", async () => {
+    window.history.replaceState(null, "", "/gallery?q=hex&loader=shimmer#top");
+    const before = window.history.length;
+    render(<GalleryPage />);
+    expect(tileNames()).toEqual(["Hex from center"]);
+    expect(pressed("Shimmer")).toBe(true);
+    await userEvent.click(screen.getByRole("button", { name: "Scramble" }));
+    expect(window.location.search).toBe("?q=hex&loader=shimmer&text=scramble");
+    expect(window.location.hash).toBe("#top");
+    await userEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+    expect(window.location.search).toBe("");
+    expect(window.history.length).toBe(before);
   });
 });
