@@ -1,6 +1,7 @@
 // app.tsx: root of the website: the header, the page for the current address and the footer.
 
 import { useEffect } from "react";
+import { FinalCta } from "./home/final-cta.tsx";
 import { GalleryPreview } from "./home/gallery-preview.tsx";
 import { Hero } from "./home/hero.tsx";
 import { HowItWorks } from "./home/how-it-works.tsx";
@@ -42,6 +43,7 @@ export function App() {
             <HowItWorks />
             <WhyUseful />
             <GalleryPreview />
+            <FinalCta />
           </>
         )}
       </main>
