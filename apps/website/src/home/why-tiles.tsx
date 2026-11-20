@@ -5,8 +5,8 @@
 import type { Settings } from "@veilo-ui/core";
 import type { LayoutInput } from "@veilo-ui/presets";
 import "@veilo-ui/css/skeleton.css";
-import { useReveal } from "@veilo-ui/react";
-import { useEffect, type CSSProperties, type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { useLoopingReveal } from "./use-looping-reveal.ts";
 import styles from "./why-tiles.module.css";
 
 /** One tile: what it says and what it shows. */
@@ -46,26 +46,6 @@ const CARD_LAYOUT = {
     second: { role: "text", width: 55 },
   },
 } as const;
-
-/**
- * Plays a reveal on a container over and over once the tile is active. A visitor who asks for
- * less motion gets the finished content at once, because core follows the preference.
- *
- * Side effects: creates a reveal and destroys it on unmount; starts a looping sequence when
- * `active` turns true.
- *
- * @param settings - The effect.
- * @param layout - The slot hints.
- * @param active - Whether the tile has been scrolled into view.
- * @returns A ref for the container that holds the slots.
- */
-function useLoopingReveal(settings: Partial<Settings>, layout: LayoutInput, active: boolean) {
-  const { ref, reveal } = useReveal<HTMLDivElement>({ settings, layout });
-  useEffect(() => {
-    if (active && reveal) reveal.playSequence({ loop: true });
-  }, [active, reveal]);
-  return ref;
-}
 
 /**
  * Layout stays put: a small card goes from skeleton to content inside a dashed outline. The
