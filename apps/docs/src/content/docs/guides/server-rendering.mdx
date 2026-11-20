@@ -1,0 +1,41 @@
+---
+title: Server rendering
+description: Which Veilo packages are safe to import on a server, and when the skeleton first appears in the page.
+---
+
+Every Veilo package imports on a server without touching browser globals; the packages' CI loads each built entry in plain Node to check this. What differs is when the skeleton first shows.
+
+## What runs where
+
+| Package             | On the server                                                                                                                                              | In the browser                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `@veilo-ui/core`    | `parseSettings`, `parseLayout`, `defaultSettings`, `settingsJsonSchema` and `generateLoaderCss` work anywhere. `serverSkeletonCss` makes the skeleton CSS. | `createReveal` and `createSkeleton` need a browser.         |
+| `@veilo-ui/react`   | Renders the skeleton in the server HTML.                                                                                                                   | The live skeleton takes over after hydration.               |
+| `@veilo-ui/vue`     | Renders your plain markup.                                                                                                                                 | The skeleton appears when the page hydrates.                |
+| `@veilo-ui/svelte`  | Renders your plain markup.                                                                                                                                 | The skeleton appears when the page hydrates.                |
+| `@veilo-ui/angular` | Renders your plain markup.                                                                                                                                 | The skeleton appears after the first render in the browser. |
+| `@veilo-ui/element` | Importing registers nothing.                                                                                                                               | The elements register and start when the page loads.        |
+| `@veilo-ui/css`     | The stylesheet is plain CSS, so the skeleton shows before any script runs.                                                                                 | The same.                                                   |
+
+Where the skeleton appears at hydration, Veilo still causes no layout shift: the server HTML holds your real markup, and the skeleton is painted over it.
+
+## React
+
+All exports are client components (the package starts with `"use client"`), and they render on the server. While loading, the server HTML already shows the skeleton: a small scoped `<style>` from `serverSkeletonCss` comes with the markup, so the skeleton shows before any script runs. After hydration the live skeleton takes over and the style is removed; the two look the same.
+
+Until the script takes over, the wave runs in step, slots with no name in a layout are guessed from their tag alone, and the placeholders are not yet `aria-hidden` and the container not yet `aria-busy`.
+
+## Your own server code
+
+To show the skeleton from server-rendered markup in another stack, generate the CSS and scope it to your element:
+
+```ts
+import { serverSkeletonCss } from "@veilo-ui/core/loader";
+
+const css = serverSkeletonCss(layout, '[data-skeleton="card-1"]');
+// <style>{css}</style><article data-skeleton="card-1">...slots...</article>
+```
+
+Every `data-veilo-slot` element inside the scope is a placeholder; text slots show line bars with the layout's `width` and `lines` hints. With `{ self: true }` the scope element itself is one solid placeholder. When `createSkeleton` or `createReveal` takes over in the browser, remove the `<style>` and the scope attribute.
+
+`@veilo-ui/core/loader` has no DOM code, so it loads in any server runtime.

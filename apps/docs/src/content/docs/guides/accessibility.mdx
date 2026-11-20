@@ -1,0 +1,38 @@
+---
+title: Accessibility and reduced motion
+description: What Veilo does for screen readers and for people who ask for less motion, and what is left to your markup.
+---
+
+A skeleton and a reveal are decoration on top of content that is, or will be, in the page. Veilo is built so the decoration never gets in the way of that content.
+
+## Reduced motion
+
+Veilo follows `prefers-reduced-motion` by default:
+
+- The **skeleton** stays still: a flat placeholder, with no sweep or pulse.
+- The **reveal** skips the animation and shows the real content at once.
+
+The `reducedMotion` option overrides this for a single reveal or skeleton: `true` always behaves as if the visitor asked for less motion, and `false` always animates. The [playground](https://veilo-ui.dev/playground) uses `false` for its preview, on purpose, so you can see the effect even when your system asks for less motion. Do not ship that setting in a product.
+
+The CSS-only loaders follow the preference too: under `prefers-reduced-motion: reduce` every effect class stops and shows a still base-color placeholder.
+
+## Screen readers
+
+- **The real text always stays in the page.** A screen reader reads the final content, not the animation. Scramble and typewriter draw on an overlay that is `aria-hidden` and written with `textContent`, so it can never inject markup.
+- **Placeholders are hidden.** Skeleton elements get `aria-hidden` while loading.
+- **The loading region is marked busy.** The container (or the `busy` element you pass) gets `aria-busy="true"` while the skeleton shows, so assistive technology waits for the real content instead of reading a half-loaded region.
+- **Nothing is added to the tab order.** The overlays and canvases are not focusable, and Veilo does not move focus.
+
+If a load can take long, add a short status message of your own, such as "Loading product" in a `role="status"` element. The skeleton itself says nothing.
+
+## Layout
+
+Overlays and canvases are absolutely positioned and never change the size of your elements, so there is no layout shift when the reveal starts or ends. For the same reason, render placeholder content of a typical size while data loads: the skeleton takes the size of your real elements.
+
+## Contrast
+
+Skeleton placeholders are meant to be quiet. The default colors are low contrast against the Veilo backgrounds, between 1.08 and 1.37 as WCAG contrast ratios. WCAG's 3:1 for non-text contrast covers graphics needed to understand the content, and hidden placeholders are not such graphics, so these values are allowed. They can look faint, most of all on a card in dark mode. If the bars are hard to see on your background, change `--veilo-base` and `--veilo-hi`: darken them in light themes and lighten them in dark themes, and keep the highlight a step beyond the base so the sweep stays visible.
+
+## If you use the CSS loaders alone
+
+The stylesheet only paints. Add the markup yourself: `aria-busy` on the loading region, `aria-hidden` on each placeholder, and drop `aria-busy` when the content arrives. The [CSS loaders guide](/guides/css/) has an example.

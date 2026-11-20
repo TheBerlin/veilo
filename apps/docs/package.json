@@ -4,7 +4,7 @@
   "description": "The Veilo docs: guides, the settings reference and every ready-made effect, built with Astro Starlight.",
   "type": "module",
   "scripts": {
-    "generate": "node scripts/generate-settings-reference.mjs && node scripts/generate-effect-pages.mjs",
+    "generate": "node scripts/generate-settings-reference.mjs && node scripts/generate-effect-pages.mjs && node scripts/generate-changelog.mjs",
     "dev": "pnpm generate && astro dev",
     "build": "pnpm generate && astro build",
     "preview": "astro preview",
