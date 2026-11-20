@@ -1,11 +1,14 @@
 // astro.config.mjs: the docs site. Starlight supplies the layout, navigation, search (Pagefind)
 // and the dark/light switch; src/styles/theme.css maps its colors and fonts onto the Veilo tokens.
 
+import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
   integrations: [
+    // Islands for the live previews on the Effects pages.
+    react(),
     starlight({
       title: "Veilo UI",
       description:
@@ -38,6 +41,7 @@ export default defineConfig({
             { slug: "guides/css" },
           ],
         },
+        { label: "Effects", items: [{ autogenerate: { directory: "effects" } }] },
         { label: "Reference", items: [{ slug: "reference/settings" }] },
       ],
     }),

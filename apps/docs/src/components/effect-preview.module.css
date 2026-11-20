@@ -1,0 +1,86 @@
+/* Effect preview: a small product card on the page, with a Replay button under it. Colors,
+   spacing and radius come from the Veilo tokens, so it follows the docs' light and dark themes. */
+
+/* The figure: the card and its button, centered, with no margin of its own. */
+.preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  margin: var(--veilo-space-4) 0;
+}
+
+/* The card: a column of the photo and three lines of text and the button. */
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--veilo-space-1);
+  width: 100%;
+  max-width: 300px;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-card);
+  color: var(--veilo-text);
+}
+
+/* The photo: the card's full width, square. */
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--veilo-radius-base);
+}
+
+/* The title, the description and the price: the page's own type, with no margins. */
+.title,
+.text,
+.price {
+  margin: 0;
+}
+
+.title {
+  font: var(--veilo-type-label);
+}
+
+.text {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.price {
+  font: var(--veilo-type-label);
+}
+
+/* The Buy button: the accent color. The engine fades its background with its label through
+   --veilo-bg-a while the reveal plays. */
+.buy {
+  padding: var(--veilo-space-1) var(--veilo-space-2);
+  border: 0;
+  border-radius: var(--veilo-radius-base);
+  background: rgb(from var(--veilo-accent) r g b / var(--veilo-bg-a, 1));
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label-sm);
+}
+
+/* Replay: a quiet button under the card. */
+.replay {
+  padding: var(--veilo-space-1) var(--veilo-space-2);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-base);
+  background: transparent;
+  color: var(--veilo-text);
+  font: var(--veilo-type-label-sm);
+  cursor: pointer;
+}
+
+.replay:hover {
+  background: var(--veilo-secondary);
+}
+
+.replay:focus-visible {
+  outline: 2px solid var(--veilo-text);
+  outline-offset: 2px;
+}
