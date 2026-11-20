@@ -1,0 +1,26 @@
+{
+  "input": {
+    "version": 1,
+    "settings": { "imageFx": "dots", "textFx": "scramble", "unknownKey": true },
+    "slots": {
+      "photo": { "role": "image" },
+      "badge": { "role": "block" },
+      "title": { "role": "text", "width": 58 },
+      "description": { "role": "text", "lines": 2, "width": 70 },
+      "long": { "role": "text", "lines": 99, "width": 500 },
+      "buy": { "role": "button" },
+      "wrong": { "role": "banner" },
+      "": { "role": "text" }
+    }
+  },
+  "expectedSlots": {
+    "photo": { "role": "image" },
+    "badge": { "role": "block" },
+    "title": { "role": "text", "width": 58 },
+    "description": { "role": "text", "lines": 2, "width": 70 },
+    "long": { "role": "text", "lines": 20, "width": 100 },
+    "buy": { "role": "button" },
+    "wrong": {}
+  },
+  "expectedSettingChanges": { "imageFx": "dots", "textFx": "scramble" }
+}

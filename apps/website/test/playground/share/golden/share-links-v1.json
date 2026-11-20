@@ -1,0 +1,52 @@
+{
+  "full": {
+    "fragment": "#v1.XVBBTsMwEPzLcLUip2na1FegPIADZzfeOhauHdkOpFT9O9oUisRtPeOdmZ0LMpXigs1QF3xQyi4GqFqAjkfqCxTGyWeCgH-aElRdbbatgH_RI5SsNgL-WWeCQj_lEk_8ca6Zapg7L-OyMa94XDeMrn7RRCNpdomhZ5NctLWUmK43AjpYT1A73n9zpgxQzbpqBQyN_JBVI5C0cVOG2gm4k7a0n6HwFZcsMTnrAhSSDmZB-ugzVCcXr1Ree80OjUAeE2nDmm0rUGgui9BRGw7WDzpl4qT5fDqwhsAUHAOfMRkIpJ9-uq1A-t9JunWyrvnmv1LSrZR2x-i9lCF6syi1Aged6TH6mKDwUMuVbCQEBmcH7-xQ7pSWB9kz5cL7Hdzvu05KXK_f",
+    "settings": {
+      "version": 1,
+      "effect": "pulse",
+      "lDur": 1.675,
+      "lGap": 0.6,
+      "lEase": "custom",
+      "lx1": 0.36,
+      "ly1": 0.75,
+      "lx2": 0.43,
+      "ly2": 0.75,
+      "repeat": "once",
+      "stagger": 0.16,
+      "angle": 95,
+      "lWidth": 34.5,
+      "depth": 0.3,
+      "radius": 9,
+      "imageFx": "zoom",
+      "origin": "random",
+      "cols": 80,
+      "startScale": 3,
+      "spread": 0.55,
+      "textFx": "fade",
+      "charset": "symbols",
+      "unit": "word",
+      "rDur": 1.87,
+      "rEase": "custom",
+      "rx1": 0.415,
+      "ry1": 0.75,
+      "rx2": 0.59,
+      "ry2": 0.75,
+      "hold": 1.85,
+      "baseColor": "#102030",
+      "highlightColor": "#a0b0c0",
+      "inkColor": "#FF8800"
+    }
+  },
+  "partial": {
+    "fragment": "#v1.q1YqTi0pycxLL1ayqlbKzE1MT3WrULJSykitUNJRKnIpLVKyMtQzq9VRSs7PK0nNKwEpK0osycxXslIyNLOyVKqtBQA",
+    "payload": {
+      "settings": {
+        "imageFx": "hex",
+        "rDur": 1.6
+      },
+      "content": {
+        "ratio": "16:9"
+      }
+    }
+  }
+}
