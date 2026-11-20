@@ -176,6 +176,27 @@ describe("WhyUseful", () => {
       },
     );
 
+    it.each([1440, 1214, 1100, 960])(
+      "the two frames of a row end on one line, whatever their captions wrap to, at %i px",
+      async (width) => {
+        await page.viewport(width, 900);
+        render(<WhyUseful />);
+        const tiles = screen.getAllByRole("article");
+        const frame = (index: number) =>
+          (
+            tiles[index]!.firstElementChild!.firstElementChild as HTMLElement
+          ).getBoundingClientRect();
+        // Row 1 is tiles 1 and 2, row 2 is tiles 3 and 4.
+        for (const [a, b] of [
+          [0, 1],
+          [2, 3],
+        ] as const) {
+          expect(frame(a).height, `frames ${a + 1} and ${b + 1}`).toBeCloseTo(frame(b).height, 0);
+          expect(frame(a).top).toBeCloseTo(frame(b).top, 0);
+        }
+      },
+    );
+
     it("a full-width tile on a small screen is no taller than its demo needs, not a square", async () => {
       await page.viewport(700, 900);
       render(<WhyUseful />);

@@ -75,6 +75,15 @@
   text-wrap: balance;
 }
 
+/* Two tiles in a row are forced to one height, so a caption that wraps to two lines (a narrow tile's
+   often does) would take a line from its frame and leave the two frames ending 24 px apart. Every
+   caption reserves two lines wherever tiles sit side by side, so the frames end on one line. */
+@media (min-width: 901px) {
+  .caption {
+    min-height: 2lh;
+  }
+}
+
 @media (max-width: 900px) {
   .title {
     font: var(--veilo-type-h2-mobile);

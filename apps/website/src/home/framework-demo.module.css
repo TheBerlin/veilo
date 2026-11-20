@@ -15,6 +15,20 @@
   min-width: 0;
 }
 
+/* The bar spans the code panel under it, and the choices share its width, so it lines up with the
+   code at both edges and does not float in it. Where the choices scroll (small screens) there is no
+   spare width, so they keep their own. */
+.bar .switcher {
+  display: flex;
+  /* Border box, so the bar's own padding and border do not push it past the code panel's edges. */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.bar .switcher > [role="radio"] {
+  flex: 1 1 auto;
+}
+
 @media (max-width: 1100px) {
   .switcher {
     display: flex;

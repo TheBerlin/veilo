@@ -92,6 +92,34 @@ describe("FrameworkDemo", () => {
     expect(screen.getByText(/arrive with the first public release/)).toBeTruthy();
   });
 
+  it.each([1440, 1100, 960])(
+    "the choice bar spans the code panel under it, edge to edge, at %i px",
+    async (width) => {
+      await page.viewport(width, 900);
+      render(<FrameworkDemo />);
+      const bar = screen.getByRole("radiogroup").getBoundingClientRect();
+      const code = screen.getByLabelText("React example").parentElement!.getBoundingClientRect();
+      expect(bar.left).toBeCloseTo(code.left, 0);
+      expect(bar.right).toBeCloseTo(code.right, 0);
+    },
+  );
+
+  it("the sliding pill stays under the chosen choice when the choices share the bar's width", async () => {
+    await page.viewport(1440, 900);
+    render(<FrameworkDemo />);
+    const pill = () =>
+      screen.getByRole("radiogroup").querySelector("[aria-hidden=true]")!.getBoundingClientRect();
+    for (const name of ["React", "Angular", "HTML"]) {
+      await userEvent.click(screen.getByRole("radio", { name }));
+      // The pill slides (a transition), so wait for it to settle under the chosen choice.
+      await vi.waitFor(() => {
+        const chosen = screen.getByRole("radio", { name }).getBoundingClientRect();
+        expect(Math.abs(pill().left - chosen.left)).toBeLessThanOrEqual(1);
+        expect(Math.abs(pill().right - chosen.right)).toBeLessThanOrEqual(1);
+      });
+    }
+  });
+
   it("keeps the six choices in one row on a phone, scrolling sideways instead of wrapping", async () => {
     await page.viewport(375, 800);
     render(<FrameworkDemo />);
