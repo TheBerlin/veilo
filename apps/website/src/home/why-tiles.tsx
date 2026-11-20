@@ -17,6 +17,8 @@ export interface WhyTile {
   title: string;
   /** The one-line caption under it. */
   caption: string;
+  /** Whether the tile is a wide one (8 columns) or a narrow one (4), on a desktop screen. */
+  wide: boolean;
   /** Builds the live demo. `active` turns true once the tile has been scrolled into view. */
   demo: (props: DemoProps) => ReactNode;
 }
@@ -165,24 +167,28 @@ function ReducedMotionDemo() {
 export const WHY_TILES: readonly WhyTile[] = [
   {
     id: "layout",
+    wide: true,
     title: "Layout stays put.",
     caption: "Placeholders keep the content's size.",
     demo: (props) => <StayPutDemo active={props.active} />,
   },
   {
     id: "css",
+    wide: false,
     title: "CSS-only loaders.",
     caption: "No JavaScript needed to shimmer.",
     demo: () => <CssOnlyDemo />,
   },
   {
     id: "framework",
+    wide: true,
     title: "Your framework.",
     caption: "React, Vue, Svelte, Angular or HTML.",
     demo: (props) => <FrameworkDemo active={props.active} />,
   },
   {
     id: "motion",
+    wide: false,
     title: "Reduced motion.",
     caption: "Effects calm down when users ask.",
     demo: () => <ReducedMotionDemo />,

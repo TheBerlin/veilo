@@ -18,11 +18,14 @@
   text-wrap: balance;
 }
 
-/* A tile: the demo frame, then the title and the caption 8 px below. */
+/* A tile: the demo frame, then the title and the caption 8 px below. A tile fills its row's
+   height, and the frame takes what the title and caption leave, so the two tiles of a row end
+   on the same line. */
 .tile {
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   gap: var(--veilo-space-1);
-  align-content: start;
+  height: 100%;
 }
 
 .frame {
@@ -30,12 +33,17 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  aspect-ratio: 1;
   padding: var(--veilo-space-2);
   border: 1px solid var(--veilo-border);
   border-radius: var(--veilo-radius-lg);
   background: var(--veilo-card);
   overflow: hidden;
+}
+
+/* The wide tile sets its row's height: twice as wide as tall. The narrow tile beside it stretches
+   to it. */
+.tile[data-wide] .frame {
+  aspect-ratio: 2 / 1;
 }
 
 .tileTitle {
@@ -57,10 +65,10 @@
   }
 }
 
-/* Compact frames (see why-tiles.module.css): taller than wide, with less padding. */
-@media (max-width: 1100px) {
-  .frame {
-    aspect-ratio: 3 / 4;
-    padding: var(--veilo-space-1);
+/* A phone: every tile has its own row, so each frame is square. */
+@media (max-width: 900px) {
+  .frame,
+  .tile[data-wide] .frame {
+    aspect-ratio: 1;
   }
 }

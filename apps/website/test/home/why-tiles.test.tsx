@@ -27,6 +27,10 @@ describe("WHY_TILES", () => {
     ]);
   });
 
+  it("marks the first and third tiles as the wide ones", () => {
+    expect(WHY_TILES.map((tile) => tile.wide)).toEqual([true, false, true, false]);
+  });
+
   it("CSS-only loaders: the three classes really animate, from the stylesheet alone", () => {
     const container = demo("css", false);
     for (const [name, className] of [

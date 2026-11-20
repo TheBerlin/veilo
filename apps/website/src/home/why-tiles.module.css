@@ -4,7 +4,7 @@
 /* Layout stays put: the dashed outline is the card's box before anything loads; it stays the same
    size while the card goes from skeleton to content. */
 .outline {
-  width: 100%;
+  width: min(100%, var(--veilo-size-test-card));
   padding: var(--veilo-space-1);
   border: 1px dashed var(--veilo-border-strong);
   border-radius: var(--veilo-radius-lg);
@@ -62,7 +62,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--veilo-space-1);
-  width: 100%;
+  width: min(100%, var(--veilo-size-test-card));
   margin: 0;
   padding: 0;
   list-style: none;
@@ -74,26 +74,4 @@
   border-radius: var(--veilo-radius-base);
   font: var(--veilo-type-label-sm);
   text-align: center;
-}
-
-/* Compact: a tile is under about 240 px wide here (a phone's 2 by 2, or a narrow desktop), so the
-   frame is taller than it is wide and the demos carry less: one bar per group, one column of
-   labels. */
-@media (max-width: 1100px) {
-  .outline {
-    padding: var(--veilo-space-0-5);
-  }
-
-  .bar:nth-child(2) {
-    display: none;
-  }
-
-  .chips {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--veilo-space-0-5);
-  }
-
-  .chip {
-    padding-block: var(--veilo-space-0-5);
-  }
 }

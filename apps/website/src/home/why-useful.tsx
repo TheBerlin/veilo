@@ -24,7 +24,12 @@ function Tile(props: TileProps) {
   const { tile } = props;
   const { ref, seen } = useSeen<HTMLDivElement>();
   return (
-    <div ref={ref} className={`${styles.tile} ${rise.onView}`} data-seen={seen || undefined}>
+    <div
+      ref={ref}
+      className={`${styles.tile} ${rise.onView}`}
+      data-seen={seen || undefined}
+      data-wide={tile.wide || undefined}
+    >
       <div className={styles.frame} aria-hidden="true">
         {tile.demo({ active: seen })}
       </div>
@@ -35,7 +40,9 @@ function Tile(props: TileProps) {
 }
 
 /**
- * The section: a badge and the h2, then four tiles of three columns each (two by two on a phone).
+ * The section: a badge and the h2, then four tiles in two rows of 8 and 4 columns: the two demos that need room
+ * (layout stays put and your framework) are the wide ones, and the first leads. On a phone every tile
+ * has its own row.
  *
  * @returns The section.
  */
@@ -53,7 +60,7 @@ export function WhyUseful() {
           </div>
         </GridCell>
         {WHY_TILES.map((tile) => (
-          <GridCell key={tile.id} span={3} spanMobile={2} as="article">
+          <GridCell key={tile.id} span={tile.wide ? 8 : 4} spanMobile={4} as="article">
             <Tile tile={tile} />
           </GridCell>
         ))}
