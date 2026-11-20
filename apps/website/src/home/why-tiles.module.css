@@ -1,0 +1,99 @@
+/* Demo frame content for "Why it's useful": the small things the four tiles show. Everything
+   inside the tile's square frame is centered and uses the page's tokens. */
+
+/* Layout stays put: the dashed outline is the card's box before anything loads; it stays the same
+   size while the card goes from skeleton to content. */
+.outline {
+  width: 100%;
+  padding: var(--veilo-space-1);
+  border: 1px dashed var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-lg);
+}
+
+.miniCard {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.pic {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-border);
+}
+
+.line {
+  margin: 0;
+  font: var(--veilo-type-label-sm);
+}
+
+/* CSS-only loaders and Reduced motion: labeled rows of skeleton bars. */
+.rows {
+  display: grid;
+  width: 100%;
+  gap: var(--veilo-space-2);
+}
+
+.row {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.label {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+}
+
+.bars {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.bar {
+  display: block;
+  height: var(--veilo-space-2);
+}
+
+.wide {
+  height: var(--veilo-space-3);
+}
+
+/* Your framework: six short labels in two columns. */
+.chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--veilo-space-1);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  padding: var(--veilo-space-1) var(--veilo-space-1-5);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  font: var(--veilo-type-label-sm);
+  text-align: center;
+}
+
+/* Compact: a tile is under about 240 px wide here (a phone's 2 by 2, or a narrow desktop), so the
+   frame is taller than it is wide and the demos carry less: one bar per group, one column of
+   labels. */
+@media (max-width: 1100px) {
+  .outline {
+    padding: var(--veilo-space-0-5);
+  }
+
+  .bar:nth-child(2) {
+    display: none;
+  }
+
+  .chips {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--veilo-space-0-5);
+  }
+
+  .chip {
+    padding-block: var(--veilo-space-0-5);
+  }
+}

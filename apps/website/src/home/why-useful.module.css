@@ -1,0 +1,66 @@
+/* Why it's useful: a centered heading, then four tiles. 128 px below, like the other sections. */
+.section {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font: var(--veilo-type-h2);
+  letter-spacing: var(--veilo-type-h2-tracking);
+  text-wrap: balance;
+}
+
+/* A tile: the demo frame, then the title and the caption 8 px below. */
+.tile {
+  display: grid;
+  gap: var(--veilo-space-1);
+  align-content: start;
+}
+
+.frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  aspect-ratio: 1;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+  overflow: hidden;
+}
+
+.tileTitle {
+  margin: var(--veilo-space-1) 0 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+.caption {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body);
+}
+
+@media (max-width: 900px) {
+  .title {
+    font: var(--veilo-type-h2-mobile);
+    letter-spacing: var(--veilo-type-h2-mobile-tracking);
+  }
+}
+
+/* Compact frames (see why-tiles.module.css): taller than wide, with less padding. */
+@media (max-width: 1100px) {
+  .frame {
+    aspect-ratio: 3 / 4;
+    padding: var(--veilo-space-1);
+  }
+}

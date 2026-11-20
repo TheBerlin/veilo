@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Hero } from "./home/hero.tsx";
 import { HowItWorks } from "./home/how-it-works.tsx";
+import { WhyUseful } from "./home/why-useful.tsx";
 import { App as Playground } from "./playground/app.tsx";
 import { PLAYGROUND_URL } from "./site/links.ts";
 import { usePath } from "./site/router.tsx";
@@ -38,6 +39,7 @@ export function App() {
           <>
             <Hero />
             <HowItWorks />
+            <WhyUseful />
           </>
         )}
       </main>
