@@ -31,22 +31,39 @@ describe("WHY_TILES", () => {
     expect(WHY_TILES.map((tile) => tile.wide)).toEqual([true, false, true, false]);
   });
 
-  it("CSS-only loaders: the three classes really animate, from the stylesheet alone", () => {
+  it("CSS-only loaders: names the stylesheet and each class, and each really animates", () => {
     const container = demo("css", false);
-    for (const [name, className] of [
-      ["shimmer", ".veilo-shimmer"],
-      ["wave", ".veilo-wave"],
-      ["pulse", ".veilo-pulse"],
-    ] as const) {
-      const bar = container.querySelector(className)!;
-      expect(getComputedStyle(bar).animationName, name).toBe(`veilo-${name}`);
+    expect(container.textContent).toContain('@import "@veilo-ui/css/skeleton.css";');
+    for (const name of ["shimmer", "wave", "pulse"]) {
+      const label = [...container.querySelectorAll("code")].find(
+        (code) => code.textContent === `class="veilo veilo-${name}"`,
+      )!;
+      expect(label, name).toBeTruthy();
+      // The placeholder under the label: an avatar and two lines, all with that class.
+      const parts = label.nextElementSibling!.querySelectorAll("span");
+      expect(parts, name).toHaveLength(3);
+      for (const part of parts) {
+        expect(getComputedStyle(part).animationName, name).toBe(`veilo-${name}`);
+      }
     }
   });
 
-  it("Reduced motion: one bar moves and the other rests", () => {
+  it("CSS-only loaders: the wave staggers its three parts through --i", () => {
+    const container = demo("css", false);
+    const parts = [...container.querySelectorAll(".veilo-wave")] as HTMLElement[];
+    expect(parts.map((part) => part.style.getPropertyValue("--i"))).toEqual(["0", "1", "2"]);
+    const delays = parts.map((part) => getComputedStyle(part).animationDelay);
+    expect(new Set(delays).size).toBe(3);
+  });
+
+  it("Reduced motion: one placeholder moves, the other rests, and the media query is named", () => {
     const container = demo("motion", false);
-    const [moving, resting] = [...container.querySelectorAll(".veilo")];
-    expect(getComputedStyle(moving!).animationName).toBe("veilo-shimmer");
-    expect(getComputedStyle(resting!).animationName).toBe("none");
+    const items = [...container.querySelectorAll("[aria-hidden=true]")];
+    const [moving, resting] = items.map((item) => [...item.querySelectorAll("span")]);
+    expect(moving).toHaveLength(3);
+    expect(resting).toHaveLength(3);
+    for (const part of moving!) expect(getComputedStyle(part).animationName).toBe("veilo-shimmer");
+    for (const part of resting!) expect(getComputedStyle(part).animationName).toBe("none");
+    expect(container.textContent).toContain("@media (prefers-reduced-motion: reduce)");
   });
 });

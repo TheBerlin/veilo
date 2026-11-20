@@ -30,32 +30,60 @@ export interface DemoProps {
   active: boolean;
 }
 
+/** The animation class of each way a skeleton item can behave in the small demos. */
+const EFFECT_CLASS = {
+  shimmer: "veilo-shimmer",
+  wave: "veilo-wave",
+  pulse: "veilo-pulse",
+  still: "",
+} as const;
+
+/** Props of {@link SkeletonItem}. */
+interface SkeletonItemProps {
+  /** How it moves: one of the three loaders of the CSS package, or `still` for none. */
+  effect: keyof typeof EFFECT_CLASS;
+}
+
 /**
- * CSS-only loaders: the three classes of the CSS package on plain elements. No script runs in this
- * demo; the animation is the stylesheet's.
+ * A small placeholder: an avatar and two lines of text, made of the CSS package's classes on plain
+ * spans. The three parts carry `--i` 0, 1 and 2, which the wave reads to start each one a little
+ * after the last. The same item is in both skeleton tiles, so they share one look.
+ *
+ * @param props - How it moves.
+ * @returns The placeholder, hidden from assistive technology.
+ */
+function SkeletonItem(props: SkeletonItemProps) {
+  const className = `veilo ${EFFECT_CLASS[props.effect]}`;
+  const part = (index: number, extra: string) => (
+    <span className={`${className} ${extra}`} style={{ "--i": index } as CSSProperties} />
+  );
+  return (
+    <div className={styles.item} aria-hidden="true">
+      {part(0, styles.avatar!)}
+      <div className={styles.lines}>
+        {part(1, styles.bar!)}
+        {part(2, `${styles.bar} ${styles.short}`)}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * CSS-only loaders: the stylesheet line, then the three classes of the CSS package, each on the
+ * same small placeholder, labeled with the class name. No script runs in this demo; the animation
+ * is the stylesheet's.
  *
  * @returns The demo.
  */
 function CssOnlyDemo() {
-  const rows = [
-    { name: "shimmer", className: "veilo veilo-shimmer" },
-    { name: "wave", className: "veilo veilo-wave" },
-    { name: "pulse", className: "veilo veilo-pulse" },
-  ];
+  const effects = ["shimmer", "wave", "pulse"] as const;
   return (
     <div className={styles.rows}>
-      {rows.map((row) => (
-        <div key={row.name} className={styles.row}>
-          <code className={styles.label}>{`.veilo-${row.name}`}</code>
-          <div className={styles.bars} aria-hidden="true">
-            {[0, 1].map((index) => (
-              <span
-                key={index}
-                className={`${row.className} ${styles.bar}`}
-                style={{ "--i": index } as CSSProperties}
-              />
-            ))}
-          </div>
+      <code className={styles.label}>{'@import "@veilo-ui/css/skeleton.css";'}</code>
+      {effects.map((effect) => (
+        <div key={effect} className={styles.row}>
+          <code className={styles.label}>{`class="veilo veilo-${effect}"`}</code>
+          <SkeletonItem effect={effect} />
         </div>
       ))}
     </div>
@@ -63,8 +91,8 @@ function CssOnlyDemo() {
 }
 
 /**
- * Reduced motion: the same bar moving and at rest. The stylesheet stops its animations for a
- * visitor who asks for less motion, so for them both bars rest.
+ * Reduced motion: the same placeholder moving and at rest, and the media query that stills it,
+ * which is built into the stylesheet. For a visitor who asks for less motion, both rest.
  *
  * @returns The demo.
  */
@@ -73,16 +101,13 @@ function ReducedMotionDemo() {
     <div className={styles.rows}>
       <div className={styles.row}>
         <span className={styles.label}>Motion on</span>
-        <div className={styles.bars} aria-hidden="true">
-          <span className={`veilo veilo-shimmer ${styles.bar} ${styles.wide}`} />
-        </div>
+        <SkeletonItem effect="shimmer" />
       </div>
       <div className={styles.row}>
         <span className={styles.label}>Reduced motion</span>
-        <div className={styles.bars} aria-hidden="true">
-          <span className={`veilo ${styles.bar} ${styles.wide}`} />
-        </div>
+        <SkeletonItem effect="still" />
       </div>
+      <code className={styles.label}>@media (prefers-reduced-motion: reduce)</code>
     </div>
   );
 }

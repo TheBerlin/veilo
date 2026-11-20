@@ -1,11 +1,16 @@
-/* Demo frame content for "Why it's useful": the small things the four tiles show. Everything
-   inside the tile's square frame is centered and uses the page's tokens. */
+/* Demo frame content for "Why it's useful": the small things the two skeleton tiles show. Both use
+   the same placeholder item, so they share one look. */
 
-/* CSS-only loaders and Reduced motion: labeled rows of skeleton bars. */
+/* Labeled rows of placeholders. The placeholders use the CSS package's custom properties, set a
+   notch stronger than its faint defaults so the sweep can be seen on the card surface: the base is
+   the border color and the highlight blends toward the strong border. */
 .rows {
   display: grid;
   width: 100%;
-  gap: var(--veilo-space-2);
+  gap: var(--veilo-space-3);
+  --veilo-base: var(--veilo-border);
+  --veilo-hi: color-mix(in srgb, var(--veilo-border) 45%, var(--veilo-border-strong));
+  --veilo-radius: var(--veilo-radius-base);
 }
 
 .row {
@@ -16,11 +21,31 @@
 .label {
   color: var(--veilo-text-muted);
   font: var(--veilo-type-code);
+  /* A long line (the stylesheet import) wraps in a narrow frame instead of overflowing it. */
+  overflow-wrap: anywhere;
 }
 
-.bars {
+/* The placeholder: an avatar and two lines. */
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.avatar {
+  flex: none;
+  width: var(--veilo-size-card-thumb-sm);
+  height: var(--veilo-size-card-thumb-sm);
+  /* The stylesheet reads its corner radius from this property; its own rule outranks a plain
+     border-radius here. */
+  --veilo-radius: var(--veilo-radius-pill);
+}
+
+.lines {
   display: grid;
+  flex: 1;
   gap: var(--veilo-space-1);
+  min-width: 0;
 }
 
 .bar {
@@ -28,6 +53,6 @@
   height: var(--veilo-space-2);
 }
 
-.wide {
-  height: var(--veilo-space-3);
+.short {
+  width: 60%;
 }
