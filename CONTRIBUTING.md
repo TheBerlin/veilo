@@ -55,6 +55,18 @@ After `visual:update`, review the changed PNGs in the git diff before committing
 
 When the `e2e` job fails in CI, open the run's summary and download the `playwright-report` artifact. Unzip it and run `pnpm --filter website exec playwright show-report <unzipped folder>/playwright-report`; each failed screenshot shows the expected, actual and diff images side by side.
 
+## Size budget
+
+Growth is checked in CI after the build, with the sizes gzipped. The packages are measured with [size-limit](https://github.com/ai/size-limit): the limits are in `.size-limit.json`, each about 10% above the size when set, and the files are measured as built (not minified), so the numbers are for watching growth, not what a bundler ships. The website has its own check, because its files have hashed names: `apps/website/scripts/check-size.mjs` limits the first-load JavaScript and CSS, the lazy grid chunk, and every clip, poster and image.
+
+```sh
+pnpm build
+pnpm size                  # the packages
+pnpm --filter website size # the website
+```
+
+When a check fails, first find out why the size grew. Raising a limit means editing `.size-limit.json` or `check-size.mjs` and saying why in the commit message.
+
 ## Core layers
 
 `packages/core/src` is split into layers, and a layer imports only from the layers below it:

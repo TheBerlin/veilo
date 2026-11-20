@@ -9,6 +9,7 @@
     "test": "vitest run",
     "typecheck": "tsc -p . && tsc -p tsconfig.e2e.json",
     "e2e": "playwright test",
+    "size": "node scripts/check-size.mjs",
     "visual": "node scripts/visual-docker.mjs",
     "visual:update": "node scripts/visual-docker.mjs --update-snapshots"
   },

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "core: everything but the grid",
+    "path": ["packages/core/dist/*.mjs", "!packages/core/dist/grid-renderer-*.mjs"],
+    "limit": "27000 B",
+    "gzip": true
+  },
+  {
+    "name": "core: grid chunk (loaded on demand)",
+    "path": "packages/core/dist/grid-renderer-*.mjs",
+    "limit": "5500 B",
+    "gzip": true
+  },
+  {
+    "name": "core/loader entry",
+    "path": "packages/core/dist/loader.mjs",
+    "limit": "200 B",
+    "gzip": true
+  },
+  {
+    "name": "css",
+    "path": "packages/css/dist/index.mjs",
+    "limit": "200 B",
+    "gzip": true
+  },
+  {
+    "name": "css: skeleton.css",
+    "path": "packages/css/skeleton.css",
+    "limit": "700 B",
+    "gzip": true
+  },
+  {
+    "name": "presets",
+    "path": "packages/presets/dist/index.mjs",
+    "limit": "1800 B",
+    "gzip": true
+  },
+  {
+    "name": "react",
+    "path": "packages/react/dist/index.mjs",
+    "limit": "2900 B",
+    "gzip": true
+  },
+  {
+    "name": "vue",
+    "path": "packages/vue/dist/index.mjs",
+    "limit": "2900 B",
+    "gzip": true
+  },
+  {
+    "name": "svelte",
+    "path": "packages/svelte/dist/*.js",
+    "limit": "2100 B",
+    "gzip": true
+  },
+  {
+    "name": "angular",
+    "path": "packages/angular/dist/fesm2022/*.mjs",
+    "limit": "4500 B",
+    "gzip": true
+  },
+  {
+    "name": "element",
+    "path": ["packages/element/dist/*.mjs"],
+    "limit": "3400 B",
+    "gzip": true
+  },
+  {
+    "name": "element: cdn.js (self-contained)",
+    "path": "packages/element/dist/cdn.js",
+    "limit": "15000 B",
+    "gzip": true
+  }
+]

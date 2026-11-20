@@ -39,6 +39,10 @@ jobs:
         run: pnpm --filter @veilo-ui/core check:entries
       - name: Check the element entries and the CDN bundle
         run: pnpm --filter @veilo-ui/element check:entries
+      - name: Check the size budget of the packages
+        run: pnpm size
+      - name: Check the size budget of the website
+        run: pnpm --filter website size
 
   # Playwright tests of the built website, in the same image `pnpm --filter website visual`
   # uses locally, so screenshots match. Keep the tag equal to the `playwright` version.
