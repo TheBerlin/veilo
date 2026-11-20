@@ -1,0 +1,75 @@
+---
+title: CSS loaders
+description: "Skeleton loaders with plain CSS classes (shimmer, wave and pulse), with no JavaScript at runtime."
+---
+
+`@veilo-ui/css` gives you the skeleton loaders as a stylesheet. There is nothing to run: add a class to an element.
+
+## Use the stylesheet
+
+Load `skeleton.css` and add the classes. `veilo` alone is a still placeholder; add one effect class to animate it.
+
+```html
+<link rel="stylesheet" href="node_modules/@veilo-ui/css/skeleton.css" />
+<div class="veilo veilo-shimmer" style="width: 200px; height: 20px"></div>
+```
+
+With a bundler, `import "@veilo-ui/css/skeleton.css";` does the same.
+
+| Class           | Effect                                                                             |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `veilo-shimmer` | A highlight band sweeps across, then pauses                                        |
+| `veilo-wave`    | The shimmer, started later per element: set `--i` to 0, 1, 2... (`style="--i: 1"`) |
+| `veilo-pulse`   | The base color fades in and out                                                    |
+
+The file is generated from the default settings, so it always matches the core engine. For other timing, generate your own CSS (below).
+
+## Theming
+
+| Custom property  | Default   | Veilo dark theme | Used for          |
+| ---------------- | --------- | ---------------- | ----------------- |
+| `--veilo-base`   | `#dcdcdc` | `#171717`        | Placeholder color |
+| `--veilo-hi`     | `#f7f7f7` | `#262626`        | Highlight band    |
+| `--veilo-radius` | `6px`     |                  | Corner radius     |
+
+The stylesheet does not switch colors with the system theme, because a page's own theme may differ from it. Set the properties where your page sets its theme:
+
+```css
+[data-theme="dark"] {
+  --veilo-base: #171717;
+  --veilo-hi: #262626;
+}
+```
+
+## Accessibility
+
+The stylesheet only paints. What a screen reader hears comes from your markup, so add these yourself (`createSkeleton` in the [core engine](/guides/javascript/) sets them for you).
+
+**Mark the loading region busy.** Put `aria-busy="true"` on the element that holds the content being loaded, and remove it (or set `"false"`) when the real content is in. Screen readers then wait instead of reading a half-loaded region.
+
+**Hide the placeholders.** Skeleton bars carry no information, so give each one `aria-hidden="true"`. Without it, a screen reader may announce empty groups or stray text.
+
+```html
+<section aria-busy="true" aria-label="Product">
+  <div class="veilo veilo-wave" aria-hidden="true" style="--i: 0; height: 160px"></div>
+  <div class="veilo veilo-wave" aria-hidden="true" style="--i: 1; height: 20px"></div>
+  <div class="veilo veilo-wave" aria-hidden="true" style="--i: 2; height: 20px; width: 60%"></div>
+</section>
+```
+
+When the content arrives, replace the placeholders and drop `aria-busy` in the same update. If loading can take long, add a short visible or visually hidden status text such as "Loading product" in a `role="status"` element, as the bars themselves say nothing.
+
+**Reduced motion is built in.** Under `prefers-reduced-motion: reduce` every effect class stops and shows a still base-color placeholder. There is nothing to add.
+
+**Contrast.** Placeholders are meant to be quiet. The default colors are low contrast against the Veilo backgrounds, between 1.08 and 1.37 as WCAG contrast ratios. WCAG's 3:1 for non-text contrast covers graphics needed to understand the content, and hidden placeholders are not such graphics, so these values are allowed, but they can look faint, most of all on a card in dark mode. If the bars are hard to see on your background, darken `--veilo-base` in light themes or lighten it in dark themes, and keep `--veilo-hi` a step beyond it so the sweep stays visible.
+
+## Generate the CSS
+
+```ts
+import { generateLoaderCss, parseSettings } from "@veilo-ui/css";
+
+const { settings } = parseSettings({ effect: "wave", lDur: 1.6 });
+const css = generateLoaderCss(settings);
+```
+
+The generator is the one in `@veilo-ui/core`, re-exported here, so the CSS always matches what the engine draws. The [settings reference](/reference/settings/) lists every key. Options: `selector` (default `.skeleton`), fallback `base` and `highlight` colors, `radius`, `keyframes` (the animation name; give each stylesheet on one page its own) and `reducedMotion`.

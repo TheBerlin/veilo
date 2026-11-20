@@ -1,0 +1,99 @@
+---
+title: Web components and CDN
+description: Use Veilo in plain HTML with one script tag, or in any framework that renders HTML, with the veilo-reveal and veilo-skeleton elements.
+---
+
+`@veilo-ui/element` provides `<veilo-reveal>` and `<veilo-skeleton>`. They show a skeleton on your own markup while its content loads, then reveal it. They work in plain HTML with one script tag, and in any framework that renders HTML. The elements add no shadow DOM, so your elements stay in the page and your CSS keeps applying to them.
+
+## Use it from a CDN
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo-ui/element"></script>
+
+<veilo-reveal preset="dot-upscale" loading>
+  <img data-veilo-slot="photo" src="placeholder.png" alt="" />
+  <h2 data-veilo-slot="title">Product name here</h2>
+  <p data-veilo-slot="price">$00.00</p>
+</veilo-reveal>
+
+<script type="module">
+  const card = document.querySelector("veilo-reveal");
+  const product = await fetchProduct();
+  // Fill in the real content, then end loading: the reveal plays.
+  card.querySelector("img").src = product.image;
+  card.querySelector("h2").textContent = product.name;
+  card.querySelector("[data-veilo-slot=price]").textContent = product.price;
+  card.loading = false;
+</script>
+```
+
+The script is one ES module of about 35 KB (14 KB gzipped) with the engine, the presets and Lit inside. It registers both elements when it loads. unpkg works the same (`https://unpkg.com/@veilo-ui/element`). The CDN links work once the package is on npm.
+
+Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example from Google Fonts.
+
+## Install from npm
+
+```sh
+npm install @veilo-ui/element
+```
+
+```ts
+// Registers <veilo-reveal> and <veilo-skeleton>.
+import "@veilo-ui/element/define";
+```
+
+Or register them yourself, for example in your own registry:
+
+```ts
+import { defineVeiloElements } from "@veilo-ui/element";
+
+defineVeiloElements(); // safe to call twice; a tag already taken is left alone
+```
+
+Importing `@veilo-ui/element` registers nothing, and both entries import on a server without errors.
+
+## Mark your markup
+
+Put `data-veilo-slot` with a name on every part that should animate. Only marked elements take part. Slots are `img` or `canvas` for the photo, `button` for the button, `video` for a still block, and anything else for text.
+
+**Keep placeholder content in the slots while loading.** Veilo never sizes anything: the skeleton takes the size of your real elements. Text of a typical length, and an image of the real size, keeps the layout from shifting when the content arrives.
+
+## `<veilo-reveal>`
+
+While `loading` is present, every slot shows the skeleton and the element gets `aria-busy`. Removing `loading` plays the reveal once.
+
+| Attribute           | Property          | What it does                                                                                                                  |
+| ------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `loading`           | `loading`         | Present: the skeleton shows. Removed: the reveal plays. Absent from the start: the content simply shows.                      |
+| `reveal-on-connect` | `revealOnConnect` | Play the reveal when the element enters the page, without a loading phase.                                                    |
+| `preset`            | `preset`          | A built-in preset, such as `dot-upscale` or `hex-from-center`. See the [effects](/effects/).                                  |
+| `settings`          | `settings`        | Settings to apply on top, as JSON: `settings='{"imageFx":"mosaic","rDur":1.6}'`. The property takes an object.                |
+| `layout`            | `layout`          | Slot roles and bar hints, plus base settings, as JSON.                                                                        |
+| none                | `options`         | Core options: `ink`, `fontFamily`, `reducedMotion` and others. Set it before the element enters the page.                     |
+| none                | `reveal`          | The live core reveal (read only): `play()`, `seek(p)`, `playSequence()`, `on("progress", ...)`. `null` while not in the page. |
+
+Settings are validated and clamped. An attribute that is not valid JSON is ignored with a console warning. The `veilo-complete` event bubbles each time a reveal finishes:
+
+```js
+card.addEventListener("veilo-complete", () => console.log("revealed"));
+```
+
+## `<veilo-skeleton>`
+
+A loader without a reveal: shimmer, wave or pulse while `loading` is present; removing it restores the elements exactly.
+
+```html
+<veilo-skeleton effect="wave" loading>
+  <h3 data-veilo-slot="name">Placeholder name</h3>
+  <p data-veilo-slot="bio">A short bio of about one line.</p>
+</veilo-skeleton>
+```
+
+`effect` is `shimmer`, `wave` or `pulse` and wins over `preset` and `settings`. For a single element with no wrapper, such as an avatar, use the [CSS loaders](/guides/css/) instead.
+
+## Accessibility and cleanup
+
+- Users who prefer reduced motion see the content at once and a still placeholder.
+- Placeholders are `aria-hidden` and the element is `aria-busy` while loading.
+- Removing an element from the page cancels every frame, timer and observer and restores your markup exactly. Moving it creates a new reveal; a move in the middle of a reveal ends it and shows the content.
+- The CDN bundle is a production build, so warnings about slot mismatches are off unless `options.warnings` is `true`.

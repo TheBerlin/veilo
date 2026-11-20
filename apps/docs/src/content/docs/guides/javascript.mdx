@@ -1,0 +1,141 @@
+---
+title: Plain JavaScript
+description: Use the core engine directly, in any framework or none, with createReveal and createSkeleton.
+---
+
+`@veilo-ui/core` is the framework-agnostic engine behind every other package. Use it directly when there is no wrapper for your stack.
+
+## Install
+
+```sh
+npm install @veilo-ui/core
+```
+
+## Reveal
+
+Mark the parts of your component with `data-veilo-slot`, then pass the container:
+
+```html
+<article class="card">
+  <div class="media"><img data-veilo-slot="photo" src="product.png" alt="MCHOSE L7 Pro" /></div>
+  <h3 data-veilo-slot="title">MCHOSE L7 Pro</h3>
+  <p data-veilo-slot="price">$59.99</p>
+  <button data-veilo-slot="buy"><span data-veilo-slot="label">Buy now</span></button>
+</article>
+```
+
+```ts
+import { createReveal } from "@veilo-ui/core";
+
+const card = document.querySelector<HTMLElement>(".card")!;
+const reveal = createReveal(card, { imageFx: "dots", origin: "left", textFx: "scramble" });
+
+reveal.playSequence(); // skeleton for `hold` seconds, then the reveal
+```
+
+Nothing on the page changes until you call a method, and `destroy()` restores the page exactly as it was. Instead of a container you can pass the elements themselves:
+
+```ts
+const reveal = createReveal(
+  { image: photo, text: [title, price, label], button },
+  { imageFx: "dots" },
+  { busy: card },
+);
+```
+
+### Methods and properties
+
+| Member                   | What it does                                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `play()`                 | Plays the reveal from `p = 0`. Resolves `true` at the end, `false` if another call or `destroy()` interrupts it. |
+| `pause()`, `resume()`    | Pause and continue. A paused reveal stays paused when it scrolls back into view.                                 |
+| `seek(p)`                | Stops playback and shows the exact frame at `p`, and holds it. At `p = 1` the real content shows.                |
+| `showLoading()`          | Stops everything and shows the skeleton.                                                                         |
+| `redraw()`               | Reads the ink color again and redraws the current frame. Call it after a theme change.                           |
+| `playSequence({ loop })` | Loading for `hold` seconds, then the reveal. With `loop`, it starts again 900 ms after the end.                  |
+| `on(event, listener)`    | Events: `progress`, `state` and `complete`. Returns an unsubscribe function.                                     |
+| `destroy()`              | Cancels frames, timers and observers, removes canvases, overlays and styles, and restores the page.              |
+| `state`                  | `"idle"`, `"loading"`, `"revealing"` or `"revealed"`.                                                            |
+| `progress`               | The current progress, from 0 to 1.                                                                               |
+| `ready`                  | Resolves once the image is sampled. Never rejects; a broken image is shown as it is.                             |
+
+### Options
+
+| Key             | Default                             | What it does                                                                   |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------------------ |
+| `busy`          | the container, if given             | Gets `aria-busy="true"` while the skeleton shows.                              |
+| `warnings`      | on in development builds            | Prints slot mismatches to the console.                                         |
+| `ink`           | `--veilo-ink`, then text color      | Color of dots and characters when the settings have no `inkColor`.             |
+| `fontFamily`    | `"IBM Plex Mono", monospace`        | Font for hex and binary characters.                                            |
+| `reducedMotion` | the user's `prefers-reduced-motion` | `true` keeps the skeleton still and jumps to the end; `false` always animates. |
+| `root`          | the document head                   | The shadow root to put the skeleton stylesheet in.                             |
+| `scheduler`     | the browser's clock and frames      | A custom time source, for tests that drive time by hand.                       |
+
+The image is sampled once and cached; frames only draw. It is sampled again when it resizes by 2 px or more, when the glyph font finishes loading, and when its picture changes. Playback pauses while the elements are off screen or the tab is hidden.
+
+## A loader without a reveal
+
+```ts
+import { createSkeleton } from "@veilo-ui/core";
+
+const skeleton = createSkeleton(card, { effect: "wave", stagger: 0.12 });
+skeleton.start(); // also restarts the animation if it already shows
+skeleton.stop(); // restores the elements exactly
+```
+
+Given a container, every slot in it is a placeholder, in page order; given a list, the elements are the placeholders in that order. Text turns transparent, images, canvases and videos hide their picture but keep their size, and each element gets `--i` (its index) for the wave delay.
+
+## Layouts
+
+A layout pairs the effect settings with a map of slots, so one JSON file describes a whole component:
+
+```json
+{
+  "version": 1,
+  "settings": { "imageFx": "dots", "textFx": "scramble" },
+  "slots": {
+    "photo": { "role": "image" },
+    "badge": { "role": "block" },
+    "title": { "role": "text", "width": 58 },
+    "description": { "role": "text", "lines": 2, "width": 70 },
+    "buy": { "role": "button" }
+  }
+}
+```
+
+`width` is the width of the last line's bar in percent (1 to 100), and `lines` is the height an empty text element gets while loading (1 to 20 lines). `createReveal` and `createSkeleton` accept a layout or plain settings, and `parseLayout(json)` validates one. Mismatches never throw; in development builds they print a `Veilo:` warning.
+
+## Settings, plain CSS and theming
+
+`parseSettings(json)` validates and clamps a settings object, and `defaultSettings` and `settingsJsonSchema()` are exported too. `generateLoaderCss(settings, { selector })` returns the loader as plain CSS, for use without JavaScript at runtime. `serverSkeletonCss(settings, scope)` returns the skeleton stylesheet for server-rendered markup.
+
+| Custom property | Used for                                                                                       |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| `--veilo-base`  | Skeleton base color (default `#dcdcdc`)                                                        |
+| `--veilo-hi`    | Skeleton highlight color (default `#f7f7f7`)                                                   |
+| `--veilo-ink`   | Dots and characters of the grid effects                                                        |
+| `--veilo-bg-a`  | Set on the button during a reveal; use it in the button's background to fade it with its label |
+
+```css
+.buy {
+  background: rgb(3 3 3 / var(--veilo-bg-a, 1));
+}
+```
+
+## Entry points and size
+
+| Import                                | Contents                                                                                   | Minified + gzip |
+| ------------------------------------- | ------------------------------------------------------------------------------------------ | --------------- |
+| `@veilo-ui/core`                      | Everything above                                                                           | 8.6 KB          |
+| `@veilo-ui/core/loader`               | `generateLoaderCss`, `parseSettings`, `defaultSettings`, `settingsJsonSchema`; no DOM code | 2.3 KB          |
+| `@veilo-ui/core/settings.schema.json` | The settings JSON Schema                                                                   |                 |
+
+The grid effects (`dots`, `hex`, `binary`, `mosaic`) are loaded on demand, in a separate file of about 1.8 KB. The package has no side effects on import, so unused code is dropped.
+
+## Known limits
+
+- An inline `background` set on an element beats the skeleton's background.
+- The photo is sampled as `object-fit: cover`, whatever the image's own `object-fit`.
+- Rise and sharpen moves text with `transform`, which has no effect on `display: inline` elements.
+- A strike-through is not shown on scrambled text until the reveal ends.
+- Line bars use the CSS `lh` unit. Browsers without it show text slots as solid blocks instead.

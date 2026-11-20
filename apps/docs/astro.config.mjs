@@ -26,6 +26,18 @@ export default defineConfig({
           label: "Start",
           items: [{ slug: "start/getting-started" }, { slug: "start/concepts" }],
         },
+        {
+          label: "Guides",
+          items: [
+            { slug: "guides/react" },
+            { slug: "guides/vue" },
+            { slug: "guides/svelte" },
+            { slug: "guides/angular" },
+            { slug: "guides/web-components" },
+            { slug: "guides/javascript" },
+            { slug: "guides/css" },
+          ],
+        },
         { label: "Reference", items: [{ slug: "reference/settings" }] },
       ],
     }),

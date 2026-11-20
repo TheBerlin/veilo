@@ -1,0 +1,90 @@
+---
+title: Angular
+description: Show a skeleton on an Angular component while its data loads, then reveal it, with standalone components or directives. Works with zone.js and zoneless.
+---
+
+`@veilo-ui/angular` works with Angular 20, 21 and 22, with zone.js and zoneless, and reads the same `data-veilo-slot` markup as every other Veilo package. The logic lives in two directives, `veiloReveal` and `veiloSkeleton`; the components `<veilo-reveal>` and `<veilo-skeleton>` apply them to their own element. Everything is standalone: there is no NgModule.
+
+The package is built with Angular 20 in partial-compilation mode, so an app on Angular 20 or later links it with its own compiler.
+
+## Install
+
+```sh
+npm install @veilo-ui/angular
+```
+
+Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`.
+
+## Reveal a component when its data arrives
+
+```ts
+import { Component, computed, input } from "@angular/core";
+import { VeiloReveal } from "@veilo-ui/angular";
+
+@Component({
+  selector: "app-product-card",
+  imports: [VeiloReveal],
+  template: `
+    <veilo-reveal class="card" [ready]="product() !== null" [preset]="'dot-upscale'">
+      <img data-veilo-slot="photo" [src]="shown().image" [alt]="shown().name" />
+      <h2 data-veilo-slot="title">{{ shown().name }}</h2>
+      <p data-veilo-slot="price">{{ shown().price }}</p>
+      <button data-veilo-slot="buy">
+        <span data-veilo-slot="label">Add to cart</span>
+      </button>
+    </veilo-reveal>
+  `,
+})
+export class ProductCard {
+  readonly product = input<Product | null>(null); // null while loading
+  protected readonly shown = computed(() => this.product() ?? PLACEHOLDER);
+}
+```
+
+While `ready` is `false`, every slot shows the skeleton: text slots one bar per line, the image and button a solid block, and the container gets `aria-busy`. When `ready` turns `true`, the reveal plays once.
+
+**Render placeholder data while loading.** Veilo never sizes anything: the skeleton takes the size of your real elements. Rendering the same markup with placeholder text of a typical length, and an image of the real size, keeps the layout from shifting when the data arrives.
+
+### `<veilo-reveal>` and `veiloReveal` inputs
+
+| Input           | Default  | What it does                                                                                                                            |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                            |
+| `preset`        | none     | A built-in preset, such as `'dot-upscale'` or `'hex-from-center'`. See the [effects](/effects/).                                        |
+| `settings`      | none     | Settings to apply on top, such as `{ imageFx: 'mosaic', rDur: 1.6 }`. Validated and clamped. See the [reference](/reference/settings/). |
+| `layout`        | none     | Slot roles and bar hints, plus base settings. A `preset` replaces its settings; `settings` still apply on top.                          |
+| `revealOnMount` | `false`  | Play when `ready` is already `true` at the start.                                                                                       |
+| `options`       | none     | Core options: `ink`, `fontFamily`, `reducedMotion` and others. Read when the reveal is created.                                         |
+
+The `(complete)` output fires each time a reveal finishes, inside the zone, so handlers update the view as usual.
+
+The component is a block element: style it with a class or any attribute. Use the directive when you want your own element instead: `<article veiloReveal [ready]="loaded">…</article>`, importing `VeiloRevealDirective`. With `exportAs`, `#r="veiloReveal"` gives you the directive, and `r.reveal()` is a signal with the live core reveal, `null` before the first render and after destroy. Effect inputs are compared by value, so passing a new but equal object does not rebuild anything.
+
+## A loader without a reveal
+
+```html
+<veilo-skeleton [loading]="!user()" [effect]="'wave'">
+  <h3 data-veilo-slot="name">{{ user()?.name ?? 'Placeholder name' }}</h3>
+  <p data-veilo-slot="bio">{{ user()?.bio ?? 'A short bio of about one line.' }}</p>
+</veilo-skeleton>
+
+<!-- One part, with no extra element: the element itself becomes the placeholder. -->
+<span
+  class="avatar"
+  aria-hidden="true"
+  veiloSkeleton
+  [loading]="!user()"
+  [self]="true"
+  [effect]="'pulse'"
+></span>
+```
+
+`loading` is required: `true` shows the loader and `false` restores the elements exactly. `effect` is `'shimmer'`, `'wave'` or `'pulse'` and wins over `preset` and `settings`. `self` makes the element itself one solid placeholder.
+
+## Zones, zoneless and server rendering
+
+The directives create the reveal inside `NgZone.runOutsideAngular`, so the animation never triggers change detection, and they work the same with zone.js and zoneless. Nothing is created on the server: the effect starts after the first render in the browser, so server-rendered HTML holds your plain markup and the skeleton appears when the page hydrates. React's package can render the skeleton in the server HTML; the Angular package does not yet.
+
+## Accessibility
+
+The container gets `aria-busy` while loading, placeholders are `aria-hidden`, and users who prefer reduced motion see the content at once.
