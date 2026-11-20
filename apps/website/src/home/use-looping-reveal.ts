@@ -21,6 +21,8 @@ const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
  * @param settings - The effect.
  * @param layout - The slot hints.
  * @param active - Whether the demo has been scrolled into view.
+ * @param paused - Whether the visitor has paused it. The loop stops and the content shows, finished,
+ * until it is played again.
  * @returns A ref for the container that holds the slots, and the reveal's state (`idle` until it
  * exists), for a demo that shows something beside it that follows the same cycle.
  */
@@ -28,6 +30,7 @@ export function useLoopingReveal(
   settings: Partial<Settings>,
   layout: LayoutInput,
   active: boolean,
+  paused = false,
 ) {
   const { ref, reveal } = useReveal<HTMLDivElement>({ settings, layout });
   const [state, setState] = useState<RevealState>("idle");
@@ -40,9 +43,12 @@ export function useLoopingReveal(
     if (!active || !reveal) return;
     if (matchMedia(REDUCED_MOTION).matches) {
       void reveal.play();
+    } else if (paused) {
+      // Stops the loop and shows the real content, still.
+      reveal.seek(1);
     } else {
       reveal.playSequence({ loop: true });
     }
-  }, [active, reveal]);
+  }, [active, reveal, paused]);
   return { ref, state };
 }

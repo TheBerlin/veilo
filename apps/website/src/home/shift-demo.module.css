@@ -17,10 +17,26 @@
 
 /* The two names, over the two sides: plain text at the card's edges. */
 .captions {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  /* The two names at the card's edges, the Pause button between them, centered. */
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   color: var(--veilo-text-muted);
   font: var(--veilo-type-label-sm);
+}
+
+/* The names sit in the outer columns, whether or not the Pause button is there. */
+.captionLeft {
+  grid-column: 1;
+}
+
+.captionRight {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.pause {
+  grid-column: 2;
 }
 
 /* The card's area: a press anywhere moves the divider; a vertical swipe still scrolls the page. */
@@ -114,7 +130,8 @@
 /* The divider: a line the height of the area in the accent color, and a handle on it. */
 .divider {
   position: absolute;
-  inset-block: calc(var(--veilo-space-1) * -1);
+  /* Sticks out of the card by half a step, short of the Pause button above it. */
+  inset-block: calc(var(--veilo-space-0-5) * -1);
   left: var(--split);
   width: 2px;
   margin-left: -1px;

@@ -158,6 +158,89 @@ describe("ShiftDemo", () => {
     ]);
   });
 
+  describe("the pause", () => {
+    /** The skeletons the engine is showing now, and whether the typical side shows its placeholder. */
+    const skeletons = (container: HTMLElement) =>
+      container.querySelectorAll("[data-veilo-skeleton]").length;
+    const placeholder = (container: HTMLElement) =>
+      container.querySelector("[class*=placeholder]") !== null;
+
+    it("has a Pause button between the two names, named for what it does", async () => {
+      render(<ShiftDemo active={false} />);
+      const pause = screen.getByRole("button", { name: "Pause the demo" });
+      expect(pause.textContent).toBe("Pause");
+      // Between the two captions, and not hidden from assistive technology.
+      expect(pause.closest("[aria-hidden=true]")).toBeNull();
+      const area = screen.getByRole("slider").parentElement!.getBoundingClientRect();
+      const box = pause.getBoundingClientRect();
+      // Centered over the card, with the two names at its edges on either side.
+      expect(Math.abs(box.left + box.width / 2 - (area.left + area.width / 2))).toBeLessThanOrEqual(
+        2,
+      );
+      expect(screen.getByText("Typical loader").getBoundingClientRect().left).toBeCloseTo(
+        area.left,
+        0,
+      );
+      expect(screen.getByText("Veilo").getBoundingClientRect().right).toBeCloseTo(area.right, 0);
+    });
+
+    it("stops everything: the finished card beside a loader still loading, nothing moving", async () => {
+      const { container } = render(<ShiftDemo active />);
+      await vi.waitFor(() => expect(screen.getAllByText("Buy now")).toHaveLength(2), {
+        timeout: 8000,
+      });
+      await userEvent.click(screen.getByRole("button", { name: "Pause the demo" }));
+      const play = screen.getByRole("button", { name: "Play the demo" });
+      expect(play.textContent).toBe("Play");
+      // The still picture: Veilo finished, the typical loader on its placeholder.
+      await vi.waitFor(() => expect(skeletons(container)).toBe(0), { timeout: 3000 });
+      expect(placeholder(container)).toBe(true);
+      // A whole cycle later (a 1.2 s hold, the reveal and a gap) nothing has changed or moved.
+      const buttons = screen.getAllByText("Buy now");
+      const tops = () => buttons.map((button) => Math.round(button.getBoundingClientRect().top));
+      const before = tops();
+      for (let waited = 0; waited < 3500; waited += 250) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        expect(skeletons(container)).toBe(0);
+        expect(container.getAnimations({ subtree: true }).length).toBe(0);
+      }
+      expect(tops()).toEqual(before);
+      // And it is the composed still: the typical loader's button sits above Veilo's.
+      expect(before[1]!).toBeLessThan(before[0]!);
+    }, 25000);
+
+    it("Play starts the loop again", async () => {
+      const { container } = render(<ShiftDemo active />);
+      await vi.waitFor(() => expect(screen.getAllByText("Buy now")).toHaveLength(2), {
+        timeout: 8000,
+      });
+      await userEvent.click(screen.getByRole("button", { name: "Pause the demo" }));
+      await vi.waitFor(() => expect(skeletons(container)).toBe(0), { timeout: 3000 });
+      await userEvent.click(screen.getByRole("button", { name: "Play the demo" }));
+      expect(screen.getByRole("button", { name: "Pause the demo" })).toBeTruthy();
+      // The loop is back: the skeleton returns and the typical loader's placeholder with it.
+      await vi.waitFor(() => expect(skeletons(container)).toBeGreaterThan(0), { timeout: 8000 });
+    }, 25000);
+
+    it("works from the keyboard: Space toggles it", async () => {
+      render(<ShiftDemo active={false} />);
+      screen.getByRole("button", { name: "Pause the demo" }).focus();
+      await userEvent.keyboard(" ");
+      expect(screen.getByRole("button", { name: "Play the demo" })).toBeTruthy();
+      await userEvent.keyboard(" ");
+      expect(screen.getByRole("button", { name: "Pause the demo" })).toBeTruthy();
+    });
+
+    it("is not there for a visitor who asks for less motion, who already gets the still", () => {
+      reduceMotion();
+      render(<ShiftDemo active />);
+      expect(screen.queryByRole("button", { name: /the demo/ })).toBeNull();
+      // The two names are still at the card's edges.
+      expect(screen.getByText("Typical loader")).toBeTruthy();
+      expect(screen.getByText("Veilo")).toBeTruthy();
+    });
+  });
+
   describe("the divider", () => {
     it("is a slider with a name and a value, starting in the middle", () => {
       render(<ShiftDemo active={false} />);

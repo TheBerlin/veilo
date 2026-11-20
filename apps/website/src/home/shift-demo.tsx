@@ -17,6 +17,7 @@ import { DemoPhoto } from "./demo-photo.tsx";
 import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./shift-demo.module.css";
 import { useAlbumCover } from "./use-album-cover.ts";
+import { Button } from "@veilo-ui/ui";
 import { useLoopingReveal } from "./use-looping-reveal.ts";
 import { useReducedMotion } from "./use-reduced-motion.ts";
 import type { DemoProps } from "./why-tiles.tsx";
@@ -96,6 +97,8 @@ function Buy() {
 interface VeiloLayerProps {
   /** Whether the tile has come into view. */
   active: boolean;
+  /** Whether the visitor has paused the loop: the card then rests, finished. */
+  paused: boolean;
   /** Told whether the content is on screen, so the typical layer follows the same cycle. */
   onLoaded: (loaded: boolean) => void;
 }
@@ -109,8 +112,8 @@ interface VeiloLayerProps {
  * @returns The card and the button.
  */
 function VeiloLayer(props: VeiloLayerProps) {
-  const { active, onLoaded } = props;
-  const { ref, state } = useLoopingReveal(HERO_SETTINGS, CARD_LAYOUT, active);
+  const { active, paused, onLoaded } = props;
+  const { ref, state } = useLoopingReveal(HERO_SETTINGS, CARD_LAYOUT, active, paused);
   // Loading is the only state without content; idle is before anything has started.
   useEffect(() => onLoaded(state !== "loading"), [state, onLoaded]);
   return (
@@ -274,6 +277,7 @@ function useDivider() {
  * for bigger steps, Home and End for the ends). The two layers are decoration, hidden from
  * assistive technology; the slider has a name and a value.
  *
+ * The loop has a Pause button, which gives the same still picture and a Play button to resume it.
  * A visitor who asks for less motion gets one still picture, composed to carry the point: Veilo's
  * finished card on the right, and on the left a typical loader that is still loading, so its button
  * sits higher than Veilo's, which is where it ends up. Everyone else gets the loop.
@@ -288,13 +292,33 @@ export function ShiftDemo(props: DemoProps) {
   const ready = useAlbumCover();
   const [loaded, setLoaded] = useState(true);
   const reduced = useReducedMotion();
+  const [paused, setPaused] = useState(false);
+  // Paused or asked for less motion: one still picture, with nothing moving.
+  const still = reduced || paused;
   const divider = useDivider();
   const shown = Math.round(divider.position);
   return (
     <div className={styles.compare}>
-      <div className={styles.captions} aria-hidden="true">
-        <span>Typical loader</span>
-        <span>Veilo</span>
+      <div className={styles.captions}>
+        <span className={styles.captionLeft} aria-hidden="true">
+          Typical loader
+        </span>
+        {/* The loop starts by itself and runs for as long as the tile is in view, so there is a way to
+            stop it (WCAG 2.2.2). A visitor who already gets the still has nothing to pause. */}
+        {reduced ? null : (
+          <Button
+            variant="secondary"
+            size="sm"
+            className={styles.pause}
+            aria-label={paused ? "Play the demo" : "Pause the demo"}
+            onClick={() => setPaused((now) => !now)}
+          >
+            {paused ? "Play" : "Pause"}
+          </Button>
+        )}
+        <span className={styles.captionRight} aria-hidden="true">
+          Veilo
+        </span>
       </div>
       <div className={styles.wrap}>
         <div
@@ -307,10 +331,12 @@ export function ShiftDemo(props: DemoProps) {
           onPointerCancel={divider.onPointerCancel}
         >
           <div className={styles.layer} aria-hidden="true">
-            {ready ? <VeiloLayer active={props.active} onLoaded={setLoaded} /> : null}
+            {ready ? (
+              <VeiloLayer active={props.active} paused={paused} onLoaded={setLoaded} />
+            ) : null}
           </div>
           <div className={`${styles.layer} ${styles.before}`} aria-hidden="true">
-            <TypicalLayer loaded={loaded && !reduced} />
+            <TypicalLayer loaded={loaded && !still} />
           </div>
           <div className={styles.guide} aria-hidden="true" />
           <div className={styles.divider} aria-hidden="true" />
