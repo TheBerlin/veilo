@@ -57,12 +57,13 @@ When the `e2e` job fails in CI, open the run's summary and download the `playwri
 
 ## Size budget
 
-Growth is checked in CI after the build, with the sizes gzipped. The packages are measured with [size-limit](https://github.com/ai/size-limit): the limits are in `.size-limit.json`, each about 10% above the size when set, and the files are measured as built (not minified), so the numbers are for watching growth, not what a bundler ships. The website has its own check, because its files have hashed names: `apps/website/scripts/check-size.mjs` limits the first-load JavaScript and CSS, the lazy grid chunk, and every clip, poster and image.
+Growth is checked in CI after the build, with the sizes gzipped. The packages are measured with [size-limit](https://github.com/ai/size-limit): the limits are in `.size-limit.json`, each about 10% above the size when set, and the files are measured as built (not minified), so the numbers are for watching growth, not what a bundler ships. The website has its own check, because its files have hashed names: `apps/website/scripts/check-size.mjs` limits the first-load JavaScript and CSS, the lazy grid chunk, and every clip, poster and image. The docs have one too, `apps/docs/scripts/check-size.mjs`.
 
 ```sh
 pnpm build
 pnpm size                  # the packages
 pnpm --filter website size # the website
+pnpm --filter docs size    # the docs
 ```
 
 When a check fails, first find out why the size grew. Raising a limit means editing `.size-limit.json` or `check-size.mjs` and saying why in the commit message.

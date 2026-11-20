@@ -43,6 +43,10 @@ jobs:
         run: pnpm size
       - name: Check the size budget of the website
         run: pnpm --filter website size
+      - name: Check the size budget of the docs
+        run: pnpm --filter docs size
+      - name: Check the links of the docs
+        run: pnpm --filter docs check:links
 
   # Playwright tests of the built website, in the same image `pnpm --filter website visual`
   # uses locally, so screenshots match. Keep the tag equal to the `playwright` version.

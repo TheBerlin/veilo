@@ -8,7 +8,9 @@
     "dev": "pnpm generate && astro dev",
     "build": "pnpm generate && astro build",
     "preview": "astro preview",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "size": "node scripts/check-size.mjs",
+    "check:links": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.9",
