@@ -96,7 +96,8 @@
       "kind": "number",
       "default": 64,
       "min": 16,
-      "max": 110
+      "max": 110,
+      "integer": true
     },
     "startScale": {
       "kind": "number",

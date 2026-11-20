@@ -27,6 +27,15 @@ const options = (list: string[], value: string) => ({
   default: value,
 });
 
+/**
+ * A count: the spec's range, but read as a whole number (decided in the schema freeze review, D2).
+ * One of the two deliberate differences from the spec's tables; the other is the `lEase` default.
+ */
+const count = (min: number, max: number, step: number, value: number) => ({
+  ...range(min, max, step, value),
+  integer: true,
+});
+
 // Spec: Easing presets.
 const EASINGS = ["out", "outSoft", "inOut", "in", "linear", "back", "custom"];
 
@@ -51,7 +60,7 @@ const SPEC = {
     "dots",
   ),
   origin: options(["left", "right", "top", "bottom", "center", "diagonal", "random"], "left"),
-  cols: range(16, 110, 2, 64),
+  cols: count(16, 110, 2, 64),
   startScale: range(1, 4, 0.1, 2.5),
   spread: range(0.1, 0.9, 0.05, 0.6),
   textFx: options(["scramble", "typewriter", "rise", "fade"], "scramble"),

@@ -28,6 +28,7 @@ interface FrozenKey {
   options?: string[];
   min?: number;
   max?: number;
+  integer?: true;
 }
 
 const frozen = golden<{ version: number; keys: Record<string, FrozenKey>; colors: string[] }>(
@@ -64,6 +65,14 @@ describe("settings format, frozen at version 1", () => {
         }
       }
     }
+  });
+
+  it("keeps counts as whole numbers", () => {
+    const current = SETTINGS_SPEC as Record<string, { integer?: true }>;
+    for (const [key, entry] of Object.entries(frozen.keys)) {
+      if (entry.integer) expect(current[key]!.integer, `${key} is no longer a count`).toBe(true);
+    }
+    expect(parseSettings({ cols: 70.6 }).settings.cols).toBe(71);
   });
 
   it("the defaults are the frozen defaults, plus the version", () => {

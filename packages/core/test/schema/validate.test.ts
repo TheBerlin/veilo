@@ -37,6 +37,14 @@ describe("parseSettings", () => {
     expect(parseSettings({ lDur: 1.234 }).settings.lDur).toBe(1.234);
   });
 
+  it("rounds a count to a whole number before clamping it", () => {
+    expect(parseSettings({ cols: 64.5 }).settings.cols).toBe(65);
+    expect(parseSettings({ cols: 64.4 }).settings.cols).toBe(64);
+    expect(parseSettings({ cols: 15.6 }).settings.cols).toBe(16);
+    expect(parseSettings({ cols: 200.2 }).settings.cols).toBe(110);
+    expect(parseSettings({ cols: 64.5 }).applied).toEqual(["cols"]);
+  });
+
   it("ignores unknown keys", () => {
     const { settings, applied } = parseSettings({ nope: 1 });
     expect(settings).toEqual(defaultSettings());
