@@ -56,16 +56,4 @@ describe("WHY_TILES", () => {
       expect(screen.getByText(name)).toBeTruthy();
     }
   });
-
-  it("Layout stays put: the outline keeps its size while the card loads and reveals", async () => {
-    const container = demo("layout");
-    const outline = container.firstElementChild!.firstElementChild as HTMLElement;
-    const heights = new Set<number>();
-    // Sample across a full skeleton and reveal (about 2 s) of the looping sequence.
-    for (let index = 0; index < 12; index += 1) {
-      heights.add(outline.getBoundingClientRect().height);
-      await new Promise((resolve) => setTimeout(resolve, 200));
-    }
-    expect(heights.size).toBe(1);
-  });
 });

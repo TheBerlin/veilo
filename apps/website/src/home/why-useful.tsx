@@ -30,7 +30,7 @@ function Tile(props: TileProps) {
       data-seen={seen || undefined}
       data-wide={tile.wide || undefined}
     >
-      <div className={styles.frame} aria-hidden="true">
+      <div className={styles.frame} aria-hidden={tile.interactive ? undefined : true}>
         {tile.demo({ active: seen })}
       </div>
       <h3 className={styles.tileTitle}>{tile.title}</h3>

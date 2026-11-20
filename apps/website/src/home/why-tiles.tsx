@@ -6,6 +6,7 @@ import type { Settings } from "@veilo-ui/core";
 import type { LayoutInput } from "@veilo-ui/presets";
 import "@veilo-ui/css/skeleton.css";
 import type { CSSProperties, ReactNode } from "react";
+import { ShiftDemo } from "./shift-demo.tsx";
 import { useLoopingReveal } from "./use-looping-reveal.ts";
 import styles from "./why-tiles.module.css";
 
@@ -19,6 +20,8 @@ export interface WhyTile {
   caption: string;
   /** Whether the tile is a wide one (8 columns) or a narrow one (4), on a desktop screen. */
   wide: boolean;
+  /** Whether the demo can be operated. Its frame is then exposed to assistive technology. */
+  interactive?: boolean;
   /** Builds the live demo. `active` turns true once the tile has been scrolled into view. */
   demo: (props: DemoProps) => ReactNode;
 }
@@ -38,41 +41,6 @@ const LOOP_SETTINGS: Partial<Settings> = {
   textFx: "fade",
   rDur: 0.8,
 };
-
-/** Slot hints of the layout-stays-put card. */
-const CARD_LAYOUT = {
-  version: 1,
-  slots: {
-    pic: { role: "block" },
-    first: { role: "text", width: 80 },
-    second: { role: "text", width: 55 },
-  },
-} as const;
-
-/**
- * Layout stays put: a small card goes from skeleton to content inside a dashed outline. The
- * outline is the card's box before anything loads; it never changes, because the overlays core
- * draws are absolutely positioned and never resize the element.
- *
- * @param props - Whether the tile is active.
- * @returns The demo.
- */
-function StayPutDemo(props: DemoProps) {
-  const ref = useLoopingReveal(LOOP_SETTINGS, CARD_LAYOUT, props.active);
-  return (
-    <div className={styles.outline}>
-      <div ref={ref} className={styles.miniCard}>
-        <div className={styles.pic} data-veilo-slot="pic" />
-        <p className={styles.line} data-veilo-slot="first">
-          Weekend in the mountains
-        </p>
-        <p className={styles.line} data-veilo-slot="second">
-          Three days, two trails
-        </p>
-      </div>
-    </div>
-  );
-}
 
 /**
  * CSS-only loaders: the three classes of the CSS package on plain elements. No script runs in this
@@ -122,7 +90,7 @@ const FRAMEWORK_LAYOUT: LayoutInput = {
  * @returns The demo.
  */
 function FrameworkDemo(props: DemoProps) {
-  const ref = useLoopingReveal(
+  const { ref } = useLoopingReveal(
     { ...LOOP_SETTINGS, textFx: "scramble", charset: "binary", rDur: 1.2 },
     FRAMEWORK_LAYOUT,
     props.active,
@@ -168,9 +136,10 @@ export const WHY_TILES: readonly WhyTile[] = [
   {
     id: "layout",
     wide: true,
+    interactive: true,
     title: "Layout stays put.",
     caption: "Placeholders keep the content's size.",
-    demo: (props) => <StayPutDemo active={props.active} />,
+    demo: (props) => <ShiftDemo active={props.active} />,
   },
   {
     id: "css",

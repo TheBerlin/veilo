@@ -1,31 +1,6 @@
 /* Demo frame content for "Why it's useful": the small things the four tiles show. Everything
    inside the tile's square frame is centered and uses the page's tokens. */
 
-/* Layout stays put: the dashed outline is the card's box before anything loads; it stays the same
-   size while the card goes from skeleton to content. */
-.outline {
-  width: min(100%, var(--veilo-size-test-card));
-  padding: var(--veilo-space-1);
-  border: 1px dashed var(--veilo-border-strong);
-  border-radius: var(--veilo-radius-lg);
-}
-
-.miniCard {
-  display: grid;
-  gap: var(--veilo-space-1);
-}
-
-.pic {
-  aspect-ratio: 16 / 9;
-  border-radius: var(--veilo-radius-base);
-  background: var(--veilo-border);
-}
-
-.line {
-  margin: 0;
-  font: var(--veilo-type-label-sm);
-}
-
 /* CSS-only loaders and Reduced motion: labeled rows of skeleton bars. */
 .rows {
   display: grid;

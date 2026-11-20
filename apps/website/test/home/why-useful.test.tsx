@@ -26,13 +26,18 @@ describe("WhyUseful", () => {
     }
   });
 
-  it("hides the demos from assistive technology; the text carries the message", () => {
+  it("hides the demos from assistive technology, except the one that can be operated", () => {
     render(<WhyUseful />);
-    for (const tile of screen.getAllByRole("article")) {
-      const frame = tile.querySelector("[aria-hidden=true]");
-      expect(frame).not.toBeNull();
-      expect(within(tile).getByRole("heading", { level: 3 })).not.toBe(frame);
+    const [layout, ...others] = screen.getAllByRole("article") as [HTMLElement, ...HTMLElement[]];
+    // The layout tile's frame holds the divider, a slider, so the frame is exposed.
+    expect(within(layout).getByRole("slider")).toBeTruthy();
+    expect(layout.querySelector(":scope > div > [aria-hidden=true]")).toBeNull();
+    // The others are decoration: their frame is hidden and the text carries the message.
+    for (const tile of others) {
+      expect(tile.querySelector("[aria-hidden=true]")).not.toBeNull();
+      expect(within(tile).queryByRole("slider")).toBeNull();
     }
+    expect(screen.getAllByRole("slider")).toHaveLength(1);
   });
 
   it("lays the tiles out as two rows of 8 and 4 columns, each row ending on one line", async () => {

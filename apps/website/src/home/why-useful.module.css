@@ -23,12 +23,17 @@
    on the same line. */
 .tile {
   display: grid;
+  /* One column that may shrink, so a demo's own width (a canvas) cannot widen the tile. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto auto;
   gap: var(--veilo-space-1);
   height: 100%;
 }
 
 .frame {
+  /* An explicit width: with a minimum height and an aspect ratio, an auto width would grow to
+     match the height. */
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,10 +45,15 @@
   overflow: hidden;
 }
 
-/* The wide tile sets its row's height: twice as wide as tall. The narrow tile beside it stretches
-   to it. */
-.tile[data-wide] .frame {
-  aspect-ratio: 2 / 1;
+/* The wide tile sets its row's height from a viewport width where its frame is at least 760 px
+   wide: twice as wide as tall. The narrow tile beside it stretches to it. Below that, the frame is
+   as tall as its demo needs. */
+@media (min-width: 1214px) {
+  .tile[data-wide] .frame {
+    aspect-ratio: 2 / 1;
+    /* Never shorter than the demos in it need (a card, its name and a button). */
+    min-height: calc(var(--veilo-size-test-card) + var(--veilo-space-8));
+  }
 }
 
 .tileTitle {
@@ -67,8 +77,11 @@
 
 /* A phone: every tile has its own row, so each frame is square. */
 @media (max-width: 900px) {
-  .frame,
-  .tile[data-wide] .frame {
+  .frame {
     aspect-ratio: 1;
+  }
+
+  .tile[data-wide] .frame {
+    aspect-ratio: auto;
   }
 }

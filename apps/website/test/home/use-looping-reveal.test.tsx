@@ -6,7 +6,7 @@ import { useLoopingReveal } from "../../src/home/use-looping-reveal.ts";
 
 /** A one-line card: a text slot the demo reveals. */
 function Demo(props: { active: boolean }) {
-  const ref = useLoopingReveal(
+  const { ref } = useLoopingReveal(
     { version: 1, effect: "shimmer", hold: 0.3, rDur: 0.2, textFx: "fade" },
     { version: 1, slots: { line: { role: "text" } } },
     props.active,
