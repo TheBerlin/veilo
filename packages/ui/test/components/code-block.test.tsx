@@ -1,6 +1,6 @@
 // Tests for src/components/code-block.tsx, in Chromium with the real tokens and styles.
 
-import { act, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
@@ -78,6 +78,44 @@ describe("CodeBlock", () => {
     expect(getComputedStyle(screen.getByRole("button")).outlineStyle).toBe("solid");
   });
 
+  describe("the Copy button's name", () => {
+    it("is just Copy when the block has no name", () => {
+      render(<CodeBlock code={COMMAND} />);
+      expect(screen.getByRole("button", { name: "Copy" }).getAttribute("aria-label")).toBeNull();
+    });
+
+    it("carries the block's name, so several blocks can be told apart", () => {
+      render(
+        <>
+          <CodeBlock code="one" aria-label="React example" />
+          <CodeBlock code="two" aria-label="React install command" />
+        </>,
+      );
+      expect(screen.getByRole("button", { name: "Copy React example" })).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Copy React install command" })).toBeTruthy();
+      // Both start with the visible word, so voice control can still say "Copy".
+      for (const button of screen.getAllByRole("button")) {
+        expect(button.textContent).toBe("Copy");
+        expect(button.getAttribute("aria-label")).toMatch(/^Copy /);
+      }
+    });
+
+    it("follows the button's state: Copied, and Press Ctrl+C when the clipboard is blocked", async () => {
+      vi.spyOn(navigator.clipboard, "writeText").mockResolvedValueOnce();
+      render(<CodeBlock code={COMMAND} aria-label="Install command" />);
+      await userEvent.click(screen.getByRole("button", { name: "Copy Install command" }));
+      expect(screen.getByRole("button", { name: "Copied Install command" })).toBeTruthy();
+      vi.restoreAllMocks();
+      vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(new Error("blocked"));
+      cleanup();
+      render(<CodeBlock code={COMMAND} aria-label="Install command" />);
+      await userEvent.click(screen.getByRole("button", { name: "Copy Install command" }));
+      expect(
+        screen.getByRole("button", { name: "Press Ctrl+C to copy Install command" }),
+      ).toBeTruthy();
+    });
+  });
+
   describe("narrow", () => {
     afterEach(async () => {
       await page.viewport(414, 896);
@@ -92,7 +130,7 @@ describe("CodeBlock", () => {
     function layoutOf(narrow?: "scroll" | "wrap") {
       render(<CodeBlock code={"a long line ".repeat(12)} narrow={narrow} aria-label="Example" />);
       const pre = screen.getByLabelText("Example");
-      const copy = screen.getByRole("button", { name: "Copy" });
+      const copy = screen.getByRole("button", { name: /^Copy / });
       return {
         whiteSpace: getComputedStyle(pre).whiteSpace,
         copyAbove: copy.getBoundingClientRect().bottom <= pre.getBoundingClientRect().top,

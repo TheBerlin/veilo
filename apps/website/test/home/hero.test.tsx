@@ -22,7 +22,7 @@ describe("Hero", () => {
   it("shows the install command with a Copy button", () => {
     render(<Hero />);
     expect(screen.getByLabelText("Install command").textContent).toContain(INSTALL_COMMAND);
-    expect(screen.getByRole("button", { name: "Copy" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /^Copy / })).toBeTruthy();
   });
 
   it("has no preset switch: the demo plays one fixed preset", () => {

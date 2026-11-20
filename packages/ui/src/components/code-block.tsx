@@ -19,7 +19,10 @@ export interface CodeBlockProps {
    * On wider screens both scroll.
    */
   narrow?: "scroll" | "wrap";
-  /** Names the block for screen readers, such as "Install command" or "Loader CSS". */
+  /**
+   * Names the block for screen readers, such as "Install command" or "Loader CSS". The Copy button
+   * is named after it ("Copy Install command"), so several blocks on a page can be told apart.
+   */
   "aria-label"?: string;
   /** Extra class for the block. */
   className?: string;
@@ -27,6 +30,17 @@ export interface CodeBlockProps {
 
 /** The copy button's states. */
 type CopyState = "idle" | "copied" | "blocked";
+
+/**
+ * What the Copy button's accessible name says in each state, given the block's own name. It starts
+ * with the visible label, so a voice-control user can say what they see, and it ends with the block's
+ * name, so several blocks on a page can be told apart.
+ */
+const NAMES: Record<CopyState, (block: string) => string> = {
+  idle: (block) => `Copy ${block}`,
+  copied: (block) => `Copied ${block}`,
+  blocked: (block) => `Press Ctrl+C to copy ${block}`,
+};
 
 const LABELS: Record<CopyState, string> = {
   idle: "Copy",
@@ -84,7 +98,13 @@ export function CodeBlock(props: CodeBlockProps) {
           {code}
         </code>
       </pre>
-      <button type="button" className={styles.copy} data-state={state} onClick={copy}>
+      <button
+        type="button"
+        className={styles.copy}
+        data-state={state}
+        onClick={copy}
+        aria-label={props["aria-label"] ? NAMES[state](props["aria-label"]) : undefined}
+      >
         {/* Keyed by the state, so each new label mounts and plays its own entrance. */}
         <span key={state} className={styles.label}>
           {LABELS[state]}
