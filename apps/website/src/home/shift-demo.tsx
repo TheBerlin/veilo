@@ -158,10 +158,33 @@ function TypicalLayer(props: TypicalLayerProps) {
   );
 }
 
+/** How far a finger must travel, in px, before its direction decides between a drag and a scroll. */
+const TOUCH_SLOP = 8;
+
+/** A press in progress: which pointer, where it started, and what it has turned out to be. */
+interface Gesture {
+  /** The pointer's id. */
+  id: number;
+  /** Where the press began. */
+  x: number;
+  y: number;
+  /**
+   * `drag`: the divider follows the pointer. `pending`: a finger that has not moved far enough to
+   * tell a drag from a scroll or a tap.
+   */
+  mode: "drag" | "pending";
+}
+
 /**
  * Keeps a position between 0 and 100 and turns pointer and key input into it.
  *
- * Side effects: none until the returned handlers are called; a press captures the pointer until it
+ * A mouse or pen press moves the divider at once and then drags it. A finger does not: the area
+ * lets the page scroll vertically, and a swipe that starts on the card is mostly a scroll, so the
+ * divider must not jump to where the finger landed. A tap moves it there, a swipe that is more
+ * sideways than vertical drags it, and a swipe that is more vertical leaves it alone and lets the
+ * page scroll.
+ *
+ * Side effects: none until the returned handlers are called; a drag captures the pointer until it
  * is released.
  *
  * @returns The position, a ref for the area it is measured against, and the event handlers.
@@ -169,29 +192,63 @@ function TypicalLayer(props: TypicalLayerProps) {
 function useDivider() {
   const [position, setPosition] = useState(START);
   const area = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
+  const gesture = useRef<Gesture | null>(null);
   const moveTo = useCallback((clientX: number) => {
     const box = area.current?.getBoundingClientRect();
     if (!box || box.width === 0) return;
     setPosition(Math.min(100, Math.max(0, ((clientX - box.left) / box.width) * 100)));
   }, []);
-  return {
-    position,
-    area,
-    onPointerDown(event: PointerEvent<HTMLDivElement>) {
-      dragging.current = true;
+  /** Starts following the pointer: captures it and moves the divider to it. */
+  const startDrag = useCallback(
+    (element: HTMLDivElement, event: PointerEvent<HTMLDivElement>) => {
+      gesture.current = { id: event.pointerId, x: event.clientX, y: event.clientY, mode: "drag" };
       try {
-        event.currentTarget.setPointerCapture(event.pointerId);
+        element.setPointerCapture(event.pointerId);
       } catch {
         // A pointer that is not active (a synthetic event) cannot be captured; it still moves.
       }
       moveTo(event.clientX);
     },
-    onPointerMove(event: PointerEvent<HTMLDivElement>) {
-      if (dragging.current) moveTo(event.clientX);
+    [moveTo],
+  );
+  return {
+    position,
+    area,
+    onPointerDown(event: PointerEvent<HTMLDivElement>) {
+      if (event.pointerType === "touch") {
+        gesture.current = {
+          id: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+          mode: "pending",
+        };
+        return;
+      }
+      startDrag(event.currentTarget, event);
     },
-    onPointerUp() {
-      dragging.current = false;
+    onPointerMove(event: PointerEvent<HTMLDivElement>) {
+      const current = gesture.current;
+      if (!current || current.id !== event.pointerId) return;
+      if (current.mode === "drag") {
+        moveTo(event.clientX);
+        return;
+      }
+      const across = Math.abs(event.clientX - current.x);
+      const down = Math.abs(event.clientY - current.y);
+      if (across < TOUCH_SLOP && down < TOUCH_SLOP) return;
+      // Sideways: a drag, from here. Otherwise a scroll, which the browser takes; leave it alone.
+      if (across > down) startDrag(event.currentTarget, event);
+      else gesture.current = null;
+    },
+    onPointerUp(event: PointerEvent<HTMLDivElement>) {
+      const current = gesture.current;
+      // A finger lifted without having gone anywhere is a tap: put the divider there.
+      if (current?.mode === "pending" && current.id === event.pointerId) moveTo(current.x);
+      gesture.current = null;
+    },
+    onPointerCancel() {
+      // The browser took the gesture (a scroll): nothing to follow, and not a tap.
+      gesture.current = null;
     },
     onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
       const step = event.shiftKey ? BIG_STEP : STEP;
@@ -247,7 +304,7 @@ export function ShiftDemo(props: DemoProps) {
           onPointerDown={divider.onPointerDown}
           onPointerMove={divider.onPointerMove}
           onPointerUp={divider.onPointerUp}
-          onPointerCancel={divider.onPointerUp}
+          onPointerCancel={divider.onPointerCancel}
         >
           <div className={styles.layer} aria-hidden="true">
             {ready ? <VeiloLayer active={props.active} onLoaded={setLoaded} /> : null}

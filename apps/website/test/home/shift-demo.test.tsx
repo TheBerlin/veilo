@@ -123,6 +123,100 @@ describe("ShiftDemo", () => {
       expect(Number(slider.getAttribute("aria-valuenow")), "no drag after release").toBe(80);
     });
 
+    describe("with a finger", () => {
+      /**
+       * Sets up a touch on the card.
+       *
+       * @returns The slider, the area, its box and a way to read the divider.
+       */
+      function touchSetup() {
+        render(<ShiftDemo active={false} />);
+        const slider = screen.getByRole("slider");
+        const area = slider.parentElement!;
+        const box = area.getBoundingClientRect();
+        const touch = { pointerType: "touch", pointerId: 7, isPrimary: true } as const;
+        return {
+          slider,
+          area,
+          box,
+          touch,
+          value: () => Number(slider.getAttribute("aria-valuenow")),
+        };
+      }
+
+      it("a press alone does not move the divider", () => {
+        const { area, box, touch, value } = touchSetup();
+        fireEvent.pointerDown(area, {
+          ...touch,
+          clientX: box.left + box.width * 0.2,
+          clientY: box.top + 50,
+        });
+        expect(value()).toBe(50);
+      });
+
+      it("a vertical swipe leaves the divider alone, however it starts, and a cancel is not a tap", () => {
+        const { area, box, touch, value } = touchSetup();
+        const x = box.left + box.width * 0.2;
+        fireEvent.pointerDown(area, { ...touch, clientX: x, clientY: box.top + 50 });
+        fireEvent.pointerMove(area, { ...touch, clientX: x + 3, clientY: box.top + 90 });
+        fireEvent.pointerMove(area, { ...touch, clientX: x + 4, clientY: box.top + 140 });
+        // The browser takes the gesture to scroll the page and cancels the pointer.
+        fireEvent.pointerCancel(area, touch);
+        expect(value()).toBe(50);
+      });
+
+      it("a vertical swipe that ends normally still leaves the divider alone", () => {
+        const { area, box, touch, value } = touchSetup();
+        const x = box.left + box.width * 0.2;
+        fireEvent.pointerDown(area, { ...touch, clientX: x, clientY: box.top + 50 });
+        fireEvent.pointerMove(area, { ...touch, clientX: x + 2, clientY: box.top + 120 });
+        fireEvent.pointerUp(area, { ...touch, clientX: x + 2, clientY: box.top + 120 });
+        expect(value()).toBe(50);
+      });
+
+      it("a sideways swipe drags the divider", () => {
+        const { area, box, touch, value } = touchSetup();
+        const y = box.top + 80;
+        fireEvent.pointerDown(area, { ...touch, clientX: box.left + box.width * 0.5, clientY: y });
+        fireEvent.pointerMove(area, {
+          ...touch,
+          clientX: box.left + box.width * 0.5 + 20,
+          clientY: y + 2,
+        });
+        fireEvent.pointerMove(area, {
+          ...touch,
+          clientX: box.left + box.width * 0.9,
+          clientY: y + 4,
+        });
+        expect(value()).toBe(90);
+        fireEvent.pointerUp(area, {
+          ...touch,
+          clientX: box.left + box.width * 0.9,
+          clientY: y + 4,
+        });
+        fireEvent.pointerMove(area, { ...touch, clientX: box.left + box.width * 0.1, clientY: y });
+        expect(value(), "no drag after the finger lifts").toBe(90);
+      });
+
+      it("a tap puts the divider where the finger was", () => {
+        const { area, box, touch, value } = touchSetup();
+        const point = { ...touch, clientX: box.left + box.width * 0.3, clientY: box.top + 60 };
+        fireEvent.pointerDown(area, point);
+        fireEvent.pointerUp(area, point);
+        expect(value()).toBe(30);
+      });
+
+      it("a mouse press still moves it at once", () => {
+        const { area, box, value } = touchSetup();
+        fireEvent.pointerDown(area, {
+          pointerType: "mouse",
+          pointerId: 1,
+          clientX: box.left + box.width * 0.2,
+        });
+        expect(value()).toBe(20);
+      });
+    });
+
     it("shows the typical layer only to the left of the divider", () => {
       render(<ShiftDemo active={false} />);
       const slider = screen.getByRole("slider");
