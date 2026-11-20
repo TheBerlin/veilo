@@ -21,6 +21,12 @@ export default defineConfig({
         "@veilo-ui/ui/tokens.css",
         "./src/styles/theme.css",
       ],
+      sidebar: [
+        {
+          label: "Start",
+          items: [{ slug: "start/getting-started" }, { slug: "start/concepts" }],
+        },
+      ],
     }),
   ],
 });

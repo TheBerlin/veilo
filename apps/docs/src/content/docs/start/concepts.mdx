@@ -1,0 +1,52 @@
+---
+title: Concepts
+description: "The few ideas behind Veilo: slots, skeleton and reveal, progress, settings and presets."
+---
+
+Veilo has a small set of ideas. Once you know them, every guide and every setting reads the same way.
+
+## Slots
+
+A slot is a part of your own markup marked with `data-veilo-slot="name"`. The name is yours. Sizes and positions always come from your elements and your CSS: Veilo draws on top of them and puts them back when it is done.
+
+A slot has one of four roles:
+
+| Role     | What it does                                                                          |
+| -------- | ------------------------------------------------------------------------------------- |
+| `image`  | The photo (`<img>` or `<canvas>`). Only the first image slot is revealed.             |
+| `text`   | A text element on the text timeline, in page order. Its skeleton is one bar per line. |
+| `button` | Its background fades in with its label. Only the first button slot is used.           |
+| `block`  | Shows the skeleton but has no reveal effect, for avatars, badges and other shapes.    |
+
+Roles are guessed from the element, or named in a layout, which also carries hints such as how wide the last line's bar is.
+
+## Skeleton and reveal
+
+There are two separate things, and you can use either alone.
+
+- A **skeleton** is the placeholder shown while content is on its way: a shimmer, a wave or a pulse over each slot. It is a loader.
+- A **reveal** is the animation that turns the loader into the real content: a grid of dots, characters or mosaic tiles over the image, or a fade, blur, zoom or wipe, with text that scrambles, types, rises or fades in.
+
+A reveal always begins from the skeleton. The usual sequence is: loading, then revealing, then revealed.
+
+## Progress is the only input
+
+Every frame of a reveal is a pure function of a single number, progress `p`, from 0 to 1. Nothing else changes what a frame looks like. That has three consequences you can rely on:
+
+- Playing, pausing and scrubbing show exactly the same frames.
+- What you see at 40% in the playground is what ships.
+- Screenshots at a fixed `p` are exact and repeatable, which is how Veilo tests its own effects.
+
+## Settings
+
+An effect is described by one flat, versioned object of plain JSON: the loader, the image effect, the text effect, the timing and, optionally, colors. Unknown keys are ignored, values of the wrong type fall back to the default, and numbers are clamped to their range, so settings you load from a link or a file are always safe to use. The [settings reference](/reference/settings/) lists every key.
+
+## Presets
+
+A preset is a named set of settings, such as `dot-upscale` or `hex-from-center`. Choose one, then change only what you want on top. Every preset has a [page with a live preview](/effects/).
+
+## Honest by default
+
+- **Reduced motion.** With `prefers-reduced-motion`, the skeleton stays still and a reveal jumps to its end.
+- **Screen readers.** The real text always stays in the page. Animated text is drawn on an `aria-hidden` overlay, and the loading region is `aria-busy`.
+- **Cleanup.** Everything Veilo adds (canvases, overlays, styles, timers) is removed by `destroy()`, and your elements are restored exactly.
