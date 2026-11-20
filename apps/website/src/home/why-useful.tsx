@@ -1,7 +1,7 @@
-// why-useful.tsx: the "Why it's useful" section: a heading and four tiles, each a small live demo
-// with a title and a caption. A tile's demo starts once the tile is scrolled into view.
+// why-useful.tsx: the benefits section of the home page: a heading and four tiles, each a small live
+// demo with a title and a caption. A tile's demo starts once the tile is scrolled into view.
 
-import { Badge, Grid, GridCell } from "@veilo-ui/ui";
+import { Grid, GridCell } from "@veilo-ui/ui";
 import rise from "./rise.module.css";
 import { useSeen } from "./use-seen.ts";
 import { WHY_TILES, type WhyTile } from "./why-tiles.tsx";
@@ -40,7 +40,7 @@ function Tile(props: TileProps) {
 }
 
 /**
- * The section: a badge and the h2, then four tiles in two rows of 8 and 4 columns: the two demos that need room
+ * The section: the h2, then four tiles in two rows of 8 and 4 columns: the two demos that need room
  * (layout stays put and your framework) are the wide ones, and the first leads. On a phone every tile
  * has its own row.
  *
@@ -53,9 +53,8 @@ export function WhyUseful() {
       <Grid rowGap="space-4">
         <GridCell>
           <div className={`${styles.head} ${rise.onView}`} ref={ref} data-seen={seen || undefined}>
-            <Badge>Why Veilo</Badge>
             <h2 className={styles.title} id="why-title">
-              Why it&apos;s useful
+              Loading states that stay out of your way.
             </h2>
           </div>
         </GridCell>

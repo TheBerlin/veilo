@@ -55,7 +55,7 @@ When the padding is uneven, use the smallest side. A surface placed inside anoth
 | 901 to 1439 px    | 12 columns, 20 px gutters | Shrink to 32 px (`space-4`), at 1264 px; below that the columns narrow instead. |
 | 900 px and below  | 4 columns, 8 px gutters   | 20 px; the columns stretch with the screen.                                     |
 
-The switch at 900 px is the same as the playground's one-column switch (`GRID_BREAKPOINT` in `tokens.ts`). Margins also grow to the phone's safe-area insets. Place every block on whole columns. On desktop the hero splits 6 and 6 columns, the three How it works rows use 4 and 7 columns with one empty column between, the four "Why it's useful" tiles come in two rows of 8 and 4 columns (the two demos that need room are the wide ones, and the first leads) and gallery tiles take 4. On mobile every block spans 4 columns, including each "Why it's useful" tile. Row gaps come from the spacing scale; the grid tokens `grid-desktop-*` and `grid-mobile-*` hold the numbers.
+The switch at 900 px is the same as the playground's one-column switch (`GRID_BREAKPOINT` in `tokens.ts`). Margins also grow to the phone's safe-area insets. Place every block on whole columns. On desktop the hero splits 6 and 6 columns, the three How it works rows use 4 and 7 columns with one empty column between, the four benefit tiles ("Loading states that stay out of your way.") come in two rows of 8 and 4 columns (the two demos that need room are the wide ones, and the first leads) and gallery tiles take 4. On mobile every block spans 4 columns, including each benefit tile. Row gaps come from the spacing scale; the grid tokens `grid-desktop-*` and `grid-mobile-*` hold the numbers.
 
 The **playground** is a tool and is fluid between the two frames: the stage stretches, the control panel is at most `size-panel` (380 px), and below 900 px the layout becomes one column. Side gutters are at least 16 px at every width and grow to the phone's safe-area insets.
 
@@ -67,7 +67,7 @@ The **playground** is a tool and is fluid between the two frames: the stage stre
 
 ## Page structure
 
-The site has three pages: Home, Playground and Gallery, all with the Nav, plus a 404 page. On Home, in order: hero (headline, supporting text, primary and secondary CTA, install command, live demo card), demo panel of three effects, How it works (Design, Preview, Export with videos and the install command), Why it's useful (four media tiles), gallery preview with a button, final CTA, footer. The primary action everywhere is "Open Playground"; the secondary is "Browse gallery".
+The site has three pages: Home, Playground and Gallery, all with the Nav, plus a 404 page. On Home, in order: hero (headline, supporting text, primary and secondary CTA, install command, live demo card), demo panel of three effects, How it works (Design, Preview, Export with videos and the install command), the benefits section (four live demo tiles: layout stays put, CSS-only loaders, your framework, reduced motion), gallery preview with a button, final CTA, footer. The primary action everywhere is "Open Playground"; the secondary is "Browse gallery".
 
 ## Iconography
 
@@ -115,7 +115,7 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | ----------- | ------- | ------ | ------------------ | ------ | -------------- | -------------------------------------------------------------------- |
 | `h1`        | Display | sans   | 56px / 60px        | 700    | -0.02em        | Hero headline, one per page.                                         |
 | `h1-mobile` | Display | sans   | 40px / 46px        | 700    | -0.02em        | `h1` on the 375 px layout.                                           |
-| `h2`        | Display | sans   | 40px / 46px        | 700    | -0.015em       | Section titles such as 'Why it's useful.'                            |
+| `h2`        | Display | sans   | 40px / 46px        | 700    | -0.015em       | Section titles such as 'Loading states that stay out of your way.'   |
 | `h2-mobile` | Display | sans   | 32px / 38px        | 700    | -0.015em       | `h2` on the 375 px layout.                                           |
 | `h3`        | Display | sans   | 28px / 34px        | 700    | -0.01em        | Step titles in How it works (Design., Preview., Export.).            |
 | `body-lg`   | Text    | sans   | 20px / 30px        | 400    | none           | Hero and section supporting text.                                    |

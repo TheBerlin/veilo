@@ -20,10 +20,13 @@ afterEach(async () => {
 });
 
 describe("HowItWorks", () => {
-  it("is a section labelled by its h2, with the badge above it", () => {
+  it("is a section labelled by its h2, with no label above the heading", () => {
     render(<HowItWorks />);
     const section = screen.getByRole("region", { name: /From a tuned effect/ });
-    expect(within(section).getByText("How it works").tagName).toBe("SPAN");
+    // The heading stands alone: nothing in its block above or beside it.
+    expect(within(section).getByRole("heading", { level: 2 }).parentElement!.children).toHaveLength(
+      1,
+    );
     expect(within(section).getAllByRole("heading", { level: 2 })).toHaveLength(1);
   });
 

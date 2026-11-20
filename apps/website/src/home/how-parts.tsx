@@ -1,7 +1,6 @@
 // how-parts.tsx: the small parts of "How it works" that more than one layout uses: the heading
-// block (badge and h2) and a step's link.
+// h2 and a step's link.
 
-import { Badge } from "@veilo-ui/ui";
 import styles from "./how-steps.module.css";
 import { SECTION_TITLE, type StepContent } from "./how-steps.tsx";
 import rise from "./rise.module.css";
@@ -14,7 +13,7 @@ export interface SectionHeadProps {
 }
 
 /**
- * The badge and the h2 of the section, rising in once when scrolled into view like the other text
+ * The h2 of the section, rising in once when scrolled into view like the other text
  * blocks of the page.
  *
  * @param props - The h2's id.
@@ -24,7 +23,6 @@ export function SectionHead(props: SectionHeadProps) {
   const { ref, seen } = useSeen<HTMLDivElement>();
   return (
     <div className={`${styles.head} ${rise.onView}`} ref={ref} data-seen={seen || undefined}>
-      <Badge>How it works</Badge>
       <h2 className={styles.title} id={props.id}>
         {SECTION_TITLE}
       </h2>

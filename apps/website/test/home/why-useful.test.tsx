@@ -10,11 +10,16 @@ afterEach(async () => {
 });
 
 describe("WhyUseful", () => {
-  it("is a section labelled by its h2, with the badge above it", () => {
+  it("is a section labelled by its h2, which stands alone with no label above it", () => {
     render(<WhyUseful />);
-    const section = screen.getByRole("region", { name: "Why it's useful" });
-    expect(within(section).getByText("Why Veilo").tagName).toBe("SPAN");
+    const section = screen.getByRole("region", {
+      name: "Loading states that stay out of your way.",
+    });
     expect(within(section).getAllByRole("heading", { level: 2 })).toHaveLength(1);
+    // Nothing in the heading's block but the h2.
+    expect(within(section).getByRole("heading", { level: 2 }).parentElement!.children).toHaveLength(
+      1,
+    );
   });
 
   it("has four tiles, each an article with a title and a caption", () => {
