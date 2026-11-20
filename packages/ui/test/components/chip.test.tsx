@@ -67,6 +67,86 @@ describe("ChipGroup", () => {
     expect(onChange).toHaveBeenLastCalledWith("wave");
   });
 
+  it("by default an arrow key only moves focus: arrowing past an item does not choose it", async () => {
+    const onChange = vi.fn();
+    render(<Effects onChange={onChange} />);
+    screen.getByRole("radio", { name: "Shimmer" }).focus();
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}");
+    expect(document.activeElement).toBe(screen.getByRole("radio", { name: "Pulse" }));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("radio", { name: "Shimmer" }).getAttribute("aria-checked")).toBe(
+      "true",
+    );
+  });
+
+  describe("followFocus", () => {
+    /**
+     * A controlled group that chooses on arrival, and reports each change.
+     *
+     * @param props - The change handler.
+     * @returns The group.
+     */
+    function Following(props: { onChange: (value: string) => void }) {
+      const [value, setValue] = useState("shimmer");
+      return (
+        <ChipGroup
+          aria-label="Effect"
+          value={value}
+          followFocus
+          onValueChange={(next) => {
+            setValue(next);
+            props.onChange(next);
+          }}
+        >
+          <ChipGroupItem value="shimmer">Shimmer</ChipGroupItem>
+          <ChipGroupItem value="wave">Wave</ChipGroupItem>
+          <ChipGroupItem value="pulse">Pulse</ChipGroupItem>
+        </ChipGroup>
+      );
+    }
+
+    /**
+     * The name of the chosen radio.
+     *
+     * @returns The names of the radios that are checked.
+     */
+    const chosen = () =>
+      screen
+        .getAllByRole("radio")
+        .filter((radio) => radio.getAttribute("aria-checked") === "true")
+        .map((radio) => radio.textContent);
+
+    it("an arrow key chooses the item it lands on, as a native radio group does", async () => {
+      const onChange = vi.fn();
+      render(<Following onChange={onChange} />);
+      screen.getByRole("radio", { name: "Shimmer" }).focus();
+      await userEvent.keyboard("{ArrowRight}");
+      expect(chosen()).toEqual(["Wave"]);
+      expect(onChange).toHaveBeenLastCalledWith("wave");
+      await userEvent.keyboard("{ArrowRight}");
+      expect(chosen()).toEqual(["Pulse"]);
+      await userEvent.keyboard("{ArrowLeft}");
+      // Exactly one is chosen throughout.
+      expect(chosen()).toEqual(["Wave"]);
+    });
+
+    it("Home and End choose the first and last", async () => {
+      render(<Following onChange={() => {}} />);
+      screen.getByRole("radio", { name: "Wave" }).focus();
+      await userEvent.keyboard("{End}");
+      expect(chosen()).toEqual(["Pulse"]);
+      await userEvent.keyboard("{Home}");
+      expect(chosen()).toEqual(["Shimmer"]);
+    });
+
+    it("focusing the chosen item changes nothing", () => {
+      const onChange = vi.fn();
+      render(<Following onChange={onChange} />);
+      screen.getByRole("radio", { name: "Shimmer" }).focus();
+      expect(onChange).not.toHaveBeenCalled();
+    });
+  });
+
   it("keeps the choice when the chosen item is pressed again", async () => {
     const onChange = vi.fn();
     render(<Effects onChange={onChange} />);
