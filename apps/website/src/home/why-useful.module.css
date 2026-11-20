@@ -70,6 +70,8 @@
   margin: 0;
   color: var(--veilo-text-muted);
   font: var(--veilo-type-body);
+  /* A caption that wraps breaks into even lines, not one word on the second. */
+  text-wrap: balance;
 }
 
 @media (max-width: 900px) {

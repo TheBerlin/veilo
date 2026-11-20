@@ -21,11 +21,25 @@ function demo(id: string, active = true): HTMLElement {
 describe("WHY_TILES", () => {
   it("has the four tiles, in order, with the agreed copy", () => {
     expect(WHY_TILES.map((tile) => [tile.title, tile.caption])).toEqual([
-      ["Layout stays put.", "Placeholders keep the content's size."],
-      ["CSS-only loaders.", "No JavaScript needed to shimmer."],
-      ["Your framework.", "React, Vue, Svelte, Angular or HTML."],
-      ["Reduced motion.", "Effects calm down when users ask."],
+      ["Layout stays put.", "Veilo draws over your own elements and never resizes them."],
+      ["CSS-only loaders.", "A 2 KB stylesheet, and no JavaScript."],
+      ["Your framework.", "One settings object, the same in every package."],
+      ["Reduced motion.", "Veilo reads the visitor's setting itself. You configure nothing."],
     ]);
+  });
+
+  it("adds a fact in each caption that its card does not already say", () => {
+    // The card says what happens; the caption says how, how big, or how much work. None of the
+    // captions repeats the title or the words of the notes and lines inside the card.
+    for (const tile of WHY_TILES) {
+      expect(tile.caption.toLowerCase()).not.toContain(tile.title.replace(".", "").toLowerCase());
+    }
+    const notes = [
+      "No room kept for the text",
+      "Text lines are reserved",
+      "The button never moves",
+    ];
+    for (const note of notes) expect(WHY_TILES[0]!.caption).not.toContain(note);
   });
 
   it("marks the first and third tiles as the wide ones", () => {

@@ -61,7 +61,10 @@ describe("MotionDemo", () => {
     render(<MotionDemo />);
     const toggle = screen.getByRole("switch", { name: "Reduced motion" });
     expect(toggle.getAttribute("aria-checked")).toBe("false");
-    expect(screen.getByText(/shimmers, then the reveal plays/)).toBeTruthy();
+    // The label shows the value of the setting the card follows, as CSS writes it.
+    expect(screen.getByText("prefers-reduced-motion: no-preference")).toBeTruthy();
+    // At rest the line says how to start.
+    expect(screen.getByText(/Press Play, or flip the switch, to load the card/)).toBeTruthy();
   });
 
   it("starts on when the visitor's own setting asks for less motion", () => {
@@ -70,7 +73,28 @@ describe("MotionDemo", () => {
     expect(
       screen.getByRole("switch", { name: "Reduced motion" }).getAttribute("aria-checked"),
     ).toBe("true");
+    expect(screen.getByText("prefers-reduced-motion: reduce")).toBeTruthy();
+    expect(screen.getByText(/Press Play, or flip the switch, to load the card/)).toBeTruthy();
+  });
+
+  it("the label and the line follow the switch once the card has been run", async () => {
+    const { container } = render(<MotionDemo />);
+    await cardReady(container);
+    await flip();
+    expect(screen.getByText("prefers-reduced-motion: reduce")).toBeTruthy();
     expect(screen.getByText(/stands still and the content appears at once/)).toBeTruthy();
+    expect(screen.queryByText(/Press Play, or flip the switch/)).toBeNull();
+    await flip();
+    expect(screen.getByText("prefers-reduced-motion: no-preference")).toBeTruthy();
+    expect(screen.getByText(/shimmers, then the reveal plays/)).toBeTruthy();
+  });
+
+  it("has a Play button that can be seen: an outlined button, not a bare link", () => {
+    render(<MotionDemo />);
+    const play = screen.getByRole("button", { name: "Play" });
+    const style = getComputedStyle(play);
+    expect(style.borderTopWidth).toBe("1px");
+    expect(style.borderTopStyle).toBe("solid");
   });
 
   it("rests on the finished card and moves nothing until the visitor asks", async () => {

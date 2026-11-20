@@ -7,6 +7,13 @@
   min-width: 0;
 }
 
+.label {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  /* Wraps in a narrow frame instead of overflowing it. */
+  overflow-wrap: anywhere;
+}
+
 .card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

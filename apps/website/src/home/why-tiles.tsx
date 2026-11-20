@@ -102,14 +102,14 @@ export const WHY_TILES: readonly WhyTile[] = [
     wide: true,
     interactive: true,
     title: "Layout stays put.",
-    caption: "Placeholders keep the content's size.",
+    caption: "Veilo draws over your own elements and never resizes them.",
     demo: (props) => <ShiftDemo active={props.active} />,
   },
   {
     id: "css",
     wide: false,
     title: "CSS-only loaders.",
-    caption: "No JavaScript needed to shimmer.",
+    caption: "A 2 KB stylesheet, and no JavaScript.",
     demo: () => <CssOnlyDemo />,
   },
   {
@@ -117,7 +117,7 @@ export const WHY_TILES: readonly WhyTile[] = [
     wide: true,
     interactive: true,
     title: "Your framework.",
-    caption: "React, Vue, Svelte, Angular or HTML.",
+    caption: "One settings object, the same in every package.",
     demo: () => <FrameworkDemo />,
   },
   {
@@ -125,7 +125,7 @@ export const WHY_TILES: readonly WhyTile[] = [
     wide: false,
     interactive: true,
     title: "Reduced motion.",
-    caption: "Effects calm down when users ask.",
+    caption: "Veilo reads the visitor's setting itself. You configure nothing.",
     demo: () => <MotionDemo />,
   },
 ];

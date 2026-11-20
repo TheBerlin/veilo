@@ -9,6 +9,7 @@ const NODE_TESTS = [
   "test/playground/{state,export,stage,presets,share,panel}/**/*.test.ts",
   // Reads the packages' files from disk.
   "test/home/framework-snippets.test.ts",
+  "test/home/why-copy.test.ts",
 ];
 
 export default defineProject({

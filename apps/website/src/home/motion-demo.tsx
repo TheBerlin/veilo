@@ -24,8 +24,12 @@ const CARD_LAYOUT = {
   },
 } as const;
 
-/** What the line under the controls says for each state of the switch. */
+/**
+ * What the line under the controls says: at first how to start, and once the visitor has run the
+ * card, what the switch does.
+ */
 const EXPLAIN = {
+  rest: "Press Play, or flip the switch, to load the card.",
   off: "Off: the skeleton shimmers, then the reveal plays.",
   on: "On: the skeleton stands still and the content appears at once.",
 } as const;
@@ -92,6 +96,10 @@ export function MotionDemo() {
   const reduced = chosen ?? system;
   return (
     <div className={styles.demo}>
+      {/* The value the card is following, as CSS writes it: the switch previews this setting. */}
+      <code className={styles.label}>
+        {`prefers-reduced-motion: ${reduced ? "reduce" : "no-preference"}`}
+      </code>
       {ready ? <MotionCard key={`${reduced}-${runs}`} reduced={reduced} play={runs > 0} /> : null}
       <div className={styles.controls}>
         <Toggle
@@ -102,12 +110,12 @@ export function MotionDemo() {
             setRuns((count) => count + 1);
           }}
         />
-        <Button variant="ghost" size="sm" onClick={() => setRuns((count) => count + 1)}>
+        <Button variant="secondary" size="sm" onClick={() => setRuns((count) => count + 1)}>
           {runs === 0 ? "Play" : "Play again"}
         </Button>
       </div>
       <p className={styles.explain} aria-live="polite">
-        {reduced ? EXPLAIN.on : EXPLAIN.off}
+        {runs === 0 ? EXPLAIN.rest : reduced ? EXPLAIN.on : EXPLAIN.off}
       </p>
     </div>
   );
