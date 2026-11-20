@@ -96,7 +96,11 @@ export interface Reveal {
   pause(): void;
   /** Resumes a paused reveal. */
   resume(): void;
-  /** Stops playback and shows the exact frame at `p`. At `p = 1` the real content shows. */
+  /**
+   * Stops playback and shows the exact frame at `p`. At `p = 1` the real content shows. The frame
+   * stays held, even if the element is off screen and scrolls into view; `resume()` continues from
+   * it, and `play()` starts afresh.
+   */
   seek(p: number): void;
   /** Stops everything and shows the skeleton. */
   showLoading(): void;
@@ -504,6 +508,9 @@ export function createReveal(
       interrupt();
       clock.stop();
       skeleton.stop();
+      // The frame is held: coming back on screen must not set the reveal running again from it.
+      // resume() and any play start it afresh.
+      userPaused = true;
       const target = clamp(p);
       const show = () => {
         if (destroyed) return;
