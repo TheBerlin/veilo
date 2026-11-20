@@ -3,6 +3,9 @@
 // (Tune and Export), in dark and light, as WebM files in src/home/assets/clips/. Not part of CI: the
 // committed files are the source, and this is re-run by hand after a change to the playground's UI.
 //
+// The site must be able to load while this runs, and the page imports the clips' posters, so on a
+// first run create the four empty `.jpg` files in that folder; the recorder overwrites them.
+//
 // Usage (the site must be served; the default is the dev server on 127.0.0.1:8123):
 //   node scripts/record-clips.mjs [--base http://127.0.0.1:8123] [--only tune|export]
 
@@ -188,6 +191,13 @@ for (const [name, script] of Object.entries(CLIPS)) {
     await page.getByRole("button", { name: "Export", exact: true }).waitFor();
     await pause(1500);
     await page.evaluate(OVERLAY);
+    // The poster (reduced motion, and before the video loads): the calm start, as a JPEG, because
+    // the ffmpeg that Playwright ships can write only PNG, which is four times larger.
+    await page.screenshot({
+      path: join(OUT, `${name}-${scheme}.jpg`),
+      type: "jpeg",
+      quality: 80,
+    });
     await script(page);
     const video = page.video();
     await context.close();
@@ -213,19 +223,6 @@ for (const [name, script] of Object.entries(CLIPS)) {
       "-row-mt",
       "1",
       join(OUT, file),
-    ]);
-    // A still of the first calm moment, for the poster (reduced motion and before load).
-    execFileSync(playwrightFfmpeg(), [
-      "-y",
-      "-loglevel",
-      "error",
-      "-ss",
-      "0.2",
-      "-i",
-      join(OUT, file),
-      "-frames:v",
-      "1",
-      join(OUT, `${name}-${scheme}.png`),
     ]);
     console.log("wrote", file, Math.round(statSync(join(OUT, file)).size / 1024), "KB");
   }

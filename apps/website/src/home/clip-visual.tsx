@@ -5,13 +5,13 @@
 import { Button, watchTheme } from "@veilo-ui/ui";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import exportDark from "./assets/clips/export-dark.webm";
-import exportDarkPoster from "./assets/clips/export-dark.png";
+import exportDarkPoster from "./assets/clips/export-dark.jpg";
 import exportLight from "./assets/clips/export-light.webm";
-import exportLightPoster from "./assets/clips/export-light.png";
+import exportLightPoster from "./assets/clips/export-light.jpg";
 import tuneDark from "./assets/clips/tune-dark.webm";
-import tuneDarkPoster from "./assets/clips/tune-dark.png";
+import tuneDarkPoster from "./assets/clips/tune-dark.jpg";
 import tuneLight from "./assets/clips/tune-light.webm";
-import tuneLightPoster from "./assets/clips/tune-light.png";
+import tuneLightPoster from "./assets/clips/tune-light.jpg";
 import styles from "./clip-visual.module.css";
 import { useReducedMotion } from "./use-reduced-motion.ts";
 import { useSeen } from "./use-seen.ts";
