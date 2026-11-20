@@ -26,6 +26,7 @@ export default defineConfig({
           label: "Start",
           items: [{ slug: "start/getting-started" }, { slug: "start/concepts" }],
         },
+        { label: "Reference", items: [{ slug: "reference/settings" }] },
       ],
     }),
   ],
