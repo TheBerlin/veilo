@@ -90,6 +90,18 @@
   font: var(--veilo-type-label);
 }
 
+/* The guide: a hairline across the whole card at the top edge of the button's resting place. Veilo's
+   button sits on it all the time; the typical loader's starts above it and drops onto it when its
+   text lands, so the jump reads as a distance and not as a torn button. */
+.guide {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--veilo-size-test-card-button);
+  height: 0;
+  border-top: 1px solid var(--veilo-border-strong);
+  pointer-events: none;
+}
+
 /* The divider: a line the height of the area in the accent color, and a handle on it. */
 .divider {
   position: absolute;

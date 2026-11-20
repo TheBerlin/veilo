@@ -71,7 +71,8 @@ function SkeletonItem(props: SkeletonItemProps) {
 /**
  * CSS-only loaders: the stylesheet line, then the three classes of the CSS package, each on the
  * same small placeholder, labeled with the class name. No script runs in this demo; the animation
- * is the stylesheet's.
+ * is the stylesheet's. The rows rest until the pointer is on one, so the section moves in one
+ * place only.
  *
  * @returns The demo.
  */
@@ -86,6 +87,10 @@ function CssOnlyDemo() {
           <SkeletonItem effect={effect} />
         </div>
       ))}
+      <p className={styles.hint}>
+        <span className={styles.hintHover}>Hover a row to run it.</span>
+        <span className={styles.hintTouch}>Each row runs twice, then rests.</span>
+      </p>
     </div>
   );
 }
@@ -121,6 +126,6 @@ export const WHY_TILES: readonly WhyTile[] = [
     interactive: true,
     title: "Reduced motion.",
     caption: "Effects calm down when users ask.",
-    demo: (props) => <MotionDemo active={props.active} />,
+    demo: () => <MotionDemo />,
   },
 ];

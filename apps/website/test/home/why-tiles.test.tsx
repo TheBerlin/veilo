@@ -2,6 +2,7 @@
 // engine and the real stylesheet.
 
 import { render } from "@testing-library/react";
+import { userEvent } from "vitest/browser";
 import { describe, expect, it } from "vitest";
 import { WHY_TILES } from "../../src/home/why-tiles.tsx";
 
@@ -54,5 +55,39 @@ describe("WHY_TILES", () => {
     expect(parts.map((part) => part.style.getPropertyValue("--i"))).toEqual(["0", "1", "2"]);
     const delays = parts.map((part) => getComputedStyle(part).animationDelay);
     expect(new Set(delays).size).toBe(3);
+  });
+
+  it("CSS-only loaders: the rows rest until the pointer is on one, then that row runs alone", async () => {
+    const container = demo("css", false);
+    // Each row is a CSS-module class named row; the container's is named rows.
+    const rows = [...container.querySelectorAll<HTMLElement>("[class*=_row_]")];
+    expect(rows).toHaveLength(3);
+    const states = () =>
+      rows.map((row) =>
+        [...row.querySelectorAll(".veilo")].map(
+          (part) => getComputedStyle(part).animationPlayState,
+        ),
+      );
+    // At rest every part is paused.
+    expect(
+      states()
+        .flat()
+        .every((state) => state === "paused"),
+    ).toBe(true);
+    await userEvent.hover(rows[1]!);
+    expect(states()[1]!.every((state) => state === "running")).toBe(true);
+    expect(states()[0]!.every((state) => state === "paused")).toBe(true);
+    expect(states()[2]!.every((state) => state === "paused")).toBe(true);
+    await userEvent.unhover(rows[1]!);
+    expect(
+      states()
+        .flat()
+        .every((state) => state === "paused"),
+    ).toBe(true);
+  });
+
+  it("CSS-only loaders: a hint says how to run a row", () => {
+    const container = demo("css", false);
+    expect(container.textContent).toContain("Hover a row to run it.");
   });
 });

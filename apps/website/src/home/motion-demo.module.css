@@ -31,6 +31,15 @@
   font: var(--veilo-type-caption);
 }
 
+/* The switch and the Play button, on one row. */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-1) var(--veilo-space-2);
+}
+
 /* What the switch does, in words that change with it. Two lines are always reserved. */
 .explain {
   min-height: calc(var(--veilo-space-2) * 2.5);

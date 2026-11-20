@@ -255,6 +255,7 @@ export function ShiftDemo(props: DemoProps) {
           <div className={`${styles.layer} ${styles.before}`} aria-hidden="true">
             <TypicalLayer loaded={loaded && !reduced} />
           </div>
+          <div className={styles.guide} aria-hidden="true" />
           <div className={styles.divider} aria-hidden="true" />
           <div
             className={styles.handle}

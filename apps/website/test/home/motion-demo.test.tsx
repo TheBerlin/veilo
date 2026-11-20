@@ -37,9 +37,28 @@ const shimmering = (container: HTMLElement) =>
  */
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** The polling options for waits on the real engine. */
+const POLL = { timeout: 8000, interval: 50 };
+
+/**
+ * Presses the switch.
+ *
+ * @returns A promise that resolves after the click.
+ */
+const flip = () => userEvent.click(screen.getByRole("switch", { name: "Reduced motion" }));
+
+/**
+ * Waits until the card's photograph is on screen, so the card exists.
+ *
+ * @param container - The demo's container.
+ * @returns A promise that resolves when it is.
+ */
+const cardReady = (container: HTMLElement) =>
+  vi.waitFor(() => expect(container.querySelector("canvas")).not.toBeNull(), POLL);
+
 describe("MotionDemo", () => {
   it("has a switch named Reduced motion, off unless the visitor's own setting is on", () => {
-    render(<MotionDemo active={false} />);
+    render(<MotionDemo />);
     const toggle = screen.getByRole("switch", { name: "Reduced motion" });
     expect(toggle.getAttribute("aria-checked")).toBe("false");
     expect(screen.getByText(/shimmers, then the reveal plays/)).toBeTruthy();
@@ -47,55 +66,68 @@ describe("MotionDemo", () => {
 
   it("starts on when the visitor's own setting asks for less motion", () => {
     reduceMotion();
-    render(<MotionDemo active={false} />);
+    render(<MotionDemo />);
     expect(
       screen.getByRole("switch", { name: "Reduced motion" }).getAttribute("aria-checked"),
     ).toBe("true");
     expect(screen.getByText(/stands still and the content appears at once/)).toBeTruthy();
   });
 
-  it("off: the skeleton shimmers, and the sequence repeats", async () => {
-    const { container } = render(<MotionDemo active />);
-    const options = { timeout: 8000, interval: 50 };
-    await expect.poll(() => shimmering(container), options).toBe(true);
-    // Content arrives, then the skeleton comes back: a loop.
-    await expect.poll(() => placeholders(container).length, options).toBe(0);
-    await expect.poll(() => shimmering(container), options).toBe(true);
-  }, 20000);
+  it("rests on the finished card and moves nothing until the visitor asks", async () => {
+    const { container } = render(<MotionDemo />);
+    await cardReady(container);
+    // Longer than a whole sequence (a 1.2 s hold, the reveal and a gap), sampled throughout.
+    for (let waited = 0; waited < 3000; waited += 250) {
+      await wait(250);
+      expect(placeholders(container).length).toBe(0);
+    }
+    expect(screen.getByRole("button", { name: "Play" })).toBeTruthy();
+  }, 15000);
 
-  it("on: the skeleton stands still, the content appears at once and stays", async () => {
-    reduceMotion();
-    const { container } = render(<MotionDemo active />);
-    const options = { timeout: 8000, interval: 50 };
-    await expect.poll(() => placeholders(container).length, options).toBeGreaterThan(0);
-    expect(shimmering(container), "a still skeleton").toBe(false);
-    await expect.poll(() => placeholders(container).length, options).toBe(0);
-    // No repeat: longer than a whole looping cycle (hold, reveal and the gap) passes quietly.
+  it("Play, switch off: the skeleton shimmers once, the content is revealed, nothing repeats", async () => {
+    const { container } = render(<MotionDemo />);
+    await cardReady(container);
+    await userEvent.click(screen.getByRole("button", { name: "Play" }));
+    await expect.poll(() => shimmering(container), POLL).toBe(true);
+    await expect.poll(() => placeholders(container).length, POLL).toBe(0);
+    // No loop: a whole cycle passes without the skeleton coming back.
     for (let waited = 0; waited < 3500; waited += 250) {
       await wait(250);
       expect(placeholders(container).length).toBe(0);
     }
-  }, 20000);
+    expect(screen.getByRole("button", { name: "Play again" })).toBeTruthy();
+  }, 25000);
 
-  it("flipping the switch changes the behavior and the words", async () => {
-    const { container } = render(<MotionDemo active />);
-    const options = { timeout: 8000, interval: 50 };
-    await expect.poll(() => shimmering(container), options).toBe(true);
-    await userEvent.click(screen.getByRole("switch", { name: "Reduced motion" }));
+  it("flipping the switch on: a still skeleton, then the content at once, with no repeat", async () => {
+    const { container } = render(<MotionDemo />);
+    await cardReady(container);
+    await flip();
     expect(screen.getByText(/stands still and the content appears at once/)).toBeTruthy();
-    // The card is made again as a reduced one: its skeleton is still.
-    await expect.poll(() => placeholders(container).length, options).toBeGreaterThan(0);
-    expect(shimmering(container)).toBe(false);
-    await userEvent.click(screen.getByRole("switch", { name: "Reduced motion" }));
-    expect(screen.getByText(/shimmers, then the reveal plays/)).toBeTruthy();
-    await expect.poll(() => shimmering(container), options).toBe(true);
-  }, 30000);
+    await expect.poll(() => placeholders(container).length, POLL).toBeGreaterThan(0);
+    expect(shimmering(container), "a still skeleton").toBe(false);
+    await expect.poll(() => placeholders(container).length, POLL).toBe(0);
+    for (let waited = 0; waited < 3500; waited += 250) {
+      await wait(250);
+      expect(placeholders(container).length).toBe(0);
+    }
+  }, 25000);
 
-  it("keeps the picture out of the accessibility tree; the switch and the line carry the meaning", () => {
-    const { container } = render(<MotionDemo active={false} />);
-    expect(
-      container.querySelector("[aria-hidden=true] canvas, canvas[aria-hidden=true]"),
-    ).not.toBeNull();
+  it("flipping the switch off again loads the card with motion, and Play again repeats a run", async () => {
+    reduceMotion();
+    const { container } = render(<MotionDemo />);
+    await cardReady(container);
+    await flip();
+    expect(screen.getByText(/shimmers, then the reveal plays/)).toBeTruthy();
+    await expect.poll(() => shimmering(container), POLL).toBe(true);
+    await expect.poll(() => placeholders(container).length, POLL).toBe(0);
+    await userEvent.click(screen.getByRole("button", { name: "Play again" }));
+    await expect.poll(() => shimmering(container), POLL).toBe(true);
+  }, 25000);
+
+  it("keeps the picture out of the accessibility tree; the controls and the line carry the meaning", () => {
+    const { container } = render(<MotionDemo />);
+    expect(container.querySelector("[aria-hidden=true] canvas")).not.toBeNull();
     expect(screen.getByRole("switch")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Play" })).toBeTruthy();
   });
 });

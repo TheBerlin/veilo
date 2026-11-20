@@ -53,3 +53,44 @@
 .short {
   width: 60%;
 }
+
+/* Still until asked. The section has one looping demo (the layout one), so these rows rest and a
+   row runs while the pointer is on it or focus is inside it. The package's own rule starts every
+   animation running, so this one is more specific. Where there is no hover (a phone), each row runs
+   twice instead and then rests. The package's reduced-motion rule still wins over both. */
+.rows .row :global(.veilo) {
+  animation-play-state: paused;
+}
+
+.rows .row:hover :global(.veilo),
+.rows .row:focus-within :global(.veilo) {
+  animation-play-state: running;
+}
+
+@media (hover: none) {
+  .rows .row :global(.veilo) {
+    animation-play-state: running;
+    animation-iteration-count: 2;
+  }
+}
+
+/* The hint under the rows says which of the two applies. */
+.hint {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintHover {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}

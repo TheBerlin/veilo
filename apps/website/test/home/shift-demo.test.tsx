@@ -53,6 +53,24 @@ describe("ShiftDemo", () => {
     expect([...seen.typical][0]!).toBeLessThan([...seen.veilo][0]!);
   }, 15000);
 
+  it("draws a guide at the top edge of the button's resting place, across the whole card", async () => {
+    render(<ShiftDemo active={false} />);
+    await vi.waitFor(() => expect(screen.getAllByText("Buy now")).toHaveLength(2), {
+      timeout: 8000,
+    });
+    const veiloButton = screen.getAllByText("Buy now")[0]!;
+    const guide = document.querySelector<HTMLElement>("[class*=guide]")!;
+    expect(guide).not.toBeNull();
+    const area = screen.getByRole("slider").parentElement!.getBoundingClientRect();
+    const line = guide.getBoundingClientRect();
+    // On the top edge of Veilo's button, to the pixel, and as wide as the card.
+    expect(Math.abs(line.top - veiloButton.getBoundingClientRect().top)).toBeLessThanOrEqual(1);
+    expect(line.left).toBeCloseTo(area.left, 0);
+    expect(line.right).toBeCloseTo(area.right, 0);
+    // It is not something to press: a press on it still moves the divider.
+    expect(getComputedStyle(guide).pointerEvents).toBe("none");
+  });
+
   it("explains the difference in a list: each problem next to its answer", () => {
     render(<ShiftDemo active={false} />);
     const items = within(screen.getByRole("list", { name: "What differs" })).getAllByRole(
