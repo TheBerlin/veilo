@@ -13,7 +13,9 @@ export interface FrameworkSnippet {
   pkg: string | null;
   /** The install command, or null when there is nothing to install. */
   install: string | null;
-  /** The example, 7 to 9 lines, so the examples are about as tall as each other. */
+  /** A line shown where the install command would be, when there is none. */
+  note?: string;
+  /** The example, 7 or 8 lines, so the examples are about as tall as each other. */
   code: string;
 }
 
@@ -101,11 +103,10 @@ export const FRAMEWORK_SNIPPETS: readonly FrameworkSnippet[] = [
     code: [
       'import "@veilo-ui/element/define";',
       "",
+      "<!-- Remove `loading` when your data is ready. -->",
       `<veilo-reveal preset="${SNIPPET_PRESET}" loading>`,
       indent(PARTS, 2),
       "</veilo-reveal>",
-      "",
-      "<!-- Remove `loading` when your data is ready. -->",
     ].join("\n"),
   },
   {
@@ -113,14 +114,14 @@ export const FRAMEWORK_SNIPPETS: readonly FrameworkSnippet[] = [
     label: "HTML",
     pkg: null,
     install: null,
+    note: "Nothing to install. Remove `loading` when your data is ready.",
     code: [
-      '<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo-ui/element"></script>',
+      '<script type="module"',
+      '  src="https://cdn.jsdelivr.net/npm/@veilo-ui/element"></script>',
       "",
       `<veilo-reveal preset="${SNIPPET_PRESET}" loading>`,
       indent(PARTS, 2),
       "</veilo-reveal>",
-      "",
-      "<!-- No build step. Remove `loading` when your data is ready. -->",
     ].join("\n"),
   },
 ];

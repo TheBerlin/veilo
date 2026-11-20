@@ -37,10 +37,17 @@ export function FrameworkDemo() {
       <div className={styles.stack}>
         {FRAMEWORK_SNIPPETS.map((item) => (
           <div key={item.id} className={styles.panel} data-chosen={item.id === chosen || undefined}>
-            <CodeBlock code={item.code} aria-label={`${item.label} example`} />
+            <CodeBlock code={item.code} narrow="wrap" aria-label={`${item.label} example`} />
             {item.install ? (
-              <CodeBlock code={item.install} prompt aria-label={`${item.label} install command`} />
-            ) : null}
+              <CodeBlock
+                code={item.install}
+                prompt
+                narrow="wrap"
+                aria-label={`${item.label} install command`}
+              />
+            ) : (
+              <p className={styles.none}>{item.note}</p>
+            )}
           </div>
         ))}
       </div>

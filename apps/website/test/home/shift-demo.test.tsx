@@ -16,8 +16,10 @@ afterEach(() => {
  * @returns The distinct offsets seen: `veilo` (the layer that sets the size) and `typical`.
  */
 async function watchButtons(ms: number) {
-  const buttons = await screen.findAllByText("Buy now");
-  expect(buttons).toHaveLength(2);
+  // The Veilo layer appears only once the photograph has loaded, which can take a while on a busy
+  // machine; the typical layer's button is there at once.
+  await vi.waitFor(() => expect(screen.getAllByText("Buy now")).toHaveLength(2), { timeout: 8000 });
+  const buttons = screen.getAllByText("Buy now");
   const [veilo, typical] = buttons as [HTMLElement, HTMLElement];
   const area = screen.getByRole("slider").parentElement!;
   const offset = (button: HTMLElement) =>

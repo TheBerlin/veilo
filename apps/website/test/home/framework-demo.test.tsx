@@ -2,7 +2,8 @@
 
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { page } from "vitest/browser";
 import { FrameworkDemo } from "../../src/home/framework-demo.tsx";
 import { FRAMEWORK_SNIPPETS } from "../../src/home/framework-snippets.ts";
 
@@ -23,6 +24,10 @@ function panelOf(label: string): HTMLElement {
  * @returns True when the panel is visible.
  */
 const visible = (label: string) => getComputedStyle(panelOf(label)).visibility === "visible";
+
+afterEach(async () => {
+  await page.viewport(414, 896);
+});
 
 describe("FrameworkDemo", () => {
   it("offers the six ways in as a group of choices, React first", () => {
@@ -62,13 +67,24 @@ describe("FrameworkDemo", () => {
     expect(heights.size).toBe(1);
   });
 
-  it("shows the install command under the code, except for the CDN example", async () => {
+  it("shows the install command under the code, and a line in its place for the CDN example", async () => {
     render(<FrameworkDemo />);
     expect(screen.getByText("npm install @veilo-ui/react")).toBeTruthy();
     await userEvent.click(screen.getByRole("radio", { name: "HTML" }));
     const html = FRAMEWORK_SNIPPETS.find((item) => item.id === "html")!;
     expect(html.install).toBeNull();
     expect(screen.queryByLabelText("HTML install command")).toBeNull();
+    expect(screen.getByText(html.note!)).toBeTruthy();
+  });
+
+  it("shows every example's longest line without scrolling on a desktop screen", async () => {
+    await page.viewport(1440, 900);
+    render(<FrameworkDemo />);
+    for (const item of FRAMEWORK_SNIPPETS) {
+      await userEvent.click(screen.getByRole("radio", { name: item.label }));
+      const pre = screen.getByLabelText(`${item.label} example`);
+      expect(pre.scrollWidth, item.id).toBeLessThanOrEqual(pre.clientWidth);
+    }
   });
 
   it("says the packages are not out yet", () => {

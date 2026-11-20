@@ -3,8 +3,8 @@
   display: grid;
   gap: var(--veilo-space-2);
   width: 100%;
-  /* The code lines never wrap, so the block is only as wide as the longest line needs. */
-  max-width: calc(var(--veilo-size-test-card) * 2);
+  /* Wide enough for the longest example line, the CDN script tag, without scrolling. */
+  max-width: calc(var(--veilo-size-test-card) * 2 + var(--veilo-space-8));
   min-width: 0;
 }
 
@@ -30,6 +30,15 @@
 
 .note {
   margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* Where there is nothing to install, a line takes the install command's place, so the example does
+   not leave a gap under it. */
+.none {
+  margin: 0;
+  padding: var(--veilo-space-1) var(--veilo-space-2);
   color: var(--veilo-text-muted);
   font: var(--veilo-type-caption);
 }

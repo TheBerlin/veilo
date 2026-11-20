@@ -60,7 +60,7 @@ describe("FRAMEWORK_SNIPPETS", () => {
 
   it("keeps each example short, and about as tall as the others", () => {
     for (const item of FRAMEWORK_SNIPPETS) {
-      expect(item.code.split("\n").length, item.id).toBeLessThanOrEqual(9);
+      expect(item.code.split("\n").length, item.id).toBeLessThanOrEqual(8);
     }
   });
 
@@ -86,13 +86,14 @@ describe("FRAMEWORK_SNIPPETS", () => {
     expect(read("element", "src/define.ts")).toContain("veilo-reveal");
   });
 
-  it("HTML: one script tag from a CDN, with nothing to install", () => {
+  it("HTML: one script tag from a CDN, with nothing to install and a line saying so", () => {
     const item = FRAMEWORK_SNIPPETS.find((candidate) => candidate.id === "html")!;
     const manifest = JSON.parse(read("element", "package.json"));
     expect(item.install).toBeNull();
-    expect(item.code).toContain(
-      `<script type="module" src="https://cdn.jsdelivr.net/npm/${manifest.name}"></script>`,
-    );
+    expect(item.note).toMatch(/Nothing to install/);
+    // The tag is split over two lines so that its longest line fits the block.
+    expect(item.code.split("\n")[0]).toBe('<script type="module"');
+    expect(item.code).toContain(`src="https://cdn.jsdelivr.net/npm/${manifest.name}"></script>`);
     // The CDN serves the file named by the package's `jsdelivr` field.
     expect(manifest.jsdelivr).toBeTruthy();
   });
