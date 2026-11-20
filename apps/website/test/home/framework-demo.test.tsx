@@ -92,6 +92,44 @@ describe("FrameworkDemo", () => {
     expect(screen.getByText(/arrive with the first public release/)).toBeTruthy();
   });
 
+  it("keeps the six choices in one row on a phone, scrolling sideways instead of wrapping", async () => {
+    await page.viewport(375, 800);
+    render(<FrameworkDemo />);
+    const tops = new Set(
+      screen.getAllByRole("radio").map((radio) => Math.round(radio.getBoundingClientRect().top)),
+    );
+    expect(tops.size).toBe(1);
+    const group = screen.getByRole("radiogroup");
+    expect(getComputedStyle(group).overflowX).toBe("auto");
+    expect(group.scrollWidth).toBeGreaterThan(group.clientWidth);
+  });
+
+  it("scrolls a choice into view when the keyboard reaches it", async () => {
+    await page.viewport(375, 800);
+    render(<FrameworkDemo />);
+    screen.getByRole("radio", { name: "React" }).focus();
+    await userEvent.keyboard("{End}");
+    const html = screen.getByRole("radio", { name: "HTML" });
+    expect(document.activeElement).toBe(html);
+    const group = screen.getByRole("radiogroup").getBoundingClientRect();
+    const chip = html.getBoundingClientRect();
+    // Wholly inside the group's visible part.
+    expect(chip.left).toBeGreaterThanOrEqual(group.left - 1);
+    expect(chip.right).toBeLessThanOrEqual(group.right + 1);
+  });
+
+  it("keeps the six choices in one row at tablet widths too", async () => {
+    for (const width of [960, 700]) {
+      await page.viewport(width, 800);
+      const { unmount } = render(<FrameworkDemo />);
+      const tops = new Set(
+        screen.getAllByRole("radio").map((radio) => Math.round(radio.getBoundingClientRect().top)),
+      );
+      expect(tops.size, `at ${width}`).toBe(1);
+      unmount();
+    }
+  });
+
   it("can be used from the keyboard: arrows move focus, Enter chooses", async () => {
     render(<FrameworkDemo />);
     screen.getByRole("radio", { name: "React" }).focus();

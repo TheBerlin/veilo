@@ -27,6 +27,7 @@ export function FrameworkDemo() {
         // Pressing the chosen item keeps it: one is always chosen.
         onValueChange={(value) => value && setChosen(value)}
         variant="segmented"
+        className={styles.switcher}
       >
         {FRAMEWORK_SNIPPETS.map((item) => (
           <ChipGroupItem key={item.id} value={item.id}>

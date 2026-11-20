@@ -155,13 +155,37 @@
   position: relative;
 }
 
-/* The notes, narrow: a two-column list under the card, the typical loader's problem on the left
-   and Veilo's answer on the right, a row for each part. A press on them does not move the divider. */
+/* The hint under the card says how to compare. Where there is no hover (a phone) it says swipe. It
+   is only for the narrow layout: with the notes beside the card, the handle speaks for itself. */
+.hint {
+  margin: var(--veilo-space-1) 0 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintMouse {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}
+
+/* The notes, narrow: plain text in two columns under the card, lined up with the card's two halves:
+   the typical loader's problem on the left and Veilo's answer on the right, a row for each part,
+   with a hairline above each. Boxes would look like buttons here, where they sit right under the
+   card. A press on them does not move the divider. */
 .notes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--veilo-space-1);
-  margin: var(--veilo-space-2) 0 0;
+  gap: 0 var(--veilo-space-2);
+  margin: var(--veilo-space-1) 0 0;
   padding: 0;
   list-style: none;
   pointer-events: none;
@@ -170,25 +194,16 @@
 .note {
   display: flex;
   align-items: stretch;
+  padding-block: var(--veilo-space-1);
+  border-top: 1px solid var(--veilo-border);
 }
 
-/* A problem is an outlined tag; its answer is a solid one, so the two read apart without color. */
 .tag {
-  display: flex;
-  align-items: center;
+  display: block;
   box-sizing: border-box;
   width: 100%;
-  padding: var(--veilo-space-0-5) var(--veilo-space-1);
-  border: 1px solid var(--veilo-border-strong);
-  border-radius: var(--veilo-radius-base);
-  font: var(--veilo-type-label-sm);
+  font: var(--veilo-type-caption);
   text-wrap: balance;
-}
-
-.note[data-side="solution"] .tag {
-  border-color: var(--veilo-accent);
-  background: var(--veilo-accent);
-  color: var(--veilo-on-accent);
 }
 
 .leader {
@@ -200,6 +215,10 @@
    on each side for a tag. The two rows are spread evenly about the card's vertical center, so the
    tags read as a pair of problem and answer on each side. */
 @media (min-width: 1214px) {
+  .hint {
+    display: none;
+  }
+
   .notes {
     display: block;
     margin: 0;
@@ -210,6 +229,8 @@
     align-items: center;
     top: 36%;
     width: max-content;
+    padding-block: 0;
+    border-top: 0;
     transform: translateY(-50%);
   }
 
@@ -226,9 +247,22 @@
     flex-direction: row-reverse;
   }
 
+  /* A problem is an outlined tag; its answer is a solid one, so the two read apart without color. */
   .tag {
+    display: flex;
+    align-items: center;
     width: auto;
     max-width: calc(var(--veilo-size-test-card) / 2);
+    padding: var(--veilo-space-0-5) var(--veilo-space-1);
+    border: 1px solid var(--veilo-border-strong);
+    border-radius: var(--veilo-radius-base);
+    font: var(--veilo-type-label-sm);
+  }
+
+  .note[data-side="solution"] .tag {
+    border-color: var(--veilo-accent);
+    background: var(--veilo-accent);
+    color: var(--veilo-on-accent);
   }
 
   .leader {

@@ -328,6 +328,10 @@ export function ShiftDemo(props: DemoProps) {
             <span className={styles.grip} aria-hidden="true" />
           </div>
         </div>
+        <p className={styles.hint}>
+          <span className={styles.hintMouse}>Drag the divider to compare.</span>
+          <span className={styles.hintTouch}>Swipe sideways to compare.</span>
+        </p>
         <ul className={styles.notes} aria-label="What differs">
           {NOTES.map((note) => (
             <li key={note.text} className={styles.note} data-side={note.side} data-row={note.row}>

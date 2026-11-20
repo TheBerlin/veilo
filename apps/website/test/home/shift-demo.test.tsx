@@ -3,11 +3,13 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
 import { ShiftDemo } from "../../src/home/shift-demo.tsx";
 import { reduceMotion } from "../support/media.ts";
 
-afterEach(() => {
+afterEach(async () => {
   vi.restoreAllMocks();
+  await page.viewport(414, 896);
 });
 
 /**
@@ -69,6 +71,62 @@ describe("ShiftDemo", () => {
     expect(line.right).toBeCloseTo(area.right, 0);
     // It is not something to press: a press on it still moves the divider.
     expect(getComputedStyle(guide).pointerEvents).toBe("none");
+  });
+
+  describe("the notes by width", () => {
+    /**
+     * The first problem tag and the first solution tag.
+     *
+     * @returns The two tag elements.
+     */
+    function tags() {
+      const items = within(screen.getByRole("list", { name: "What differs" })).getAllByRole(
+        "listitem",
+      );
+      return {
+        problem: items[0]!.firstElementChild as HTMLElement,
+        solution: items[1]!.firstElementChild as HTMLElement,
+        list: items,
+      };
+    }
+
+    it("on a phone: plain text in two columns under the card, with a hint on how to compare", async () => {
+      await page.viewport(375, 800);
+      render(<ShiftDemo active={false} />);
+      const { problem, solution } = tags();
+      // No box: nothing there that looks like a button.
+      for (const tag of [problem, solution]) {
+        expect(getComputedStyle(tag).borderTopWidth).toBe("0px");
+        expect(getComputedStyle(tag).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+      }
+      // The columns line up with the card's two halves: problems on the left, answers on the right.
+      const area = screen.getByRole("slider").parentElement!.getBoundingClientRect();
+      expect(problem.getBoundingClientRect().left).toBeCloseTo(area.left, 0);
+      expect(solution.getBoundingClientRect().left).toBeGreaterThan(area.left + area.width / 2 - 2);
+      // Under the card, not beside it.
+      expect(problem.getBoundingClientRect().top).toBeGreaterThanOrEqual(area.bottom);
+      // The hint: one of its two wordings shows, whichever the device can do.
+      const hints = ["Drag the divider to compare.", "Swipe sideways to compare."].map((text) =>
+        screen.getByText(text),
+      );
+      expect(hints.filter((hint) => getComputedStyle(hint).display !== "none")).toHaveLength(1);
+    });
+
+    it("on a wide screen: boxed tags beside the card, outlined and solid, and no hint", async () => {
+      await page.viewport(1440, 900);
+      render(<ShiftDemo active={false} />);
+      const { problem, solution } = tags();
+      expect(getComputedStyle(problem).borderTopWidth).toBe("1px");
+      expect(getComputedStyle(problem).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+      expect(getComputedStyle(solution).backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+      const area = screen.getByRole("slider").parentElement!.getBoundingClientRect();
+      expect(problem.getBoundingClientRect().right).toBeLessThanOrEqual(area.left);
+      expect(solution.getBoundingClientRect().left).toBeGreaterThanOrEqual(area.right);
+      for (const text of ["Drag the divider to compare.", "Swipe sideways to compare."]) {
+        // Hidden: its paragraph takes no space, so the text has no box at all.
+        expect(screen.getByText(text).getClientRects()).toHaveLength(0);
+      }
+    });
   });
 
   it("explains the difference in a list: each problem next to its answer", () => {
