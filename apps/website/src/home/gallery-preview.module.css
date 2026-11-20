@@ -1,0 +1,56 @@
+/* The gallery preview: a heading row, three tiles, and on a phone one tile and a full-width button.
+   128 px below, like the other sections. */
+.section {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+/* The heading and the button share a row and sit on its middle line. */
+.head,
+.action {
+  align-self: center;
+}
+
+.title {
+  margin: 0;
+  font: var(--veilo-type-h2);
+  letter-spacing: var(--veilo-type-h2-tracking);
+  text-wrap: balance;
+}
+
+/* The button at the row's right end. */
+.action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* The second button is for a phone and the first for everything wider; each cell is hidden, not
+   just moved, so the link is in the page's reading order once. */
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .title {
+    font: var(--veilo-type-h2-mobile);
+    letter-spacing: var(--veilo-type-h2-mobile-tracking);
+  }
+
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+
+  /* One tile on a phone, then the button full width. */
+  .extra {
+    display: none;
+  }
+
+  .mobileOnly > a {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+  }
+}

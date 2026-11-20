@@ -229,6 +229,41 @@ describe("App startup", () => {
     await waitFor(() => expect(litPreset()).toBe("Cascade wave"));
   });
 
+  it("opens on a linked preset (?preset=<id>) over the last session, and drops the query", async () => {
+    saveSession("soft-pulse");
+    window.history.replaceState(null, "", `${window.location.pathname}?preset=hex-from-center`);
+    render(<App />);
+    expect(litPreset()).toBe("Hex from center");
+    // The link has done its job: a reload would return to the last session.
+    await waitFor(() => expect(window.location.search).toBe(""));
+  });
+
+  it("keeps the path when it drops a linked preset's query", async () => {
+    const { pathname } = window.location;
+    window.history.replaceState(null, "", `${pathname}?preset=matrix-columns`);
+    render(<App />);
+    await waitFor(() => expect(window.location.search).toBe(""));
+    expect(window.location.pathname).toBe(pathname);
+  });
+
+  it("ignores a link to a preset that does not exist, and starts as usual", () => {
+    saveSession("soft-pulse");
+    window.history.replaceState(null, "", `${window.location.pathname}?preset=no-such-preset`);
+    render(<App />);
+    expect(litPreset()).toBe("Soft pulse");
+  });
+
+  it("lets a share link win over a linked preset", async () => {
+    const fragment = await encodeShareLink({ settings: presetSettings("cascade-wave") });
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}?preset=hex-from-center${fragment}`,
+    );
+    render(<App />);
+    await waitFor(() => expect(litPreset()).toBe("Cascade wave"));
+  });
+
   it("lets a frame request win, and leaves the session untouched", async () => {
     saveSession("soft-pulse");
     window.history.replaceState(

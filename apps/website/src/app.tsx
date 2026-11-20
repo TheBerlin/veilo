@@ -1,6 +1,7 @@
 // app.tsx: root of the website: the header, the page for the current address and the footer.
 
 import { useEffect } from "react";
+import { GalleryPreview } from "./home/gallery-preview.tsx";
 import { Hero } from "./home/hero.tsx";
 import { HowItWorks } from "./home/how-it-works.tsx";
 import { WhyUseful } from "./home/why-useful.tsx";
@@ -40,6 +41,7 @@ export function App() {
             <Hero />
             <HowItWorks />
             <WhyUseful />
+            <GalleryPreview />
           </>
         )}
       </main>

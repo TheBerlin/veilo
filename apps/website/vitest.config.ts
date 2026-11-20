@@ -10,6 +10,7 @@ const NODE_TESTS = [
   // Reads the packages' files from disk.
   "test/home/framework-snippets.test.ts",
   "test/home/why-copy.test.ts",
+  "test/home/gallery-tiles.test.ts",
 ];
 
 export default defineProject({

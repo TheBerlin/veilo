@@ -15,7 +15,7 @@ import { browserStorage } from "./presets/browser-storage.ts";
 import { readLastSession, watchLastSession } from "./presets/last-session.ts";
 import { createUserPresetsStore } from "./presets/user-presets-store.ts";
 import { ShareNotice } from "./share/share-notice.tsx";
-import { parseFrameQuery } from "./stage/frame-query.ts";
+import { parseFrameQuery, parsePresetQuery } from "./stage/frame-query.ts";
 import { Stage } from "./stage/stage.tsx";
 import { createContentStore } from "./state/content-store.ts";
 import { createSettingsStore } from "./state/settings-store.ts";
@@ -23,23 +23,36 @@ import { useNarrow } from "./state/use-narrow.ts";
 
 /**
  * The playground page. A `?preset=<id>&p=<0..1>` query opens it on that preset, paused at that
- * progress (used by the visual tests). Otherwise the page opens on the last session's settings
+ * progress (used by the visual tests). A `?preset=<id>` query alone (a link from the website's
+ * gallery) opens it on that preset, playing as usual, and is then taken out of the address so a
+ * reload returns to the last session. Otherwise the page opens on the last session's settings
  * (saved in this browser) and then loads a `#v1.` share link fragment, if any. Side effects:
- * reads and writes localStorage, unless a frame is requested.
+ * reads and writes localStorage, unless a frame is requested; rewrites the address once for a
+ * preset link.
  *
  * @returns The app.
  */
 export function App() {
   // The URL is read once, at mount.
   const [frame] = useState(() => parseFrameQuery(window.location.search));
+  // A link to a preset (no progress): the page starts on it, as choosing its chip would.
+  const [linked] = useState(() => (frame ? null : parsePresetQuery(window.location.search)));
+  // The link has done its job once the page is open, so the address drops it.
+  useEffect(() => {
+    if (!linked) return;
+    const { pathname, hash } = window.location;
+    window.history.replaceState(window.history.state, "", pathname + hash);
+  }, [linked]);
   // A frame request leaves storage alone, so visual tests neither read nor write a session.
   const [storage] = useState(() => (frame ? null : browserStorage()));
   // One store for the app's lifetime; useState's initializer runs once. Starting order: a frame
-  // request, else the last session, else the defaults. A share link loads after mount
-  // (ShareNotice) and so wins over the last session.
+  // request, else a linked preset, else the last session, else the defaults. A share link loads
+  // after mount (ShareNotice) and so wins over all of them.
   const [session] = useState(() => readLastSession(storage));
   const [store] = useState(() =>
-    createSettingsStore(frame ? presetSettings(frame.preset) : session?.settings),
+    createSettingsStore(
+      frame ? presetSettings(frame.preset) : linked ? presetSettings(linked) : session?.settings,
+    ),
   );
   // The preview content (image ratio) starts from the session too; a frame request keeps the
   // defaults, which the visual baselines are made with.
