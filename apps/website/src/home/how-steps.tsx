@@ -3,14 +3,14 @@
 
 import type { ReactNode } from "react";
 import { PLAYGROUND_URL } from "../site/links.ts";
-import { DesignVisual, ExportVisual, PreviewVisual } from "./how-visuals.tsx";
+import { ExportVisual, PreviewVisual, TuneVisual } from "./how-visuals.tsx";
 import styles from "./how-steps.module.css";
 
 /** One step of the section. */
 export interface StepContent {
   /** A stable id, for keys and tab values. */
-  id: "design" | "preview" | "export";
-  /** The step's title, such as "Design.". */
+  id: "tune" | "preview" | "export";
+  /** The step's title, such as "Tune.". */
   title: string;
   /** A short label for tabs and lists, without the full stop. */
   label: string;
@@ -25,9 +25,9 @@ export interface StepContent {
 /** The three steps, in order. */
 export const STEPS: readonly StepContent[] = [
   {
-    id: "design",
-    title: "Design.",
-    label: "Design",
+    id: "tune",
+    title: "Tune.",
+    label: "Tune",
     text: (
       <>
         Pick a preset or start from scratch. Move the sliders, edit the easing curve, and drop in
@@ -35,7 +35,7 @@ export const STEPS: readonly StepContent[] = [
       </>
     ),
     link: { href: PLAYGROUND_URL, label: "Open the playground" },
-    Visual: DesignVisual,
+    Visual: TuneVisual,
   },
   {
     id: "preview",

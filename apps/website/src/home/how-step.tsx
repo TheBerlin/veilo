@@ -9,7 +9,7 @@ import { useSeen } from "./use-seen.ts";
 
 /** Props of {@link HowStep}. */
 export interface HowStepProps {
-  /** The step's title, such as "Design.". */
+  /** The step's title, such as "Tune.". */
   title: string;
   /** The step's text. */
   children: ReactNode;

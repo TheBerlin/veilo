@@ -18,7 +18,7 @@ import { SectionHead, StepLink } from "./how-parts.tsx";
 import styles from "./how-it-works.module.css";
 import { HowStep } from "./how-step.tsx";
 import { STEPS, type StepContent } from "./how-steps.tsx";
-import { ExportVisual, MusicVisual } from "./how-visuals.tsx";
+import { ExportVisual, MusicVisual, TuneVisual } from "./how-visuals.tsx";
 
 /** When the story can be pinned: a wide, tall screen, and no request for less motion. */
 const LIVE_QUERY =
@@ -74,25 +74,27 @@ function pickStep(rect: DOMRect, viewport: number, current: number): number {
 }
 
 /**
- * Which stage layer a step belongs to. Design and Preview share one layer, the music player, so it
- * stays in place from one to the other and only the row under it changes; Export is the code.
+ * Which stage layer a step belongs to: each step has its own, so moving to another step swaps
+ * the whole example.
  *
  * @param step - The step.
  * @returns The layer's name.
  */
-function layerOf(step: StepContent): "music" | "code" {
-  return step.id === "export" ? "code" : "music";
+function layerOf(step: StepContent): StepContent["id"] {
+  return step.id;
 }
 
 /**
- * One step's live example on the stage. The music player plays alone in Design and in Preview.
+ * One step's example on the stage: a clip of the playground for Tune and Export, and the live music
+ * player for Preview.
  *
  * @param step - The step.
  * @returns The example.
  */
 function renderVisual(step: StepContent): ReactNode {
+  if (step.id === "tune") return <TuneVisual />;
   if (step.id === "export") return <ExportVisual />;
-  return <MusicVisual mode={step.id === "preview" ? "preview" : "design"} />;
+  return <MusicVisual />;
 }
 
 /**
@@ -141,7 +143,7 @@ export function HowItWorks() {
 
   // A change of step that changes the layer (the music player to the code, or back) starts the
   // arrival of the new example and the departure of the old one, in the direction the visitor is
-  // going. A change inside a layer (Design to Preview) only updates it: the card stays.
+  // going. A change inside a layer only updates it.
   useEffect(() => {
     setShown((previous) => {
       if (previous.current === active) return previous;

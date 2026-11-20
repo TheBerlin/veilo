@@ -6,18 +6,24 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { HowItWorks } from "../../src/home/how-it-works.tsx";
 import { PLAYGROUND_URL } from "../../src/site/links.ts";
-import {
-  DesignVisual,
-  EXPORT_INSTALL,
-  EXPORT_SNIPPET,
-  PreviewVisual,
-} from "../../src/home/how-visuals.tsx";
+import { EXPORT_INSTALL, PreviewVisual } from "../../src/home/how-visuals.tsx";
 
 afterEach(async () => {
   await page.viewport(414, 896);
   vi.useRealTimers();
   vi.restoreAllMocks();
 });
+
+/**
+ * A clip by its description: its still frame's alt text before it plays, its video's label after.
+ *
+ * @param description - A pattern for the description.
+ * @returns The element that carries it, or null.
+ */
+const clip = (description: RegExp) =>
+  [...document.querySelectorAll("img[alt], video[aria-label]")].find((element) =>
+    description.test(element.getAttribute("alt") ?? element.getAttribute("aria-label") ?? ""),
+  ) ?? null;
 
 describe("HowItWorks", () => {
   it("is a section labelled by its h2, with no label above the heading", () => {
@@ -33,7 +39,7 @@ describe("HowItWorks", () => {
   it("has the three steps in order, each with its text before its visual", () => {
     render(<HowItWorks />);
     const titles = screen.getAllByRole("heading", { level: 3 });
-    expect(titles.map((title) => title.textContent)).toEqual(["Design.", "Preview.", "Export."]);
+    expect(titles.map((title) => title.textContent)).toEqual(["Tune.", "Preview.", "Export."]);
     for (const title of titles) {
       const step = title.parentElement?.parentElement;
       const text = step?.children[0];
@@ -53,14 +59,11 @@ describe("HowItWorks", () => {
     expect(screen.queryByRole("button", { name: "Preview." })).toBeNull();
   });
 
-  it("shows the install command and a React example that uses the new package name", () => {
+  it("shows the install command, with a clip of the export above it", () => {
     render(<HowItWorks />);
     expect(screen.getByLabelText("Install command").textContent).toContain(EXPORT_INSTALL);
     expect(EXPORT_INSTALL).toBe("npm install @veilo-ui/react");
-    const example = screen.getByLabelText("React example").textContent ?? "";
-    expect(example).toContain('from "@veilo-ui/react"');
-    expect(example).toContain("data-veilo-slot");
-    expect(EXPORT_SNIPPET).not.toContain("@veilo/");
+    expect(clip(/Export drawer/)).not.toBeNull();
   });
 
   it("gives each step an underlined link on to the playground", () => {
@@ -78,7 +81,7 @@ describe("HowItWorks", () => {
 
   it("has no panel around the examples: the cards sit on the page", () => {
     render(<HowItWorks />);
-    const visual = screen.getByRole("heading", { name: "Design." }).parentElement!.parentElement!
+    const visual = screen.getByRole("heading", { name: "Tune." }).parentElement!.parentElement!
       .children[1]!.firstElementChild as HTMLElement;
     const computed = getComputedStyle(visual);
     expect(computed.backgroundColor).toBe("rgba(0, 0, 0, 0)");
@@ -113,7 +116,7 @@ describe("HowItWorks, pinned", () => {
     const section = screen.getByRole("region", { name: /From a tuned effect/ });
     // Three screens tall: the stage's own plus a hold of two.
     expect(section.offsetHeight).toBe(window.innerHeight * 3);
-    expect(open()).toBe("Design.");
+    expect(open()).toBe("Tune.");
     expect(
       screen.getAllByRole("button").filter((button) => /\.$/.test(button.textContent ?? "")),
     ).toHaveLength(3);
@@ -127,7 +130,7 @@ describe("HowItWorks, pinned", () => {
     scrollTo(0.9);
     await expect.poll(open, { timeout: 4000 }).toBe("Export.");
     scrollTo(0.1);
-    await expect.poll(open, { timeout: 4000 }).toBe("Design.");
+    await expect.poll(open, { timeout: 4000 }).toBe("Tune.");
   });
 
   /** The Preview readout: "Loading", "Revealing" or "Revealed", with no numbers. */
@@ -136,13 +139,13 @@ describe("HowItWorks, pinned", () => {
   it("keeps a step open through a short dead zone at each boundary", async () => {
     await page.viewport(1440, 900);
     render(<HowItWorks />);
-    // Design ends at a third of the stretch. A little past it (inside the dead zone) it stays open.
+    // Tune ends at a third of the stretch. A little past it (inside the dead zone) it stays open.
     scrollTo(0.3);
     await new Promise((resolve) => setTimeout(resolve, 200));
-    expect(open()).toBe("Design.");
+    expect(open()).toBe("Tune.");
     scrollTo(0.36);
     await new Promise((resolve) => setTimeout(resolve, 200));
-    expect(open()).toBe("Design.");
+    expect(open()).toBe("Tune.");
     // Beyond the dead zone Preview takes over,
     scrollTo(0.42);
     await expect.poll(open, { timeout: 4000 }).toBe("Preview.");
@@ -151,7 +154,7 @@ describe("HowItWorks, pinned", () => {
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(open()).toBe("Preview.");
     scrollTo(0.2);
-    await expect.poll(open, { timeout: 4000 }).toBe("Design.");
+    await expect.poll(open, { timeout: 4000 }).toBe("Tune.");
   });
 
   it("plays the skeleton and then the reveal in Preview by itself, whatever the scroll does", async () => {
@@ -172,26 +175,20 @@ describe("HowItWorks, pinned", () => {
     ).toBeNull();
   }, 30000);
 
-  it("keeps the same music card from Design to Preview, and swaps it for the code on Export", async () => {
+  it("shows the Tune clip, then the music card with a scrubber, then the Export clip", async () => {
     await page.viewport(1440, 900);
     render(<HowItWorks />);
     const card = () => screen.queryByRole("article", { name: "Demo: a music player" });
-    await expect.poll(card, { timeout: 4000 }).not.toBeNull();
-    const first = card();
-    // Design shows Replay; Preview swaps it for a scrubber, with the same card element in place.
-    expect(screen.getByRole("button", { name: "Replay" })).toBeTruthy();
+    expect(clip(/choosing a card layout/)).not.toBeNull();
+    expect(card()).toBeNull();
     scrollTo(0.5);
     await expect.poll(open, { timeout: 4000 }).toBe("Preview.");
-    await expect
-      .poll(() => screen.queryByRole("slider", { name: "Reveal progress" }), { timeout: 4000 })
-      .not.toBeNull();
-    expect(card()).toBe(first);
-    expect(first!.isConnected).toBe(true);
-    // Export brings the code in and takes the card out.
+    await expect.poll(card, { timeout: 4000 }).not.toBeNull();
+    expect(screen.getByRole("slider", { name: "Reveal progress" })).toBeTruthy();
     scrollTo(0.9);
     await expect.poll(open, { timeout: 4000 }).toBe("Export.");
     await expect.poll(card, { timeout: 4000 }).toBeNull();
-    expect(screen.getByLabelText("React example")).toBeTruthy();
+    expect(clip(/Export drawer/)).not.toBeNull();
   });
 
   it("jumps to a step when its title is pressed", async () => {
@@ -224,36 +221,6 @@ describe("HowItWorks, pinned", () => {
     await expect.poll(open, { timeout: 4000 }).toBe("Export.");
     expect(height()).toBe(first);
   });
-});
-
-describe("DesignVisual", () => {
-  /** The card's state, as the readout under it reports it. */
-  const state = () =>
-    document.querySelector("[data-demo-state]")?.getAttribute("data-demo-state") ?? "";
-
-  it("is the music player, with a readout and Replay, and nothing to switch or pause", async () => {
-    render(<DesignVisual />);
-    await expect
-      .poll(() => screen.queryByRole("article", { name: "Demo: a music player" }), {
-        timeout: 4000,
-      })
-      .not.toBeNull();
-    expect(screen.getByRole("button", { name: "Replay" })).toBeTruthy();
-    // The first version rotated three effects with a switch and a Pause button; this one is one
-    // card and one button.
-    expect(screen.queryByRole("radiogroup")).toBeNull();
-    expect(screen.queryByRole("button", { name: /rotation/ })).toBeNull();
-    expect(screen.queryByRole("slider")).toBeNull();
-  });
-
-  it("plays its reveal once and rests, and Replay plays it again", async () => {
-    const user = userEvent.setup();
-    render(<DesignVisual />);
-    await expect.poll(state, { timeout: 9000 }).toBe("revealed");
-    await user.click(screen.getByRole("button", { name: "Replay" }));
-    await expect.poll(state, { timeout: 3000 }).not.toBe("revealed");
-    await expect.poll(state, { timeout: 9000 }).toBe("revealed");
-  }, 30000);
 });
 
 describe("PreviewVisual", () => {
