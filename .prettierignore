@@ -5,3 +5,4 @@ packages/core/settings.schema.json
 packages/css/skeleton.css
 packages/ui/tokens.css
 .svelte-kit/
+.astro/

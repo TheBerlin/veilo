@@ -1,0 +1,48 @@
+/* Theme: puts Starlight's colors and fonts on the Veilo tokens, so the docs look like the site and
+   follow the same light and dark values. Starlight switches `data-theme` on <html>, which is the
+   attribute the tokens already switch on, so one block covers both themes. This file is not
+   layered, so it wins over Starlight's own layered defaults. */
+:root {
+  /* Text, from brightest to faintest. */
+  --sl-color-white: var(--veilo-text);
+  --sl-color-gray-1: var(--veilo-text);
+  --sl-color-gray-2: var(--veilo-text-muted);
+  --sl-color-gray-3: var(--veilo-text-muted);
+  --sl-color-gray-4: var(--veilo-border-strong);
+  /* Surfaces and lines, from the strongest line to the page. */
+  --sl-color-gray-5: var(--veilo-border);
+  --sl-color-gray-6: var(--veilo-secondary);
+  --sl-color-gray-7: var(--veilo-card);
+  --sl-color-black: var(--veilo-bg);
+  /* The accent is monochrome, as on the site. */
+  --sl-color-accent-low: var(--veilo-secondary);
+  --sl-color-accent: var(--veilo-accent);
+  --sl-color-accent-high: var(--veilo-text);
+  --sl-color-text-accent: var(--veilo-text);
+  --sl-color-text-invert: var(--veilo-on-accent);
+  --sl-color-bg-inline-code: var(--veilo-secondary);
+  --sl-color-hairline: var(--veilo-border);
+  --sl-color-hairline-light: var(--veilo-border);
+  --sl-color-hairline-shade: var(--veilo-border);
+  /* Callouts take the status colors. */
+  --sl-color-blue-low: var(--veilo-info-soft);
+  --sl-color-blue: var(--veilo-info);
+  --sl-color-blue-high: var(--veilo-text);
+  --sl-color-green-low: var(--veilo-success-soft);
+  --sl-color-green: var(--veilo-success);
+  --sl-color-green-high: var(--veilo-text);
+  --sl-color-orange-low: var(--veilo-warning-soft);
+  --sl-color-orange: var(--veilo-warning);
+  --sl-color-orange-high: var(--veilo-text);
+  --sl-color-red-low: var(--veilo-danger-soft);
+  --sl-color-red: var(--veilo-danger);
+  --sl-color-red-high: var(--veilo-text);
+  /* Fonts: Geist for text, IBM Plex Mono for code. */
+  --sl-font: var(--veilo-font-sans);
+  --sl-font-mono: var(--veilo-font-mono);
+}
+
+/* Buttons: the site's 8 px corners, not Starlight's pills. */
+.sl-link-button {
+  border-radius: var(--veilo-radius-base);
+}

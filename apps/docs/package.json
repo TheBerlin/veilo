@@ -1,0 +1,18 @@
+{
+  "name": "docs",
+  "private": true,
+  "description": "The Veilo docs: guides, the settings reference and every ready-made effect, built with Astro Starlight.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "@fontsource/geist": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@veilo-ui/ui": "workspace:*",
+    "astro": "^7.2.10"
+  }
+}

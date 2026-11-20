@@ -26,6 +26,7 @@ export default tseslint.config(
     ignores: [
       "**/dist/",
       "**/.svelte-kit/",
+      "**/.astro/",
       "**/node_modules/",
       "**/.turbo/",
       "**/playwright-report/",

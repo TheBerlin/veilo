@@ -11,6 +11,8 @@ build/
 .next/
 .svelte-kit/
 .angular/
+# Written by Astro next to the docs site.
+.astro/
 coverage/
 storybook-static/
 
