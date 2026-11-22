@@ -28,7 +28,7 @@ export { DockedSheet } from "./components/docked-sheet.tsx";
 export type { DockedSheetProps } from "./components/docked-sheet.tsx";
 export { Drawer } from "./components/drawer.tsx";
 export type { DrawerProps } from "./components/drawer.tsx";
-export { Toaster, toast } from "./components/toaster.tsx";
+export { Toaster, toast, toastCountdown } from "./components/toaster.tsx";
 export type { ToasterProps } from "./components/toaster.tsx";
 export { Kbd } from "./components/kbd.tsx";
 export { Popover, PopoverContent, PopoverTrigger } from "./components/popover.tsx";

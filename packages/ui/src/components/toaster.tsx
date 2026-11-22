@@ -1,6 +1,7 @@
 // toaster.tsx: short messages that appear over the page and leave by themselves, on Sonner. The app
 // mounts one Toaster and calls `toast` from anywhere; screen readers hear each message.
 
+import type { CSSProperties } from "react";
 import { Toaster as SonnerToaster, toast } from "sonner";
 import styles from "./toaster.module.css";
 
@@ -10,6 +11,22 @@ import styles from "./toaster.module.css";
  * one early. This is Sonner's own function, whose messages the {@link Toaster} draws.
  */
 export { toast };
+
+/**
+ * Options for a message that shows how long it will stay: a line along its bottom edge shrinks
+ * to nothing over `ms`. Spread them into the call together with the same duration:
+ * `toast("Saved", { duration: 10_000, ...toastCountdown(10_000) })`. Under reduced motion the
+ * line is not shown.
+ *
+ * @param ms - The message's duration in milliseconds.
+ * @returns The `className` and `style` to pass to `toast`.
+ */
+export function toastCountdown(ms: number) {
+  return {
+    className: styles.countdown,
+    style: { "--veilo-toast-ms": `${ms}ms` } as CSSProperties,
+  };
+}
 
 /** Props of {@link Toaster}. */
 export interface ToasterProps {

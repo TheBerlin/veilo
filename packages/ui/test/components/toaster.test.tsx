@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Button } from "../../src/components/button.tsx";
-import { Toaster, toast } from "../../src/components/toaster.tsx";
+import { Toaster, toast, toastCountdown } from "../../src/components/toaster.tsx";
 
 afterEach(() => {
   toast.dismiss();
@@ -52,6 +52,19 @@ describe("Toaster", () => {
     expect(screen.queryByText("First")).toBeNull();
     toast.dismiss("note");
     await expect.poll(() => screen.queryByText("Second")).toBeNull();
+  });
+
+  it("shows a countdown line along the bottom edge that shrinks over the message's time", async () => {
+    render(<Toaster />);
+    toast("Reset.", { duration: 8000, ...toastCountdown(8000) });
+    const message = (await screen.findByText("Reset.")).closest("li")!;
+    const line = getComputedStyle(message);
+    // A 2 px background strip, so Sonner's own pseudo-elements cannot replace it.
+    expect(line.backgroundImage).toContain("linear-gradient");
+    expect(line.backgroundSize).toBe("100% 2px");
+    expect(line.animationName).toContain("countdown");
+    expect(line.animationDuration).toBe("8s");
+    expect(line.animationTimingFunction).toBe("linear");
   });
 
   it("draws a message as a raised card in the design system's colors", async () => {
