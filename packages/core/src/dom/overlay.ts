@@ -12,6 +12,21 @@ export interface TextOverlay {
 }
 
 /**
+ * Counts the lines the element's text is laid out on.
+ *
+ * @param element - An attached element.
+ * @returns The number of distinct line positions of its content (0 when it has no text).
+ */
+function lineCount(element: HTMLElement): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  // Rects on one line share a top edge (within sub-pixel rounding), so count distinct tops.
+  const tops = new Set<number>();
+  for (const rect of range.getClientRects()) if (rect.width > 0) tops.add(Math.round(rect.top));
+  return tops.size;
+}
+
+/**
  * Covers a text element with an overlay.
  *
  * The real text stays in place, so the layout does not move and screen readers still read it,
@@ -21,7 +36,9 @@ export interface TextOverlay {
  * not shown on the overlay text. The overlay is `aria-hidden`, absolutely positioned over the
  * element and ignores the pointer. If the element is `position: static` it becomes `relative`,
  * which does not move it. On an inline element the overlay does not wrap, because it is only as
- * wide as the text.
+ * wide as the text. An element whose text sits on one line keeps its overlay on one line too
+ * (clipped at the element's edge), because scrambled characters are wider or narrower than the
+ * real ones and would otherwise wrap onto a second line and jump over the next element.
  *
  * @param element - The text element. Must be attached to the page, so its styles can be read.
  * @returns The overlay and its `unmount`.
@@ -35,6 +52,10 @@ export function mountTextOverlay(element: HTMLElement): TextOverlay {
   Object.assign(overlay.style, { position: "absolute", inset: "0", pointerEvents: "none" });
   overlay.style.setProperty("-webkit-text-fill-color", "currentcolor");
   if (computed.display === "inline") overlay.style.whiteSpace = "nowrap";
+  else if (lineCount(element) === 1) {
+    overlay.style.whiteSpace = "nowrap";
+    overlay.style.overflow = "hidden";
+  }
 
   if (computed.position === "static") cleanup.style(element, "position", "relative");
   cleanup.style(element, "-webkit-text-fill-color", "transparent");

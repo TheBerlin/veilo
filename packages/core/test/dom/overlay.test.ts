@@ -124,3 +124,20 @@ describe("mountTextOverlay and authored style text", () => {
     expect(element.outerHTML).toBe(before);
   });
 });
+
+describe("mountTextOverlay on one-line text", () => {
+  it("keeps the overlay of a block element that fits on one line from wrapping", () => {
+    const element = textElement();
+    element.style.width = "400px";
+    const { overlay } = mountTextOverlay(element);
+    expect(getComputedStyle(overlay).whiteSpace).toBe("nowrap");
+    overlay.textContent = `${TEXT} and then some more words that are far wider than the box`;
+    expect(overlay.getBoundingClientRect().height).toBe(element.getBoundingClientRect().height);
+  });
+
+  it("lets a multi-line element's overlay wrap like its text", () => {
+    const element = textElement();
+    const { overlay } = mountTextOverlay(element);
+    expect(getComputedStyle(overlay).whiteSpace).toBe("normal");
+  });
+});
