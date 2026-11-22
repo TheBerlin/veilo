@@ -10,6 +10,25 @@
   justify-content: center;
 }
 
+/* Hover: the panel grows 3% while the pointer is on it, like the hero's demo cards (same duration
+   and curve both ways). Real hover devices only; no scale under reduced motion. */
+@media (hover: hover) {
+  .panel {
+    transition: transform var(--veilo-duration-base) var(--veilo-ease-out);
+    will-change: transform;
+  }
+
+  .panel:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:hover {
+    transform: none;
+  }
+}
+
 .copy {
   display: flex;
   flex-direction: column;
