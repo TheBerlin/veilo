@@ -1,7 +1,7 @@
 /* Hero: copy and demo side by side, centered on each other; vertical rhythm from the spacing
    tokens (64 px above and below, since the demo column fills the space down the right side). */
 .hero {
-  padding-block: var(--veilo-space-8);
+  padding-block: var(--veilo-space-8) var(--veilo-space-4);
 }
 
 .copy {
@@ -65,7 +65,7 @@
 /* Narrow layout: smaller headline, tighter vertical rhythm, full-width actions. */
 @media (max-width: 900px) {
   .hero {
-    padding-block: var(--veilo-space-4) var(--veilo-space-8);
+    padding-block: var(--veilo-space-4);
   }
 
   .title {
