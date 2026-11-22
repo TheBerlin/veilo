@@ -1,7 +1,7 @@
 /* Hero: copy and demo side by side, centered on each other; vertical rhythm from the spacing
-   tokens (64 px above, 128 px below). */
+   tokens (64 px above and below, since the demo column fills the space down the right side). */
 .hero {
-  padding-block: var(--veilo-space-8) var(--veilo-space-16);
+  padding-block: var(--veilo-space-8);
 }
 
 .copy {

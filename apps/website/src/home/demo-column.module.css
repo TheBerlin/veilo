@@ -1,0 +1,85 @@
+/* The demo column: the three cards one under another, each centered in the column, with the
+   Replay button at the end. Spacing is from the tokens. */
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-3);
+}
+
+/* One card: a click replays it. It is as wide as its own card (the video tile is narrower). */
+.item {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+}
+
+/* A card whose turn has not come is not seen at all (its space is kept, so nothing moves): its
+   skeleton appears, fading in, only when the card before it has finished, and then plays. */
+.item {
+  transition: opacity var(--veilo-duration-slow) var(--veilo-ease-out);
+}
+
+.item[data-waiting] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* The hint under the last card: one muted caption, centered. Absent (its space kept) until the last
+   card has finished, then it fades in. */
+.hint {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--veilo-duration-slow) var(--veilo-ease-out);
+  max-width: 40ch;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.hint[data-shown] {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* The Replay button: absent (its space kept) until the last card has finished and a moment has
+   passed, then it fades in. */
+.replay {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--veilo-duration-slow) var(--veilo-ease-out);
+}
+
+.replay[data-shown] {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* One size: every card is as wide as the widest (the inbox and the music player, 1.5 times the video
+   tile's own width), and never wider than the column. */
+.item > * {
+  width: calc(var(--veilo-size-test-card) * 1.5);
+  max-width: 100%;
+}
+
+/* Hover: the card grows 3% while the pointer is on it and eases back when it leaves, as the
+   hero's single card does. Real hover devices only, and not under reduced motion. */
+@media (hover: hover) {
+  .item > * {
+    transition: transform var(--veilo-duration-base) var(--veilo-ease-out);
+    will-change: transform;
+  }
+
+  .item > *:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item > *:hover {
+    transform: none;
+  }
+}
