@@ -9,11 +9,11 @@ import styles from "../panel/panel.module.css";
 import type { SettingsStore } from "../state/settings-store.ts";
 import {
   downloadText,
+  presetsFileName,
   importMessage,
   mergePresets,
   PRESETS_FILE_ERRORS,
   PRESETS_FILE_LIMITS,
-  PRESETS_FILE_NAME,
   presetsFileText,
   readPresetsFile,
 } from "./presets-file.ts";
@@ -138,9 +138,10 @@ export function PresetsTab(props: PresetsTabProps) {
   };
 
   const exportFile = () => {
-    downloadText(presetsFileText(presets), PRESETS_FILE_NAME);
+    const fileName = presetsFileName(presets);
+    downloadText(presetsFileText(presets), fileName);
     const count = `${presets.length} ${presets.length === 1 ? "preset" : "presets"}`;
-    setNotice({ text: `Exported ${count} to ${PRESETS_FILE_NAME}.`, place: "file" });
+    setNotice({ text: `Exported ${count} to ${fileName}.`, place: "file" });
   };
 
   const importFile = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -303,7 +304,7 @@ export function PresetsTab(props: PresetsTabProps) {
       <section className={styles.group}>
         <h3 className={styles.legend}>File</h3>
         <p className={styles.message}>
-          Move presets to another browser, or share a set, as {PRESETS_FILE_NAME}.
+          Move presets to another browser, or share a set, as a JSON file named after the preset.
         </p>
         <div className={tab.actions}>
           <Button size="sm" onClick={exportFile} disabled={presets.length === 0}>

@@ -7,6 +7,8 @@ import {
   importMessage,
   mergePresets,
   PRESETS_FILE_LIMITS,
+  PRESETS_FILE_NAME,
+  presetsFileName,
   presetsFileText,
   readPresetsFile,
 } from "../../../src/playground/presets/presets-file.ts";
@@ -112,5 +114,26 @@ describe("importMessage", () => {
     expect(importMessage(1, 0)).toBe("Added 1 preset.");
     expect(importMessage(3, 1)).toBe("Added 3 presets. 1 entry could not be used.");
     expect(importMessage(2, 4)).toBe("Added 2 presets. 4 entries could not be used.");
+  });
+});
+
+describe("presetsFileName", () => {
+  it("names a file with one preset after it", () => {
+    expect(presetsFileName([{ name: "Soft pulse" }])).toBe("Soft pulse.json");
+  });
+
+  it("replaces characters a file system rejects, and trims dots and spaces", () => {
+    expect(presetsFileName([{ name: ' a/b\\c:d*e?f"g<h>i|j ' }])).toBe("a-b-c-d-e-f-g-h-i-j.json");
+    expect(presetsFileName([{ name: "..hidden." }])).toBe("hidden.json");
+  });
+
+  it("cuts a long name to 60 characters", () => {
+    expect(presetsFileName([{ name: "x".repeat(100) }])).toBe(`${"x".repeat(60)}.json`);
+  });
+
+  it("keeps the shared name for several presets, none, or a name with nothing usable", () => {
+    expect(presetsFileName([{ name: "One" }, { name: "Two" }])).toBe(PRESETS_FILE_NAME);
+    expect(presetsFileName([])).toBe(PRESETS_FILE_NAME);
+    expect(presetsFileName([{ name: "///" }])).toBe(PRESETS_FILE_NAME);
   });
 });

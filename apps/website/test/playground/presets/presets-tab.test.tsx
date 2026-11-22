@@ -5,10 +5,7 @@ import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { browserStorage } from "../../../src/playground/presets/browser-storage.ts";
-import {
-  PRESETS_FILE_ERRORS,
-  PRESETS_FILE_NAME,
-} from "../../../src/playground/presets/presets-file.ts";
+import { PRESETS_FILE_ERRORS } from "../../../src/playground/presets/presets-file.ts";
 import { EMPTY_LIST, NOT_KEPT, PresetsTab } from "../../../src/playground/presets/presets-tab.tsx";
 import { NAME_ERRORS } from "../../../src/playground/presets/user-presets.ts";
 import {
@@ -190,7 +187,7 @@ describe("PresetsTab", () => {
     expect(click).toHaveBeenCalledTimes(1);
     const file = JSON.parse(await blobs[0]!.text());
     expect(file).toMatchObject({ format: "veilo-presets", version: 1, presets: [{ name: "One" }] });
-    expect(screen.getByText(`Exported 1 preset to ${PRESETS_FILE_NAME}.`)).toBeTruthy();
+    expect(screen.getByText("Exported 1 preset to One.json.")).toBeTruthy();
     create.mockRestore();
     click.mockRestore();
   });

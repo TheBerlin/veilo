@@ -4,7 +4,7 @@
 
 import { newPresetId, readPresetEntry, uniqueName, type UserPreset } from "./user-presets.ts";
 
-/** The file name offered on export. */
+/** The file name offered on export when it holds several presets (or a name cannot be used). */
 export const PRESETS_FILE_NAME = "veilo-presets.json";
 
 /** The marker that tells a presets file from other JSON. */
@@ -116,6 +116,28 @@ export function importMessage(added: number, skipped: number): string {
   const main = `Added ${added} ${added === 1 ? "preset" : "presets"}.`;
   if (skipped === 0) return main;
   return `${main} ${skipped} ${skipped === 1 ? "entry" : "entries"} could not be used.`;
+}
+
+/**
+ * The file name to offer on export. A file with one preset is named after it ("Soft pulse.json"),
+ * with the characters that file systems reject (backslash, slash, colon, asterisk, question mark,
+ * quote, angle brackets, bar and control characters)
+ * replaced by a hyphen and the name cut to 60 characters. A file with several presets, or a name
+ * with nothing usable in it, gets {@link PRESETS_FILE_NAME}.
+ *
+ * @param presets - The presets being exported.
+ * @returns The suggested file name, ending in `.json`.
+ */
+export function presetsFileName(presets: readonly { name: string }[]): string {
+  if (presets.length !== 1) return PRESETS_FILE_NAME;
+  const base = presets[0]!.name
+    // eslint-disable-next-line no-control-regex -- control characters are exactly what is removed
+    .replace(/[\\/:*?"<>|\u0000-\u001f]+/g, "-")
+    .trim()
+    .replace(/^[.\- ]+|[. ]+$/g, "")
+    .slice(0, 60)
+    .trim();
+  return base ? `${base}.json` : PRESETS_FILE_NAME;
 }
 
 /**
