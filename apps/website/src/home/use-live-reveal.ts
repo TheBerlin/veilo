@@ -16,25 +16,29 @@ import { useEffect, type RefCallback } from "react";
  * @param settings - The effect to play: the skeleton loader and the reveal, as settings.
  * @param layout - The slot hints for the card's parts.
  * @param onReveal - Called with the live reveal, and with `null` when there is none.
+ * @param play - Whether to play now (default). While false the card waits as a skeleton; when it
+ *   turns true the sequence plays, which lets a caller chain several cards one after another.
  * @returns A ref for the container that holds the `data-veilo-slot` elements.
  */
 export function useLiveReveal(
   settings: Partial<Settings>,
   layout: LayoutInput,
   onReveal: (reveal: Reveal | null) => void,
+  play = true,
 ): RefCallback<HTMLElement> {
   const { ref, reveal } = useReveal<HTMLElement>({ settings, layout });
 
   useEffect(() => {
     onReveal(reveal);
     if (!reveal) return;
-    reveal.playSequence();
+    if (play) reveal.playSequence();
+    else reveal.showLoading();
     const stop = watchTheme(() => reveal.redraw());
     return () => {
       stop();
       onReveal(null);
     };
-  }, [reveal, onReveal]);
+  }, [reveal, onReveal, play]);
 
   return ref;
 }

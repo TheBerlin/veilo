@@ -11,16 +11,16 @@ import { TestCard } from "../../../src/playground/stage/test-card.tsx";
 const settings = defaultSettings();
 
 /**
- * Renders the card with a fake clock.
+ * Renders the card with a fake clock. The card appears once the album cover has loaded.
  *
  * @returns The card element and the clock.
  */
-function renderCard() {
+async function renderCard() {
   const clock = fakeScheduler();
   const view = render(
     <TestCard settings={settings} revealOptions={{ scheduler: clock.scheduler }} />,
   );
-  const card = screen.getByRole("button", { name: /Test card/ });
+  const card = await screen.findByRole("button", { name: /Test card/ });
   return { card, clock, view };
 }
 
@@ -49,34 +49,35 @@ async function finishSequence(card: HTMLElement, clock: ReturnType<typeof fakeSc
 }
 
 describe("TestCard", () => {
-  it("has the seven parts of spec 1.2 in order", () => {
-    const { card } = renderCard();
+  it("is the music player of the home page, with its parts in order", async () => {
+    const { card } = await renderCard();
     const slots = [...card.querySelectorAll("[data-veilo-slot]")].map((el) =>
       el.getAttribute("data-veilo-slot"),
     );
     expect(slots).toEqual([
-      "photo",
-      "heading",
-      "line1",
-      "line2",
-      "price",
-      "oldPrice",
-      "buy",
-      "label",
+      "cover",
+      "track",
+      "artist",
+      "more",
+      "progress",
+      "time",
+      "repeat",
+      "back",
+      "play",
+      "forward",
+      "like",
     ]);
-    expect(card.textContent).toBe(
-      "MCHOSE L7 ProLightweight 8K polling mouse withtri-mode wireless and a 60 g shell.$59.99$79.99Buy now",
-    );
+    expect(card.textContent).toBe("Glass HorizonBlue Meridian00:42 / 03:18");
   });
 
-  it("is a focusable button with no button nested inside", () => {
-    const { card } = renderCard();
+  it("is a focusable button with no button nested inside", async () => {
+    const { card } = await renderCard();
     expect(card.tabIndex).toBe(0);
     expect(card.querySelectorAll("button, [role=button]")).toHaveLength(0);
   });
 
-  it("opens in the Loading view with the skeleton and --i per part", () => {
-    const { card } = renderCard();
+  it("opens in the Loading view with the skeleton and --i per part", async () => {
+    const { card } = await renderCard();
     expect(card.getAttribute("aria-busy")).toBe("true");
     const indexes = [...card.querySelectorAll<HTMLElement>("[data-veilo-slot]")]
       .slice(0, 7)
@@ -85,14 +86,12 @@ describe("TestCard", () => {
   });
 
   it("reveals after the hold and ends with the real content", async () => {
-    const { card, clock } = renderCard();
+    const { card, clock } = await renderCard();
     await finishSequence(card, clock);
     expect(card.getAttribute("aria-busy")).toBeNull();
     expect(card.querySelectorAll("canvas")).toHaveLength(1);
-    // Only the photo canvas stays hidden: every text overlay is gone.
-    expect([...card.querySelectorAll("[aria-hidden=true]")].map((el) => el.tagName)).toEqual([
-      "CANVAS",
-    ]);
+    // The grid's canvas and every text overlay are gone; the real text is back.
+    expect(card.textContent).toBe("Glass HorizonBlue Meridian00:42 / 03:18");
   });
 
   it.each([
@@ -100,7 +99,7 @@ describe("TestCard", () => {
     ["Enter", async (card: HTMLElement) => (card.focus(), userEvent.keyboard("{Enter}"))],
     ["Space", async (card: HTMLElement) => (card.focus(), userEvent.keyboard(" "))],
   ])("replays the sequence on %s", async (_name, press) => {
-    const { card, clock } = renderCard();
+    const { card, clock } = await renderCard();
     await finishSequence(card, clock);
     expect(card.getAttribute("aria-busy")).toBeNull();
     await press(card);
@@ -108,20 +107,20 @@ describe("TestCard", () => {
   });
 
   it.each([
-    ["16:9", 16 / 9],
-    ["2:3", 2 / 3],
-  ])("shapes the image area, its drawing and the grid to %s", async (_name, ratio) => {
+    ["music", "the cover is square", 1],
+    ["video", "the thumbnail is 16:9", 16 / 9],
+  ] as const)("%s: %s, and so is its drawing and the grid", async (layout, _name, ratio) => {
     const clock = fakeScheduler();
     render(
       <TestCard
+        layout={layout}
         settings={{ ...settings, imageFx: "dots" }}
-        ratio={ratio}
         revealOptions={{ scheduler: clock.scheduler }}
         start="frame"
         frame={0.4}
       />,
     );
-    const card = screen.getByRole("button", { name: /Test card/ });
+    const card = await screen.findByRole("button", { name: /Test card/ });
     const photo = card.querySelector("canvas")!;
     const box = photo.getBoundingClientRect();
     expect(box.width / box.height).toBeCloseTo(ratio, 1);
@@ -134,9 +133,24 @@ describe("TestCard", () => {
     expect(Math.abs(grid.height - box.height)).toBeLessThan(1);
   });
 
+  it("the inbox has no picture, and the card still plays", async () => {
+    const clock = fakeScheduler();
+    render(
+      <TestCard
+        layout="inbox"
+        settings={settings}
+        revealOptions={{ scheduler: clock.scheduler }}
+      />,
+    );
+    const card = await screen.findByRole("button", { name: /Test card, inbox/ });
+    expect(card.querySelectorAll("canvas")).toHaveLength(0);
+    await finishSequence(card, clock);
+    expect(card.getAttribute("aria-busy")).toBeNull();
+  });
+
   it("leaves no styles, canvases or overlays behind after unmount", async () => {
     const styleCount = document.head.querySelectorAll("style").length;
-    const { clock, view } = renderCard();
+    const { clock, view } = await renderCard();
     clock.advance(settings.hold * 1000 + 200);
     view.unmount();
     expect(document.head.querySelectorAll("style").length).toBe(styleCount);

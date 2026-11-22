@@ -11,7 +11,7 @@ describe("parseContent", () => {
   it("keeps valid parts and defaults the rest", () => {
     expect(parseContent({ ratio: "16:9" })).toEqual({
       ratio: "16:9",
-      layout: "product",
+      layout: "music",
       texts: {},
       widths: {},
     });
@@ -25,19 +25,19 @@ describe("createContentStore", () => {
   it("starts square, or from checked input", () => {
     expect(createContentStore().getState().content).toEqual({
       ratio: "1:1",
-      layout: "product",
+      layout: "music",
       texts: {},
       widths: {},
     });
     expect(createContentStore({ ratio: "3:4" }).getState().content).toEqual({
       ratio: "3:4",
-      layout: "product",
+      layout: "music",
       texts: {},
       widths: {},
     });
     expect(createContentStore({ ratio: "nope" }).getState().content).toEqual({
       ratio: "1:1",
-      layout: "product",
+      layout: "music",
       texts: {},
       widths: {},
     });
@@ -55,9 +55,9 @@ describe("createContentStore", () => {
   });
 
   it("keeps a valid layout and defaults an unknown one", () => {
-    expect(parseContent({ layout: "table" }).layout).toBe("table");
+    expect(parseContent({ layout: "inbox" }).layout).toBe("inbox");
     for (const layout of ["grid", 4, null, undefined]) {
-      expect(parseContent({ layout }).layout, String(layout)).toBe("product");
+      expect(parseContent({ layout }).layout, String(layout)).toBe("music");
     }
   });
 
@@ -65,13 +65,13 @@ describe("createContentStore", () => {
     const store = createContentStore({ ratio: "16:9" });
     const listener = vi.fn();
     store.subscribe(listener);
-    store.getState().setLayout("product");
+    store.getState().setLayout("music");
     expect(listener).not.toHaveBeenCalled();
-    store.getState().setLayout("article");
+    store.getState().setLayout("video");
     // The ratio is kept: it comes back when the user returns to a layout that uses it.
     expect(store.getState().content).toEqual({
       ratio: "16:9",
-      layout: "article",
+      layout: "video",
       texts: {},
       widths: {},
     });
@@ -85,7 +85,7 @@ describe("createContentStore", () => {
     store.getState().load({ ratio: "2:3", unknown: true });
     expect(store.getState().content).toEqual({
       ratio: "2:3",
-      layout: "product",
+      layout: "music",
       texts: {},
       widths: {},
     });
@@ -96,58 +96,58 @@ describe("text edits", () => {
   it("stores only parts that differ from the default, per layout", () => {
     const store = createContentStore();
     const { setText } = store.getState();
-    setText("product", "heading", "Hello");
-    setText("list", "heading", "Other");
-    setText("product", "label", "Buy now");
+    setText("music", "track", "Hello");
+    setText("video", "title", "Other");
+    setText("music", "time", "00:42 / 03:18");
     expect(store.getState().content.texts).toEqual({
-      product: { heading: "Hello" },
-      list: { heading: "Other" },
+      music: { track: "Hello" },
+      video: { title: "Other" },
     });
     // Back to the default removes the edit, and an empty layout entry goes with it.
-    setText("list", "heading", "MCHOSE L7 Pro");
-    expect(store.getState().content.texts).toEqual({ product: { heading: "Hello" } });
+    setText("video", "title", "Night walk through the old town in 4K, no talking");
+    expect(store.getState().content.texts).toEqual({ music: { track: "Hello" } });
   });
 
   it("cleans text: one line, at most 120 characters, empty allowed", () => {
     const store = createContentStore();
-    store.getState().setText("product", "heading", `a\nb\t${"x".repeat(200)}`);
-    const heading = store.getState().content.texts.product!.heading!;
-    expect(heading.startsWith("a b ")).toBe(true);
-    expect(heading).toHaveLength(120);
-    store.getState().setText("product", "heading", "");
-    expect(store.getState().content.texts.product).toEqual({ heading: "" });
+    store.getState().setText("music", "track", `a\nb\t${"x".repeat(200)}`);
+    const track = store.getState().content.texts.music!.track!;
+    expect(track.startsWith("a b ")).toBe(true);
+    expect(track).toHaveLength(120);
+    store.getState().setText("music", "track", "");
+    expect(store.getState().content.texts.music).toEqual({ track: "" });
   });
 
   it("ignores unknown slots, and wakes nobody when nothing changes", () => {
     const store = createContentStore();
     const listener = vi.fn();
     store.subscribe(listener);
-    store.getState().setText("product", "nope", "x");
-    store.getState().setText("product", "heading", "MCHOSE L7 Pro");
-    store.getState().resetLayout("product");
+    store.getState().setText("music", "nope", "x");
+    store.getState().setText("music", "track", "Glass Horizon");
+    store.getState().resetLayout("music");
     expect(listener).not.toHaveBeenCalled();
-    store.getState().setText("product", "heading", "A");
-    store.getState().setText("product", "heading", "A");
+    store.getState().setText("music", "track", "A");
+    store.getState().setText("music", "track", "A");
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
   it("resets one layout and keeps the others", () => {
     const store = createContentStore();
-    store.getState().setText("product", "heading", "A");
-    store.getState().setText("table", "stock", "Sold out");
-    store.getState().resetLayout("product");
-    expect(store.getState().content.texts).toEqual({ table: { stock: "Sold out" } });
+    store.getState().setText("music", "track", "A");
+    store.getState().setText("inbox", "from1", "Someone");
+    store.getState().resetLayout("music");
+    expect(store.getState().content.texts).toEqual({ inbox: { from1: "Someone" } });
   });
 
   it("reads saved text part by part and drops what is wrong", () => {
     const content = parseContent({
       texts: {
-        product: { heading: "Kept", line1: 5, nope: "x", label: "Buy now" },
-        grid: { heading: "unknown layout" },
-        list: "not an object",
+        music: { track: "Kept", artist: 5, nope: "x", time: "00:42 / 03:18" },
+        grid: { track: "unknown layout" },
+        video: "not an object",
       },
     });
-    expect(content.texts).toEqual({ product: { heading: "Kept" } });
+    expect(content.texts).toEqual({ music: { track: "Kept" } });
     for (const texts of [undefined, null, "x", [], 3]) {
       expect(parseContent({ texts }).texts, JSON.stringify(texts)).toEqual({});
     }
@@ -158,38 +158,39 @@ describe("card width", () => {
   it("snaps to 10 px steps inside 200 to 720, per layout, and drops the default", () => {
     const store = createContentStore();
     const { setWidth } = store.getState();
-    setWidth("product", 333);
-    setWidth("table", 5000);
-    setWidth("list", 1);
-    expect(store.getState().content.widths).toEqual({ product: 330, table: 720, list: 200 });
-    // The product card's default is 320, so choosing it again removes the edit.
-    setWidth("product", 320);
-    expect(store.getState().content.widths).toEqual({ table: 720, list: 200 });
+    setWidth("music", 533);
+    setWidth("inbox", 5000);
+    setWidth("video", 1);
+    expect(store.getState().content.widths).toEqual({ music: 530, inbox: 720, video: 200 });
+    // The music player's default is 480, so choosing it again removes the edit.
+    setWidth("music", 480);
+    expect(store.getState().content.widths).toEqual({ inbox: 720, video: 200 });
   });
 
   it("wakes nobody when the width stays the same", () => {
     const store = createContentStore();
     const listener = vi.fn();
     store.subscribe(listener);
-    store.getState().setWidth("product", 320);
-    store.getState().setWidth("product", 400);
-    store.getState().setWidth("product", 404);
+    store.getState().setWidth("music", 480);
+    store.getState().setWidth("music", 400);
+    store.getState().setWidth("music", 404);
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
   it("reads saved widths part by part and drops what is wrong", () => {
     const content = parseContent({
       widths: {
-        product: 400,
-        list: "wide",
-        table: Number.NaN,
-        profile: 400,
+        music: 400,
+        video: "wide",
+        inbox: Number.NaN,
         grid: 300,
         article: 90,
       },
     });
-    // profile's default is 400, so it is no edit; article is clamped up to the minimum.
-    expect(content.widths).toEqual({ product: 400, article: 200 });
+    // video and inbox hold no number, and grid and article are not layouts.
+    expect(content.widths).toEqual({ music: 400 });
+    expect(parseContent({ widths: { video: 320 } }).widths).toEqual({});
+    expect(parseContent({ widths: { video: 90 } }).widths).toEqual({ video: 200 });
     for (const widths of [undefined, null, "x", [], 3]) {
       expect(parseContent({ widths }).widths, JSON.stringify(widths)).toEqual({});
     }
@@ -197,11 +198,11 @@ describe("card width", () => {
 
   it("Reset clears one layout's text and width together", () => {
     const store = createContentStore();
-    store.getState().setWidth("product", 400);
-    store.getState().setText("product", "heading", "A");
-    store.getState().setWidth("table", 700);
-    store.getState().resetLayout("product");
+    store.getState().setWidth("music", 400);
+    store.getState().setText("music", "track", "A");
+    store.getState().setWidth("inbox", 700);
+    store.getState().resetLayout("music");
     expect(store.getState().content.texts).toEqual({});
-    expect(store.getState().content.widths).toEqual({ table: 700 });
+    expect(store.getState().content.widths).toEqual({ inbox: 700 });
   });
 });

@@ -3,7 +3,7 @@
 // between visits.
 
 import type { Settings } from "@veilo-ui/core";
-import { Button, toast } from "@veilo-ui/ui";
+import { Button, toast, toastCountdown } from "@veilo-ui/ui";
 import { useEffect, useRef, useState } from "react";
 import type { Content, ContentStore } from "../state/content-store.ts";
 import type { SettingsStore } from "../state/settings-store.ts";
@@ -95,6 +95,8 @@ export function ResetButton(props: ResetButtonProps) {
     toast(RESET_MESSAGE, {
       id: MESSAGE_ID,
       duration: RESET_MESSAGE_MS,
+      // A line along the bottom edge shows the time left to undo.
+      ...toastCountdown(RESET_MESSAGE_MS),
       action: { label: "Undo", onClick: () => undo(current) },
       onAutoClose: () => setBefore(null),
     });

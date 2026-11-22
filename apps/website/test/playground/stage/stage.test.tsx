@@ -30,8 +30,10 @@ async function renderStage(content = createContentStore()) {
     </TooltipProvider>,
   );
   await userEvent.click(screen.getByRole("tab", { name: "Content" }));
+  // The music player appears once its cover photograph has loaded.
+  await screen.findByRole("button", { name: /Test card/ });
   const card = () => screen.getByRole("button", { name: /Test card/ });
-  const photo = () => card().querySelector<HTMLCanvasElement>("[data-veilo-slot=photo]")!;
+  const photo = () => card().querySelector<HTMLCanvasElement>("canvas")!;
   return { card, photo, clock };
 }
 
@@ -61,53 +63,6 @@ function center(canvas: HTMLCanvasElement): number[] {
   const middle = Math.floor(canvas.width / 2);
   return [...canvas.getContext("2d")!.getImageData(middle, middle, 1, 1).data];
 }
-
-describe("Stage image ratio", () => {
-  /**
-   * The photo's shown width over height.
-   *
-   * @param photo - The photo canvas.
-   * @returns The ratio.
-   */
-  const shape = (photo: HTMLCanvasElement) => {
-    const box = photo.getBoundingClientRect();
-    return box.width / box.height;
-  };
-
-  it("starts square, and a chosen ratio rebuilds the card in that shape", async () => {
-    const content = createContentStore();
-    await renderStage(content);
-    const card = () => screen.getByRole("button", { name: /Test card/ });
-    const photo = () => card().querySelector<HTMLCanvasElement>("[data-veilo-slot=photo]")!;
-    expect(shape(photo())).toBeCloseTo(1, 2);
-    const first = card();
-    await userEvent.selectOptions(screen.getByRole("combobox", { name: "Image ratio" }), "16:9");
-    expect(content.getState().content.ratio).toBe("16:9");
-    await waitFor(() => expect(card()).not.toBe(first));
-    expect(shape(photo())).toBeCloseTo(16 / 9, 1);
-    expect(photo().width / photo().height).toBeCloseTo(16 / 9, 2);
-  });
-
-  it("follows the image's own shape, kept within 3:1", async () => {
-    const content = createContentStore({ ratio: "image" });
-    await renderStage(content);
-    const photo = () =>
-      screen
-        .getByRole("button", { name: /Test card/ })
-        .querySelector<HTMLCanvasElement>("[data-veilo-slot=photo]")!;
-    // The drawn placeholder is square.
-    expect(shape(photo())).toBeCloseTo(1, 2);
-    const canvas = new OffscreenCanvas(40, 10);
-    canvas.getContext("2d")!.fillRect(0, 0, 40, 10);
-    const wide = new File([await canvas.convertToBlob({ type: "image/png" })], "wide.png", {
-      type: "image/png",
-    });
-    const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
-    await userEvent.upload(input, wide);
-    // 4:1 is wider than the limit, so the area is 3:1.
-    await waitFor(() => expect(shape(photo())).toBeCloseTo(3, 1));
-  });
-});
 
 describe("Stage image source", () => {
   it("starts on the placeholder with no sample chosen", async () => {

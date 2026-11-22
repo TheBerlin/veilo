@@ -9,8 +9,8 @@
   grid-template-rows: auto minmax(0, 1fr);
   gap: var(--veilo-space-2);
   box-sizing: border-box;
-  /* The site header (64 px and its hairline) is above; the footer follows below the fold. */
-  height: calc(100dvh - var(--veilo-space-8) - 1px);
+  /* No site header or footer around the tool: it is the whole screen. */
+  height: 100dvh;
   padding: var(--veilo-space-2) max(var(--veilo-space-2), env(safe-area-inset-right))
     max(var(--veilo-space-2), env(safe-area-inset-bottom))
     max(var(--veilo-space-2), env(safe-area-inset-left));
@@ -73,6 +73,11 @@
   margin-left: auto;
 }
 
+/* The theme switch closes the top bar (it moved here from the site header). */
+.theme {
+  flex: 0 0 auto;
+}
+
 /* Workspace: the stage and the panel side by side, each as tall as the space left. */
 .workspace {
   display: grid;
@@ -120,6 +125,12 @@
 
   .presets {
     flex-basis: 100%;
+    order: 1;
+  }
+
+  /* Home on the left, the theme switch on the right, the chips on their own row below. */
+  .theme {
+    margin-left: auto;
   }
 
   .workspace {

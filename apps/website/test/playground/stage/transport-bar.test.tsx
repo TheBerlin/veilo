@@ -124,7 +124,7 @@ describe("TransportBar", () => {
     await userEvent.click(motion);
     // A new card plays the full sequence, starting from Loading.
     await waitFor(() => expect(status()).toBe("Loading"));
-    const heading = () => card().querySelector<HTMLElement>('[data-veilo-slot="heading"]')!;
+    const heading = () => card().querySelector<HTMLElement>('[data-veilo-slot="track"]')!;
     expect(getComputedStyle(heading()).animationName).toBe("none");
     // Collect every label on the way, so a frame in between would be seen.
     const labels = new Set<string>();
@@ -147,7 +147,7 @@ describe("TransportBar", () => {
     await userEvent.click(motion);
     expect(motion.getAttribute("aria-checked")).toBe("false");
     await waitFor(() => expect(status()).toBe("Loading"));
-    const heading = card().querySelector<HTMLElement>('[data-veilo-slot="heading"]')!;
+    const heading = card().querySelector<HTMLElement>('[data-veilo-slot="track"]')!;
     expect(getComputedStyle(heading).animationName).toMatch(/^veilo-skeleton-/);
     // The preview never follows the viewer's own setting: no rule that could stop it.
     // (Only the skeleton's own stylesheet: the design tokens rightly have such a rule.)

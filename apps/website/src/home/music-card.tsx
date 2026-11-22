@@ -3,28 +3,11 @@
 
 import { Card } from "@veilo-ui/ui";
 import type { ReactNode } from "react";
-import type { DemoCardProps } from "./demo-cards.tsx";
+import type { DemoCardProps, DemoViewProps } from "./demo-cards.tsx";
 import { DemoPhoto } from "./demo-photo.tsx";
 import styles from "./music-card.module.css";
+import { MUSIC_LAYOUT, MUSIC_TEXTS } from "./demo-data.ts";
 import { useLiveReveal } from "./use-live-reveal.ts";
-
-/** Slot hints of the music player. */
-const MUSIC_LAYOUT = {
-  version: 1,
-  slots: {
-    cover: { role: "image" },
-    track: { role: "text", width: 62 },
-    artist: { role: "text", width: 44 },
-    more: { role: "block" },
-    progress: { role: "block" },
-    time: { role: "text" },
-    repeat: { role: "block" },
-    back: { role: "block" },
-    play: { role: "block" },
-    forward: { role: "block" },
-    like: { role: "block" },
-  },
-} as const;
 
 /** Props of {@link Control}. */
 interface ControlProps {
@@ -59,26 +42,39 @@ function Control(props: ControlProps) {
 }
 
 /**
- * A wide music player: square cover on the left (flush with the card's edge), then the track,
- * the artist and a small service glyph, a progress bar with the time, and the controls: repeat,
- * back, play, forward and like.
+ * The music player's markup: square cover on the left (flush with the card's edge), then the
+ * track, the artist and a small service glyph, a progress bar with the time, and the controls:
+ * repeat, back, play, forward and like. It plays no reveal itself; {@link MusicCard} does, and
+ * the playground puts its own on it.
  *
- * @param props - The effect and the reveal callback.
+ * @param props - The text, the picture, the root's ref and element attributes.
  * @returns The card.
  */
-export function MusicCard(props: DemoCardProps) {
-  const ref = useLiveReveal(props.settings, MUSIC_LAYOUT, props.onReveal);
+export function MusicView(props: DemoViewProps) {
+  const { texts, renderPhoto, innerRef, className, ...rest } = props;
+  const text = (slot: keyof typeof MUSIC_TEXTS) => texts?.[slot] ?? MUSIC_TEXTS[slot];
   return (
-    <Card as="article" raised ref={ref} className={styles.card} aria-label="Demo: a music player">
-      <DemoPhoto scene="album" ratio={1} slot="cover" className={styles.cover} />
+    <Card
+      as="article"
+      raised
+      ref={innerRef}
+      className={className ? `${styles.card} ${className}` : styles.card}
+      aria-label="Demo: a music player"
+      {...rest}
+    >
+      {renderPhoto ? (
+        renderPhoto(styles.cover!)
+      ) : (
+        <DemoPhoto scene="album" ratio={1} slot="cover" className={styles.cover} />
+      )}
       <div className={styles.body}>
         <div className={styles.head}>
           <div className={styles.titles}>
             <p className={styles.track} data-veilo-slot="track">
-              Glass Horizon
+              {text("track")}
             </p>
             <p className={styles.artist} data-veilo-slot="artist">
-              Blue Meridian
+              {text("artist")}
             </p>
           </div>
           <Control slot="more">
@@ -90,7 +86,7 @@ export function MusicCard(props: DemoCardProps) {
         <div className={styles.timeline}>
           <span className={styles.progress} data-veilo-slot="progress" aria-hidden="true" />
           <span className={styles.time} data-veilo-slot="time">
-            00:42 / 03:18
+            {text("time")}
           </span>
         </div>
         <div className={styles.controls}>
@@ -120,4 +116,15 @@ export function MusicCard(props: DemoCardProps) {
       </div>
     </Card>
   );
+}
+
+/**
+ * A music player that plays the reveal.
+ *
+ * @param props - The effect and the reveal callback.
+ * @returns The card.
+ */
+export function MusicCard(props: DemoCardProps) {
+  const ref = useLiveReveal(props.settings, MUSIC_LAYOUT, props.onReveal, props.play);
+  return <MusicView innerRef={ref} />;
 }

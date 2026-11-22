@@ -34,11 +34,13 @@ export function App() {
   useEffect(() => {
     document.title = TITLES[page]!;
   }, [page]);
+  // The playground is a full-screen tool: no site header or footer, only its own way back home.
+  const tool = page === PLAYGROUND_URL;
   return (
     <>
-      <SiteNav path={path} />
+      {tool ? null : <SiteNav path={path} />}
       <main id="main" tabIndex={-1}>
-        {page === PLAYGROUND_URL ? (
+        {tool ? (
           <Playground />
         ) : page === GALLERY_URL ? (
           <GalleryPage />
@@ -52,7 +54,7 @@ export function App() {
           </>
         )}
       </main>
-      <SiteFooter />
+      {tool ? null : <SiteFooter />}
     </>
   );
 }

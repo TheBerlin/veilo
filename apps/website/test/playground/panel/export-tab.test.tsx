@@ -128,13 +128,13 @@ describe("ExportTab", () => {
 
   it("writes the snippets for the card on the stage, and follows its changes", async () => {
     const store = createSettingsStore();
-    const content = createContentStore({ layout: "profile", widths: { profile: 450 } });
+    const content = createContentStore({ layout: "video", widths: { video: 450 } });
     render(<ExportTab store={store} content={content} />);
     await userEvent.selectOptions(screen.getByLabelText("Format"), "vanilla");
     const code = () => screen.getByLabelText("Vanilla JS").textContent!;
-    expect(code()).toContain("Mara Lindqvist");
+    expect(code()).toContain("Night walk through the old town");
     expect(code()).toContain("width: 450px");
-    act(() => content.getState().setText("profile", "heading", "Someone Else"));
+    act(() => content.getState().setText("video", "title", "Someone Else"));
     expect(code()).toContain("Someone Else");
     act(() => store.getState().set("imageFx", "mosaic"));
     expect(code()).toContain('"imageFx": "mosaic"');

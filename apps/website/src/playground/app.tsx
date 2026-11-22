@@ -3,7 +3,7 @@
 // the stage with a bottom row and the panel in a sheet.
 
 import { presetSettings } from "@veilo-ui/presets";
-import { Button, DockedSheet, Toaster, TooltipProvider } from "@veilo-ui/ui";
+import { Button, DockedSheet, ThemeSwitch, Toaster, TooltipProvider } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import styles from "./app.module.css";
 import { ExportButton } from "./header/export-drawer.tsx";
@@ -78,11 +78,18 @@ export function App() {
     <TooltipProvider delayDuration={200}>
       <div className={styles.app}>
         <header className={styles.header}>
+          {/* The one way out: the site's header is not shown around the tool. */}
+          <Button asChild variant="ghost" size={size}>
+            <a href="/">← Home</a>
+          </Button>
           <h1 className={styles.title}>Veilo playground</h1>
           <div className={styles.presets}>
             <PresetChips store={store} />
           </div>
           {narrow ? null : <div className={styles.actions}>{actions}</div>}
+          <div className={styles.theme}>
+            <ThemeSwitch />
+          </div>
           {/* A frame request is for the visual tests and wins over a shared link. */}
           {frame ? null : <ShareNotice store={store} content={content} />}
         </header>

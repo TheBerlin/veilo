@@ -147,8 +147,8 @@ test.describe("with reduced motion", () => {
     await page.goto("/playground");
     // The skeleton too (before 0.6.0 its CSS still followed the preference and stood still).
     // Read once the card has started it, not while the page is still mounting.
-    await page.locator('[data-veilo-slot="heading"][data-veilo-skeleton]').waitFor();
-    expect(await animationNames(page, '[data-veilo-slot="heading"]')).toEqual([
+    await page.locator('[data-veilo-slot="track"][data-veilo-skeleton]').waitFor();
+    expect(await animationNames(page, '[data-veilo-slot="track"]')).toEqual([
       expect.stringMatching(/^veilo-skeleton-/),
     ]);
     // The state label passes through the reveal, as without the preference.
@@ -189,8 +189,8 @@ test.describe("without reduced motion (controls)", () => {
     await page.getByRole("button", { name: "Preview options" }).click();
     await page.getByRole("switch", { name: "Reduced motion" }).click();
     await expect(page.getByRole("status")).toHaveText("Loading");
-    await page.locator('[data-veilo-slot="heading"][data-veilo-skeleton]').waitFor();
-    expect(await animationNames(page, '[data-veilo-slot="heading"]')).toEqual(["none"]);
+    await page.locator('[data-veilo-slot="track"][data-veilo-skeleton]').waitFor();
+    expect(await animationNames(page, '[data-veilo-slot="track"]')).toEqual(["none"]);
     // Record every label until the end; none may show a frame in between.
     await page.evaluate(() => {
       const status = document.querySelector('[role="status"]')!;

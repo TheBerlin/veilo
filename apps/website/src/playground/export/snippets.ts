@@ -4,6 +4,7 @@
 // the same snippets and run them.
 
 import type { Layout, Settings } from "@veilo-ui/core";
+import { MESSAGES } from "../../home/demo-data.ts";
 import { CARD_LAYOUTS, defaultText, type CardLayoutId } from "../stage/card-layouts.ts";
 
 /** What a snippet is built from: the layout, the user's text and width, and the settings. */
@@ -27,68 +28,82 @@ interface MarkupNode {
   tag: string;
   /** The `data-veilo-slot` name, when the element animates. */
   slot?: string;
-  /** The slot name whose text the element holds. */
+  /** The slot name whose text the element holds, which the user may edit. */
   text?: string;
+  /** Fixed text the user cannot edit (a date, an icon glyph). */
+  literal?: string;
   /** The elements inside, for containers. */
   children?: MarkupNode[];
 }
 
 /** The image of a layout: a real `img`, which core samples. */
-const PHOTO: MarkupNode = { tag: "img", slot: "photo" };
+const photo = (slot: string): MarkupNode => ({ tag: "img", slot });
 
-/** A text part: a tag and the slot it holds. */
+/** A text part the user can edit: a tag and the slot it holds. */
 const part = (tag: string, slot: string): MarkupNode => ({ tag, slot, text: slot });
 
-/**
- * A button with its label inside. A real `button` is guessed as the button role, and the span
- * inside as its label.
- */
-const BUY: MarkupNode = {
-  tag: "button",
-  slot: "buy",
-  children: [part("span", "label")],
-};
+/** A part with fixed text, such as a date or an icon glyph. */
+const fixed = (tag: string, slot: string, literal: string): MarkupNode => ({ tag, slot, literal });
 
 /**
- * The markup of each layout, in page order. It is the playground card's markup with real
- * elements: the card itself is a `role=button` element, so there "Buy now" is a span.
+ * The markup of each layout, in page order: the demo card's parts as plain elements, one per slot.
+ * Icons are written as a glyph, so every slot has some size without any CSS.
  */
 const MARKUP: Record<CardLayoutId, MarkupNode[]> = {
-  product: [
-    PHOTO,
-    part("h2", "heading"),
-    part("p", "line1"),
-    part("p", "line2"),
-    { tag: "div", children: [part("span", "price"), part("span", "oldPrice")] },
-    BUY,
-  ],
-  list: [
-    PHOTO,
-    { tag: "div", children: [part("h2", "heading"), part("p", "line1")] },
-    part("span", "price"),
-  ],
-  profile: [
+  inbox: [
     {
       tag: "div",
-      children: [PHOTO, { tag: "div", children: [part("h2", "heading"), part("p", "line1")] }],
+      children: ["Updates", "From", "To"].map((label, index) => ({
+        tag: "button",
+        slot: `chip${index}`,
+        children: [fixed("span", `chipLabel${index}`, label)],
+      })),
     },
-    part("p", "line2"),
-    BUY,
+    {
+      tag: "ul",
+      children: MESSAGES.map((message, index) => ({
+        tag: "li",
+        children: [
+          fixed("span", `avatar${index}`, message.from.charAt(0)),
+          {
+            tag: "div",
+            children: [
+              part("p", `from${index}`),
+              fixed("p", `date${index}`, message.date),
+              ...(message.unread ? [fixed("span", `dot${index}`, "•")] : []),
+              part("p", `subject${index}`),
+              fixed("p", `preview${index}`, message.preview),
+              fixed("span", `star${index}`, "☆"),
+            ],
+          },
+        ],
+      })),
+    },
   ],
-  article: [
-    PHOTO,
-    part("p", "tag"),
-    part("h2", "heading"),
-    part("p", "line1"),
-    part("p", "line2"),
-    part("p", "meta"),
+  video: [
+    photo("thumb"),
+    part("span", "duration"),
+    fixed("span", "avatar", "SC"),
+    {
+      tag: "div",
+      children: [part("p", "title"), part("p", "channel"), part("p", "stats")],
+    },
+    fixed("span", "more", "⋮"),
   ],
-  table: [
-    PHOTO,
-    { tag: "div", children: [part("h2", "heading"), part("p", "line1")] },
-    part("p", "category"),
-    part("p", "stock"),
-    part("span", "price"),
+  music: [
+    photo("cover"),
+    {
+      tag: "div",
+      children: [part("p", "track"), part("p", "artist")],
+    },
+    fixed("span", "more", "…"),
+    fixed("div", "progress", "—"),
+    part("span", "time"),
+    fixed("span", "repeat", "⟲"),
+    fixed("span", "back", "⏮"),
+    fixed("span", "play", "▶"),
+    fixed("span", "forward", "⏭"),
+    fixed("span", "like", "♡"),
   ],
 };
 
@@ -166,7 +181,8 @@ function renderNode(
       `${pad}</${node.tag}>`,
     ];
   }
-  return [`${pad}<${node.tag}${slot}>${content(texts(node.text ?? ""), syntax)}</${node.tag}>`];
+  const body = node.text ? texts(node.text) : (node.literal ?? "");
+  return [`${pad}<${node.tag}${slot}>${content(body, syntax)}</${node.tag}>`];
 }
 
 /**

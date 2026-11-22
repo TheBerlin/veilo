@@ -65,19 +65,22 @@ export function ContentTab(props: ContentTabProps) {
           onValueChange={(next) => props.content.getState().setWidth(layoutId, next)}
         />
       </fieldset>
-      <fieldset className={styles.group}>
-        <legend className={styles.legend}>Image</legend>
-        <ImagePicker
-          selectedSample={photo.sample}
-          error={photo.error}
-          onSample={(id) => props.content.getState().pickSample(id)}
-          onFile={(file) => props.content.getState().pickFile(file)}
-          onReset={() => props.content.getState().clearPhoto()}
-          // Only layouts with a large image have a ratio to choose.
-          ratio={layout.hasRatio ? ratio : undefined}
-          onRatioChange={(next) => props.content.getState().setRatio(next)}
-        />
-      </fieldset>
+      {/* The inbox has no picture, so it has nothing to choose here. */}
+      {layout.picture && (
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Image</legend>
+          <ImagePicker
+            selectedSample={photo.sample}
+            error={photo.error}
+            onSample={(id) => props.content.getState().pickSample(id)}
+            onFile={(file) => props.content.getState().pickFile(file)}
+            onReset={() => props.content.getState().clearPhoto()}
+            // Only layouts with a large image have a ratio to choose.
+            ratio={layout.hasRatio ? ratio : undefined}
+            onRatioChange={(next) => props.content.getState().setRatio(next)}
+          />
+        </fieldset>
+      )}
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Text</legend>
         {layout.texts.map((part) => (

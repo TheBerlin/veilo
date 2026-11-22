@@ -3,94 +3,34 @@
 // are invented.
 
 import { Card } from "@veilo-ui/ui";
-import type { DemoCardProps } from "./demo-cards.tsx";
+import type { DemoCardProps, DemoViewProps } from "./demo-cards.tsx";
 import styles from "./inbox-card.module.css";
+import { FILTERS, INBOX_LAYOUT, MESSAGES } from "./demo-data.ts";
 import { useLiveReveal } from "./use-live-reveal.ts";
 
-/** One message of the list. */
-interface Message {
-  /** The sender's name. */
-  from: string;
-  /** The date shown at the end of the first line. */
-  date: string;
-  /** The subject, bold when the message is unread. */
-  subject: string;
-  /** The start of the body. */
-  preview: string;
-  /** Unread messages are bold and have a dot. */
-  unread: boolean;
-}
-
-/** The messages, newest first. */
-const MESSAGES: readonly Message[] = [
-  {
-    from: "Parcel Tracker",
-    date: "17 Nov",
-    subject: "Your parcel is out for delivery",
-    preview: "Arriving today between 14:00 and 16:00 at",
-    unread: true,
-  },
-  {
-    from: "Mara Lindqvist",
-    date: "17 Nov",
-    subject: "Re: Design review notes",
-    preview: "Thanks, I moved the comments into the doc",
-    unread: false,
-  },
-  {
-    from: "Harbor Bank",
-    date: "16 Nov",
-    subject: "Your November statement is ready",
-    preview: "Your monthly statement for the account ending",
-    unread: true,
-  },
-  {
-    from: "Studio Weekly",
-    date: "15 Nov",
-    subject: "Five small changes that made our app calmer",
-    preview: "This week: shorter forms, calmer empty states",
-    unread: false,
-  },
-];
-
-/** The filter chips: the first is chosen. */
-const FILTERS = ["Updates", "From", "To"] as const;
-
-/** Slot hints of the inbox: the chips, then each message's parts by index. */
-const INBOX_LAYOUT = {
-  version: 1,
-  slots: {
-    ...Object.fromEntries(
-      FILTERS.flatMap((_, index) => [
-        [`chip${index}`, { role: "button" }],
-        [`chipLabel${index}`, { role: "text" }],
-      ]),
-    ),
-    ...Object.fromEntries(
-      MESSAGES.flatMap((message, index) => [
-        [`avatar${index}`, { role: "block" }],
-        [`from${index}`, { role: "text", width: 55 }],
-        [`date${index}`, { role: "text" }],
-        ...(message.unread ? [[`dot${index}`, { role: "block" }]] : []),
-        [`subject${index}`, { role: "text" }],
-        [`preview${index}`, { role: "text" }],
-        [`star${index}`, { role: "block" }],
-      ]),
-    ),
-  },
-} as const;
-
 /**
- * A mail inbox: filter chips and four messages. Unread messages are bold with a dot. It is all
- * text, with round avatars and small icons, so the reveal works on dense, list-like UI.
+ * The inbox's markup: filter chips and four messages. Unread messages are bold with a dot. It is
+ * all text, with round avatars and small icons, so the reveal works on dense, list-like UI. The
+ * sender and subject of message `n` are the slots `from<n>` and `subject<n>`. It plays no reveal
+ * itself; {@link InboxCard} does, and the playground puts its own on it.
  *
- * @param props - The effect and the reveal callback.
+ * @param props - The text, the root's ref and element attributes (an inbox has no picture, so
+ *   `renderPhoto` is ignored).
  * @returns The card.
  */
-export function InboxCard(props: DemoCardProps) {
-  const ref = useLiveReveal(props.settings, INBOX_LAYOUT, props.onReveal);
+export function InboxView(props: DemoViewProps) {
+  const { texts, innerRef, renderPhoto, className, ...rest } = props;
+  void renderPhoto;
+  const sender = (index: number) => texts?.[`from${index}`] ?? MESSAGES[index]!.from;
   return (
-    <Card as="article" raised ref={ref} className={styles.card} aria-label="Demo: an inbox">
+    <Card
+      as="article"
+      raised
+      ref={innerRef}
+      className={className ? `${styles.card} ${className}` : styles.card}
+      aria-label="Demo: an inbox"
+      {...rest}
+    >
       <div className={styles.filters}>
         {FILTERS.map((filter, index) => (
           <span
@@ -123,12 +63,12 @@ export function InboxCard(props: DemoCardProps) {
         {MESSAGES.map((message, index) => (
           <li key={message.subject} className={message.unread ? styles.unread : styles.read}>
             <span className={styles.avatar} data-veilo-slot={`avatar${index}`} aria-hidden="true">
-              {message.from.charAt(0)}
+              {sender(index).charAt(0)}
             </span>
             <div className={styles.body}>
               <div className={styles.line}>
                 <p className={styles.from} data-veilo-slot={`from${index}`}>
-                  {message.from}
+                  {sender(index)}
                 </p>
                 <p className={styles.date} data-veilo-slot={`date${index}`}>
                   {message.date}
@@ -138,7 +78,7 @@ export function InboxCard(props: DemoCardProps) {
                 )}
               </div>
               <p className={styles.subject} data-veilo-slot={`subject${index}`}>
-                {message.subject}
+                {texts?.[`subject${index}`] ?? message.subject}
               </p>
               <div className={styles.line}>
                 <p className={styles.preview} data-veilo-slot={`preview${index}`}>
@@ -162,4 +102,15 @@ export function InboxCard(props: DemoCardProps) {
       </ul>
     </Card>
   );
+}
+
+/**
+ * A mail inbox that plays the reveal.
+ *
+ * @param props - The effect and the reveal callback.
+ * @returns The card.
+ */
+export function InboxCard(props: DemoCardProps) {
+  const ref = useLiveReveal(props.settings, INBOX_LAYOUT, props.onReveal, props.play);
+  return <InboxView innerRef={ref} />;
 }

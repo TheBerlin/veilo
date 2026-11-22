@@ -83,25 +83,25 @@ describe("snippet markup", () => {
   }
 
   it("writes the user's text, escaped for HTML", () => {
-    const text = { heading: 'Mice & <keys> "quoted"', price: "$1" };
-    const html = vanillaSnippet(input("product", { texts: text }));
-    expect(html).toContain('Mice &amp; &lt;keys&gt; "quoted"</h2>');
-    expect(html).toContain('<span data-veilo-slot="price">$1</span>');
+    const text = { track: 'Mice & <keys> "quoted"', time: "$1" };
+    const html = vanillaSnippet(input("music", { texts: text }));
+    expect(html).toContain('Mice &amp; &lt;keys&gt; "quoted"</p>');
+    expect(html).toContain('<span data-veilo-slot="time">$1</span>');
     // The rest keeps its default text.
-    expect(html).toContain("Lightweight 8K polling mouse with");
+    expect(html).toContain("Blue Meridian");
   });
 
   it("writes JSX with a self-closing img and braced text where it needs it", () => {
-    const tsx = reactSnippet(input("product", { texts: { heading: "A {braced} <b>" } }));
-    expect(tsx).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
-    expect(tsx).toContain('<h2 data-veilo-slot="heading">{"A {braced} <b>"}</h2>');
+    const tsx = reactSnippet(input("video", { texts: { title: "A {braced} <b>" } }));
+    expect(tsx).toContain('<img data-veilo-slot="thumb" src="photo.jpg" alt="" />');
+    expect(tsx).toContain('<p data-veilo-slot="title">{"A {braced} <b>"}</p>');
     expect(tsx).toContain("<Reveal");
   });
 });
 
 describe("snippets", () => {
   it("vanilla JS imports core and plays the sequence with the layout", () => {
-    const code = vanillaSnippet(input("list", { width: 500 }));
+    const code = vanillaSnippet(input("video", { width: 500 }));
     expect(code).toContain('<article class="card" style="width: 500px">');
     expect(code).toContain('import { createReveal } from "@veilo-ui/core";');
     expect(code).toContain("createReveal(card, layout)");
@@ -110,55 +110,55 @@ describe("snippets", () => {
   });
 
   it("uses the layout's own width when none is chosen", () => {
-    expect(vanillaSnippet(input("table"))).toContain("width: 640px");
-    expect(reactSnippet(input("article"))).toContain("style={{ width: 360 }}");
+    expect(vanillaSnippet(input("inbox"))).toContain("width: 480px");
+    expect(reactSnippet(input("video"))).toContain("style={{ width: 320 }}");
   });
 
   it("React imports from @veilo-ui/react and takes the layout as a prop", () => {
-    const code = reactSnippet(input("product"));
+    const code = reactSnippet(input("music"));
     expect(code).toContain('import { Reveal, type RevealProps } from "@veilo-ui/react";');
     expect(code).toContain('const layout: RevealProps["layout"] = {');
     expect(code).toContain("ready={ready} layout={layout}>");
   });
 
   it("Vue is a script-setup component with the layout as a prop, and escapes interpolation", () => {
-    const code = vueSnippet(input("product", { texts: { heading: "A {{ b }} <c>" } }));
+    const code = vueSnippet(input("video", { texts: { title: "A {{ b }} <c>" } }));
     expect(code.startsWith('<script setup lang="ts">')).toBe(true);
     expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo-ui/vue";');
     expect(code).toContain("defineProps<{ ready: boolean }>();");
     expect(code).toContain(':ready="ready" :layout="layout"');
     // An absolute path: a relative one would be compiled into a module import.
-    expect(code).toContain('<img data-veilo-slot="photo" src="/photo.jpg" alt="" />');
+    expect(code).toContain('<img data-veilo-slot="thumb" src="/photo.jpg" alt="" />');
     // `{{` would start an interpolation in a template; `<` is escaped as in HTML.
-    expect(code).toContain('A {{ "{{" }} b }} &lt;c&gt;</h2>');
+    expect(code).toContain('A {{ "{{" }} b }} &lt;c&gt;</p>');
   });
 
   it("Svelte is a runes component with the layout as a prop, and escapes braces", () => {
-    const code = svelteSnippet(input("product", { texts: { heading: "A {b} <c>" } }));
+    const code = svelteSnippet(input("video", { texts: { title: "A {b} <c>" } }));
     expect(code.startsWith('<script lang="ts">')).toBe(true);
     expect(code).toContain('import { Reveal, type LayoutInput } from "@veilo-ui/svelte";');
     expect(code).toContain("let { ready }: { ready: boolean } = $props();");
     expect(code).toContain("{ready} {layout}>");
-    expect(code).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
+    expect(code).toContain('<img data-veilo-slot="thumb" src="photo.jpg" alt="" />');
     // A brace would start an expression in a template; `<` is escaped as in HTML.
-    expect(code).toContain('A {"{"}b{"}"} &lt;c&gt;</h2>');
+    expect(code).toContain('A {"{"}b{"}"} &lt;c&gt;</p>');
   });
 
   it("Angular is a standalone component with the layout as an input, and escapes its template", () => {
-    const code = angularSnippet(input("product", { texts: { heading: "A {b} @c `d` ${e} <f>" } }));
+    const code = angularSnippet(input("video", { texts: { title: "A {b} @c `d` ${e} <f>" } }));
     expect(code).toContain('import { VeiloReveal, type LayoutInput } from "@veilo-ui/angular";');
     expect(code).toContain("imports: [VeiloReveal],");
     expect(code).toContain("readonly ready = input.required<boolean>();");
     expect(code).toContain('[ready]="ready()" [layout]="layout">');
-    expect(code).toContain('<img data-veilo-slot="photo" src="photo.jpg" alt="" />');
+    expect(code).toContain('<img data-veilo-slot="thumb" src="photo.jpg" alt="" />');
     // Braces and @ become character references; backtick and ${ are escaped for the literal.
     // (String.raw keeps the backslashes the snippet writes before each backtick.) A `$` before a
     // brace needs no escape: the brace is already a character reference, so `${` never appears.
-    expect(code).toContain(String.raw`A &#123;b&#125; &#64;c \`d\` $&#123;e&#125; &lt;f&gt;</h2>`);
+    expect(code).toContain(String.raw`A &#123;b&#125; &#64;c \`d\` $&#123;e&#125; &lt;f&gt;</p>`);
   });
 
   it("the web component snippet registers the element and ends loading", () => {
-    const code = elementSnippet(input("profile"));
+    const code = elementSnippet(input("video"));
     expect(code).toContain('import "@veilo-ui/element/define";');
     expect(code).toContain("<veilo-reveal");
     expect(code).toContain("card.loading = false;");
@@ -166,7 +166,7 @@ describe("snippets", () => {
   });
 
   it("the CDN snippet loads the script by URL and has no import", () => {
-    const code = cdnSnippet(input("profile"));
+    const code = cdnSnippet(input("video"));
     expect(
       code.startsWith(
         '<script type="module" src="https://cdn.jsdelivr.net/npm/@veilo-ui/element">',
@@ -176,9 +176,9 @@ describe("snippets", () => {
   });
 
   it("the layout attribute reads back as the same layout", () => {
-    const code = cdnSnippet(input("article"));
+    const code = cdnSnippet(input("inbox"));
     const attribute = /layout='([^']*)'/.exec(code)![1]!;
-    expect(JSON.parse(attribute)).toEqual(JSON.parse(layoutJson(input("article"))));
+    expect(JSON.parse(attribute)).toEqual(JSON.parse(layoutJson(input("inbox"))));
   });
 
   it("has no trailing spaces", () => {
@@ -190,7 +190,7 @@ describe("snippets", () => {
       elementSnippet,
       cdnSnippet,
     ]) {
-      expect(make(input("product")), make.name).not.toMatch(/[ \t]+\n/);
+      expect(make(input("music")), make.name).not.toMatch(/[ \t]+\n/);
     }
   });
 });

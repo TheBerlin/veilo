@@ -33,6 +33,13 @@
   color: var(--veilo-text);
   font: var(--veilo-type-label-sm);
   font-variant-numeric: tabular-nums;
+  transition: opacity var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+/* The live card hides the badge until the reveal is done (other users of the view never set the
+   attribute, so they always show it). */
+.card[data-revealed="false"] .duration {
+  opacity: 0;
 }
 
 /* Details row: the avatar lines up with the first line of the title; the "more" button sits at

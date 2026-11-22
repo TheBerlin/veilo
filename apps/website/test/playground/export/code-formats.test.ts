@@ -48,15 +48,15 @@ describe("code formats", () => {
   it("follows the layout, text and width of the content", () => {
     const content = {
       ...defaultContent(),
-      layout: "list" as const,
-      texts: { list: { heading: "Quiet mouse" } },
-      widths: { list: 520 },
+      layout: "video" as const,
+      texts: { video: { title: "Quiet street at night" } },
+      widths: { video: 520 },
     };
     const code = codeFor("vanilla", { ...context, content });
-    expect(code).toContain("Quiet mouse");
+    expect(code).toContain("Quiet street at night");
     expect(code).toContain("width: 520px");
-    expect(code).toContain('data-veilo-slot="photo"');
-    expect(code).not.toContain('data-veilo-slot="buy"');
+    expect(code).toContain('data-veilo-slot="thumb"');
+    expect(code).not.toContain('data-veilo-slot="cover"');
   });
 
   it("marks exactly the formats that import a package", () => {

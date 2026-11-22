@@ -31,7 +31,7 @@ import { serve } from "../element-demo/serve.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "../..");
-const playground = join(repo, "apps/playground/src");
+const playground = join(repo, "apps/website/src/playground");
 const {
   angularSnippet,
   cdnSnippet,
@@ -47,27 +47,26 @@ const { CARD_LAYOUTS, LAYOUT_IDS } = await import(
 
 /** The packages a user installs for these snippets, as workspace folders. */
 const PACKAGES = ["core", "presets", "react", "vue", "svelte", "angular", "element"];
-const PORT = 4177;
+// SNIPPET_PORT picks another port where 4177 is reserved (Windows keeps some ranges back).
+const PORT = Number(process.env.SNIPPET_PORT ?? 4177);
 const ORIGIN = `http://localhost:${PORT}`;
 /** The address the CDN snippet loads its script from; the check serves the packed file there. */
 const CDN_URL = "https://cdn.jsdelivr.net/npm/@veilo-ui/element";
 
 /**
  * Settings per layout, so every image effect and several text effects run. Hold and duration are
- * short, to keep the check quick. The first five of these cover the grid and non-grid effects.
+ * short, to keep the check quick. These cover grid effects (dots, hex, binary) and several text effects; the inbox has no picture.
  */
 const SETTINGS = {
-  product: { imageFx: "dots", origin: "left", textFx: "scramble" },
-  list: { imageFx: "hex", origin: "center", textFx: "typewriter" },
-  profile: { imageFx: "mosaic", origin: "diagonal", textFx: "rise" },
-  article: { imageFx: "blur", textFx: "fade" },
-  table: { imageFx: "binary", origin: "top" },
+  music: { imageFx: "dots", origin: "left", textFx: "scramble" },
+  video: { imageFx: "hex", origin: "center", textFx: "typewriter" },
+  inbox: { imageFx: "binary", origin: "top", textFx: "rise" },
 };
 const GRID_EFFECTS = new Set(["dots", "hex", "binary", "mosaic"]);
-/** A heading with the characters that break HTML and JSX if they are not escaped. */
-const HEADING = "Quiet <mouse> & {co}";
+/** A text with the characters that break HTML and JSX if they are not escaped. */
+const SPECIAL_TEXT = "Quiet <mouse> & {co}";
 /** A width other than the default, for one layout. */
-const WIDTHS = { list: 500 };
+const WIDTHS = { video: 500 };
 
 const work = mkdtempSync(join(tmpdir(), "veilo-snippet-check-"));
 const packs = join(work, "packs");
@@ -104,7 +103,8 @@ const cases = [];
 for (const layoutId of LAYOUT_IDS) {
   const layout = CARD_LAYOUTS[layoutId];
   const settings = { ...SETTINGS[layoutId], hold: 0.2, rDur: 0.8 };
-  const texts = { heading: HEADING };
+  // The first editable part of the layout gets the tricky text.
+  const texts = { [layout.texts[0].slot]: SPECIAL_TEXT };
   const width = WIDTHS[layoutId] ?? layout.width;
   const input = { layoutId, texts, width, settings };
   const expected = Object.fromEntries(
@@ -127,7 +127,7 @@ for (const entry of cases) {
       ? `${ORIGIN}/angular/index.html?layout=${entry.layoutId}`
       : `${ORIGIN}/${entry.name}.html`;
 }
-// SNIPPET_ONLY=element-product,cdn-list runs just those pages, for debugging a failure.
+// SNIPPET_ONLY=element-music,cdn-video runs just those pages, for debugging a failure.
 const only = process.env.SNIPPET_ONLY?.split(",");
 if (only) cases.splice(0, cases.length, ...cases.filter((entry) => only.includes(entry.name)));
 
@@ -465,7 +465,7 @@ try {
             root &&
             root.getAttribute("aria-busy") === null &&
             root.querySelector("[data-veilo-skeleton], canvas") === null &&
-            root.querySelector("img")?.complete
+            (!root.querySelector("img") || root.querySelector("img").complete)
           );
         },
         null,
@@ -478,8 +478,11 @@ try {
         const actual = await card.locator(`[data-veilo-slot="${slot}"]`).first().textContent();
         if (actual !== text) problems.push(`slot ${slot}: "${actual}", expected "${text}"`);
       }
-      const photo = await card.locator("img").evaluate((img) => img.naturalWidth);
-      if (photo === 0) problems.push("the photo did not load");
+      // The inbox has no picture; the other layouts must have loaded theirs.
+      if ((await card.locator("img").count()) > 0) {
+        const photo = await card.locator("img").evaluate((img) => img.naturalWidth);
+        if (photo === 0) problems.push("the photo did not load");
+      }
       const box = await card.boundingBox();
       if (!box || Math.abs(box.width - entry.width) > 1) {
         problems.push(`width ${box?.width}, expected ${entry.width}`);

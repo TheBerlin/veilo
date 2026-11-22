@@ -3,13 +3,14 @@
 
 import type { Reveal, Settings } from "@veilo-ui/core";
 import { Button, Kbd } from "@veilo-ui/ui";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { VideoCard } from "./demo-cards.tsx";
 import { InboxCard } from "./inbox-card.tsx";
 import { MusicCard } from "./music-card.tsx";
 import { DemoReadout } from "./demo-readout.tsx";
 import styles from "./demo-stage.module.css";
 import { useAlbumCover } from "./use-album-cover.ts";
+import { useReplayKey } from "./use-replay-key.ts";
 
 /** The components the hero can show, with their labels. */
 export const DEMO_KINDS = [
@@ -46,45 +47,10 @@ export function DemoStage(props: DemoStageProps) {
 
   // The music card samples its cover when its reveal is created, so it waits for the photograph.
   const coverReady = useAlbumCover();
-  const waiting = kind === "music" && !coverReady;
+  const waiting = kind !== "inbox" && !coverReady;
 
   const replayButton = useRef<HTMLButtonElement>(null);
-  const [pressed, setPressed] = useState(false);
-
-  // The R key imitates a mouse click on the Replay button. The button shows pressed for as long
-  // as the key is held (a mouse-down), and the click, which replays, happens when the key is
-  // released (a mouse-up). If the window loses focus while the key is held, the press is
-  // cancelled with no click, as when a pointer is dragged off a button. The key is left alone
-  // while the visitor types in a field, when a modifier is held (Ctrl+R and Cmd+R reload the
-  // page) and on key repeat.
-  useEffect(() => {
-    let held = false;
-    const release = () => {
-      held = false;
-      setPressed(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "r" || event.repeat) return;
-      if (event.ctrlKey || event.metaKey || event.altKey) return;
-      const target = event.target instanceof Element ? event.target : null;
-      if (target?.closest("input, textarea, select, [contenteditable]")) return;
-      held = true;
-      setPressed(true);
-    };
-    const onKeyUp = (event: KeyboardEvent) => {
-      if (!held || event.key.toLowerCase() !== "r") return;
-      release();
-      replayButton.current?.click();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keyup", onKeyUp);
-    window.addEventListener("blur", release);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("keyup", onKeyUp);
-      window.removeEventListener("blur", release);
-    };
-  }, []);
+  const pressed = useReplayKey(replayButton);
   return (
     <div className={styles.stage}>
       {/* A click anywhere on the component replays it; Replay below is the keyboard way. */}

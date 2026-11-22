@@ -1,10 +1,20 @@
-// card-layouts.ts: the playground's card layouts as one table: slots, bar widths, default text
-// and default width. The card, the Content tab and the layout JSON export all read it.
+// card-layouts.ts: the playground's card layouts as one table: slots, default text and default
+// width. The card, the Content tab and the layout JSON export all read it. The three layouts are
+// the home page's demo cards, so what people tune here is what they saw there.
 
 import type { Layout } from "@veilo-ui/core";
+import {
+  INBOX_LAYOUT,
+  MESSAGES,
+  MUSIC_LAYOUT,
+  MUSIC_TEXTS,
+  VIDEO_LAYOUT,
+  VIDEO_TEXTS,
+} from "../../home/demo-data.ts";
+import type { SceneId } from "../../home/demo-scenes.ts";
 
 /** The id of a card layout. */
-export type CardLayoutId = "product" | "list" | "profile" | "article" | "table";
+export type CardLayoutId = "inbox" | "video" | "music";
 
 /** One editable text part of a layout. */
 export interface CardTextPart {
@@ -14,6 +24,16 @@ export interface CardTextPart {
   label: string;
   /** The text shown until the user edits it. */
   text: string;
+}
+
+/** The picture of a layout: which slot it is, its shape and the drawing shown until a photo is chosen. */
+export interface CardPicture {
+  /** The slot name of the picture's canvas. */
+  slot: string;
+  /** Width divided by height; fixed by the card's design. */
+  ratio: number;
+  /** The home page's drawn scene shown while the user has chosen no photo. */
+  scene: SceneId;
 }
 
 /** A card layout: what it is called, how wide it starts, which slots it has and its text. */
@@ -26,143 +46,70 @@ export interface CardLayout {
   width: number;
   /** Whether the image area has a large photo whose ratio the user may choose. */
   hasRatio: boolean;
+  /** The picture, or `undefined` for a layout without one (the inbox). */
+  picture?: CardPicture;
   /** The slot table passed to core: roles and skeleton bar widths. */
   slots: Layout["slots"];
-  /** The text parts in page order; every `text` slot of `slots` appears once. */
+  /** The text parts in page order; every editable text slot appears once. */
   texts: readonly CardTextPart[];
 }
 
-/**
- * The product card (spec 1.2). The image and the button are full width. "Buy now" is a span named
- * as the button role, because the whole card is already a button and a button inside a button is
- * invalid. The prices are sized to 28% and 20% of their row in CSS, so their bars are full width.
- */
-export const PRODUCT_LAYOUT: CardLayout = {
-  id: "product",
-  name: "Product card",
-  width: 320,
-  hasRatio: true,
-  slots: {
-    photo: { role: "image" },
-    heading: { role: "text", width: 58 },
-    line1: { role: "text", width: 96 },
-    line2: { role: "text", width: 70 },
-    price: { role: "text" },
-    oldPrice: { role: "text" },
-    buy: { role: "button" },
-    label: { role: "text" },
-  },
-  texts: [
-    { slot: "heading", label: "Heading", text: "MCHOSE L7 Pro" },
-    { slot: "line1", label: "Description, line 1", text: "Lightweight 8K polling mouse with" },
-    { slot: "line2", label: "Description, line 2", text: "tri-mode wireless and a 60 g shell." },
-    { slot: "price", label: "Price", text: "$59.99" },
-    { slot: "oldPrice", label: "Old price", text: "$79.99" },
-    { slot: "label", label: "Button label", text: "Buy now" },
-  ],
-};
-
-/** A small image, a title with one line under it, and a price at the right. */
-export const LIST_LAYOUT: CardLayout = {
-  id: "list",
-  name: "List row",
+/** A mail inbox: filter chips and four messages. All text, avatars and icons; no picture. */
+export const INBOX_CARD_LAYOUT: CardLayout = {
+  id: "inbox",
+  name: "Inbox",
   width: 480,
   hasRatio: false,
-  slots: {
-    photo: { role: "image" },
-    heading: { role: "text", width: 55 },
-    line1: { role: "text", width: 90 },
-    price: { role: "text" },
-  },
-  texts: [
-    { slot: "heading", label: "Title", text: "MCHOSE L7 Pro" },
-    { slot: "line1", label: "Description", text: "Lightweight 8K polling mouse" },
-    { slot: "price", label: "Price", text: "$59.99" },
-  ],
+  slots: INBOX_LAYOUT.slots,
+  texts: MESSAGES.flatMap((message, index) => [
+    { slot: `from${index}`, label: `Sender ${index + 1}`, text: message.from },
+    { slot: `subject${index}`, label: `Subject ${index + 1}`, text: message.subject },
+  ]),
 };
 
-/** A round avatar with a name and handle, a short bio and a Follow button. */
-export const PROFILE_LAYOUT: CardLayout = {
-  id: "profile",
-  name: "Profile header",
-  width: 400,
+/** A video tile: a wide thumbnail, an avatar, a two-line title and the channel's details. */
+export const VIDEO_CARD_LAYOUT: CardLayout = {
+  id: "video",
+  name: "Video tile",
+  width: 320,
   hasRatio: false,
-  slots: {
-    photo: { role: "image" },
-    heading: { role: "text", width: 70 },
-    line1: { role: "text", width: 50 },
-    line2: { role: "text", width: 95 },
-    buy: { role: "button" },
-    label: { role: "text" },
-  },
+  picture: { slot: "thumb", ratio: 16 / 9, scene: "street" },
+  slots: VIDEO_LAYOUT.slots,
   texts: [
-    { slot: "heading", label: "Name", text: "Mara Lindqvist" },
-    { slot: "line1", label: "Handle", text: "@maralind" },
-    { slot: "line2", label: "Bio", text: "Product designer. Builds calm interfaces." },
-    { slot: "label", label: "Button label", text: "Follow" },
+    { slot: "title", label: "Title", text: VIDEO_TEXTS.title },
+    { slot: "channel", label: "Channel", text: VIDEO_TEXTS.channel },
+    { slot: "stats", label: "Views and age", text: VIDEO_TEXTS.stats },
+    { slot: "duration", label: "Duration", text: VIDEO_TEXTS.duration },
   ],
 };
 
-/** A large image, a tag, a headline, two lines of excerpt and a byline. */
-export const ARTICLE_LAYOUT: CardLayout = {
-  id: "article",
-  name: "Article teaser",
-  width: 360,
-  hasRatio: true,
-  slots: {
-    photo: { role: "image" },
-    tag: { role: "text", width: 30 },
-    heading: { role: "text", width: 90 },
-    line1: { role: "text", width: 96 },
-    line2: { role: "text", width: 70 },
-    meta: { role: "text", width: 50 },
-  },
-  texts: [
-    { slot: "tag", label: "Tag", text: "Release notes" },
-    { slot: "heading", label: "Headline", text: "Veilo 0.6 adds share links" },
-    { slot: "line1", label: "Excerpt, line 1", text: "Send any effect as one short link, and" },
-    { slot: "line2", label: "Excerpt, line 2", text: "open it on another device unchanged." },
-    { slot: "meta", label: "Byline", text: "Mara L. Â· 4 min read" },
-  ],
-};
-
-/** One wide row: a small image, a name with a code under it, a category, stock and a price. */
-export const TABLE_LAYOUT: CardLayout = {
-  id: "table",
-  name: "Table row",
-  width: 640,
+/** A wide music player: a square cover, the track, a progress bar and the controls. */
+export const MUSIC_CARD_LAYOUT: CardLayout = {
+  id: "music",
+  name: "Music player",
+  width: 480,
   hasRatio: false,
-  slots: {
-    photo: { role: "image" },
-    heading: { role: "text", width: 70 },
-    line1: { role: "text", width: 45 },
-    category: { role: "text", width: 70 },
-    stock: { role: "text", width: 70 },
-    price: { role: "text" },
-  },
+  picture: { slot: "cover", ratio: 1, scene: "album" },
+  slots: MUSIC_LAYOUT.slots,
   texts: [
-    { slot: "heading", label: "Name", text: "MCHOSE L7 Pro" },
-    { slot: "line1", label: "Code", text: "SKU 8841" },
-    { slot: "category", label: "Category", text: "Mice" },
-    { slot: "stock", label: "Stock", text: "In stock" },
-    { slot: "price", label: "Price", text: "$59.99" },
+    { slot: "track", label: "Track", text: MUSIC_TEXTS.track },
+    { slot: "artist", label: "Artist", text: MUSIC_TEXTS.artist },
+    { slot: "time", label: "Time", text: MUSIC_TEXTS.time },
   ],
 };
 
 /** Every layout, by id. */
 export const CARD_LAYOUTS: Record<CardLayoutId, CardLayout> = {
-  product: PRODUCT_LAYOUT,
-  list: LIST_LAYOUT,
-  profile: PROFILE_LAYOUT,
-  article: ARTICLE_LAYOUT,
-  table: TABLE_LAYOUT,
+  music: MUSIC_CARD_LAYOUT,
+  video: VIDEO_CARD_LAYOUT,
+  inbox: INBOX_CARD_LAYOUT,
 };
 
 /** The layout ids in the order the picker shows them. */
 export const LAYOUT_IDS = Object.keys(CARD_LAYOUTS) as CardLayoutId[];
 
-/** The layout the card starts with: the product card of spec 1.2 and the visual baselines. */
-export const DEFAULT_LAYOUT: CardLayoutId = "product";
+/** The layout the card starts with, and the one the visual baselines show. */
+export const DEFAULT_LAYOUT: CardLayoutId = "music";
 
 /**
  * Narrows any value to a layout id, for saved or shared input.

@@ -14,10 +14,10 @@ import { createSettingsStore } from "../../../src/playground/state/settings-stor
 
 describe("card layouts", () => {
   for (const id of LAYOUT_IDS) {
-    it(`${id}: the card has exactly the table's slots and texts`, () => {
+    it(`${id}: the card has exactly the table's slots and texts`, async () => {
       const layout = CARD_LAYOUTS[id];
       render(<TestCard settings={defaultSettings()} layout={id} />);
-      const card = screen.getByRole("button", { name: /Test card/ });
+      const card = await screen.findByRole("button", { name: /Test card/ });
       const slots = [...card.querySelectorAll("[data-veilo-slot]")].map((el) =>
         el.getAttribute("data-veilo-slot"),
       );
@@ -28,12 +28,6 @@ describe("card layouts", () => {
       expect(card.style.width).toBe(`${layout.width}px`);
     });
   }
-
-  it("a layout without a large image draws a square image whatever the ratio", () => {
-    render(<TestCard settings={defaultSettings()} layout="list" ratio={16 / 9} />);
-    const canvas = screen.getByRole("button").querySelector("canvas")!;
-    expect(canvas.clientWidth).toBe(canvas.clientHeight);
-  });
 });
 
 describe("Content tab text", () => {
@@ -55,6 +49,8 @@ describe("Content tab text", () => {
       </>,
     );
     await user.click(screen.getByRole("tab", { name: "Content" }));
+    // The music player appears once its cover photograph has loaded.
+    await screen.findByRole("button", { name: /Test card/ });
     return { content, user };
   }
 
@@ -62,17 +58,17 @@ describe("Content tab text", () => {
     const { content, user } = await renderContentTab();
     expect(
       screen.getAllByRole("textbox").map((field) => (field as HTMLInputElement).value),
-    ).toEqual(CARD_LAYOUTS.product.texts.map((part) => part.text));
+    ).toEqual(CARD_LAYOUTS.music.texts.map((part) => part.text));
 
-    const heading = screen.getByRole("textbox", { name: "Heading" });
-    await user.clear(heading);
-    await user.type(heading, "Quiet mouse");
-    expect(content.getState().content.texts).toEqual({ product: { heading: "Quiet mouse" } });
+    const track = screen.getByRole("textbox", { name: "Track" });
+    await user.clear(track);
+    await user.type(track, "Quiet street");
+    expect(content.getState().content.texts).toEqual({ music: { track: "Quiet street" } });
     // The card is rebuilt once the typing stops.
     await waitFor(
       () => {
         const card = screen.getByRole("button", { name: /Test card/ });
-        expect(card.querySelector('[data-veilo-slot="heading"]')?.textContent).toBe("Quiet mouse");
+        expect(card.querySelector('[data-veilo-slot="track"]')?.textContent).toBe("Quiet street");
       },
       { timeout: 3000 },
     );
@@ -80,53 +76,53 @@ describe("Content tab text", () => {
 
   it("keeps each layout's own edits, and Reset content clears the current layout only", async () => {
     const { content, user } = await renderContentTab();
-    await user.type(screen.getByRole("textbox", { name: "Heading" }), "!");
-    await user.selectOptions(screen.getByLabelText("Layout"), "list");
+    await user.type(screen.getByRole("textbox", { name: "Track" }), "!");
+    await user.selectOptions(screen.getByLabelText("Layout"), "video");
     expect((screen.getByRole("textbox", { name: "Title" }) as HTMLInputElement).value).toBe(
-      "MCHOSE L7 Pro",
+      "Night walk through the old town in 4K, no talking",
     );
     expect(screen.getByRole("button", { name: "Reset content" })).toHaveProperty("disabled", true);
 
     await user.type(screen.getByRole("textbox", { name: "Title" }), "?");
     await user.click(screen.getByRole("button", { name: "Reset content" }));
-    expect(content.getState().content.texts).toEqual({ product: { heading: "MCHOSE L7 Pro!" } });
+    expect(content.getState().content.texts).toEqual({ music: { track: "Glass Horizon!" } });
 
-    await user.selectOptions(screen.getByLabelText("Layout"), "product");
-    expect((screen.getByRole("textbox", { name: "Heading" }) as HTMLInputElement).value).toBe(
-      "MCHOSE L7 Pro!",
+    await user.selectOptions(screen.getByLabelText("Layout"), "music");
+    expect((screen.getByRole("textbox", { name: "Track" }) as HTMLInputElement).value).toBe(
+      "Glass Horizon!",
     );
   });
 
   it("the width slider sets the card width after a pause, per layout", async () => {
     const { content, user } = await renderContentTab();
     const slider = screen.getByRole("slider", { name: /Card width/ });
-    expect(slider.getAttribute("aria-valuenow")).toBe("320");
+    expect(slider.getAttribute("aria-valuenow")).toBe("480");
     slider.focus();
     await user.keyboard("{ArrowRight}{ArrowRight}");
-    expect(content.getState().content.widths).toEqual({ product: 340 });
+    expect(content.getState().content.widths).toEqual({ music: 500 });
     await waitFor(
-      () => expect(screen.getByRole("button", { name: /Test card/ }).style.width).toBe("340px"),
+      () => expect(screen.getByRole("button", { name: /Test card/ }).style.width).toBe("500px"),
       { timeout: 3000 },
     );
     // Another layout starts at its own default, and Reset content brings the first one back.
-    await user.selectOptions(screen.getByLabelText("Layout"), "list");
+    await user.selectOptions(screen.getByLabelText("Layout"), "video");
     expect(screen.getByRole("slider", { name: /Card width/ }).getAttribute("aria-valuenow")).toBe(
-      "480",
+      "320",
     );
-    await user.selectOptions(screen.getByLabelText("Layout"), "product");
+    await user.selectOptions(screen.getByLabelText("Layout"), "music");
     await user.click(screen.getByRole("button", { name: "Reset content" }));
     expect(content.getState().content.widths).toEqual({});
   });
 
   it("limits a field to 120 characters", async () => {
     await renderContentTab();
-    const field = screen.getByRole("textbox", { name: "Heading" }) as HTMLInputElement;
+    const field = screen.getByRole("textbox", { name: "Track" }) as HTMLInputElement;
     expect(field.maxLength).toBe(120);
   });
 });
 
 describe("Content tab", () => {
-  it("changes the card's layout, and shows the ratio only for layouts with a large image", async () => {
+  it("changes the card's layout, and shows the image controls only for layouts with a picture", async () => {
     const user = userEvent.setup();
     const store = createSettingsStore();
     const content = createContentStore();
@@ -139,21 +135,25 @@ describe("Content tab", () => {
       </>,
     );
     await user.click(screen.getByRole("tab", { name: "Content" }));
-    expect(screen.getByLabelText("Image ratio")).toBeTruthy();
-    await user.selectOptions(screen.getByLabelText("Layout"), "list");
-
-    expect(content.getState().content.layout).toBe("list");
-    const card = screen.getByRole("button", { name: /list row/i });
-    expect(within(card).getByText("Lightweight 8K polling mouse")).toBeTruthy();
+    const ownImage = () => screen.queryByRole("button", { name: "Use my own image" });
+    expect(ownImage()).not.toBeNull();
+    // The demo cards have a fixed picture shape, so there is no ratio to choose.
     expect(screen.queryByLabelText("Image ratio")).toBeNull();
+    await user.selectOptions(screen.getByLabelText("Layout"), "video");
 
-    await user.selectOptions(screen.getByLabelText("Layout"), "article");
-    expect(screen.getByLabelText("Image ratio")).toBeTruthy();
+    expect(content.getState().content.layout).toBe("video");
+    const card = await screen.findByRole("button", { name: /video tile/i });
+    expect(within(card).getByText("Slow Cities")).toBeTruthy();
+    expect(ownImage()).not.toBeNull();
+
+    // The inbox has no picture.
+    await user.selectOptions(screen.getByLabelText("Layout"), "inbox");
+    expect(ownImage()).toBeNull();
   });
 });
 
 describe("Content tab image", () => {
-  it("offers the samples, the user's own file and the ratio, and shows the chosen sample", async () => {
+  it("offers the samples and the user's own file, and shows the chosen sample", async () => {
     const user = userEvent.setup();
     const store = createSettingsStore();
     const content = createContentStore();
@@ -166,7 +166,6 @@ describe("Content tab image", () => {
     // The tab's "Image" group and the picker row inside it have the same name.
     const group = screen.getAllByRole("group", { name: "Image" }).at(-1)!;
     expect(within(group).getByRole("button", { name: "Use my own image" })).toBeTruthy();
-    expect(screen.getByLabelText("Image ratio")).toBeTruthy();
     const sample = within(group).getAllByRole("button", { pressed: false })[0]!;
     await user.click(sample);
     await waitFor(() => expect(content.getState().photo.sample).not.toBeNull());

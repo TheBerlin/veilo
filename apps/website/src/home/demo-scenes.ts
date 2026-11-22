@@ -3,9 +3,10 @@
 // whatever the canvas holds.
 
 import albumCoverUrl from "./assets/album-cover.webp";
+import videoThumbUrl from "./assets/video-thumb.webp";
 
 /** The pictures the demos use. */
-export type SceneId = "street" | "album";
+export type SceneId = "street" | "album" | "video";
 
 /**
  * Sizes a canvas to its CSS width times the pixel ratio (at most 2), and its height from the
@@ -98,30 +99,58 @@ function drawAlbum(context: CanvasRenderingContext2D, w: number, h: number): voi
   context.fill();
 }
 
-/** The decoded album cover, once loaded; until then the drawn album art stands in. */
-let albumCover: HTMLImageElement | null = null;
-/** The one load of the album cover, shared by every caller. */
-let albumCoverLoad: Promise<void> | null = null;
+/** The photograph each photographic scene shows. */
+const PHOTO_URLS: Partial<Record<SceneId, string>> = { album: albumCoverUrl, video: videoThumbUrl };
+/** The decoded photographs, once loaded; until then the drawn art stands in. */
+const photos = new Map<SceneId, HTMLImageElement>();
+/** The one load of each photograph, shared by every caller. */
+const photoLoads = new Map<SceneId, Promise<void>>();
 
 /**
- * Loads and decodes the album cover photograph once. A failed load is not an error: the drawn
- * album art keeps standing in.
+ * Loads and decodes a scene's photograph once. A failed load is not an error: the drawn art
+ * keeps standing in.
  *
  * Side effects: starts one image request the first time; later calls share it.
+ *
+ * @param scene - The photographic scene.
+ * @returns A promise that resolves when the photograph is ready or has failed to load.
+ */
+export function preloadPhoto(scene: SceneId): Promise<void> {
+  let load = photoLoads.get(scene);
+  if (!load) {
+    load = new Promise<void>((resolve) => {
+      const url = PHOTO_URLS[scene];
+      if (!url) return resolve();
+      const image = new Image();
+      image.onload = () => {
+        photos.set(scene, image);
+        resolve();
+      };
+      image.onerror = () => resolve();
+      image.src = url;
+    });
+    photoLoads.set(scene, load);
+  }
+  return load;
+}
+
+/**
+ * Tells whether a scene's photograph is loaded.
+ *
+ * @param scene - The photographic scene.
+ * @returns True once {@link preloadPhoto} has loaded it.
+ */
+export function photoLoaded(scene: SceneId): boolean {
+  return photos.has(scene);
+}
+
+/**
+ * Loads and decodes the album cover photograph once.
  *
  * @returns A promise that resolves when the cover is ready or has failed to load.
  */
 export function preloadAlbumCover(): Promise<void> {
-  albumCoverLoad ??= new Promise<void>((resolve) => {
-    const image = new Image();
-    image.onload = () => {
-      albumCover = image;
-      resolve();
-    };
-    image.onerror = () => resolve();
-    image.src = albumCoverUrl;
-  });
-  return albumCoverLoad;
+  return preloadPhoto("album");
 }
 
 /**
@@ -130,7 +159,7 @@ export function preloadAlbumCover(): Promise<void> {
  * @returns True once {@link preloadAlbumCover} has loaded the photograph.
  */
 export function albumCoverLoaded(): boolean {
-  return albumCover !== null;
+  return photoLoaded("album");
 }
 
 /**
@@ -166,10 +195,14 @@ export function drawScene(canvas: HTMLCanvasElement, scene: SceneId, ratio: numb
   const { width, height } = sizeCanvas(canvas, ratio);
   const context = canvas.getContext("2d");
   if (!context) return;
-  if (scene === "street") drawStreet(context, width, height);
-  else if (albumCover) drawCover(context, albumCover, width, height);
-  else drawAlbum(context, width, height);
+  const photo = photos.get(scene);
+  if (photo) drawCover(context, photo, width, height);
+  else if (scene === "album") drawAlbum(context, width, height);
+  else drawStreet(context, width, height);
 }
 
 // Start fetching at import, so the cover is usually ready before the music card is chosen.
-if (typeof Image !== "undefined") void preloadAlbumCover();
+if (typeof Image !== "undefined") {
+  void preloadPhoto("album");
+  void preloadPhoto("video");
+}

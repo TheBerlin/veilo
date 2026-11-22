@@ -42,9 +42,9 @@ describe("App layout", () => {
     const stage = stageColumn().getBoundingClientRect();
     const panel = screen.getByRole("complementary", { name: "Settings" }).getBoundingClientRect();
     expect(panel.left).toBeGreaterThan(stage.right);
-    // The panel is as tall as the workspace, down to the bottom gutter. The app leaves room for the
-    // site header above it (64 px and a hairline), which these tests do not render.
-    expect(window.innerHeight - panel.bottom).toBe(16 + 64 + 1);
+    // The panel is as tall as the workspace, down to the bottom gutter. The app is the whole
+    // screen: no site header or footer around it.
+    expect(window.innerHeight - panel.bottom).toBe(16);
     // The playback controls are in view on the first screen, not below the fold.
     const bar = screen.getByRole("toolbar", { name: "Playback" }).getBoundingClientRect();
     expect(bar.bottom).toBeLessThanOrEqual(window.innerHeight);
@@ -279,35 +279,35 @@ describe("App startup", () => {
     );
   });
 
-  it("restores the image ratio from the last session, and saves a new one", async () => {
+  it("restores the card layout from the last session, and saves a new one", async () => {
     localStorage.setItem(
       LAST_SESSION_KEY,
       JSON.stringify({
         version: LAST_SESSION_VERSION,
         settings: presetSettings("soft-pulse"),
-        content: { ratio: "3:4" },
+        content: { layout: "video" },
       }),
     );
     render(<App />);
     await userEvent.click(screen.getByRole("tab", { name: "Content" }));
-    const select = screen.getByRole<HTMLSelectElement>("combobox", { name: "Image ratio" });
-    expect(select.value).toBe("3:4");
-    await userEvent.selectOptions(select, "16:9");
+    const select = screen.getByRole<HTMLSelectElement>("combobox", { name: "Layout" });
+    expect(select.value).toBe("video");
+    await userEvent.selectOptions(select, "inbox");
     await waitFor(() => {
       const saved = JSON.parse(localStorage.getItem(LAST_SESSION_KEY) ?? "null");
-      expect(saved?.content).toEqual({ ratio: "16:9", layout: "product", texts: {}, widths: {} });
+      expect(saved?.content).toEqual({ ratio: "1:1", layout: "inbox", texts: {}, widths: {} });
     });
   });
 
-  it("restores the image ratio from a share link", async () => {
+  it("restores the card layout from a share link", async () => {
     const fragment = await encodeShareLink({
       settings: presetSettings("cascade-wave"),
-      content: { ratio: "2:3" },
+      content: { layout: "inbox" },
     });
     window.history.replaceState(null, "", window.location.pathname + fragment);
     render(<App />);
     await userEvent.click(screen.getByRole("tab", { name: "Content" }));
-    const select = screen.getByRole<HTMLSelectElement>("combobox", { name: "Image ratio" });
-    await waitFor(() => expect(select.value).toBe("2:3"));
+    const select = screen.getByRole<HTMLSelectElement>("combobox", { name: "Layout" });
+    await waitFor(() => expect(select.value).toBe("inbox"));
   });
 });
