@@ -25,6 +25,8 @@ const LIMITS = {
   "lazy grid chunk (gzip)": 5 * KB,
   // Media: a clip, its poster, and any other picture.
   "each clip (.webm)": 200 * KB,
+  // The one full-length playground demo, which opens in the larger watch mode.
+  "demo video (.mp4)": 1500 * KB,
   "each poster (.jpg)": 80 * KB,
   "each image (.webp, .png)": 100 * KB,
 };
@@ -53,6 +55,7 @@ for (const name of readdirSync(join(dist, "assets"))) {
   if (/^grid-renderer-.*\.js$/.test(name))
     checks.push(["lazy grid chunk (gzip)", file, gzipped(file)]);
   else if (name.endsWith(".webm")) checks.push(["each clip (.webm)", file, size]);
+  else if (name.endsWith(".mp4")) checks.push(["demo video (.mp4)", file, size]);
   else if (name.endsWith(".jpg")) checks.push(["each poster (.jpg)", file, size]);
   else if (/\.(webp|png)$/.test(name)) checks.push(["each image (.webp, .png)", file, size]);
 }

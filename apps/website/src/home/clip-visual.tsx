@@ -8,23 +8,15 @@ import exportDark from "./assets/clips/export-dark.webm";
 import exportDarkPoster from "./assets/clips/export-dark.jpg";
 import exportLight from "./assets/clips/export-light.webm";
 import exportLightPoster from "./assets/clips/export-light.jpg";
-import tuneDark from "./assets/clips/tune-dark.webm";
-import tuneDarkPoster from "./assets/clips/tune-dark.jpg";
-import tuneLight from "./assets/clips/tune-light.webm";
-import tuneLightPoster from "./assets/clips/tune-light.jpg";
 import styles from "./clip-visual.module.css";
 import { useReducedMotion } from "./use-reduced-motion.ts";
 import { useSeen } from "./use-seen.ts";
 
 /** The clips there are, each recorded in both themes by `scripts/record-clips.mjs`. */
-export type ClipName = "tune" | "export";
+export type ClipName = "export";
 
 /** The video and still frame of each clip and theme. */
 const CLIPS: Record<ClipName, Record<"dark" | "light", { video: string; poster: string }>> = {
-  tune: {
-    dark: { video: tuneDark, poster: tuneDarkPoster },
-    light: { video: tuneLight, poster: tuneLightPoster },
-  },
   export: {
     dark: { video: exportDark, poster: exportDarkPoster },
     light: { video: exportLight, poster: exportLightPoster },

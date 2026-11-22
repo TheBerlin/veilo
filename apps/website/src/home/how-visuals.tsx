@@ -5,6 +5,7 @@ import type { Reveal, RevealState } from "@veilo-ui/core";
 import { Button, CodeBlock, Scrubber } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
 import { ClipVisual } from "./clip-visual.tsx";
+import { DemoPlayer } from "./demo-player.tsx";
 import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./how-visuals.module.css";
 import { MusicCard } from "./music-card.tsx";
@@ -122,10 +123,7 @@ export function MusicVisual(props: MusicVisualProps) {
 export function TuneVisual() {
   return (
     <div className={styles.panel}>
-      <ClipVisual
-        name="tune"
-        description="The Veilo playground: choosing a card layout, a preset and moving a slider, with the card replaying after each change."
-      />
+      <DemoPlayer description="The Veilo playground: choosing a card layout, a preset and moving a slider, with the card replaying after each change." />
     </div>
   );
 }
