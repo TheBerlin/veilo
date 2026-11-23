@@ -68,6 +68,15 @@ pnpm --filter docs size    # the docs
 
 When a check fails, first find out why the size grew. Raising a limit means editing `.size-limit.json` or `check-size.mjs` and saying why in the commit message.
 
+## Gallery labels
+
+Each effect in `apps/website/src/gallery/effects.ts` has a `since` (the release it came in) and a `released` date (`YYYY-MM-DD`, the day that release came out).
+
+- **New.** The label shows for 28 days: on the release day and the 27 days after it, and is gone on day 28 (`NEW_DAYS`). It removes itself, so nothing needs editing when it ends. Days are counted in the visitor's local calendar. The effects of the first public release (0.9.0) are never labeled, because everything would be new.
+- **When you add an effect,** set `since` to the release it ships in and `released` to that release's date. If the release slips, fix the date before publishing.
+- **Christmas time.** Shown while the date is between December 1 and January 10 (`SEASONS`).
+- **Previewing.** `/gallery?labels=demo` marks the three newest effects as released today; `?season=on` and `?season=off` force the season. The unit tests in `test/gallery/effects.test.ts` pass the date in, so they need no clock.
+
 ## Core layers
 
 `packages/core/src` is split into layers, and a layer imports only from the layers below it:

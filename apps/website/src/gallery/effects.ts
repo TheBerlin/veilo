@@ -1,6 +1,6 @@
 // effects.ts: the gallery's effects as data, and the rules that decide how each is labeled and
-// ordered: "New" comes from the release an effect was added in, "Christmas time" from a date
-// window. Pure functions with the date and the latest release passed in, so tests need no clock.
+// ordered: "New" lasts 28 days from the day an effect was released, "Christmas time" comes from a
+// date window. Pure functions with the date passed in, so tests need no clock.
 
 import type { EffectId } from "@veilo-ui/seasonal";
 
@@ -36,6 +36,8 @@ export interface GalleryEffect {
   added: number;
   /** The release the effect was added in, for example `"0.9.0"`. */
   since: string;
+  /** The day that release came out, as `YYYY-MM-DD`. The "New" label counts 28 days from it. */
+  released: string;
   /** The season it belongs to, if any. */
   season?: SeasonId;
 }
@@ -51,6 +53,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 1,
     added: 6,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "Snow falls and settles on the skeleton bars, then melts away.",
   },
@@ -63,6 +66,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 2,
     added: 1,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "A snowflake grows arm by arm in one ink, then fades.",
   },
@@ -75,6 +79,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 3,
     added: 2,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "The same flake, with an ice-blue cell behind every character.",
   },
@@ -87,6 +92,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 4,
     added: 3,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "Characters shift from green to violet as the flake grows.",
   },
@@ -99,6 +105,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 5,
     added: 4,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "Bands of color flow across the flake like northern lights.",
   },
@@ -111,6 +118,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 6,
     added: 5,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "A soft colored glow shows through white characters.",
   },
@@ -123,6 +131,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 7,
     added: 7,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "A whiteout of characters thins out until your content shows.",
   },
@@ -135,6 +144,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 8,
     added: 8,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "Scrambled characters lock into dots, then erode away.",
   },
@@ -147,6 +157,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 9,
     added: 9,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "Scrambled characters lock into shaded cells on a grid.",
   },
@@ -159,6 +170,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     rank: 10,
     added: 10,
     since: "0.9.0",
+    released: "2026-11-23",
     season: "christmas",
     does: "Frost-tinted cells with a few blinking sparkles.",
   },
@@ -207,16 +219,24 @@ export function isInSeason(season: SeasonId, date: Date): boolean {
   return start <= end ? today >= start && today <= end : today >= start || today <= end;
 }
 
+/** How many days the "New" label stays on an effect after its release day. */
+export const NEW_DAYS = 28;
+
 /**
- * Whether an effect is "new": it was added in the latest release, and that release is not the
- * first public one.
+ * Whether an effect is "new": its release came out less than 28 days ago (the release day is day
+ * 0; the label is gone on day 28). Effects from the first public release are never new.
  *
  * @param effect - The effect.
- * @param latest - The latest released version, for example `"0.9.0"`.
- * @returns True when the "New" label applies.
+ * @param now - The current date (its local calendar day counts, not the time).
+ * @returns True when the "New" label applies. False for a release date in the future.
  */
-export function isNew(effect: GalleryEffect, latest: string): boolean {
-  return effect.since === latest && latest !== FIRST_PUBLIC_RELEASE;
+export function isNew(effect: GalleryEffect, now: Date): boolean {
+  if (effect.since === FIRST_PUBLIC_RELEASE) return false;
+  const [year, month, day] = effect.released.split("-").map(Number) as [number, number, number];
+  // Whole local calendar days, so daylight saving shifts cannot move the cut-off by a day.
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const age = Math.round((today - Date.UTC(year, month - 1, day)) / 86_400_000);
+  return age >= 0 && age < NEW_DAYS;
 }
 
 /** A status label on a tile. */
@@ -229,8 +249,6 @@ export interface EffectLabel {
 
 /** What decides the labels. */
 export interface LabelContext {
-  /** The latest released version. */
-  latest: string;
   /** The current date. */
   now: Date;
   /**
@@ -244,12 +262,12 @@ export interface LabelContext {
  * The status labels of one tile: "New" first, then the season while it is in season. At most two.
  *
  * @param effect - The effect.
- * @param context - The latest release, the date and whether to show the season.
+ * @param context - The date and whether to show the season.
  * @returns Zero, one or two labels.
  */
 export function labelsFor(effect: GalleryEffect, context: LabelContext): EffectLabel[] {
   const labels: EffectLabel[] = [];
-  if (isNew(effect, context.latest)) labels.push({ text: "New", tone: "new" });
+  if (isNew(effect, context.now)) labels.push({ text: "New", tone: "new" });
   if (context.showSeason && effect.season && isInSeason(effect.season, context.now)) {
     labels.push({ text: SEASONS[effect.season].label, tone: "season" });
   }
@@ -319,36 +337,34 @@ export function effectiveDate(search: string, today: Date): Date {
   return today;
 }
 
-/** The release name a label preview uses for "the latest release". It is never a real version. */
+/** The release name a label preview uses for a release that does not exist. */
 export const PREVIEW_RELEASE = "preview";
 
 /** What the page shows after the label preview has had its say. */
 export interface LabelPreview {
-  /** The effects, with the three newest marked as added in the latest release. */
+  /** The effects, with the three newest marked as released today. */
   effects: readonly GalleryEffect[];
-  /** The latest release. */
-  latest: string;
   /** Whether tiles repeat the season label. */
   showSeason: boolean;
 }
 
 /**
- * Lets a link show the status labels before there is a release that earns them. With
- * `?labels=demo` the three newest effects count as added in the latest release, so they get
- * "New", and every tile repeats the season label. Without it nothing changes.
+ * Lets a link show the status labels before an effect is young enough to earn them. With
+ * `?labels=demo` the three newest effects count as released today, so they get "New", and every
+ * tile repeats the season label. Without it nothing changes.
  *
  * @param search - The address's query string.
  * @param effects - The effects.
- * @param latest - The real latest release.
- * @returns The effects, the release and the season flag to use.
+ * @param now - The current date, used as the release day of the three newest.
+ * @returns The effects and the season flag to use.
  */
 export function labelPreview(
   search: string,
   effects: readonly GalleryEffect[],
-  latest: string,
+  now: Date,
 ): LabelPreview {
   if (new URLSearchParams(search).get("labels") !== "demo") {
-    return { effects, latest, showSeason: false };
+    return { effects, showSeason: false };
   }
   const newest = new Set(
     [...effects]
@@ -356,11 +372,12 @@ export function labelPreview(
       .slice(0, 3)
       .map((effect) => effect.id),
   );
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   return {
     effects: effects.map((effect) =>
-      newest.has(effect.id) ? { ...effect, since: PREVIEW_RELEASE } : effect,
+      newest.has(effect.id) ? { ...effect, since: PREVIEW_RELEASE, released: today } : effect,
     ),
-    latest: PREVIEW_RELEASE,
     showSeason: true,
   };
 }

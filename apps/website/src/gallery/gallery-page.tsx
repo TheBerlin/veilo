@@ -28,7 +28,6 @@ import {
   type SortKey,
 } from "./effects.ts";
 import styles from "./gallery-page.module.css";
-import { LATEST_RELEASE } from "./release.ts";
 import { UseDrawer } from "./use-drawer.tsx";
 
 /** The names of the flake forms, as shown on the switch. */
@@ -60,8 +59,6 @@ interface GallerySectionProps {
   shape: FlakeShape;
   /** Whether tiles repeat the season label (a section named for the season does not). */
   showSeason: boolean;
-  /** The latest released version. */
-  latest: string;
   /** The date that decides what is in season. */
   now: Date;
   /** Called when the visitor asks how to use an effect. */
@@ -80,19 +77,8 @@ interface GallerySectionProps {
  * @returns The section.
  */
 function GallerySection(props: GallerySectionProps) {
-  const {
-    title,
-    badge,
-    copy,
-    effects,
-    shape,
-    showSeason,
-    latest,
-    now,
-    onUse,
-    shapeControl,
-    toolbar,
-  } = props;
+  const { title, badge, copy, effects, shape, showSeason, now, onUse, shapeControl, toolbar } =
+    props;
   const headingId = `section-${title.toLowerCase().replace(/\s+/g, "-")}`;
   return (
     <section aria-labelledby={headingId} className={styles.section}>
@@ -119,7 +105,7 @@ function GallerySection(props: GallerySectionProps) {
             <EffectTile
               effect={effect}
               shape={shape}
-              labels={labelsFor(effect, { latest, now, showSeason })}
+              labels={labelsFor(effect, { now, showSeason })}
               onUse={onUse}
             />
           </GridCell>
@@ -143,7 +129,7 @@ export function GalleryPage() {
   const now = useMemo(() => effectiveDate(window.location.search, new Date()), []);
   const [using, setUsing] = useState<GalleryEffect | null>(null);
   // `?labels=demo` shows the status labels before a release earns them.
-  const preview = useMemo(() => labelPreview(window.location.search, EFFECTS, LATEST_RELEASE), []);
+  const preview = useMemo(() => labelPreview(window.location.search, EFFECTS, now), [now]);
   const sorted = useMemo(() => sortEffects(preview.effects, sort), [preview, sort]);
   const { seasonal, others } = useMemo(() => splitBySeason(sorted, now), [sorted, now]);
   const season = seasonal[0]?.season ? SEASONS[seasonal[0].season] : undefined;
@@ -185,7 +171,7 @@ export function GalleryPage() {
       />
     </div>
   );
-  const shared = { shape, latest: preview.latest, now, onUse: setUsing };
+  const shared = { shape, now, onUse: setUsing };
   const sections: ReactNode[] = [];
   if (seasonal.length > 0 && season) {
     sections.push(

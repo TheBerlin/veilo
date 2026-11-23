@@ -26,8 +26,12 @@ import { EFFECT_IDS, usesFlakeShape } from "@veilo-ui/seasonal";
  */
 const on = (month: number, day: number) => new Date(2026, month - 1, day, 12);
 
-/** An effect with the given release, for the "New" rule. */
-const added = (since: string): GalleryEffect => ({ ...EFFECTS[0]!, since });
+/** An effect released on the given day (`YYYY-MM-DD`) in a release after the first public one. */
+const released = (day: string): GalleryEffect => ({
+  ...EFFECTS[0]!,
+  since: "0.10.0",
+  released: day,
+});
 
 describe("EFFECTS", () => {
   it("has one entry per drawing routine, each once", () => {
@@ -88,33 +92,49 @@ describe("isInSeason", () => {
 });
 
 describe("isNew", () => {
-  it("is true while the effect's release is the latest", () => {
-    expect(isNew(added("0.10.0"), "0.10.0")).toBe(true);
-    expect(isNew(added("0.8.0"), "0.10.0")).toBe(false);
+  it("lasts 28 days: new on days 0 to 27, gone on day 28", () => {
+    const effect = released("2026-12-01");
+    expect(isNew(effect, on(12, 1))).toBe(true);
+    expect(isNew(effect, on(12, 28))).toBe(true);
+    expect(isNew(effect, on(12, 29))).toBe(false);
   });
 
-  it("never labels anything on the first public release, when everything is new", () => {
-    expect(isNew(added(FIRST_PUBLIC_RELEASE), FIRST_PUBLIC_RELEASE)).toBe(false);
+  it("is not new before its release day", () => {
+    expect(isNew(released("2026-12-01"), on(11, 30))).toBe(false);
   });
 
-  it("labels none of the shipped effects as new, because they all arrived with the first public release", () => {
-    for (const effect of EFFECTS) {
-      expect(isNew(effect, FIRST_PUBLIC_RELEASE), effect.name).toBe(false);
-    }
+  it("counts calendar days, not hours", () => {
+    const effect = released("2026-12-01");
+    expect(isNew(effect, new Date(2026, 11, 28, 23, 59))).toBe(true);
+    expect(isNew(effect, new Date(2026, 11, 29, 0, 1))).toBe(false);
   });
 
-  it("stops by itself at the next release", () => {
-    const effect = added("0.10.0");
-    expect(isNew(effect, "0.10.0")).toBe(true);
-    expect(isNew(effect, "0.10.1")).toBe(false);
+  it("never labels the effects of the first public release", () => {
+    const effect: GalleryEffect = {
+      ...EFFECTS[0]!,
+      since: FIRST_PUBLIC_RELEASE,
+      released: "2026-12-01",
+    };
+    expect(isNew(effect, on(12, 2))).toBe(false);
+    for (const each of EFFECTS) expect(isNew(each, on(11, 24)), each.name).toBe(false);
+  });
+
+  it("has a release day written as YYYY-MM-DD for every effect", () => {
+    for (const effect of EFFECTS)
+      expect(effect.released, effect.name).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
 
 describe("labelsFor", () => {
-  const seasonal = (): GalleryEffect => ({ ...EFFECTS[0]!, since: "0.10.0", season: "christmas" });
+  const seasonal = (): GalleryEffect => ({
+    ...EFFECTS[0]!,
+    since: "0.10.0",
+    released: "2026-12-01",
+    season: "christmas",
+  });
 
   it("gives New first and the season second, at most two", () => {
-    const labels = labelsFor(seasonal(), { latest: "0.10.0", now: on(12, 15), showSeason: true });
+    const labels = labelsFor(seasonal(), { now: on(12, 15), showSeason: true });
     expect(labels).toEqual([
       { text: "New", tone: "new" },
       { text: "Christmas time", tone: "season" },
@@ -122,23 +142,27 @@ describe("labelsFor", () => {
   });
 
   it("leaves the season to the section when the tile is inside one", () => {
-    const labels = labelsFor(seasonal(), { latest: "0.10.0", now: on(12, 15), showSeason: false });
+    const labels = labelsFor(seasonal(), { now: on(12, 15), showSeason: false });
     expect(labels.map((label) => label.text)).toEqual(["New"]);
   });
 
-  it("drops the season label out of season, so it retires by itself", () => {
-    const labels = labelsFor(seasonal(), { latest: "0.10.0", now: on(7, 1), showSeason: true });
+  it("drops the season label out of season and New after 28 days, so both retire by themselves", () => {
+    const early = labelsFor(seasonal(), { now: on(12, 20), showSeason: true });
+    expect(early.map((label) => label.text)).toEqual(["New", "Christmas time"]);
+    const late = labelsFor(seasonal(), { now: on(1, 5), showSeason: true });
+    expect(late.map((label) => label.text)).toEqual(["Christmas time"]);
+    const labels = labelsFor(seasonal(), { now: on(12, 20), showSeason: false });
     expect(labels.map((label) => label.text)).toEqual(["New"]);
   });
 
   it("gives nothing for an old effect with no season", () => {
-    const effect: GalleryEffect = { ...EFFECTS[0]!, since: "0.8.0", season: undefined };
-    expect(labelsFor(effect, { latest: "0.10.0", now: on(12, 15), showSeason: true })).toEqual([]);
-  });
-
-  it("labels nothing while the build has no release number", () => {
-    const labels = labelsFor(EFFECTS[0]!, { latest: "0.0.0", now: on(7, 1), showSeason: false });
-    expect(labels).toEqual([]);
+    const effect: GalleryEffect = {
+      ...EFFECTS[0]!,
+      since: "0.8.0",
+      released: "2026-01-01",
+      season: undefined,
+    };
+    expect(labelsFor(effect, { now: on(12, 15), showSeason: true })).toEqual([]);
   });
 });
 
@@ -199,25 +223,25 @@ describe("metaLine and effectiveDate", () => {
 });
 
 describe("labelPreview", () => {
+  const today = on(11, 24);
+
   it("changes nothing without ?labels=demo", () => {
-    const preview = labelPreview("", EFFECTS, "0.10.0");
-    expect(preview).toEqual({ effects: EFFECTS, latest: "0.10.0", showSeason: false });
+    expect(labelPreview("", EFFECTS, today)).toEqual({ effects: EFFECTS, showSeason: false });
   });
 
-  it("marks the three newest effects as added in the latest release, and shows the season", () => {
-    const preview = labelPreview("?labels=demo", EFFECTS, "0.10.0");
-    const fresh = preview.effects.filter((effect) => isNew(effect, preview.latest));
+  it("marks the three newest effects as released today, and shows the season", () => {
+    const preview = labelPreview("?labels=demo", EFFECTS, today);
+    const fresh = preview.effects.filter((effect) => isNew(effect, today));
     expect(fresh.map((effect) => effect.name).sort()).toEqual([
       "Cell grid",
       "Dot matrix",
       "Frost cells",
     ]);
     expect(preview.showSeason).toBe(true);
-    expect(preview.latest).not.toBe("0.10.0");
   });
 
   it("does not change the real data", () => {
-    labelPreview("?labels=demo", EFFECTS, "0.10.0");
+    labelPreview("?labels=demo", EFFECTS, today);
     expect(EFFECTS.every((effect) => effect.since === FIRST_PUBLIC_RELEASE)).toBe(true);
   });
 });
