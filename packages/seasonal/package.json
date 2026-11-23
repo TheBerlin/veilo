@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/seasonal",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Seasonal loading animations drawn with text characters: snowflakes, frost and aurora for Christmas and New Year, with room for more seasons.",
   "type": "module",
