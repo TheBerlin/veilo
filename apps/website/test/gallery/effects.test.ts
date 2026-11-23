@@ -89,26 +89,32 @@ describe("isInSeason", () => {
 
 describe("isNew", () => {
   it("is true while the effect's release is the latest", () => {
-    expect(isNew(added("0.9.0"), "0.9.0")).toBe(true);
-    expect(isNew(added("0.8.0"), "0.9.0")).toBe(false);
+    expect(isNew(added("0.10.0"), "0.10.0")).toBe(true);
+    expect(isNew(added("0.8.0"), "0.10.0")).toBe(false);
   });
 
   it("never labels anything on the first public release, when everything is new", () => {
     expect(isNew(added(FIRST_PUBLIC_RELEASE), FIRST_PUBLIC_RELEASE)).toBe(false);
   });
 
+  it("labels none of the shipped effects as new, because they all arrived with the first public release", () => {
+    for (const effect of EFFECTS) {
+      expect(isNew(effect, FIRST_PUBLIC_RELEASE), effect.name).toBe(false);
+    }
+  });
+
   it("stops by itself at the next release", () => {
-    const effect = added("0.9.0");
-    expect(isNew(effect, "0.9.0")).toBe(true);
-    expect(isNew(effect, "0.9.1")).toBe(false);
+    const effect = added("0.10.0");
+    expect(isNew(effect, "0.10.0")).toBe(true);
+    expect(isNew(effect, "0.10.1")).toBe(false);
   });
 });
 
 describe("labelsFor", () => {
-  const seasonal = (): GalleryEffect => ({ ...EFFECTS[0]!, since: "0.9.0", season: "christmas" });
+  const seasonal = (): GalleryEffect => ({ ...EFFECTS[0]!, since: "0.10.0", season: "christmas" });
 
   it("gives New first and the season second, at most two", () => {
-    const labels = labelsFor(seasonal(), { latest: "0.9.0", now: on(12, 15), showSeason: true });
+    const labels = labelsFor(seasonal(), { latest: "0.10.0", now: on(12, 15), showSeason: true });
     expect(labels).toEqual([
       { text: "New", tone: "new" },
       { text: "Christmas time", tone: "season" },
@@ -116,18 +122,18 @@ describe("labelsFor", () => {
   });
 
   it("leaves the season to the section when the tile is inside one", () => {
-    const labels = labelsFor(seasonal(), { latest: "0.9.0", now: on(12, 15), showSeason: false });
+    const labels = labelsFor(seasonal(), { latest: "0.10.0", now: on(12, 15), showSeason: false });
     expect(labels.map((label) => label.text)).toEqual(["New"]);
   });
 
   it("drops the season label out of season, so it retires by itself", () => {
-    const labels = labelsFor(seasonal(), { latest: "0.9.0", now: on(7, 1), showSeason: true });
+    const labels = labelsFor(seasonal(), { latest: "0.10.0", now: on(7, 1), showSeason: true });
     expect(labels.map((label) => label.text)).toEqual(["New"]);
   });
 
   it("gives nothing for an old effect with no season", () => {
     const effect: GalleryEffect = { ...EFFECTS[0]!, since: "0.8.0", season: undefined };
-    expect(labelsFor(effect, { latest: "0.9.0", now: on(12, 15), showSeason: true })).toEqual([]);
+    expect(labelsFor(effect, { latest: "0.10.0", now: on(12, 15), showSeason: true })).toEqual([]);
   });
 
   it("labels nothing while the build has no release number", () => {
@@ -194,12 +200,12 @@ describe("metaLine and effectiveDate", () => {
 
 describe("labelPreview", () => {
   it("changes nothing without ?labels=demo", () => {
-    const preview = labelPreview("", EFFECTS, "0.8.0");
-    expect(preview).toEqual({ effects: EFFECTS, latest: "0.8.0", showSeason: false });
+    const preview = labelPreview("", EFFECTS, "0.10.0");
+    expect(preview).toEqual({ effects: EFFECTS, latest: "0.10.0", showSeason: false });
   });
 
   it("marks the three newest effects as added in the latest release, and shows the season", () => {
-    const preview = labelPreview("?labels=demo", EFFECTS, "0.8.0");
+    const preview = labelPreview("?labels=demo", EFFECTS, "0.10.0");
     const fresh = preview.effects.filter((effect) => isNew(effect, preview.latest));
     expect(fresh.map((effect) => effect.name).sort()).toEqual([
       "Cell grid",
@@ -207,11 +213,11 @@ describe("labelPreview", () => {
       "Frost cells",
     ]);
     expect(preview.showSeason).toBe(true);
-    expect(preview.latest).not.toBe("0.8.0");
+    expect(preview.latest).not.toBe("0.10.0");
   });
 
   it("does not change the real data", () => {
-    labelPreview("?labels=demo", EFFECTS, "0.8.0");
-    expect(EFFECTS.every((effect) => effect.since === "0.8.0")).toBe(true);
+    labelPreview("?labels=demo", EFFECTS, "0.10.0");
+    expect(EFFECTS.every((effect) => effect.since === FIRST_PUBLIC_RELEASE)).toBe(true);
   });
 });
