@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/element",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "description": "Web components for Veilo skeleton loaders and reveal animations, for plain HTML and any framework.",
   "type": "module",

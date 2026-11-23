@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/angular",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "description": "Angular standalone components and directives for Veilo skeleton loaders and reveal animations.",
   "type": "module",
