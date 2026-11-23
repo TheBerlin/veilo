@@ -73,15 +73,14 @@ describe("GalleryPreview", () => {
     expect(button.width).toBeCloseTo(tile.width, 0);
   });
 
-  it("every tile's link opens its own preset in the playground", () => {
+  it("shows three Coming soon cards, with nothing to open yet", () => {
     render(<GalleryPreview />);
-    const hrefs = screen
-      .getAllByRole("link", { name: "Open in Playground", hidden: true })
-      .map((link) => link.getAttribute("href"));
-    expect(hrefs).toEqual([
-      "/playground?preset=hex-from-center",
-      "/playground?preset=cascade-wave",
-      "/playground?preset=mosaic-from-edge",
-    ]);
+    const cards = screen.getAllByRole("article", { hidden: true });
+    expect(cards).toHaveLength(3);
+    for (const card of cards) {
+      expect(card.getAttribute("aria-label")).toBe("Coming soon");
+      expect(within(card).queryAllByRole("link", { hidden: true })).toHaveLength(0);
+      expect(within(card).queryAllByRole("button", { hidden: true })).toHaveLength(0);
+    }
   });
 });
