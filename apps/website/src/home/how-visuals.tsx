@@ -4,7 +4,6 @@
 import type { Reveal, RevealState } from "@veilo-ui/core";
 import { Button, CodeBlock, Scrubber } from "@veilo-ui/ui";
 import { useEffect, useState } from "react";
-import { ClipVisual } from "./clip-visual.tsx";
 import { DemoPlayer } from "./demo-player.tsx";
 import { HERO_SETTINGS } from "./hero-effect.ts";
 import styles from "./how-visuals.module.css";
@@ -123,7 +122,10 @@ export function MusicVisual(props: MusicVisualProps) {
 export function TuneVisual() {
   return (
     <div className={styles.panel}>
-      <DemoPlayer description="The Veilo playground: choosing a card layout, a preset and moving a slider, with the card replaying after each change." />
+      <DemoPlayer
+        name="playground"
+        description="The Veilo playground: choosing a card layout, a preset and moving a slider, with the card replaying after each change."
+      />
     </div>
   );
 }
@@ -162,7 +164,7 @@ export const EXPORT_INSTALL = "npm install @veilo-ui/react";
 export function ExportVisual() {
   return (
     <div className={styles.panel}>
-      <ClipVisual
+      <DemoPlayer
         name="export"
         description="The Veilo playground's Export drawer: choosing React from the format list and copying the code."
       />

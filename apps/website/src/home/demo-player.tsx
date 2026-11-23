@@ -4,8 +4,10 @@
 
 import { Button, Scrubber } from "@veilo-ui/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import demoPoster from "./assets/clips/playground-demo.jpg";
-import demoVideo from "./assets/clips/playground-demo.mp4";
+import exportPoster from "./assets/clips/export-demo.jpg";
+import exportVideo from "./assets/clips/export-demo.mp4";
+import playgroundPoster from "./assets/clips/playground-demo.jpg";
+import playgroundVideo from "./assets/clips/playground-demo.mp4";
 import styles from "./demo-player.module.css";
 import { useReducedMotion } from "./use-reduced-motion.ts";
 import { useSeen } from "./use-seen.ts";
@@ -51,8 +53,19 @@ function PlayPauseIcon(props: PlayPauseIconProps) {
   );
 }
 
+/** The demo videos there are. */
+export type DemoName = "playground" | "export";
+
+/** The file and still frame of each demo, and the title of its larger mode. */
+const DEMOS: Record<DemoName, { video: string; poster: string; title: string }> = {
+  playground: { video: playgroundVideo, poster: playgroundPoster, title: "Playground demo" },
+  export: { video: exportVideo, poster: exportPoster, title: "Export demo" },
+};
+
 /** Props of {@link DemoPlayer}. */
 export interface DemoPlayerProps {
+  /** Which demo video to play. */
+  name: DemoName;
   /** What the video shows, in words, for assistive technology. */
   description: string;
 }
@@ -66,11 +79,12 @@ export interface DemoPlayerProps {
  * Side effects: plays and pauses the video elements; runs an animation-frame loop while playing so
  * the timeline moves smoothly; the file is requested once the video is near view.
  *
- * @param props - The description.
+ * @param props - Which demo, and its description.
  * @returns The player's figure.
  */
 export function DemoPlayer(props: DemoPlayerProps) {
-  const { description } = props;
+  const { name, description } = props;
+  const demo = DEMOS[name];
   const reduced = useReducedMotion();
   const { ref, seen } = useSeen<HTMLElement>();
   const video = useRef<HTMLVideoElement | null>(null);
@@ -173,8 +187,8 @@ export function DemoPlayer(props: DemoPlayerProps) {
         <video
           ref={video}
           className={styles.media}
-          src={seen ? demoVideo : undefined}
-          poster={demoPoster}
+          src={seen ? demo.video : undefined}
+          poster={demo.poster}
           aria-label={description}
           muted
           loop
@@ -217,7 +231,7 @@ export function DemoPlayer(props: DemoPlayerProps) {
       <dialog
         ref={dialog}
         className={styles.dialog}
-        aria-label="Playground demo"
+        aria-label={demo.title}
         onClose={closed}
         // Esc would close at once; take it over so the closing animation plays.
         onCancel={(event) => {
@@ -234,8 +248,8 @@ export function DemoPlayer(props: DemoPlayerProps) {
             <video
               ref={largeVideo}
               className={styles.largeMedia}
-              src={demoVideo}
-              poster={demoPoster}
+              src={demo.video}
+              poster={demo.poster}
               aria-label={description}
               controls
               playsInline
