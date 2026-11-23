@@ -61,7 +61,11 @@ describe("Toaster", () => {
     const line = getComputedStyle(message);
     // A 2 px background strip, so Sonner's own pseudo-elements cannot replace it.
     expect(line.backgroundImage).toContain("linear-gradient");
-    expect(line.backgroundSize).toBe("100% 2px");
+    // The line starts at full width and has only just begun to shrink: a slow machine may read it a
+    // few milliseconds in (99.79% was seen), so the width is checked as "nearly full".
+    const [width, height] = line.backgroundSize.split(" ");
+    expect(height).toBe("2px");
+    expect(Number.parseFloat(width!)).toBeGreaterThan(95);
     expect(line.animationName).toContain("countdown");
     expect(line.animationDuration).toBe("8s");
     expect(line.animationTimingFunction).toBe("linear");
