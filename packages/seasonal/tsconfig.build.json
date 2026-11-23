@@ -1,0 +1,5 @@
+{
+  // For tsdown only: the published sources, so test helpers never reach the declaration step.
+  "extends": "./tsconfig.json",
+  "include": ["src"]
+}
