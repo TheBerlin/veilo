@@ -1,7 +1,7 @@
 /* The gallery page: 64 px below the header, 128 px above the footer, as the home page's sections. */
 .page {
   display: grid;
-  gap: var(--veilo-space-4);
+  gap: var(--veilo-space-8);
   padding-block: var(--veilo-space-8) var(--veilo-space-16);
 }
 
@@ -43,4 +43,108 @@
   margin: 0;
   color: var(--veilo-text-muted);
   font: var(--veilo-type-body-lg);
+}
+
+/* A section: its header, the count and sort row, and its tiles, 32 px apart. */
+.section {
+  display: grid;
+  gap: var(--veilo-space-4);
+}
+
+/* The header: the heading and its copy on the left, the flake-form switch on the right. */
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--veilo-space-4);
+}
+
+.sectionText {
+  display: grid;
+  gap: var(--veilo-space-1);
+  max-width: 35rem;
+}
+
+.sectionTitleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.sectionTitle {
+  margin: 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+/* The flake-form switch: label and bar on one row, and a note about its reach under them. */
+.shape {
+  display: grid;
+  justify-items: end;
+  gap: var(--veilo-space-1);
+}
+
+.shapeRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.shapeLabel {
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}
+
+.shapeNote {
+  max-width: 26rem;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  text-align: right;
+}
+
+/* The count on the left, the sort on the right. */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2);
+}
+
+/* The closing step: a line of copy and the way into the Playground. */
+.end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-4);
+}
+
+.endText {
+  display: grid;
+  gap: var(--veilo-space-1);
+  max-width: 40rem;
+}
+
+.endTitle {
+  margin: 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+@media (max-width: 900px) {
+  .sectionTitle {
+    font: var(--veilo-type-h3);
+  }
+
+  .shape {
+    justify-items: start;
+  }
+
+  .shapeNote {
+    text-align: left;
+  }
 }
