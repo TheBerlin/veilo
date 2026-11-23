@@ -566,6 +566,27 @@ describe("visibility", () => {
     expect(reveal.progress).toBeCloseTo(0.3, 10);
   });
 
+  it("holds a seeked frame when the card was off screen and comes on screen", async () => {
+    const { root, reveal, time } = setup();
+    place(root, false);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    // A card seeked while off screen, as a gallery tile resting on one frame of its effect.
+    reveal.seek(0.4);
+    await reveal.ready;
+    await flush();
+    expect(reveal.progress).toBeCloseTo(0.4, 10);
+    place(root, true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    time.advance(500);
+    // The frame is still the one seeked: showing the card did not set the reveal running.
+    expect(reveal.progress).toBeCloseTo(0.4, 10);
+    expect(reveal.state).toBe("revealing");
+    // resume() continues from it.
+    reveal.resume();
+    time.advance(100);
+    expect(reveal.progress).toBeGreaterThan(0.4);
+  });
+
   it("keeps a reveal you paused paused when it comes back on screen", async () => {
     const { root, reveal, time } = setup();
     place(root, true);

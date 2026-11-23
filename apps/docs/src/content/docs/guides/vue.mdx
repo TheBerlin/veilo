@@ -1,0 +1,100 @@
+---
+title: Vue
+description: Show a skeleton on a Vue 3 component while its data loads, then reveal it. Works in the Options API, script setup and render functions.
+---
+
+`@veilo-ui/vue` is a thin layer over the core engine and reads the same `data-veilo-slot` markup as every other Veilo package. It works with Vue 3.4 and later.
+
+## Install
+
+```sh
+npm install @veilo-ui/vue
+```
+
+Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`.
+
+## Reveal a component when its data arrives
+
+```vue
+<script setup lang="ts">
+import { Reveal } from "@veilo-ui/vue";
+import { computed } from "vue";
+
+const props = defineProps<{ product: Product | null }>(); // null while loading
+const shown = computed(() => props.product ?? PLACEHOLDER);
+</script>
+
+<template>
+  <Reveal as="article" class="card" :ready="product !== null" preset="dot-upscale">
+    <img data-veilo-slot="photo" :src="shown.image" :alt="shown.name" />
+    <h2 data-veilo-slot="title">{{ shown.name }}</h2>
+    <p data-veilo-slot="price">{{ shown.price }}</p>
+    <button data-veilo-slot="buy">
+      <span data-veilo-slot="label">Add to cart</span>
+    </button>
+  </Reveal>
+</template>
+```
+
+While `ready` is `false`, every slot shows the skeleton: text slots one bar per line, the image and button a solid block, and the container gets `aria-busy`. When `ready` turns `true`, the reveal plays once.
+
+**Render placeholder data while loading.** Veilo never sizes anything: the skeleton takes the size of your real elements. Rendering the same markup with placeholder text of a typical length, and an image of the real size, keeps the layout from shifting when the data arrives.
+
+### `Reveal` props
+
+| Prop            | Default  | What it does                                                                                                                            |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                            |
+| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"`. See the [effects](/effects/).                                        |
+| `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped. See the [reference](/reference/settings/). |
+| `layout`        | none     | Slot roles and bar hints, plus base settings. A `preset` replaces its settings; `settings` still apply on top.                          |
+| `revealOnMount` | `false`  | Play when `ready` is already `true` at mount.                                                                                           |
+| `as`            | `"div"`  | The container: `div`, `section`, `article`, `aside`, `figure`, `li` or `span`.                                                          |
+| `options`       | none     | Core options: `ink`, `fontFamily`, `reducedMotion` and others.                                                                          |
+
+The `complete` event fires each time a reveal finishes (`@complete="..."`). Any other attribute, such as `class`, `style`, `id` or `data-*`, goes to the container. Effect props are compared by value, so an inline `:settings="{ rDur: 2 }"` does not rebuild anything on each render.
+
+## A loader without a reveal
+
+```vue
+<Skeleton :loading="!user" effect="wave">
+  <h3 data-veilo-slot="name">{{ user?.name ?? "Placeholder name" }}</h3>
+  <p data-veilo-slot="bio">{{ user?.bio ?? "A short bio of about one line." }}</p>
+</Skeleton>
+
+<!-- One part, with no extra element: the child itself becomes the placeholder. -->
+<Skeleton :loading="!user" as-child effect="pulse">
+  <span class="avatar" aria-hidden="true" />
+</Skeleton>
+```
+
+`loading` is required: `true` shows the loader and `false` restores the elements exactly. `effect` is `"shimmer"`, `"wave"` or `"pulse"` and wins over `preset` and `settings`. `preset`, `settings`, `layout`, `as` and `options` work as on `Reveal`, and `asChild` puts the loader on the single child.
+
+## Control it yourself
+
+Bind the `el` that `useReveal` returns to the container, then call methods on `reveal`:
+
+```vue
+<script setup lang="ts">
+import { useReveal } from "@veilo-ui/vue";
+
+const { el, reveal, state } = useReveal({ preset: "matrix-columns" });
+</script>
+
+<template>
+  <div ref="el">
+    <img data-veilo-slot="photo" src="/photo.jpg" alt="" />
+    <button type="button" @click="reveal?.playSequence()">Replay ({{ state }})</button>
+  </div>
+</template>
+```
+
+`useReveal(config, options)` takes a config (a value, a ref or a getter) and returns `{ el, reveal, state }`. `reveal` is a `shallowRef` to the live core reveal, `null` before mount and after unmount, and `state` is a ref of its state. The composable starts nothing by itself.
+
+## Server rendering
+
+Nothing runs on the server: the effect is created after mount, in the browser. The server renders your plain markup, so Veilo causes no layout shift, but the skeleton appears when the page hydrates. React's package can render the skeleton in the server HTML; the Vue package does not yet.
+
+## Accessibility
+
+The container gets `aria-busy` while loading, placeholders are `aria-hidden`, and users who prefer reduced motion see the content at once.

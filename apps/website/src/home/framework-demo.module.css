@@ -1,0 +1,116 @@
+/* "Your framework": the switcher, the code of the chosen way in and a note. */
+.demo {
+  display: grid;
+  gap: var(--veilo-space-2);
+  width: 100%;
+  /* Wide enough for the longest example line, the CDN script tag, without scrolling. */
+  max-width: calc(var(--veilo-size-test-card) * 2 + var(--veilo-space-8));
+  min-width: 0;
+}
+
+/* The six choices. Below about 1100 px they may not fit one row (the frame is narrower than their
+   650 px), and wrapped rows push the code down by about 45 px each, so they stay in one row that
+   scrolls sideways. The sliding pill scrolls with them, as it sits inside the group. */
+.bar {
+  min-width: 0;
+}
+
+/* The bar spans the code panel under it, and the choices share its width, so it lines up with the
+   code at both edges and does not float in it. Where the choices scroll (small screens) there is no
+   spare width, so they keep their own. */
+.bar .switcher {
+  display: flex;
+  /* Border box, so the bar's own padding and border do not push it past the code panel's edges. */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.bar .switcher > [role="radio"] {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 1100px) {
+  .switcher {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .switcher::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Only when something runs past the edge: a fade there says there is more, and end padding lets
+     the last choice clear the fade when scrolled to the end. */
+  .bar[data-scrolls] .switcher {
+    padding-inline-end: var(--veilo-space-4);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      black calc(100% - var(--veilo-space-4)),
+      transparent
+    );
+    mask-image: linear-gradient(to right, black calc(100% - var(--veilo-space-4)), transparent);
+  }
+}
+
+/* Every panel sits in the same cell, so the cell is as tall as the tallest and the chosen one is
+   the only visible one. */
+.stack {
+  display: grid;
+  min-width: 0;
+}
+
+.panel {
+  display: grid;
+  grid-area: 1 / 1;
+  gap: var(--veilo-space-1);
+  align-content: start;
+  min-width: 0;
+  visibility: hidden;
+}
+
+.panel[data-chosen] {
+  visibility: visible;
+}
+
+.note {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* Where there is nothing to install, a line takes the install command's place, so the example does
+   not leave a gap under it. */
+.none {
+  margin: 0;
+  padding: var(--veilo-space-1) var(--veilo-space-2);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* Below about 1000 px the frame is too narrow for the longest example lines beside the Copy button,
+   and they would scroll sideways. The code block's own narrow layout (Copy above, lines wrapping)
+   starts at 900 px, a fixed design-system breakpoint; this band between 900 and 1000 px asks for the
+   same layout, by the block's data attribute, so a reader sees whole lines there too. */
+@media (max-width: 1000px) {
+  .stack [data-narrow="wrap"] {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--veilo-space-1);
+  }
+
+  .stack [data-narrow="wrap"] button {
+    order: -1;
+    align-self: flex-end;
+  }
+
+  .stack [data-narrow="wrap"] pre {
+    overflow-x: visible;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+}

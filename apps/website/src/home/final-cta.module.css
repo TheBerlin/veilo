@@ -1,0 +1,81 @@
+/* The final call to action: a panel with centered text and one button. 128 px below, like the other
+   sections, before the footer. */
+.section {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+/* The panel's own padding is the card's (32 px, the panel step); the copy sits in its middle. */
+.panel {
+  display: flex;
+  justify-content: center;
+}
+
+/* Hover: the panel grows 3% while the pointer is on it, like the hero's demo cards (same duration
+   and curve both ways). Real hover devices only; no scale under reduced motion. */
+@media (hover: hover) {
+  .panel {
+    transition: transform var(--veilo-duration-base) var(--veilo-ease-out);
+    will-change: transform;
+  }
+
+  .panel:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:hover {
+    transform: none;
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  padding-block: var(--veilo-space-4);
+  text-align: center;
+}
+
+.title {
+  max-width: 20ch;
+  margin: 0;
+  font: var(--veilo-type-h2);
+  letter-spacing: var(--veilo-type-h2-tracking);
+  text-wrap: balance;
+}
+
+.line {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body-lg);
+  text-wrap: balance;
+}
+
+/* A little more air before the button than between the lines above it. */
+.button {
+  margin-top: var(--veilo-space-2);
+}
+
+@media (max-width: 900px) {
+  .title {
+    font: var(--veilo-type-h2-mobile);
+    letter-spacing: var(--veilo-type-h2-mobile-tracking);
+  }
+
+  /* On a phone the button spans the panel, as the hero's buttons do. */
+  .copy {
+    align-items: stretch;
+  }
+
+  .copy .button {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .title,
+  .line {
+    align-self: center;
+  }
+}

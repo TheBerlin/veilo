@@ -5,6 +5,7 @@ import { StrictMode, useEffect, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Button,
+  Card,
   Chip,
   ChipGroup,
   ChipGroupItem,
@@ -16,6 +17,9 @@ import {
   CurveEditor,
   Grid,
   GridCell,
+  Badge,
+  Kbd,
+  Nav,
   Tabs,
   TabsContent,
   TabsList,
@@ -98,6 +102,58 @@ function Preview() {
               <Button iconOnly aria-label="Add, small" size="sm" icon={plus} />
               <Button iconOnly aria-label="Add" icon={plus} />
               <Button iconOnly aria-label="Add, large" size="lg" icon={plus} />
+            </div>
+          </Section>
+
+          <Section title="Nav (menu button at 900 px and below)">
+            <Nav
+              brand={<span>Veilo</span>}
+              brandLabel="Veilo home"
+              links={[
+                { label: "Playground", href: "#nav", current: true },
+                { label: "Gallery", href: "#nav" },
+                { label: "GitHub", href: "#nav" },
+              ]}
+              trailing={
+                <ChipGroup
+                  aria-label="Theme, in the nav"
+                  value={light ? "light" : "dark"}
+                  onValueChange={(value) => setLight(value === "light")}
+                  variant="segmented"
+                >
+                  <ChipGroupItem value="light">Light</ChipGroupItem>
+                  <ChipGroupItem value="dark">Dark</ChipGroupItem>
+                </ChipGroup>
+              }
+            />
+          </Section>
+
+          <Section title="Kbd">
+            <div className={styles.row}>
+              <Button size="sm" aria-keyshortcuts="r">
+                Replay <Kbd>R</Kbd>
+              </Button>
+              <Kbd>Esc</Kbd>
+              <Kbd>⌘</Kbd>
+            </div>
+          </Section>
+
+          <Section title="Badge">
+            <div className={styles.row}>
+              <Badge>How it works</Badge>
+              <Badge variant="solid">Coming soon</Badge>
+            </div>
+          </Section>
+
+          <Section title="Card">
+            <div className={styles.row}>
+              <Card as="article">Card: 16 px padding, flat</Card>
+              <Card as="article" raised>
+                Card, raised
+              </Card>
+              <Card as="article" size="panel">
+                Panel: 32 px padding
+              </Card>
             </div>
           </Section>
 

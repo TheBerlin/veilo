@@ -21,12 +21,18 @@ export type SettingEntry =
       readonly min: number;
       readonly max: number;
       readonly step: number;
+      /** A count: values are rounded to a whole number when read. */
+      readonly integer?: true;
     }
   | { readonly kind: "enum"; readonly default: string; readonly options: readonly string[] };
 
 /** A numeric setting: default plus the allowed range from the spec's control tables. */
 const num = (def: number, min: number, max: number, step: number) =>
   ({ kind: "number", default: def, min, max, step }) as const;
+
+/** A numeric setting that counts things, such as grid columns: read as a whole number. */
+const count = (def: number, min: number, max: number, step: number) =>
+  ({ kind: "number", default: def, min, max, step, integer: true }) as const;
 
 /** An enumerated setting: a fixed list of string options. */
 const choice = <const T extends readonly string[]>(options: T, def: T[number]) =>
@@ -41,7 +47,7 @@ export const SETTINGS_SPEC = {
   effect: choice(["shimmer", "wave", "pulse"], "shimmer"),
   lDur: num(1.2, 0.3, 4, 0.05),
   lGap: num(0.2, 0, 2, 0.05),
-  lEase: choice(EASING_KEYS, "out"),
+  lEase: choice(EASING_KEYS, "inOut"),
   lx1: num(0.22, 0, 1, 0.01),
   ly1: num(1, -0.6, 1.6, 0.01),
   lx2: num(0.36, 0, 1, 0.01),
@@ -55,7 +61,7 @@ export const SETTINGS_SPEC = {
   // Reveal tab: image
   imageFx: choice(["dots", "hex", "binary", "mosaic", "blur", "crossfade", "wipe", "zoom"], "dots"),
   origin: choice(["left", "right", "top", "bottom", "center", "diagonal", "random"], "left"),
-  cols: num(64, 16, 110, 2),
+  cols: count(64, 16, 110, 2),
   startScale: num(2.5, 1, 4, 0.1),
   spread: num(0.6, 0.1, 0.9, 0.05),
   // Reveal tab: text

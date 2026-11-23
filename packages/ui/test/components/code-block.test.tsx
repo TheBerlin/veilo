@@ -1,8 +1,9 @@
 // Tests for src/components/code-block.tsx, in Chromium with the real tokens and styles.
 
-import { act, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
 import { CodeBlock, COPIED_MS } from "../../src/components/code-block.tsx";
 
 const COMMAND = "pnpm add @veilo-ui/css";
@@ -75,5 +76,94 @@ describe("CodeBlock", () => {
     const block = screen.getByRole("button").parentElement as HTMLElement;
     expect(getComputedStyle(block).borderTopLeftRadius).toBe("16px");
     expect(getComputedStyle(screen.getByRole("button")).outlineStyle).toBe("solid");
+  });
+
+  describe("the Copy button's name", () => {
+    it("is just Copy when the block has no name", () => {
+      render(<CodeBlock code={COMMAND} />);
+      expect(screen.getByRole("button", { name: "Copy" }).getAttribute("aria-label")).toBeNull();
+    });
+
+    it("carries the block's name, so several blocks can be told apart", () => {
+      render(
+        <>
+          <CodeBlock code="one" aria-label="React example" />
+          <CodeBlock code="two" aria-label="React install command" />
+        </>,
+      );
+      expect(screen.getByRole("button", { name: "Copy React example" })).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Copy React install command" })).toBeTruthy();
+      // Both start with the visible word, so voice control can still say "Copy".
+      for (const button of screen.getAllByRole("button")) {
+        expect(button.textContent).toBe("Copy");
+        expect(button.getAttribute("aria-label")).toMatch(/^Copy /);
+      }
+    });
+
+    it("follows the button's state: Copied, and Press Ctrl+C when the clipboard is blocked", async () => {
+      vi.spyOn(navigator.clipboard, "writeText").mockResolvedValueOnce();
+      render(<CodeBlock code={COMMAND} aria-label="Install command" />);
+      await userEvent.click(screen.getByRole("button", { name: "Copy Install command" }));
+      expect(screen.getByRole("button", { name: "Copied Install command" })).toBeTruthy();
+      vi.restoreAllMocks();
+      vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(new Error("blocked"));
+      cleanup();
+      render(<CodeBlock code={COMMAND} aria-label="Install command" />);
+      await userEvent.click(screen.getByRole("button", { name: "Copy Install command" }));
+      expect(
+        screen.getByRole("button", { name: "Press Ctrl+C to copy Install command" }),
+      ).toBeTruthy();
+    });
+  });
+
+  describe("narrow", () => {
+    afterEach(async () => {
+      await page.viewport(414, 896);
+    });
+
+    /**
+     * Where the copy button and the code are, and how the code wraps.
+     *
+     * @param narrow - The prop to pass, if any.
+     * @returns The layout facts.
+     */
+    function layoutOf(narrow?: "scroll" | "wrap") {
+      render(<CodeBlock code={"a long line ".repeat(12)} narrow={narrow} aria-label="Example" />);
+      const pre = screen.getByLabelText("Example");
+      const copy = screen.getByRole("button", { name: /^Copy / });
+      return {
+        whiteSpace: getComputedStyle(pre).whiteSpace,
+        copyAbove: copy.getBoundingClientRect().bottom <= pre.getBoundingClientRect().top,
+        copySide: copy.getBoundingClientRect().left >= pre.getBoundingClientRect().right,
+        codeWidth: pre.getBoundingClientRect().width,
+        blockWidth: pre.parentElement!.getBoundingClientRect().width,
+      };
+    }
+
+    it("wrap: on a phone the button goes above the code, which wraps across the whole block", async () => {
+      await page.viewport(375, 800);
+      const layout = layoutOf("wrap");
+      expect(layout.whiteSpace).toBe("pre-wrap");
+      expect(layout.copyAbove).toBe(true);
+      // The code is the block's width less its padding, not narrowed by a button beside it.
+      expect(layout.codeWidth).toBeGreaterThan(layout.blockWidth - 40);
+    });
+
+    it("wrap: on a wide screen it still scrolls, with the button beside the code", async () => {
+      await page.viewport(1440, 900);
+      const layout = layoutOf("wrap");
+      expect(layout.whiteSpace).toBe("pre");
+      expect(layout.copySide).toBe(true);
+    });
+
+    it("scroll (the default): on a phone it keeps scrolling with the button beside the code", async () => {
+      await page.viewport(375, 800);
+      for (const narrow of [undefined, "scroll"] as const) {
+        const layout = layoutOf(narrow);
+        expect(layout.whiteSpace).toBe("pre");
+        expect(layout.copySide).toBe(true);
+        document.body.replaceChildren();
+      }
+    });
   });
 });

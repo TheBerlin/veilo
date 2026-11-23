@@ -1,0 +1,109 @@
+/* Demo frame content for "Why it's useful": the small things the two skeleton tiles show. Both use
+   the same placeholder item, so they share one look. */
+
+/* Labeled rows of placeholders. The sweep colors come from the frame (see why-useful.module.css);
+   the corners are the base radius. */
+.rows {
+  display: grid;
+  width: 100%;
+  /* As wide as the cards of the other tiles, so a full-width frame (on a small screen) does not
+     stretch the bars across it. */
+  max-width: calc(var(--veilo-size-test-card) + var(--veilo-space-4));
+  gap: var(--veilo-space-3);
+  --veilo-radius: var(--veilo-radius-base);
+}
+
+/* In a frame taller than the rows need (it is stretched to its neighbor's height, from 901 px) the
+   rows spread over it, between the first and last, and do not float in the middle with a band above
+   and below. On a phone the frame is as tall as its rows, so there is nothing to spread. */
+@media (min-width: 901px) {
+  .rows {
+    align-self: stretch;
+    align-content: space-between;
+  }
+}
+
+.row {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.label {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  /* A long line (the stylesheet import) wraps in a narrow frame instead of overflowing it. */
+  overflow-wrap: anywhere;
+}
+
+/* The placeholder: an avatar and two lines. */
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-2);
+}
+
+.avatar {
+  flex: none;
+  width: var(--veilo-size-card-thumb-sm);
+  height: var(--veilo-size-card-thumb-sm);
+  /* The stylesheet reads its corner radius from this property; its own rule outranks a plain
+     border-radius here. */
+  --veilo-radius: var(--veilo-radius-pill);
+}
+
+.lines {
+  display: grid;
+  flex: 1;
+  gap: var(--veilo-space-1);
+  min-width: 0;
+}
+
+.bar {
+  display: block;
+  height: var(--veilo-space-2);
+}
+
+.short {
+  width: 60%;
+}
+
+/* Still until asked. The section has one looping demo (the layout one), so these rows rest and a
+   row runs while the pointer is on it or focus is inside it. The package's own rule starts every
+   animation running, so this one is more specific. Where there is no hover (a phone), each row runs
+   twice instead and then rests. The package's reduced-motion rule still wins over both. */
+.rows .row :global(.veilo) {
+  animation-play-state: paused;
+}
+
+.rows .row:hover :global(.veilo),
+.rows .row:focus-within :global(.veilo) {
+  animation-play-state: running;
+}
+
+@media (hover: none) {
+  .rows .row :global(.veilo) {
+    animation-play-state: running;
+    animation-iteration-count: 2;
+  }
+}
+
+/* The hint under the rows says which of the two applies. */
+.hint {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintHover {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}

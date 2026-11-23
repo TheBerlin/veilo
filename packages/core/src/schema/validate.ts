@@ -2,6 +2,7 @@
 // Layer 0 (pure). Must not import DOM code.
 
 import { defaultSettings } from "./defaults.ts";
+import { SETTINGS_VERSION } from "./version.ts";
 import {
   COLOR_KEYS,
   COLOR_PATTERN,
@@ -17,6 +18,12 @@ export interface ParsedSettings {
   settings: Settings;
   /** Keys taken from the input, including clamped numbers. Its length is the spec's "N settings applied". */
   applied: (SettingKey | ColorKey)[];
+  /**
+   * The input's `version`, when it is newer than {@link SETTINGS_VERSION}. The input is still read
+   * (known keys are used, the rest ignored), but a newer format may mean something different, so
+   * a caller can warn that the file was made by a newer version of Veilo. Absent otherwise.
+   */
+  newerVersion?: number;
 }
 
 /**
@@ -29,8 +36,10 @@ export interface ParsedSettings {
 function readValue(entry: SettingEntry, value: unknown): number | string | undefined {
   if (entry.kind === "number") {
     if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
-    // Clamp only. Values stay off the step grid: the spec's own rDur default, 1.04, is off it.
-    return Math.min(entry.max, Math.max(entry.min, value));
+    // Clamp. Values stay off the step grid (the spec's own rDur default, 1.04, is off it), except
+    // counts such as grid columns, which are rounded to a whole number first.
+    const whole = "integer" in entry ? Math.round(value) : value;
+    return Math.min(entry.max, Math.max(entry.min, whole));
   }
   return typeof value === "string" && entry.options.includes(value) ? value : undefined;
 }
@@ -71,5 +80,10 @@ export function parseSettings(input: unknown): ParsedSettings {
     applied.push(key);
   }
 
-  return { settings, applied };
+  const result: ParsedSettings = { settings, applied };
+  const version = source.version;
+  if (typeof version === "number" && Number.isFinite(version) && version > SETTINGS_VERSION) {
+    result.newerVersion = version;
+  }
+  return result;
 }

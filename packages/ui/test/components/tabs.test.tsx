@@ -111,7 +111,10 @@ describe("Tabs", () => {
     await user.tab();
     const selected = getComputedStyle(screen.getByRole("tab", { name: "Loader" }));
     const other = getComputedStyle(screen.getByRole("tab", { name: "Reveal" }));
-    expect(selected.backgroundColor).toBe("rgb(38, 38, 44)");
+    // The selected tab is transparent; the sliding pill under it carries the fill.
+    const pill = getComputedStyle(screen.getByRole("tablist").querySelector("span[aria-hidden]")!);
+    expect(pill.backgroundColor).toBe("rgb(38, 38, 44)");
+    expect(selected.backgroundColor).toBe("rgba(0, 0, 0, 0)");
     expect(other.backgroundColor).toBe("rgba(0, 0, 0, 0)");
     expect(selected.outlineStyle).toBe("solid");
     expect(selected.height).toBe("40px");

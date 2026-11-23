@@ -67,6 +67,86 @@ describe("ChipGroup", () => {
     expect(onChange).toHaveBeenLastCalledWith("wave");
   });
 
+  it("by default an arrow key only moves focus: arrowing past an item does not choose it", async () => {
+    const onChange = vi.fn();
+    render(<Effects onChange={onChange} />);
+    screen.getByRole("radio", { name: "Shimmer" }).focus();
+    await userEvent.keyboard("{ArrowRight}{ArrowRight}");
+    expect(document.activeElement).toBe(screen.getByRole("radio", { name: "Pulse" }));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("radio", { name: "Shimmer" }).getAttribute("aria-checked")).toBe(
+      "true",
+    );
+  });
+
+  describe("followFocus", () => {
+    /**
+     * A controlled group that chooses on arrival, and reports each change.
+     *
+     * @param props - The change handler.
+     * @returns The group.
+     */
+    function Following(props: { onChange: (value: string) => void }) {
+      const [value, setValue] = useState("shimmer");
+      return (
+        <ChipGroup
+          aria-label="Effect"
+          value={value}
+          followFocus
+          onValueChange={(next) => {
+            setValue(next);
+            props.onChange(next);
+          }}
+        >
+          <ChipGroupItem value="shimmer">Shimmer</ChipGroupItem>
+          <ChipGroupItem value="wave">Wave</ChipGroupItem>
+          <ChipGroupItem value="pulse">Pulse</ChipGroupItem>
+        </ChipGroup>
+      );
+    }
+
+    /**
+     * The name of the chosen radio.
+     *
+     * @returns The names of the radios that are checked.
+     */
+    const chosen = () =>
+      screen
+        .getAllByRole("radio")
+        .filter((radio) => radio.getAttribute("aria-checked") === "true")
+        .map((radio) => radio.textContent);
+
+    it("an arrow key chooses the item it lands on, as a native radio group does", async () => {
+      const onChange = vi.fn();
+      render(<Following onChange={onChange} />);
+      screen.getByRole("radio", { name: "Shimmer" }).focus();
+      await userEvent.keyboard("{ArrowRight}");
+      expect(chosen()).toEqual(["Wave"]);
+      expect(onChange).toHaveBeenLastCalledWith("wave");
+      await userEvent.keyboard("{ArrowRight}");
+      expect(chosen()).toEqual(["Pulse"]);
+      await userEvent.keyboard("{ArrowLeft}");
+      // Exactly one is chosen throughout.
+      expect(chosen()).toEqual(["Wave"]);
+    });
+
+    it("Home and End choose the first and last", async () => {
+      render(<Following onChange={() => {}} />);
+      screen.getByRole("radio", { name: "Wave" }).focus();
+      await userEvent.keyboard("{End}");
+      expect(chosen()).toEqual(["Pulse"]);
+      await userEvent.keyboard("{Home}");
+      expect(chosen()).toEqual(["Shimmer"]);
+    });
+
+    it("focusing the chosen item changes nothing", () => {
+      const onChange = vi.fn();
+      render(<Following onChange={onChange} />);
+      screen.getByRole("radio", { name: "Shimmer" }).focus();
+      expect(onChange).not.toHaveBeenCalled();
+    });
+  });
+
   it("keeps the choice when the chosen item is pressed again", async () => {
     const onChange = vi.fn();
     render(<Effects onChange={onChange} />);
@@ -97,12 +177,45 @@ describe("ChipGroup", () => {
     };
     const group = screen.getByRole("radiogroup", { name: "Theme" });
     expect(style(group, props)).toEqual(style(screen.getByRole("tablist"), props));
-    const item = ["border-color", "background-color", "color"];
-    expect(style(screen.getByRole("radio", { name: "Light" }), item)).toEqual(
-      style(screen.getByRole("tab", { name: "A" }), item),
+    // The chosen chip is transparent; the sliding pill under it carries the tab's selected fill.
+    const pill = group.querySelector("span[aria-hidden]") as Element;
+    const fill = ["border-color", "background-color"];
+    const tabPill = screen.getByRole("tablist").querySelector("span[aria-hidden]") as Element;
+    expect(style(pill, fill)).toEqual(style(tabPill, fill));
+    expect(style(screen.getByRole("radio", { name: "Light" }), ["color"])).toEqual(
+      style(screen.getByRole("tab", { name: "A" }), ["color"]),
     );
+    const item = ["border-color", "background-color", "color"];
     expect(style(screen.getByRole("radio", { name: "Dark" }), item)).toEqual(
       style(screen.getByRole("tab", { name: "B" }), item),
     );
+  });
+
+  it("segmented: the pill sits under the chosen chip and follows a change", async () => {
+    function Bar() {
+      const [value, setValue] = useState("light");
+      return (
+        <ChipGroup aria-label="Theme" value={value} onValueChange={setValue} variant="segmented">
+          <ChipGroupItem value="light">Light</ChipGroupItem>
+          <ChipGroupItem value="dark">Dark</ChipGroupItem>
+        </ChipGroup>
+      );
+    }
+    render(<Bar />);
+    const group = screen.getByRole("radiogroup", { name: "Theme" });
+    const pill = group.querySelector("span[aria-hidden]") as HTMLElement;
+    const overlap = (chip: HTMLElement) => {
+      const a = pill.getBoundingClientRect();
+      const b = chip.getBoundingClientRect();
+      return (
+        Math.abs(a.left - b.left) < 1 &&
+        Math.abs(a.width - b.width) < 1 &&
+        Math.abs(a.top - b.top) < 1
+      );
+    };
+    expect(overlap(screen.getByRole("radio", { name: "Light" }))).toBe(true);
+    await userEvent.click(screen.getByRole("radio", { name: "Dark" }));
+    // Durations are 0 in tests, so the move is immediate.
+    await vi.waitFor(() => expect(overlap(screen.getByRole("radio", { name: "Dark" }))).toBe(true));
   });
 });

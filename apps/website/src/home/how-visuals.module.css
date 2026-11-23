@@ -1,0 +1,96 @@
+/* Visual: the live example, centered in its columns and straight on the page like the hero's card:
+   no panel of its own, so there is one surface under each example, not two. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* The card's slot: as tall as the music card's cover (2.5 x the thumbnail token), so the panel does
+   not change height when the card appears. */
+.slot {
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+  min-height: calc(var(--veilo-size-card-thumb) * 2.5);
+}
+
+/* Code blocks take the panel's width and never outgrow it; long lines scroll inside the block. */
+.code {
+  box-sizing: border-box;
+  align-self: stretch;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Scrubber row: the track takes the space, then the progress number and the Replay button. */
+.scrub {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: var(--veilo-space-2);
+}
+
+.scrub > :first-child {
+  flex: 1 1 auto;
+}
+
+.readout {
+  flex: 0 0 auto;
+  min-width: 9ch;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  font-variant-numeric: tabular-nums;
+  white-space: pre;
+}
+
+.note {
+  align-self: stretch;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* The row under the card changes between steps (Replay and the readout, then the scrubber); it comes
+   in with a short fade so the change is soft. */
+.row {
+  /* Both rows are as tall as a small control, so the card above does not move between steps. */
+  box-sizing: border-box;
+  min-height: var(--veilo-size-control-sm);
+  animation: row-in var(--veilo-duration-base) var(--veilo-ease-out) backwards;
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Status row under the card: the readout and Replay, centered, wrapping on a narrow screen. */
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--veilo-space-1) var(--veilo-space-1-5);
+}
+
+/* Narrow layout: the scrubber on its own row above the number and Replay. */
+@media (max-width: 900px) {
+  .scrub {
+    flex-wrap: wrap;
+  }
+
+  .scrub > :first-child {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    animation: none;
+  }
+}

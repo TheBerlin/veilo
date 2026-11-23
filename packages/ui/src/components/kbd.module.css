@@ -1,0 +1,16 @@
+/* Kbd: a keycap, a square of the icon size with a hairline outline and the mono face. */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+  padding: 0 var(--veilo-space-0-5);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-base);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  line-height: 1;
+  text-transform: uppercase;
+}

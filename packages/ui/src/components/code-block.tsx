@@ -12,7 +12,17 @@ export interface CodeBlockProps {
   code: string;
   /** Shows a `$` before the code, for one shell command. The `$` is not copied. */
   prompt?: boolean;
-  /** Names the block for screen readers, such as "Install command" or "Loader CSS". */
+  /**
+   * What a long line does on a narrow screen (900 px and below). `scroll` (default): it scrolls
+   * inside the block, next to the Copy button. `wrap`: the Copy button goes above the code, which
+   * takes the block's whole width and wraps. For examples a reader should see in full on a phone.
+   * On wider screens both scroll.
+   */
+  narrow?: "scroll" | "wrap";
+  /**
+   * Names the block for screen readers, such as "Install command" or "Loader CSS". The Copy button
+   * is named after it ("Copy Install command"), so several blocks on a page can be told apart.
+   */
   "aria-label"?: string;
   /** Extra class for the block. */
   className?: string;
@@ -20,6 +30,17 @@ export interface CodeBlockProps {
 
 /** The copy button's states. */
 type CopyState = "idle" | "copied" | "blocked";
+
+/**
+ * What the Copy button's accessible name says in each state, given the block's own name. It starts
+ * with the visible label, so a voice-control user can say what they see, and it ends with the block's
+ * name, so several blocks on a page can be told apart.
+ */
+const NAMES: Record<CopyState, (block: string) => string> = {
+  idle: (block) => `Copy ${block}`,
+  copied: (block) => `Copied ${block}`,
+  blocked: (block) => `Press Ctrl+C to copy ${block}`,
+};
 
 const LABELS: Record<CopyState, string> = {
   idle: "Copy",
@@ -33,11 +54,12 @@ const LABELS: Record<CopyState, string> = {
  * Ctrl+C" instead. Side effects: writes to the clipboard, changes the page selection when
  * blocked, and runs a timer that is cleared on unmount.
  *
- * @param props - The code, whether to show a prompt, and a label.
+ * @param props - The code, whether to show a prompt, what a long line does on a narrow screen, and
+ * a label.
  * @returns The block element.
  */
 export function CodeBlock(props: CodeBlockProps) {
-  const { code, prompt = false, className } = props;
+  const { code, prompt = false, narrow = "scroll", className } = props;
   const [state, setState] = useState<CopyState>("idle");
   const codeRef = useRef<HTMLElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -64,7 +86,7 @@ export function CodeBlock(props: CodeBlockProps) {
   }
 
   return (
-    <div className={[styles.block, className].filter(Boolean).join(" ")}>
+    <div className={[styles.block, className].filter(Boolean).join(" ")} data-narrow={narrow}>
       {/* Focusable, so keyboard users can scroll a long line. */}
       <pre className={styles.pre} tabIndex={0} aria-label={props["aria-label"]}>
         {prompt ? (
@@ -76,8 +98,17 @@ export function CodeBlock(props: CodeBlockProps) {
           {code}
         </code>
       </pre>
-      <button type="button" className={styles.copy} data-state={state} onClick={copy}>
-        {LABELS[state]}
+      <button
+        type="button"
+        className={styles.copy}
+        data-state={state}
+        onClick={copy}
+        aria-label={props["aria-label"] ? NAMES[state](props["aria-label"]) : undefined}
+      >
+        {/* Keyed by the state, so each new label mounts and plays its own entrance. */}
+        <span key={state} className={styles.label}>
+          {LABELS[state]}
+        </span>
       </button>
       <span className={styles.status} role="status">
         {state === "copied" ? "Copied to the clipboard" : state === "blocked" ? LABELS.blocked : ""}

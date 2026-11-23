@@ -1,0 +1,30 @@
+{
+  "name": "docs",
+  "private": true,
+  "description": "The Veilo docs: guides, the settings reference and every ready-made effect, built with Astro Starlight.",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-settings-reference.mjs && node scripts/generate-effect-pages.mjs && node scripts/generate-changelog.mjs",
+    "dev": "pnpm generate && astro dev",
+    "build": "pnpm generate && astro build",
+    "preview": "astro preview",
+    "typecheck": "tsc -p .",
+    "size": "node scripts/check-size.mjs",
+    "check:links": "node scripts/check-links.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.9",
+    "@astrojs/starlight": "^0.43.1",
+    "@fontsource/geist": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@veilo-ui/core": "workspace:*",
+    "@veilo-ui/presets": "workspace:*",
+    "@veilo-ui/react": "workspace:*",
+    "@veilo-ui/ui": "workspace:*",
+    "astro": "^7.2.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

@@ -1,0 +1,35 @@
+/* Readout: a state label and a thin progress bar, in the mono face. */
+.readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--veilo-space-1-5);
+  min-height: var(--veilo-space-3);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  font-variant-numeric: tabular-nums;
+  white-space: pre;
+}
+
+/* The label has a fixed width, so the bar does not move as the number changes. */
+.label {
+  min-width: 14ch;
+  text-align: right;
+}
+
+.bar {
+  position: relative;
+  width: var(--veilo-space-16);
+  height: 2px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: var(--veilo-border);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--veilo-text);
+}

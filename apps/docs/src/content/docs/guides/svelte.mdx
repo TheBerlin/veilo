@@ -1,0 +1,94 @@
+---
+title: Svelte
+description: Show a skeleton on a Svelte 5 component while its data loads, then reveal it, with components or actions. Works in Vite and SvelteKit.
+---
+
+`@veilo-ui/svelte` works with Svelte 5 (runes), in plain Vite apps and in SvelteKit, and reads the same `data-veilo-slot` markup as every other Veilo package. The logic lives in two Svelte actions, `reveal` and `skeleton`; the `Reveal` and `Skeleton` components are small wrappers over them.
+
+## Install
+
+```sh
+npm install @veilo-ui/svelte
+```
+
+Hex and binary grids draw their characters in IBM Plex Mono, which the package does not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`.
+
+## Reveal a component when its data arrives
+
+```svelte
+<script lang="ts">
+  import { Reveal } from "@veilo-ui/svelte";
+
+  let { product }: { product: Product | null } = $props(); // null while loading
+  const shown = $derived(product ?? PLACEHOLDER);
+</script>
+
+<Reveal as="article" class="card" ready={product !== null} preset="dot-upscale">
+  <img data-veilo-slot="photo" src={shown.image} alt={shown.name} />
+  <h2 data-veilo-slot="title">{shown.name}</h2>
+  <p data-veilo-slot="price">{shown.price}</p>
+  <button data-veilo-slot="buy">
+    <span data-veilo-slot="label">Add to cart</span>
+  </button>
+</Reveal>
+```
+
+While `ready` is `false`, every slot shows the skeleton: text slots one bar per line, the image and button a solid block, and the container gets `aria-busy`. When `ready` turns `true`, the reveal plays once.
+
+**Render placeholder data while loading.** Veilo never sizes anything: the skeleton takes the size of your real elements. Rendering the same markup with placeholder text of a typical length, and an image of the real size, keeps the layout from shifting when the data arrives.
+
+### `Reveal` props
+
+| Prop            | Default  | What it does                                                                                                                            |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `ready`         | required | `false` shows the skeleton; turning `true` plays the reveal; turning `false` again shows the skeleton again.                            |
+| `preset`        | none     | A built-in preset, such as `"dot-upscale"` or `"hex-from-center"`. See the [effects](/effects/).                                        |
+| `settings`      | none     | Settings to apply on top, such as `{ imageFx: "mosaic", rDur: 1.6 }`. Validated and clamped. See the [reference](/reference/settings/). |
+| `layout`        | none     | Slot roles and bar hints, plus base settings. A `preset` replaces its settings; `settings` still apply on top.                          |
+| `revealOnMount` | `false`  | Play when `ready` is already `true` at mount.                                                                                           |
+| `as`            | `"div"`  | The container: `div`, `section`, `article`, `aside`, `figure`, `li` or `span`.                                                          |
+| `options`       | none     | Core options: `ink`, `fontFamily`, `reducedMotion` and others.                                                                          |
+| `oncomplete`    | none     | Called each time a reveal finishes.                                                                                                     |
+
+Any other attribute, such as `class`, `style`, `id` or `data-*`, goes to the container. Effect props are compared by value, so an inline `settings={{ rDur: 2 }}` does not rebuild anything on each update.
+
+## A loader without a reveal
+
+```svelte
+<Skeleton loading={!user} effect="wave">
+  <h3 data-veilo-slot="name">{user?.name ?? "Placeholder name"}</h3>
+  <p data-veilo-slot="bio">{user?.bio ?? "A short bio of about one line."}</p>
+</Skeleton>
+```
+
+`loading` is required: `true` shows the loader and `false` restores the elements exactly. `effect` is `"shimmer"`, `"wave"` or `"pulse"` and wins over `preset` and `settings`. `preset`, `settings`, `layout`, `as` and `options` work as on `Reveal`, and `self` makes the element itself one solid placeholder.
+
+## The actions
+
+Put an action on any element when you do not want a wrapper element, or to wrap one part:
+
+```svelte
+<script lang="ts">
+  import { reveal, skeleton } from "@veilo-ui/svelte";
+</script>
+
+<!-- The element is the container. -->
+<article use:reveal={{ ready: product !== null, preset: "matrix-columns" }}>…</article>
+
+<!-- One part, with no extra element: the element itself becomes the placeholder. -->
+<span
+  class="avatar"
+  aria-hidden="true"
+  use:skeleton={{ loading: !user, self: true, effect: "pulse" }}
+></span>
+```
+
+`reveal` takes the same options as the `Reveal` component. `skeleton` takes `loading`, `effect`, `preset`, `settings`, `layout`, `self` and `options`. When the parameters change, the effect is rebuilt only if it really changed. When the element goes away, both restore it exactly.
+
+## Server rendering and SvelteKit
+
+Actions do not run on the server, so nothing is created there: the server renders your plain markup, and the effect starts in the browser after mount. Veilo causes no layout shift, but the skeleton appears when the page hydrates. React's package can render the skeleton in the server HTML; the Svelte package does not yet.
+
+## Accessibility
+
+The container gets `aria-busy` while loading, placeholders are `aria-hidden`, and users who prefer reduced motion see the content at once.

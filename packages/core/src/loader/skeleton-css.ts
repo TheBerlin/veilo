@@ -8,8 +8,8 @@ import type { Settings } from "../schema/types.ts";
 import { generateLoaderCss } from "./css-generator.ts";
 
 // The Veilo design system's light skeleton colors, used when the page defines no --veilo-base or --veilo-hi.
-const DEFAULT_BASE = "var(--veilo-base, #dcdcdc)";
-const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f7f7f7)";
+const DEFAULT_BASE = "var(--veilo-base, #d4d4d4)";
+const DEFAULT_HIGHLIGHT = "var(--veilo-hi, #f8f8f8)";
 
 /** Where a bar's mask layers sit: their vertical position and repeat. */
 interface BarPlacement {

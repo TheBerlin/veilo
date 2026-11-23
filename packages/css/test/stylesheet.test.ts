@@ -33,8 +33,8 @@ describe("skeleton.css", () => {
   });
 
   it("reads colors and radius from custom properties with fallbacks", () => {
-    expect(committed).toContain("var(--veilo-base, #dcdcdc)");
-    expect(committed).toContain("var(--veilo-hi, #f7f7f7)");
+    expect(committed).toContain("var(--veilo-base, #d4d4d4)");
+    expect(committed).toContain("var(--veilo-hi, #f8f8f8)");
     expect(committed).toContain("border-radius: var(--veilo-radius, 6px);");
     expect(committed).not.toMatch(/border-radius: \d/);
   });

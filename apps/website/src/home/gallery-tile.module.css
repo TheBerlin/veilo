@@ -1,0 +1,91 @@
+/* A gallery tile: a card holding a frame with the demo, the effect's name, its badges and a link. */
+.tile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1);
+  align-content: start;
+  height: 100%;
+}
+
+/* The frame: a media area inside the card, so it takes the base radius (the card's 24 is the 8
+   plus its 16 of padding). It is a button: pressing it plays the effect. */
+.frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0;
+  padding: var(--veilo-space-2);
+  border: 0;
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+  color: var(--veilo-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* The placeholders here read the same properties as the benefits section's frames: the base is the
+     border color nudged toward the strong border and the highlight is the strong border, so the
+     skeleton can be seen on the surface. */
+  --veilo-base: color-mix(in srgb, var(--veilo-border) 60%, var(--veilo-border-strong));
+  --veilo-hi: var(--veilo-border-strong);
+}
+
+.frame:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+/* At rest the engine's skeleton stands still: its animation is held at the start, so the bars are
+   plain. Playing releases it. */
+.frame[data-rest] :global([data-veilo-skeleton]) {
+  animation-play-state: paused !important;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1);
+  align-content: center;
+  width: 100%;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  border-radius: var(--veilo-radius-base);
+}
+
+.title {
+  margin: var(--veilo-space-0-5) 0 0;
+  font: var(--veilo-type-label);
+}
+
+.meta {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* The name: 16 px under the frame, as the design asks. */
+.name {
+  margin: var(--veilo-space-1) 0 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--veilo-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile > a,
+.tile > :last-child {
+  justify-self: start;
+  margin-top: var(--veilo-space-1);
+}

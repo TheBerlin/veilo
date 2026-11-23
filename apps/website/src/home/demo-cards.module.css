@@ -1,0 +1,99 @@
+/* Video tile: 320 px wide (the design token), never wider than its column. Spacing, type and
+   colors are tokens. */
+.card {
+  display: grid;
+  gap: var(--veilo-space-1-5);
+  width: var(--veilo-size-test-card);
+  max-width: 100%;
+  text-align: left;
+}
+
+/* Thumbnail: the picture with the video's length laid over its bottom-right corner. */
+.thumb {
+  position: relative;
+}
+
+/* Picture: media inside a card uses the base radius. Its ratio is set inline. */
+.photo {
+  display: block;
+  width: 100%;
+  border-radius: var(--veilo-radius-base);
+}
+
+.duration {
+  position: absolute;
+  right: var(--veilo-space-1);
+  bottom: var(--veilo-space-1);
+  display: inline-flex;
+  align-items: center;
+  height: var(--veilo-size-badge);
+  padding: 0 var(--veilo-space-1);
+  border-radius: var(--veilo-radius-base);
+  background: color-mix(in srgb, var(--veilo-bg) 82%, transparent);
+  color: var(--veilo-text);
+  font: var(--veilo-type-label-sm);
+  font-variant-numeric: tabular-nums;
+  transition: opacity var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+/* The live card hides the badge until the reveal is done (other users of the view never set the
+   attribute, so they always show it). */
+.card[data-revealed="false"] .duration {
+  opacity: 0;
+}
+
+/* Details row: the avatar lines up with the first line of the title; the "more" button sits at
+   the end. */
+.videoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--veilo-space-1-5);
+}
+
+.stack {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--veilo-space-0-5);
+  min-width: 0;
+}
+
+/* Text parts are blocks, so rise and other transforms apply to them. */
+.title {
+  display: block;
+  margin: 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.meta {
+  display: block;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* Avatar: a round block, 40 px, with the channel's initials. */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--veilo-size-card-thumb-sm);
+  height: var(--veilo-size-card-thumb-sm);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label-sm);
+}
+
+.more {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--veilo-text-muted);
+}
+
+.more svg {
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+}

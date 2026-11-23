@@ -1,0 +1,21 @@
+{
+  "file": {
+    "format": "veilo-presets",
+    "version": 1,
+    "presets": [
+      { "name": "Calm hex", "settings": { "imageFx": "hex", "rDur": 1.6, "lDur": 99 } },
+      {
+        "name": "A name that is much longer than the forty characters a preset may have",
+        "settings": {}
+      },
+      { "name": "", "settings": {} },
+      { "name": "No settings object" },
+      "not an object"
+    ]
+  },
+  "expected": {
+    "names": ["Calm hex", "A name that is much longer than the fort"],
+    "firstChanges": { "imageFx": "hex", "rDur": 1.6, "lDur": 4 },
+    "skipped": 3
+  }
+}

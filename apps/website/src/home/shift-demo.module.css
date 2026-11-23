@@ -1,0 +1,301 @@
+/* "Layout stays put": one card with a divider. The Veilo layer sits in the flow and sets the size;
+   the typical layer lies over it, clipped to the left of the divider. */
+.compare {
+  display: grid;
+  gap: var(--veilo-space-1);
+  width: min(100%, calc(var(--veilo-size-test-card) + var(--veilo-space-8) + var(--veilo-space-4)));
+}
+
+/* With the notes beside the card (the wide layout, below) the card is 352 px, which leaves room
+   for them. Where they sit under it there is no one to leave room for, so the card takes more of
+   its frame, and the lead tile's side bands shrink. */
+@media (min-width: 1214px) {
+  .compare {
+    width: min(100%, calc(var(--veilo-size-test-card) + var(--veilo-space-4)));
+  }
+}
+
+/* The two names, over the two sides: plain text at the card's edges. */
+.captions {
+  display: grid;
+  /* The two names at the card's edges, the Pause button between them, centered. */
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-label-sm);
+}
+
+/* The names sit in the outer columns, whether or not the Pause button is there. */
+.captionLeft {
+  grid-column: 1;
+}
+
+.captionRight {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.pause {
+  grid-column: 2;
+}
+
+/* The card's area: a press anywhere moves the divider; a vertical swipe still scrolls the page. */
+.area {
+  position: relative;
+  touch-action: pan-y;
+  cursor: ew-resize;
+  user-select: none;
+  /* Where the divider is, in percent of the width. */
+  --split: 50%;
+}
+
+.layer {
+  min-width: 0;
+  /* Veilo's layer shows only what is right of the divider, so the two layers never overlap: where
+     both drew the same edge, a hairline of this one's showed past the other's. */
+  clip-path: inset(0 0 0 var(--split));
+}
+
+/* The typical layer: over the Veilo layer, showing only what is left of the divider. */
+.before {
+  position: absolute;
+  inset: 0;
+  background: var(--veilo-card);
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
+}
+
+.stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-2);
+  align-content: start;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1);
+  align-content: start;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  border-radius: var(--veilo-radius-base);
+}
+
+.title {
+  margin: var(--veilo-space-0-5) 0 0;
+  font: var(--veilo-type-label);
+}
+
+.meta {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* The typical loader's placeholder: a plain box the size of the photo. The text under the photo is
+   not reserved. */
+.placeholder {
+  aspect-ratio: 2 / 1;
+  border-radius: var(--veilo-radius-base);
+  /* The same gray as Veilo's skeleton, so the two meet at the divider without a seam. */
+  background: var(--veilo-base);
+}
+
+/* The neighbour that must stay put. */
+.buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--veilo-size-test-card-button);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label);
+}
+
+/* The guide: a hairline across the whole card at the top edge of the button's resting place. Veilo's
+   button sits on it all the time; the typical loader's starts above it and drops onto it when its
+   text lands, so the jump reads as a distance and not as a torn button. */
+.guide {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--veilo-size-test-card-button);
+  height: 0;
+  border-top: 1px solid var(--veilo-border-strong);
+  pointer-events: none;
+}
+
+/* The divider: a line the height of the area in the accent color, and a handle on it. */
+.divider {
+  position: absolute;
+  /* Sticks out of the card by half a step, short of the Pause button above it. */
+  inset-block: calc(var(--veilo-space-0-5) * -1);
+  left: var(--split);
+  width: 2px;
+  margin-left: -1px;
+  background: var(--veilo-accent);
+  pointer-events: none;
+}
+
+.handle {
+  position: absolute;
+  top: 50%;
+  left: var(--split);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--veilo-size-control-sm);
+  height: var(--veilo-size-control-md);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  cursor: ew-resize;
+  transform: translate(-50%, -50%);
+}
+
+.handle:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+/* Three short bars, the grip of the handle. */
+.grip {
+  width: var(--veilo-size-icon-sm);
+  height: var(--veilo-size-icon-sm);
+  background: linear-gradient(
+    to right,
+    transparent 0 calc(25% - 1px),
+    currentcolor calc(25% - 1px) calc(25% + 1px),
+    transparent calc(25% + 1px) calc(50% - 1px),
+    currentcolor calc(50% - 1px) calc(50% + 1px),
+    transparent calc(50% + 1px) calc(75% - 1px),
+    currentcolor calc(75% - 1px) calc(75% + 1px),
+    transparent calc(75% + 1px)
+  );
+}
+
+/* The wrapper the notes are placed against: the card's area. */
+.wrap {
+  position: relative;
+}
+
+/* The hint under the card says how to compare. Where there is no hover (a phone) it says swipe. It
+   is only for the narrow layout: with the notes beside the card, the handle speaks for itself. */
+.hint {
+  margin: var(--veilo-space-1) 0 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.hintTouch {
+  display: none;
+}
+
+@media (hover: none) {
+  .hintMouse {
+    display: none;
+  }
+
+  .hintTouch {
+    display: inline;
+  }
+}
+
+/* The notes, narrow: plain text in two columns under the card, lined up with the card's two halves:
+   the typical loader's problem on the left and Veilo's answer on the right, a row for each part,
+   with a hairline above each. Boxes would look like buttons here, where they sit right under the
+   card. A press on them does not move the divider. */
+.notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--veilo-space-2);
+  margin: var(--veilo-space-1) 0 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.note {
+  display: flex;
+  align-items: stretch;
+  padding-block: var(--veilo-space-1);
+  border-top: 1px solid var(--veilo-border);
+}
+
+.tag {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  font: var(--veilo-type-caption);
+  text-wrap: balance;
+}
+
+.leader {
+  display: none;
+}
+
+/* The notes, wide: beside the card, each at the part it is about, with a short line to it. This is
+   from the viewport width at which the frame is at least 760 px wide: the card, and about 190 px
+   on each side for a tag. The two rows are spread evenly about the card's vertical center, so the
+   tags read as a pair of problem and answer on each side. */
+@media (min-width: 1214px) {
+  .hint {
+    display: none;
+  }
+
+  .notes {
+    display: block;
+    margin: 0;
+  }
+
+  .note {
+    position: absolute;
+    align-items: center;
+    top: 36%;
+    width: max-content;
+    padding-block: 0;
+    border-top: 0;
+    transform: translateY(-50%);
+  }
+
+  .note[data-row="button"] {
+    top: 64%;
+  }
+
+  .note[data-side="problem"] {
+    right: calc(100% + var(--veilo-space-1));
+  }
+
+  .note[data-side="solution"] {
+    left: calc(100% + var(--veilo-space-1));
+    flex-direction: row-reverse;
+  }
+
+  /* A problem is an outlined tag; its answer is a solid one, so the two read apart without color. */
+  .tag {
+    display: flex;
+    align-items: center;
+    width: auto;
+    max-width: calc(var(--veilo-size-test-card) / 2);
+    padding: var(--veilo-space-0-5) var(--veilo-space-1);
+    border: 1px solid var(--veilo-border-strong);
+    border-radius: var(--veilo-radius-base);
+    font: var(--veilo-type-label-sm);
+  }
+
+  .note[data-side="solution"] .tag {
+    border-color: var(--veilo-accent);
+    background: var(--veilo-accent);
+    color: var(--veilo-on-accent);
+  }
+
+  .leader {
+    display: block;
+    width: var(--veilo-space-3);
+    height: 1px;
+    background: var(--veilo-border-strong);
+  }
+}

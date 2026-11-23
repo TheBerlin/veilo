@@ -66,19 +66,19 @@ const reveal = createReveal(
 
 **Methods and properties**
 
-| Member                   | What it does                                                                                                      |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `play()`                 | Plays the reveal from `p = 0`. Resolves `true` at the end, `false` if another call or `destroy()` interrupts it.  |
-| `pause()`, `resume()`    | Pause and continue. A paused reveal stays paused when it scrolls back into view.                                  |
-| `seek(p)`                | Stops playback and shows the exact frame at `p`. At `p = 1` the real content shows.                               |
-| `showLoading()`          | Stops everything and shows the skeleton.                                                                          |
-| `redraw()`               | Reads the ink color again and redraws the current frame, without changing playback. Call it after a theme change. |
-| `playSequence({ loop })` | Loading for `hold` seconds, then the reveal. With `loop`, it starts again 900 ms after the end.                   |
-| `on(event, listener)`    | Events: `progress` (with `p`), `state` (with the new state) and `complete`. Returns an unsubscribe function.      |
-| `destroy()`              | Cancels frames, timers and observers, removes canvases, overlays and styles, and restores the page.               |
-| `state`                  | `"idle"`, `"loading"`, `"revealing"` or `"revealed"`.                                                             |
-| `progress`               | The current progress, from 0 to 1.                                                                                |
-| `ready`                  | Resolves once the image is sampled. Never rejects; a broken image is shown as it is.                              |
+| Member                   | What it does                                                                                                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `play()`                 | Plays the reveal from `p = 0`. Resolves `true` at the end, `false` if another call or `destroy()` interrupts it.                                                  |
+| `pause()`, `resume()`    | Pause and continue. A paused reveal stays paused when it scrolls back into view.                                                                                  |
+| `seek(p)`                | Stops playback and shows the exact frame at `p`, and holds it (also when the element scrolls into view); `resume()` continues. At `p = 1` the real content shows. |
+| `showLoading()`          | Stops everything and shows the skeleton.                                                                                                                          |
+| `redraw()`               | Reads the ink color again and redraws the current frame, without changing playback. Call it after a theme change.                                                 |
+| `playSequence({ loop })` | Loading for `hold` seconds, then the reveal. With `loop`, it starts again 900 ms after the end.                                                                   |
+| `on(event, listener)`    | Events: `progress` (with `p`), `state` (with the new state) and `complete`. Returns an unsubscribe function.                                                      |
+| `destroy()`              | Cancels frames, timers and observers, removes canvases, overlays and styles, and restores the page.                                                               |
+| `state`                  | `"idle"`, `"loading"`, `"revealing"` or `"revealed"`.                                                                                                             |
+| `progress`               | The current progress, from 0 to 1.                                                                                                                                |
+| `ready`                  | Resolves once the image is sampled. Never rejects; a broken image is shown as it is.                                                                              |
 
 The image is sampled once and cached; frames only draw. It is sampled again when it resizes by 2 px or more, when the glyph font finishes loading, and when its picture changes (a `src` set after `createReveal`, as when data arrives later, or a late load); a `play()` started meanwhile keeps the skeleton until the new picture is sampled, and `ready` resolves again. Playback pauses while the elements are off screen or the tab is hidden.
 
@@ -185,8 +185,8 @@ Options: `selector` (default `.skeleton`), fallback `base` and `highlight` color
 
 | Custom property | Used for                                                                                       |
 | --------------- | ---------------------------------------------------------------------------------------------- |
-| `--veilo-base`  | Skeleton base color (default `#dcdcdc`; the Veilo dark theme uses `#171717`)                   |
-| `--veilo-hi`    | Skeleton highlight color (default `#f7f7f7`; the Veilo dark theme uses `#262626`)              |
+| `--veilo-base`  | Skeleton base color (default `#d4d4d4`; the Veilo dark theme uses `#26262c`)                   |
+| `--veilo-hi`    | Skeleton highlight color (default `#f8f8f8`; the Veilo dark theme uses `#33333a`)              |
 | `--veilo-ink`   | Dots and characters of the grid effects                                                        |
 | `--veilo-bg-a`  | Set on the button during a reveal; use it in the button's background to fade it with its label |
 
@@ -234,7 +234,7 @@ Importing either entry touches no browser globals, so both are safe in server co
 The specification sketches `createReveal(container, { image: {}, text: {}, duration, easing })` and a `presets` export. The current API follows it with a container, and differs in these points:
 
 - The container's parts are found from `data-veilo-slot` markup, and explicit targets are accepted too.
-- Settings are the flat object that the playground exports. Grouped `image` and `text` options are an open decision.
+- Settings are the flat object that the playground exports. This is the final form: a grouped `image` and `text` input could be added later as an alternative that maps onto it, but the flat object is what the format promises.
 - Presets will come in their own package.
 - `createSkeleton` uses `start()` and `stop()` as sketched, and adds `destroy()`.
 

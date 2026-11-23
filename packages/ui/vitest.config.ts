@@ -6,7 +6,7 @@ import pkg from "./package.json" with { type: "json" };
 
 // Component tests need a real DOM, focus and CSS, so they run in headless Chromium.
 // Token tests are plain data and stay in Node.
-const BROWSER_TESTS = ["test/components/**/*.test.tsx"];
+const BROWSER_TESTS = ["test/components/**/*.test.tsx", "test/theme/**/*.test.ts"];
 
 export default defineProject({
   plugins: [react()],
@@ -29,6 +29,8 @@ export default defineProject({
             "@testing-library/react",
             "@testing-library/user-event",
             ...Object.keys(pkg.dependencies).filter((name) => name.startsWith("@radix-ui/")),
+            "vaul",
+            "sonner",
           ],
         },
         test: {

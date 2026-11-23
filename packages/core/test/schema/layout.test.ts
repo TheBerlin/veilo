@@ -60,6 +60,26 @@ describe("parseLayout", () => {
     expect(layout.slots).toEqual({ a: {}, b: {}, c: {} });
   });
 
+  it("reports a newer layout version, or newer settings inside it, and still reads the layout", () => {
+    const newerLayout = parseLayout({
+      version: LAYOUT_VERSION + 1,
+      settings: { imageFx: "mosaic" },
+      slots: { photo: { role: "image" } },
+    });
+    expect(newerLayout.newerVersion).toBe(LAYOUT_VERSION + 1);
+    expect(newerLayout.version).toBe(LAYOUT_VERSION);
+    expect(newerLayout.slots.photo).toEqual({ role: "image" });
+    expect(newerLayout.settings.imageFx).toBe("mosaic");
+    expect(parseLayout({ settings: { version: 9 }, slots: {} }).newerVersion).toBe(9);
+    expect(parseLayout({ version: 3, settings: { version: 9 } }).newerVersion).toBe(9);
+  });
+
+  it("reports nothing for a current, older or missing version", () => {
+    expect("newerVersion" in parseLayout({ version: LAYOUT_VERSION, settings: {} })).toBe(false);
+    expect("newerVersion" in parseLayout({ settings: {}, slots: {} })).toBe(false);
+    expect("newerVersion" in parseLayout({})).toBe(false);
+  });
+
   it("accepts every role", () => {
     for (const role of SLOT_ROLES)
       expect(parseLayout({ slots: { x: { role } } }).slots.x).toEqual({ role });

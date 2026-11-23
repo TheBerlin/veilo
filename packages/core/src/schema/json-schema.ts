@@ -18,7 +18,11 @@ export function settingsJsonSchema(): Record<string, unknown> {
   const settings = Object.entries(SETTINGS_SPEC).map(([key, entry]) => {
     const shape =
       entry.kind === "number"
-        ? { type: "number", minimum: entry.min, maximum: entry.max }
+        ? {
+            type: "integer" in entry ? "integer" : "number",
+            minimum: entry.min,
+            maximum: entry.max,
+          }
         : { type: "string", enum: entry.options };
     return [key, { ...shape, default: entry.default }];
   });

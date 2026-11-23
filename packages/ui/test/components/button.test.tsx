@@ -3,6 +3,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { userEvent as realUser } from "vitest/browser";
 import { Button } from "../../src/components/button.tsx";
 
 const icon = <svg aria-hidden="true" viewBox="0 0 24 24" />;
@@ -96,4 +97,57 @@ describe("Button", () => {
     expect(link.getAttribute("type")).toBeNull();
     expect(getComputedStyle(link).height).toBe("44px");
   });
+
+  it("shows the pressed look with data-pressed, as for a real press, and not when disabled", () => {
+    render(
+      <>
+        <Button data-testid="rest">Rest</Button>
+        <Button data-testid="pressed" data-pressed="true">
+          Pressed
+        </Button>
+        <Button data-testid="disabled" data-pressed="true" disabled>
+          Disabled
+        </Button>
+      </>,
+    );
+    expect(getComputedStyle(screen.getByTestId("rest")).transform).toBe("none");
+    expect(getComputedStyle(screen.getByTestId("pressed")).transform).toBe(
+      "matrix(1, 0, 0, 1, 0, 1)",
+    );
+    expect(getComputedStyle(screen.getByTestId("disabled")).transform).toBe("none");
+  });
+
+  it.each(["primary", "secondary", "ghost"] as const)(
+    "%s: a pressed button looks like a hovered one, pressed down by 1 px",
+    async (variant) => {
+      render(
+        <>
+          <Button variant={variant} data-testid="hovered">
+            Hover me
+          </Button>
+          <Button variant={variant} data-testid="pressed" data-pressed="true">
+            Pressed
+          </Button>
+          <Button variant={variant} data-testid="rest">
+            Rest
+          </Button>
+        </>,
+      );
+      const look = (id: string) => {
+        const computed = getComputedStyle(screen.getByTestId(id));
+        return ["border-top-color", "background-color", "color", "opacity"].map((name) =>
+          computed.getPropertyValue(name),
+        );
+      };
+      const rest = look("rest");
+      // A real pointer over the button, so the browser applies :hover.
+      await realUser.hover(screen.getByTestId("hovered"));
+      expect(look("hovered")).toEqual(look("pressed"));
+      // The hover effect is real: it differs from the resting look.
+      expect(look("hovered")).not.toEqual(rest);
+      expect(getComputedStyle(screen.getByTestId("pressed")).transform).toBe(
+        "matrix(1, 0, 0, 1, 0, 1)",
+      );
+    },
+  );
 });

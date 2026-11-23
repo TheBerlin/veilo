@@ -1,0 +1,71 @@
+/* The gallery toolbar: the search box, the filter rows, then the count and the clear button. */
+.toolbar {
+  display: grid;
+  gap: var(--veilo-space-2);
+}
+
+/* The search box is six of the twelve columns on a wide screen, and the full width on a phone. */
+.search {
+  max-width: calc(50% - var(--veilo-space-1));
+}
+
+/* A row: its label, then its chips, wrapping. */
+.rows {
+  display: grid;
+  gap: var(--veilo-space-1);
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--veilo-space-2);
+}
+
+/* The label has a fixed width, so the chips of the three rows start on one line. */
+.label {
+  flex: none;
+  box-sizing: border-box;
+  width: var(--veilo-space-8);
+  padding-block: var(--veilo-space-1);
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.chips {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--veilo-space-1);
+  min-width: 0;
+}
+
+/* The count at the left, the clear button at the right. */
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-2);
+}
+
+.count {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+@media (max-width: 900px) {
+  .search {
+    max-width: none;
+  }
+
+  /* On a phone the label sits above its chips, so the chips get the whole width. */
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .label {
+    width: auto;
+    padding-block: 0 var(--veilo-space-1);
+  }
+}

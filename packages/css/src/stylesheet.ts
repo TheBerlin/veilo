@@ -11,8 +11,8 @@ export const STYLESHEET_CLASS = "veilo";
 export const STYLESHEET_EFFECTS = ["shimmer", "wave", "pulse"] as const;
 
 // The Veilo design system's light skeleton colors, the same fallbacks createSkeleton uses.
-const BASE = "var(--veilo-base, #dcdcdc)";
-const HIGHLIGHT = "var(--veilo-hi, #f7f7f7)";
+const BASE = "var(--veilo-base, #d4d4d4)";
+const HIGHLIGHT = "var(--veilo-hi, #f8f8f8)";
 
 /**
  * Builds the text of skeleton.css. Pure: the same output on every call.

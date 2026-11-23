@@ -1,0 +1,7 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // astro/client declares CSS Module imports; the JSX runtime is React's,
+  // for the islands.
+  "compilerOptions": { "jsx": "react-jsx", "types": ["astro/client"] },
+  "include": ["src/components"]
+}

@@ -1,0 +1,16 @@
+{
+  "input": {
+    "version": 1,
+    "effect": "glow",
+    "lDur": 99,
+    "lGap": -5,
+    "cols": "64",
+    "imageFx": "mosaic",
+    "unknownKey": 1,
+    "baseColor": "#FFF",
+    "highlightColor": "#AABBCC",
+    "__proto__": { "polluted": true }
+  },
+  "expectedChanges": { "lDur": 4, "lGap": 0, "imageFx": "mosaic", "highlightColor": "#AABBCC" },
+  "expectedApplied": ["lDur", "lGap", "imageFx", "highlightColor"]
+}

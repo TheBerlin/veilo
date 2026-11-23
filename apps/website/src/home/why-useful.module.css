@@ -1,0 +1,92 @@
+/* Why it's useful: a centered heading, then four tiles. 128 px below, like the other sections. */
+.section {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font: var(--veilo-type-h2);
+  letter-spacing: var(--veilo-type-h2-tracking);
+  text-wrap: balance;
+}
+
+/* A tile: the demo frame, then the title and the caption 8 px below. A tile fills its row's
+   height, and the frame takes what the title and caption leave, so the two tiles of a row end
+   on the same line. */
+.tile {
+  display: grid;
+  /* One column that may shrink, so a demo's own width (a canvas) cannot widen the tile. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(auto, 1fr) auto auto;
+  gap: var(--veilo-space-1);
+  height: 100%;
+}
+
+.frame {
+  /* An explicit width: with a minimum height and an aspect ratio, an auto width would grow to
+     match the height. */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+  /* The placeholders in every demo (the CSS package's classes and the engine's own skeleton read
+     these properties) are set well above the package's faint defaults, so a sweep and the lines of
+     a skeleton can be seen on the card surface: the base is the border color nudged toward the
+     strong border (about 1.9:1 against the frame, in both themes) and the highlight is the strong
+     border itself (3.5:1 in dark, 4.2:1 in light). */
+  --veilo-base: color-mix(in srgb, var(--veilo-border) 60%, var(--veilo-border-strong));
+  --veilo-hi: var(--veilo-border-strong);
+  /* Not clipped: a frame whose demo needs more height than its ratio gives grows, instead of cutting
+     the demo off (an aspect-ratio box with overflow set would not grow). */
+}
+
+/* A wide tile's frame is as tall as its demo needs, and never shorter than a card with its name and
+   a button. The narrow tile beside it stretches to the same height. */
+@media (min-width: 1214px) {
+  .tile[data-wide] .frame {
+    min-height: calc(var(--veilo-size-test-card) + var(--veilo-space-8));
+  }
+}
+
+.tileTitle {
+  margin: var(--veilo-space-1) 0 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+.caption {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body);
+  /* A caption that wraps breaks into even lines, not one word on the second. */
+  text-wrap: balance;
+}
+
+/* Two tiles in a row are forced to one height, so a caption that wraps to two lines (a narrow tile's
+   often does) would take a line from its frame and leave the two frames ending 24 px apart. Every
+   caption reserves two lines wherever tiles sit side by side, so the frames end on one line. */
+@media (min-width: 901px) {
+  .caption {
+    min-height: 2lh;
+  }
+}
+
+@media (max-width: 900px) {
+  .title {
+    font: var(--veilo-type-h2-mobile);
+    letter-spacing: var(--veilo-type-h2-mobile-tracking);
+  }
+}

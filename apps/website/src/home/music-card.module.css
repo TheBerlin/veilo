@@ -1,0 +1,122 @@
+/* Music card: wide, with the cover flush against the left edge. The card has no padding of its
+   own; its radius clips the cover, and the body carries the padding. The cover is a fixed
+   square (2.5 x the 64 px thumbnail token = 160 px); the body is as tall as the cover. */
+.card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  width: calc(var(--veilo-size-test-card) * 1.5);
+  max-width: 100%;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+}
+
+.cover {
+  display: block;
+  width: calc(var(--veilo-size-card-thumb) * 2.5);
+  height: 100%;
+  object-fit: cover;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: var(--veilo-space-2) var(--veilo-space-3);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--veilo-space-1);
+}
+
+.titles {
+  min-width: 0;
+}
+
+.track {
+  display: block;
+  margin: 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.artist {
+  display: block;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+/* Timeline: a thin track with the played part filled, and the time at its end. */
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-1-5);
+}
+
+.progress {
+  display: block;
+  flex: 1 1 auto;
+  height: var(--veilo-space-0-5);
+  border-radius: var(--veilo-radius-pill);
+  background: linear-gradient(to right, var(--veilo-text) 22%, var(--veilo-border-strong) 22%);
+}
+
+.time {
+  flex: 0 0 auto;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Controls: five icons spread across the row. */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control {
+  display: inline-flex;
+  color: var(--veilo-text);
+}
+
+.control svg {
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+}
+
+/* Play: the one filled control, a round 44 px button, so the primary action is clear. */
+.play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--veilo-size-control-md);
+  height: var(--veilo-size-control-md);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+}
+
+.play svg {
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+}
+
+/* Narrow layout: a smaller cover (1.75 x the thumbnail token = 112 px, kept square by the row
+   height) and tighter padding. The time stays, so the player still says where it is. */
+@media (max-width: 900px) {
+  .cover {
+    width: calc(var(--veilo-size-card-thumb) * 1.75);
+  }
+
+  .body {
+    gap: var(--veilo-space-1);
+    padding: var(--veilo-space-1-5) var(--veilo-space-2);
+  }
+}

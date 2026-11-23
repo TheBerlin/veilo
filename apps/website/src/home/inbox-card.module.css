@@ -1,0 +1,165 @@
+/* Inbox card: 480 px wide (1.5 x the card token), never wider than its column. The filter chips
+   sit above a list of message rows. Rows have no fill of their own; the first one shows the hover
+   fill, as if the pointer were on it. */
+/* The one grid column may shrink below its content: without minmax(0, 1fr), the no-wrap text of
+   the rows sets the column's minimum width and the card overflows a narrow screen. */
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1-5);
+  width: calc(var(--veilo-size-test-card) * 1.5);
+  max-width: 100%;
+  text-align: left;
+}
+
+/* Filters: chips side by side; the first is chosen (inverted, like a pressed chip). */
+.filters {
+  display: flex;
+  gap: var(--veilo-space-1);
+  overflow: hidden;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--veilo-space-0-5);
+  flex: 0 0 auto;
+  height: var(--veilo-size-chip);
+  padding: 0 var(--veilo-space-1-5);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+  font: var(--veilo-type-label-sm);
+  white-space: nowrap;
+}
+
+.chipOn {
+  border-color: var(--veilo-accent);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+}
+
+.chip svg {
+  width: var(--veilo-size-icon-sm);
+  height: var(--veilo-size-icon-sm);
+}
+
+/* List: the rows, with a small gap between them. */
+.list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li {
+  display: flex;
+  min-width: 0;
+  gap: var(--veilo-space-1-5);
+  padding: var(--veilo-space-1-5);
+  border-radius: var(--veilo-radius-base);
+}
+
+/* The hovered row, as if the pointer were on the first message: a tint of the text color, a step
+   lighter or darker than the skeleton bars, so the bars still
+   show on it while the list loads. */
+.list > li:first-child {
+  background: color-mix(in srgb, var(--veilo-text) 8%, transparent);
+}
+
+/* Avatar: a round block with the sender's initial, 40 px. */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--veilo-size-card-thumb-sm);
+  height: var(--veilo-size-card-thumb-sm);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* A line: text on the left, a short item (date, dot, star) at the end. */
+.line {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-1);
+}
+
+.from,
+.subject,
+.preview {
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.from {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: var(--veilo-type-label-sm);
+}
+
+.subject {
+  font: var(--veilo-type-label-sm);
+}
+
+.preview {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.date {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* Unread: a dot, and the subject keeps full weight and color. Read mail is muted. */
+.dot {
+  flex: 0 0 auto;
+  width: var(--veilo-space-1);
+  height: var(--veilo-space-1);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-text);
+}
+
+.read .from,
+.read .subject {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+.star {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--veilo-text-muted);
+}
+
+.star svg {
+  width: var(--veilo-size-icon-md);
+  height: var(--veilo-size-icon-md);
+}
+
+/* Very narrow screens: the third chip would be cut off by the card's edge, so it is left out. */
+@media (max-width: 359px) {
+  .filters > :nth-child(3) {
+    display: none;
+  }
+}

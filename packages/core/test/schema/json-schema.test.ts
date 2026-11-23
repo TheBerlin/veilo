@@ -21,10 +21,20 @@ describe("settingsJsonSchema", () => {
     for (const [key, entry] of Object.entries(SETTINGS_SPEC)) {
       expect(properties[key]).toEqual(
         entry.kind === "number"
-          ? { type: "number", minimum: entry.min, maximum: entry.max, default: entry.default }
+          ? {
+              type: "integer" in entry ? "integer" : "number",
+              minimum: entry.min,
+              maximum: entry.max,
+              default: entry.default,
+            }
           : { type: "string", enum: entry.options, default: entry.default },
       );
     }
+  });
+
+  it("describes the grid columns as an integer and the other numbers as numbers", () => {
+    expect(properties.cols?.type).toBe("integer");
+    expect(properties.lDur?.type).toBe("number");
   });
 
   it("describes the colors and the version", () => {

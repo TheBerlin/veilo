@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=website",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/playground", "destination": "/index.html" },
+    { "source": "/gallery", "destination": "/index.html" }
+  ]
+}

@@ -27,16 +27,16 @@ The file is generated from the default settings, so it always matches the core e
 
 | Custom property  | Default   | Veilo dark theme | Used for          |
 | ---------------- | --------- | ---------------- | ----------------- |
-| `--veilo-base`   | `#dcdcdc` | `#171717`        | Placeholder color |
-| `--veilo-hi`     | `#f7f7f7` | `#262626`        | Highlight band    |
+| `--veilo-base`   | `#d4d4d4` | `#26262c`        | Placeholder color |
+| `--veilo-hi`     | `#f8f8f8` | `#33333a`        | Highlight band    |
 | `--veilo-radius` | `6px`     |                  | Corner radius     |
 
 The stylesheet does not switch colors with the system theme, because a page's own theme may differ from it. Set the properties where your page sets its theme:
 
 ```css
 [data-theme="dark"] {
-  --veilo-base: #171717;
-  --veilo-hi: #262626;
+  --veilo-base: #26262c;
+  --veilo-hi: #33333a;
 }
 ```
 
@@ -62,12 +62,12 @@ When the content arrives, replace the placeholders and drop `aria-busy` in the s
 
 **Contrast.** Placeholders are meant to be quiet. The default colors are low contrast against the Veilo backgrounds (WCAG contrast ratios):
 
-| Pair                        | Light (`#dcdcdc`, `#f7f7f7`) | Dark (`#171717`, `#262626`) |
+| Pair                        | Light (`#d4d4d4`, `#f8f8f8`) | Dark (`#26262c`, `#33333a`) |
 | --------------------------- | ---------------------------- | --------------------------- |
-| Base on page (`bg`)         | 1.21 on `#f1f1f1`            | 1.15 on `#030303`           |
-| Base on card                | 1.11 on `#e7e7e7`            | 1.08 on `#0d0d0d`           |
-| Base on white               | 1.37                         |                             |
-| Highlight band against base | 1.28                         | 1.18                        |
+| Base on page (`bg`)         | 1.31 on `#f1f1f3`            | 1.20 on `#16161a`           |
+| Base on card                | 1.21 on `#e8e8eb`            | 1.12 on `#1d1d22`           |
+| Base on white               | 1.48                         |                             |
+| Highlight band against base | 1.40                         | 1.20                        |
 
 WCAG's 3:1 for non-text contrast covers graphics needed to understand the content. Hidden placeholders are not such graphics, so these values are allowed, but they can look faint, most of all on a card in dark mode. If the bars are hard to see on your background, darken `--veilo-base` in light themes or lighten it in dark themes, and keep `--veilo-hi` a step beyond it so the sweep stays visible.
 

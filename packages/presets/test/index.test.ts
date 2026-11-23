@@ -12,7 +12,8 @@ const SPEC: Record<string, Record<string, unknown>> = {
     effect: "shimmer",
     lDur: 1.2,
     lGap: 0.2,
-    lEase: "out",
+    // The spec says "out". The loader default became "inOut" in the freeze review (D4).
+    lEase: "inOut",
     repeat: "loop",
     angle: 100,
     lWidth: 30,

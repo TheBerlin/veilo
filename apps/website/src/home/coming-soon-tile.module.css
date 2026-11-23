@@ -1,0 +1,63 @@
+/* A "Coming soon" tile: the size and rhythm of a gallery tile, with still bars in place of an effect. */
+.tile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1);
+  align-content: start;
+  height: 100%;
+}
+
+/* The frame: same square media area as a gallery tile's, holding a resting card of bars. */
+.frame {
+  display: grid;
+  align-content: center;
+  gap: var(--veilo-space-1);
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: var(--veilo-space-2);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+}
+
+/* Bars: the skeleton colors of the playground's frames, standing still. */
+.photo,
+.bar {
+  display: block;
+  border-radius: var(--veilo-radius-base);
+  background: color-mix(in srgb, var(--veilo-border) 60%, var(--veilo-border-strong));
+}
+
+.photo {
+  aspect-ratio: 16 / 10;
+}
+
+.bar {
+  height: var(--veilo-space-1-5);
+}
+
+.long {
+  width: 90%;
+}
+
+.short {
+  width: 65%;
+}
+
+.name {
+  margin: var(--veilo-space-1) 0 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.text {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+  letter-spacing: var(--veilo-type-caption-tracking);
+}
+
+.badge {
+  justify-self: start;
+  margin-top: var(--veilo-space-1);
+}

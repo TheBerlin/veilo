@@ -1,0 +1,66 @@
+/* "Reduced motion": a card, a switch and a line, in the narrow frame. */
+.demo {
+  display: grid;
+  gap: var(--veilo-space-2);
+  width: 100%;
+  max-width: calc(var(--veilo-size-test-card) + var(--veilo-space-4));
+  min-width: 0;
+}
+
+/* In a frame stretched to its neighbor's height (from 901 px) the label, the card, the controls and
+   the line spread over it, and do not float in the middle with a band above and below, as the
+   CSS-only rows do. On a phone the frame is as tall as its content. */
+@media (min-width: 901px) {
+  .demo {
+    align-self: stretch;
+    align-content: space-between;
+  }
+}
+
+.label {
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-code);
+  /* Wraps in a narrow frame instead of overflowing it. */
+  overflow-wrap: anywhere;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--veilo-space-1);
+  align-content: start;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  border-radius: var(--veilo-radius-base);
+}
+
+.title {
+  margin: var(--veilo-space-0-5) 0 0;
+  font: var(--veilo-type-label);
+}
+
+.meta {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* The switch and the Play button, on one row. */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--veilo-space-1) var(--veilo-space-2);
+}
+
+/* What the switch does, in words that change with it. Two lines are always reserved. */
+.explain {
+  min-height: calc(var(--veilo-space-2) * 2.5);
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}

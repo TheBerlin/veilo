@@ -16,19 +16,19 @@ Tune an effect with live controls, scrub it frame by frame, and export it as CSS
 
 ## Packages
 
-| Package             | Status   | Purpose                                                                                                                                                                                                                   |
-| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@veilo-ui/core`    | 0.7.0    | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md))                                                                                                         |
-| `@veilo-ui/css`     | 0.7.0    | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                                                                                                                               |
-| `@veilo-ui/presets` | 0.7.0    | The named presets as typed data ([README](packages/presets/README.md))                                                                                                                                                    |
-| `@veilo-ui/react`   | 0.7.0    | React components: `Reveal`, `Skeleton` and `useReveal`, with server rendering ([README](packages/react/README.md))                                                                                                        |
-| `@veilo-ui/vue`     | 0.7.0    | Vue 3 components `Reveal` and `Skeleton` and a `useReveal` composable, typed for script setup ([README](packages/vue/README.md))                                                                                          |
-| `@veilo-ui/svelte`  | 0.7.0    | Svelte 5 components `Reveal` and `Skeleton` and the `reveal` and `skeleton` actions ([README](packages/svelte/README.md))                                                                                                 |
-| `@veilo-ui/angular` | 0.7.0    | Angular 20 to 22 standalone components and directives, running outside the zone ([README](packages/angular/README.md))                                                                                                    |
-| `@veilo-ui/element` | 0.7.0    | Web components `<veilo-reveal>` and `<veilo-skeleton>`, and a one-file CDN bundle for plain HTML ([README](packages/element/README.md))                                                                                   |
-| `@veilo-ui/ui`      | internal | Design tokens and React components for the playground and website (never published)                                                                                                                                       |
-| `playground`        | staging  | The online tool ([staging site](https://veilo-playground.vercel.app)): test card with five layouts, image source and ratio, transport bar, presets of your own, share links, curve editor, code for every package, themes |
-| Planned             | —        | Docs and website                                                                                                                                                                                                          |
+| Package             | Status      | Purpose                                                                                                                                                                                                                      |
+| ------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@veilo-ui/core`    | 0.7.0       | Effects engine: settings schema, easing, grid sampling, renderers, controller ([README](packages/core/README.md))                                                                                                            |
+| `@veilo-ui/css`     | 0.7.0       | CSS-only loaders: a ready stylesheet and a CSS generator ([README](packages/css/README.md))                                                                                                                                  |
+| `@veilo-ui/presets` | 0.7.0       | The named presets as typed data ([README](packages/presets/README.md))                                                                                                                                                       |
+| `@veilo-ui/react`   | 0.7.0       | React components: `Reveal`, `Skeleton` and `useReveal`, with server rendering ([README](packages/react/README.md))                                                                                                           |
+| `@veilo-ui/vue`     | 0.7.0       | Vue 3 components `Reveal` and `Skeleton` and a `useReveal` composable, typed for script setup ([README](packages/vue/README.md))                                                                                             |
+| `@veilo-ui/svelte`  | 0.7.0       | Svelte 5 components `Reveal` and `Skeleton` and the `reveal` and `skeleton` actions ([README](packages/svelte/README.md))                                                                                                    |
+| `@veilo-ui/angular` | 0.7.0       | Angular 20 to 22 standalone components and directives, running outside the zone ([README](packages/angular/README.md))                                                                                                       |
+| `@veilo-ui/element` | 0.7.0       | Web components `<veilo-reveal>` and `<veilo-skeleton>`, and a one-file CDN bundle for plain HTML ([README](packages/element/README.md))                                                                                      |
+| `@veilo-ui/ui`      | internal    | Design tokens and React components for the playground and website (never published)                                                                                                                                          |
+| `playground`        | staging     | The online tool ([staging site](https://veilo-playground.vercel.app)): test card with five layouts, image source and ratio, transport bar, presets of your own, share links, curve editor, code for every package, themes    |
+| `docs`              | in progress | The docs ([Astro Starlight](https://starlight.astro.build/)): getting started, concepts, a guide per framework, the generated settings reference and an effects page for every preset, with live previews (not deployed yet) |
 
 ```ts
 import { createReveal } from "@veilo-ui/core";
@@ -59,10 +59,10 @@ docs/       SPEC.md, the product specification
 
 ```powershell
 pnpm install
-pnpm --filter playground dev     # run the playground
+pnpm --filter website dev     # run the website (home and playground)
 pnpm test                        # all tests
 pnpm lint; pnpm typecheck; pnpm build
-pnpm --filter playground visual  # screenshot tests in Docker (see CONTRIBUTING.md)
+pnpm --filter website visual  # screenshot tests in Docker (see CONTRIBUTING.md)
 ```
 
 Browser tests need Chromium once per machine: `pnpm --filter @veilo-ui/core exec playwright install chromium`.

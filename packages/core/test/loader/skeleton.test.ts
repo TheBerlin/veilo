@@ -64,7 +64,7 @@ describe("createElementSkeleton", () => {
   it("falls back to the light theme colors when the page defines none", () => {
     const { elements } = card();
     createElementSkeleton(elements, { effect: "pulse" }).start();
-    expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(220, 220, 220)");
+    expect(getComputedStyle(elements[1]!).backgroundColor).toBe("rgb(212, 212, 212)");
   });
 
   it("follows --veilo-base when the page defines it", () => {
@@ -100,7 +100,7 @@ describe("createElementSkeleton", () => {
     expect(style.opacity).toBe("1");
     // Still a placeholder: hidden text on the base color.
     expect(style.color).toBe("rgba(0, 0, 0, 0)");
-    expect(style.backgroundColor).toBe("rgb(220, 220, 220)");
+    expect(style.backgroundColor).toBe("rgb(212, 212, 212)");
   });
 
   it("animates whatever the preference when reduced motion is forced off", () => {
@@ -185,7 +185,7 @@ describe("createElementSkeleton", () => {
     root.append(line);
     createElementSkeleton([line], { effect: "pulse" }, { root }).start();
     expect(root.querySelector("style")).not.toBeNull();
-    expect(getComputedStyle(line).backgroundColor).toBe("rgb(220, 220, 220)");
+    expect(getComputedStyle(line).backgroundColor).toBe("rgb(212, 212, 212)");
   });
 });
 

@@ -1,0 +1,132 @@
+/* Variant A: no space above (the hero ends with 128 px) and 128 px below, like the section it
+   would replace. */
+.section {
+  padding-block: 0 var(--veilo-space-16);
+}
+
+/* Steps: the page's 12 columns again inside the full-width cell. The list has two rows (the text,
+   then the example); each column spans both and takes them over with a subgrid, so the three
+   examples start on one line whatever the length of the text above them. The rail is the list's
+   top edge: a hairline that draws from left to right once. */
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--veilo-grid-desktop-columns), minmax(0, 1fr));
+  grid-template-rows: auto 1fr;
+  column-gap: var(--veilo-grid-desktop-gutter);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--veilo-border-strong);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform calc(var(--veilo-duration-slow) * 2) var(--veilo-ease-out);
+}
+
+.steps[data-seen]::before {
+  transform: scaleX(1);
+}
+
+.column {
+  position: relative;
+  display: grid;
+  grid-column: span 4;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: var(--veilo-space-4);
+  padding-top: var(--veilo-space-4);
+}
+
+/* The node: a dot on the rail above the column's text. */
+.column::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--veilo-space-1);
+  height: var(--veilo-space-1);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-text);
+  transform: translateY(-50%);
+}
+
+.copy {
+  min-width: 0;
+}
+
+.stepTitle {
+  margin: 0 0 var(--veilo-space-1-5);
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+.body {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-body);
+  text-wrap: pretty;
+}
+
+.more {
+  margin: var(--veilo-space-2) 0 0;
+  font: var(--veilo-type-label);
+}
+
+/* The example, in the column's width; the cards inside it are as wide as they can be up to
+   their own size. */
+.visual {
+  min-width: 0;
+}
+
+/* Narrow layout: one column; the rail runs down the left side and the nodes sit on it. */
+@media (max-width: 900px) {
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: var(--veilo-space-8);
+    padding-left: var(--veilo-space-3);
+  }
+
+  .steps::before {
+    right: auto;
+    bottom: 0;
+    width: 1px;
+    height: auto;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
+  .steps[data-seen]::before {
+    transform: scaleY(1);
+  }
+
+  .column {
+    grid-column: auto;
+    grid-row: auto;
+    grid-template-rows: none;
+    padding-top: 0;
+  }
+
+  .column::before {
+    top: var(--veilo-space-1);
+    left: calc(var(--veilo-space-3) * -1);
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Reduced motion: the rail is simply there. */
+@media (prefers-reduced-motion: reduce) {
+  .steps::before {
+    transform: none;
+    transition: none;
+  }
+}

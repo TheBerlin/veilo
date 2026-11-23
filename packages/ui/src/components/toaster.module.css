@@ -1,0 +1,103 @@
+/* Toaster: Sonner draws the messages from its own custom properties, which the design tokens set
+   here, so a message is a raised card in the page's colors in both themes. Sonner sets its own
+   light and dark values on the same element with two attributes, so this selector has three. */
+.toaster[data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--veilo-card);
+  --normal-border: var(--veilo-border);
+  --normal-text: var(--veilo-text);
+  --border-radius: var(--veilo-radius-base);
+  font-family: var(--veilo-font-sans);
+}
+
+/* Hover: the message grows 3% under the pointer and eases back, as the home page's demo cards do
+   (same scale, duration and curve). The individual `scale` property is used, so Sonner's own
+   `transform` (position, stacking, enter and exit) is left alone; its transition list is repeated
+   here with `scale` added, because a `transition` declaration cannot be extended. Only on hover
+   devices, and not at all under reduced motion. */
+@media (hover: hover) {
+  .toaster [data-sonner-toast].toast {
+    transition:
+      transform var(--veilo-duration-slow),
+      opacity var(--veilo-duration-slow),
+      height var(--veilo-duration-slow),
+      box-shadow var(--veilo-duration-fast),
+      scale var(--veilo-duration-base) var(--veilo-ease-out);
+  }
+
+  .toaster [data-sonner-toast].toast:hover {
+    scale: 1.03;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toaster [data-sonner-toast].toast:hover {
+    scale: none;
+  }
+}
+
+.toast {
+  box-shadow: var(--veilo-shadow-soft);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+}
+
+/* Countdown: a thin line along the message's bottom edge that shrinks from the right to the left
+   as the message's time runs out. Its length of time comes from --veilo-toast-ms, set per message.
+   The text color is the accent in this design system (near-white in the dark theme). It is a
+   background image on the message itself, not a pseudo-element: Sonner draws its own ::before
+   while a message is pressed or swiped and its own ::after while the stack is hovered, and either
+   would replace the line (or, pressed, turn it into a large white block). The card's rounded
+   corners clip it. The line waits while the pointer is over the stack, as Sonner's own timer
+   does, and is left out under reduced motion, where nothing should move. The selector is the more
+ */
+.toaster [data-sonner-toast].countdown {
+  background-image: linear-gradient(var(--veilo-accent), var(--veilo-accent));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 100% 2px;
+  animation: countdown var(--veilo-toast-ms) linear forwards;
+}
+
+.toaster:hover [data-sonner-toast].countdown {
+  animation-play-state: paused;
+}
+
+@keyframes countdown {
+  to {
+    background-size: 0% 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toaster [data-sonner-toast].countdown {
+    background-image: none;
+    animation: none;
+  }
+}
+
+/* The action (Undo): the accent fill and the motion of a primary Button: it dims a little on
+   hover, moves down 1 px while pressed and shows the accent focus ring from the keyboard, all at
+   the same duration and curve. The selectors are the more specific ones, so Sonner's own button
+   colors, transition and focus shadow do not win. */
+.toast .action[data-button] {
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+  font: var(--veilo-type-label-sm);
+  transition:
+    opacity var(--veilo-duration-fast) var(--veilo-ease-out),
+    transform var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.toast .action[data-button]:hover {
+  opacity: 0.88;
+}
+
+.toast .action[data-button]:active {
+  transform: translateY(1px);
+}
+
+.toast .action[data-button]:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+  box-shadow: none;
+}

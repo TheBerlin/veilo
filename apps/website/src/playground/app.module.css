@@ -1,0 +1,139 @@
+/* The app fills the screen, as a tool does: a top bar, then the workspace in the rest of the
+   height. The page itself never scrolls; the panel scrolls inside. Side gutters are at least
+   space-2 (16 px), wider where a phone's safe area needs it. */
+.app {
+  display: grid;
+  /* One column that is exactly as wide as the screen allows; without it the column grows to its
+     widest content and the panel runs past the edge. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--veilo-space-2);
+  box-sizing: border-box;
+  /* No site header or footer around the tool: it is the whole screen. */
+  height: 100dvh;
+  padding: var(--veilo-space-2) max(var(--veilo-space-2), env(safe-area-inset-right))
+    max(var(--veilo-space-2), env(safe-area-inset-bottom))
+    max(var(--veilo-space-2), env(safe-area-inset-left));
+  overflow: hidden;
+  color: var(--veilo-text);
+  font: var(--veilo-type-body);
+}
+
+/* Top bar: one row. The title, the preset chips (they take the free width and scroll sideways
+   when they do not fit), then Reset and the theme switch at the end. The notices hang below it,
+   so it never changes height. */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-3);
+}
+
+.title {
+  flex: 0 0 auto;
+  margin: 0;
+  font: var(--veilo-type-h3);
+  letter-spacing: var(--veilo-type-h3-tracking);
+}
+
+/* The chips sit in one row that scrolls sideways, fading out at both ends to show there is more.
+   The padding keeps the focus rings of the first and last chip from being clipped. */
+.presets {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: calc(var(--veilo-space-0-5) * -1);
+  padding: var(--veilo-space-0-5);
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black var(--veilo-space-1-5),
+    black calc(100% - var(--veilo-space-3)),
+    transparent
+  );
+}
+
+.presets::-webkit-scrollbar {
+  display: none;
+}
+
+.presets > * {
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+/* Actions: Reset to defaults and the theme switch; the reset message hangs under them. */
+.actions {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--veilo-space-2);
+  margin-left: auto;
+}
+
+/* The theme switch closes the top bar (it moved here from the site header). */
+.theme {
+  flex: 0 0 auto;
+}
+
+/* Workspace: the stage and the panel side by side, each as tall as the space left. */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--veilo-size-panel));
+  gap: var(--veilo-space-2);
+  min-height: 0;
+}
+
+.stageColumn {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Bottom row (a phone): the settings button and the three others, as big as a finger needs. */
+.dock {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--veilo-space-1);
+}
+
+.dock > button {
+  width: 100%;
+  padding-inline: var(--veilo-space-1);
+}
+
+/* The settings sheet: the panel. */
+.sheet {
+  display: grid;
+  gap: var(--veilo-space-2);
+}
+
+/* Custom properties do not work in media queries; 900 px is the spec's breakpoint. On a phone it is
+   still an app that fills the screen: the top bar (the title, then the chips on their own row),
+   the stage with the playback bar, and the bottom row. The panel is in a sheet, not beside the
+   stage. */
+@media (max-width: 900px) {
+  .app {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: var(--veilo-space-1);
+  }
+
+  .presets {
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  /* Home on the left, the theme switch on the right, the chips on their own row below. */
+  .theme {
+    margin-left: auto;
+  }
+
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

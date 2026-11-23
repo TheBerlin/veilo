@@ -39,8 +39,16 @@ jobs:
         run: pnpm --filter @veilo-ui/core check:entries
       - name: Check the element entries and the CDN bundle
         run: pnpm --filter @veilo-ui/element check:entries
+      - name: Check the size budget of the packages
+        run: pnpm size
+      - name: Check the size budget of the website
+        run: pnpm --filter website size
+      - name: Check the size budget of the docs
+        run: pnpm --filter docs size
+      - name: Check the links of the docs
+        run: pnpm --filter docs check:links
 
-  # Playwright tests of the built playground, in the same image `pnpm --filter playground visual`
+  # Playwright tests of the built website, in the same image `pnpm --filter website visual`
   # uses locally, so screenshots match. Keep the tag equal to the `playwright` version.
   e2e:
     runs-on: ubuntu-latest
@@ -63,6 +71,6 @@ jobs:
         with:
           name: playwright-report
           path: |
-            apps/playground/playwright-report/
-            apps/playground/test-results/
+            apps/website/playwright-report/
+            apps/website/test-results/
           retention-days: 14

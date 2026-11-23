@@ -1,0 +1,10 @@
+/* Global: the page itself. The browser's default body margin goes so the header spans the full
+   width, and the page takes the design tokens' background, text color and body type (the tokens
+   stylesheet defines them but does not apply them to the body). */
+body {
+  margin: 0;
+  background: var(--veilo-bg);
+  color: var(--veilo-text);
+  font: var(--veilo-type-body);
+  -webkit-font-smoothing: antialiased;
+}

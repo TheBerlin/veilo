@@ -37,6 +37,28 @@ describe("parseSettings", () => {
     expect(parseSettings({ lDur: 1.234 }).settings.lDur).toBe(1.234);
   });
 
+  it("rounds a count to a whole number before clamping it", () => {
+    expect(parseSettings({ cols: 64.5 }).settings.cols).toBe(65);
+    expect(parseSettings({ cols: 64.4 }).settings.cols).toBe(64);
+    expect(parseSettings({ cols: 15.6 }).settings.cols).toBe(16);
+    expect(parseSettings({ cols: 200.2 }).settings.cols).toBe(110);
+    expect(parseSettings({ cols: 64.5 }).applied).toEqual(["cols"]);
+  });
+
+  it("reports a newer version and still reads the input", () => {
+    const result = parseSettings({ version: SETTINGS_VERSION + 1, effect: "wave", future: true });
+    expect(result.newerVersion).toBe(SETTINGS_VERSION + 1);
+    expect(result.settings.effect).toBe("wave");
+    expect(result.settings.version).toBe(SETTINGS_VERSION);
+  });
+
+  it("reports nothing for the current version, an older or missing one, or a wrong type", () => {
+    for (const version of [SETTINGS_VERSION, 0, undefined, "2", Number.NaN, null]) {
+      expect(parseSettings({ version }).newerVersion, String(version)).toBeUndefined();
+    }
+    expect("newerVersion" in parseSettings({})).toBe(false);
+  });
+
   it("ignores unknown keys", () => {
     const { settings, applied } = parseSettings({ nope: 1 });
     expect(settings).toEqual(defaultSettings());

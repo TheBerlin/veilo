@@ -1,0 +1,205 @@
+/* Player: the demo video fills the example's width, with its control row under it. */
+.player {
+  margin: 0;
+  align-self: stretch;
+  min-width: 0;
+}
+
+/* Frame: the picture is one button that opens the larger watch mode; no browser button chrome. */
+.frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-secondary);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.frame:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+/* Media: the recording at its own shape, so nothing shifts when it loads. */
+.media {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+}
+
+/* Hint: a small label that shows on hover and keyboard focus, so the click is discoverable. */
+.hint {
+  position: absolute;
+  right: var(--veilo-space-2);
+  bottom: var(--veilo-space-2);
+  padding: var(--veilo-space-0-5) var(--veilo-space-2);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-card);
+  color: var(--veilo-text);
+  font: var(--veilo-type-caption);
+  opacity: 0;
+  transition: opacity var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+.frame:hover .hint,
+.frame:focus-visible .hint {
+  opacity: 1;
+}
+
+/* Controls: play and pause, the timeline and the time on one row under the video. */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--veilo-space-3);
+  margin-top: var(--veilo-space-2);
+}
+
+/* Timeline: takes all the room between the button and the time. */
+.timeline {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Time: fixed-width digits, so the row does not jitter while it counts. */
+.time {
+  font: var(--veilo-type-code);
+  color: var(--veilo-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Dialog: the larger watch mode, centered, as wide as the screen allows. */
+.dialog {
+  width: min(1200px, calc(100vw - var(--veilo-space-8)));
+  max-height: calc(100vh - var(--veilo-space-8));
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+  color: var(--veilo-text);
+}
+
+/* Open: scales up from 0.97 while fading in (transitions.dev "Modal"); the backdrop fades with it. */
+.dialog[open] {
+  animation: dialog-in var(--veilo-duration-fast) var(--veilo-ease-out) both;
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.72);
+}
+
+.dialog[open]::backdrop {
+  animation: backdrop-in var(--veilo-duration-fast) var(--veilo-ease-out) both;
+}
+
+/* Close: the opening animation backwards, set by the player while it closes. */
+.dialog[open][data-closing] {
+  animation: dialog-out var(--veilo-duration-fast) var(--veilo-ease-out) both;
+}
+
+.dialog[open][data-closing]::backdrop {
+  animation: backdrop-out var(--veilo-duration-fast) var(--veilo-ease-out) both;
+}
+
+@keyframes dialog-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open],
+  .dialog[open]::backdrop {
+    animation: none;
+  }
+}
+
+.largeMedia {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 8 * var(--veilo-space-2));
+  border-radius: var(--veilo-radius-base);
+}
+
+/* Close: under the video, at its right edge. */
+.close {
+  margin-top: var(--veilo-space-2);
+  margin-left: auto;
+  display: flex;
+}
+
+/* Swap: play and pause icons stacked in one cell; the shown one is sharp, the other fades out with blur and scale (transitions.dev "Icon swap"). */
+.swap {
+  --icon-swap-dur: var(--veilo-duration-fast);
+  --icon-swap-ease: var(--veilo-ease-in-out);
+  --icon-swap-blur: 2px;
+  --icon-swap-start-scale: 0.25;
+  display: inline-grid;
+}
+
+.swapIcon {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--icon-swap-dur) var(--icon-swap-ease),
+    filter var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+}
+
+.swap[data-state="a"] .swapIcon[data-icon="a"],
+.swap[data-state="b"] .swapIcon[data-icon="b"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.swap[data-state="a"] .swapIcon[data-icon="b"],
+.swap[data-state="b"] .swapIcon[data-icon="a"] {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swapIcon {
+    transition: none;
+  }
+}

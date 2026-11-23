@@ -1,0 +1,99 @@
+---
+title: Getting started
+description: Install Veilo, mark up your component and show a skeleton that turns into the real content.
+---
+
+import { Tabs, TabItem, Aside } from "@astrojs/starlight/components";
+
+Veilo shows a skeleton on your own component while its data loads, then reveals the real content with a dot, character or mosaic grid and scrambled or typed text. It works on the elements you already have: it never sizes or moves them.
+
+<Aside type="caution" title="Not published yet">
+  The packages arrive on npm with the first public release. Until then the playground exports the
+  same settings and code, and you can try everything there.
+</Aside>
+
+## 1. Install a package
+
+<Tabs syncKey="framework">
+  <TabItem label="React">
+
+```sh
+npm install @veilo-ui/react
+```
+
+  </TabItem>
+  <TabItem label="Plain JavaScript">
+
+```sh
+npm install @veilo-ui/core
+```
+
+  </TabItem>
+</Tabs>
+
+Vue, Svelte, Angular and web components have their own packages: see the guides.
+
+## 2. Mark the parts of your component
+
+Put `data-veilo-slot` on the elements you want to animate. A slot is just a name on an element you already render.
+
+```html
+<article class="card">
+  <img data-veilo-slot="photo" src="product.png" alt="MCHOSE L7 Pro" />
+  <h3 data-veilo-slot="title">MCHOSE L7 Pro</h3>
+  <p data-veilo-slot="price">$59.99</p>
+  <button data-veilo-slot="buy"><span data-veilo-slot="label">Buy now</span></button>
+</article>
+```
+
+Roles are guessed from the elements: an `<img>` or `<canvas>` is the image, a `<button>` is the button, and everything else is text, revealed in page order.
+
+## 3. Run the reveal
+
+<Tabs syncKey="framework">
+  <TabItem label="React">
+
+```tsx
+import { Reveal } from "@veilo-ui/react";
+
+function Product() {
+  const product = useProduct(); // null while loading
+  return (
+    <Reveal as="article" className="card" ready={product !== null} preset="dot-upscale">
+      <ProductCard product={product ?? PLACEHOLDER} />
+    </Reveal>
+  );
+}
+```
+
+While `ready` is `false` the slots show a skeleton. When it turns `true`, the reveal plays once.
+
+  </TabItem>
+  <TabItem label="Plain JavaScript">
+
+```ts
+import { createReveal } from "@veilo-ui/core";
+
+const card = document.querySelector<HTMLElement>(".card")!;
+const reveal = createReveal(card, { imageFx: "dots", origin: "left", textFx: "scramble" });
+
+reveal.playSequence(); // skeleton for `hold` seconds, then the reveal
+```
+
+Call `reveal.destroy()` to put the page back exactly as it was.
+
+  </TabItem>
+</Tabs>
+
+## Keep the layout from shifting
+
+Veilo never sizes anything: the skeleton takes the size of your real elements. Render the same markup with placeholder text of a typical length, and an image of the real size, while your data loads. Nothing then moves when the data arrives.
+
+## Fonts for the character grids
+
+Hex and binary grids draw their characters in IBM Plex Mono, which the packages do not bundle. Load it on your page, for example with `@fontsource/ibm-plex-mono`. Without it a monospace fallback is used, and the reveal measures again when a font finishes loading.
+
+## Next
+
+- [Concepts](/start/concepts/): slots, progress, settings and presets in a few minutes.
+- The playground lets you tune an effect and copy the code for your framework.

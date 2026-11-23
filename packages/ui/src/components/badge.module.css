@@ -1,0 +1,25 @@
+/* Badge: 24 px high, base radius, 8 px side padding, small label type. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--veilo-size-badge);
+  padding: 0 var(--veilo-space-1);
+  border: 1px solid transparent;
+  border-radius: var(--veilo-radius-base);
+  font: var(--veilo-type-label-sm);
+  letter-spacing: var(--veilo-type-label-sm-tracking);
+  white-space: nowrap;
+}
+
+/* Outline: a hairline on the page surface, in the body text color. */
+.outline {
+  border-color: var(--veilo-border-strong);
+  color: var(--veilo-text);
+}
+
+/* Solid: the accent fill, for at most one highlighted item. */
+.solid {
+  background: var(--veilo-accent);
+  color: var(--veilo-on-accent);
+}

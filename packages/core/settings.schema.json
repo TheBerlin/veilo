@@ -39,7 +39,7 @@
         "back",
         "custom"
       ],
-      "default": "out"
+      "default": "inOut"
     },
     "lx1": {
       "type": "number",
@@ -131,7 +131,7 @@
       "default": "left"
     },
     "cols": {
-      "type": "number",
+      "type": "integer",
       "minimum": 16,
       "maximum": 110,
       "default": 64

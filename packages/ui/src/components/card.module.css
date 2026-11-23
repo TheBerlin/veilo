@@ -1,0 +1,20 @@
+/* Card: flat surface with a hairline border. 16 px padding gives the large radius (8 + 16). */
+.card {
+  box-sizing: border-box;
+  padding: var(--veilo-space-2);
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-lg);
+  background: var(--veilo-card);
+  color: var(--veilo-text);
+}
+
+/* Panel: 32 px padding gives the extra-large radius (8 + 32). */
+.panel {
+  padding: var(--veilo-space-4);
+  border-radius: var(--veilo-radius-xl);
+}
+
+/* Raised: the one soft shadow, for floating or raised surfaces only. */
+.raised {
+  box-shadow: var(--veilo-shadow-soft);
+}

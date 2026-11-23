@@ -9,13 +9,13 @@ The source of truth in code is `packages/ui`: `src/tokens.ts` is the typed token
 - Monochrome. Color never carries meaning on its own; the only hues are the status colors, which always come with an icon or dot and a word. Hierarchy comes from fill, shape and size: only the primary action is a solid `accent` fill.
 - Flat and quiet. Separate surfaces with `card` fills and `border` hairlines. The only shadow is `shadow-soft`, for raised bars (tabs, segmented bars, pagination) and floating elements; no gradients or blur.
 - Content stays put. Placeholders and reveals never change layout; every media frame reserves its final size.
-- One system for site and package. The skeleton colors `--veilo-base` and `--veilo-hi` are the same names the packages read, so the site's skeletons sit on its own surfaces. The packages keep neutral gray fallbacks of their own (`#DCDCDC` / `#F7F7F7`), because they must suit any site.
+- One system for site and package. The skeleton colors `--veilo-base` and `--veilo-hi` are the same names the packages read, so the site's skeletons sit on its own surfaces. The packages keep neutral gray fallbacks of their own (`#D4D4D4` / `#F8F8F8`), because they must suit any site.
 
 ## Content fundamentals
 
 - Voice: direct and calm. Short imperative sentences that say what the product does. Address the reader as "you" only where needed ("See them on your own image and text.").
 - Casing: sentence case everywhere. Write the product as `Veilo` in prose and `veilo` lowercase in the header wordmark only.
-- Headings: one or two word step titles end with a period ("Design.", "Preview.", "Export."); a heading that asks ends with a question mark ("Ready to design your loading state?").
+- Headings: one or two word step titles end with a period ("Tune.", "Preview.", "Export."); a heading that asks ends with a question mark ("Ready to design your loading state?").
 - No emoji, no exclamation marks, no hype words. Name the thing: "loader", "reveal", "preset".
 - Real copy to follow: "Design skeleton loaders and reveal animations, visually." / "Tune loaders and reveals with live controls." / "Copy CSS or JSON, or install a package."
 - Never ship build caveats in copy (for example "once the package is built"); use the `Badge` "Coming soon".
@@ -55,7 +55,7 @@ When the padding is uneven, use the smallest side. A surface placed inside anoth
 | 901 to 1439 px    | 12 columns, 20 px gutters | Shrink to 32 px (`space-4`), at 1264 px; below that the columns narrow instead. |
 | 900 px and below  | 4 columns, 8 px gutters   | 20 px; the columns stretch with the screen.                                     |
 
-The switch at 900 px is the same as the playground's one-column switch (`GRID_BREAKPOINT` in `tokens.ts`). Margins also grow to the phone's safe-area insets. Place every block on whole columns. On desktop the hero splits 6 and 6 columns, the three How it works rows use 4 and 7 columns with one empty column between, the four "Why it's useful" tiles take 3 columns each and gallery tiles take 4. On mobile every block spans 4 columns except the "Why it's useful" tiles, which take 2 each (2 by 2). Row gaps come from the spacing scale; the grid tokens `grid-desktop-*` and `grid-mobile-*` hold the numbers.
+The switch at 900 px is the same as the playground's one-column switch (`GRID_BREAKPOINT` in `tokens.ts`). Margins also grow to the phone's safe-area insets. Place every block on whole columns. On desktop the hero splits 6 and 6 columns, the three How it works rows use 4 and 7 columns with one empty column between, the four benefit tiles ("Loading states that stay out of your way.") come in two rows of 8 and 4 columns (the two demos that need room are the wide ones, and the first leads) and gallery tiles take 4. On mobile every block spans 4 columns, including each benefit tile. Row gaps come from the spacing scale; the grid tokens `grid-desktop-*` and `grid-mobile-*` hold the numbers.
 
 The **playground** is a tool and is fluid between the two frames: the stage stretches, the control panel is at most `size-panel` (380 px), and below 900 px the layout becomes one column. Side gutters are at least 16 px at every width and grow to the phone's safe-area insets.
 
@@ -67,7 +67,9 @@ The **playground** is a tool and is fluid between the two frames: the stage stre
 
 ## Page structure
 
-The site has three pages: Home, Playground and Gallery, all with the Nav, plus a 404 page. On Home, in order: hero (headline, supporting text, primary and secondary CTA, install command, live demo card), demo panel of three effects, How it works (Design, Preview, Export with videos and the install command), Why it's useful (four media tiles), gallery preview with a button, final CTA, footer. The primary action everywhere is "Open Playground"; the secondary is "Browse gallery".
+The site has three pages: Home, Playground and Gallery, all with the Nav, plus a 404 page. On Home, in order: hero (headline, supporting text, primary and secondary CTA, install command, live demo card), demo panel of three effects, How it works (Tune and Export are clips of the real playground, Preview is the live music card with a scrubber; Export also shows the install command), the benefits section (four live demo tiles: layout stays put, CSS-only loaders, your framework, reduced motion), the gallery preview (an h2 "Browse the gallery." with a "Browse gallery" button on its row, then three live tiles of four columns: Hex from center, Cascade wave and Mosaic from edge; a tile rests on one frame of its effect, or the still skeleton for a loader, and plays once on hover, keyboard focus or a press; its badges come from the preset's own settings and its "Open in Playground" link is `/playground?preset=<id>`; on a phone one tile and the button at full width), the final CTA (a panel of eight columns holding the h2 "Ready to design your loading state?", one line saying the playground runs in the browser with no account and nothing to install, and the primary "Open the playground" button, the same action as the hero's; the button spans the panel on a phone), footer. The primary action everywhere is "Open Playground"; the secondary is "Browse gallery".
+
+The Gallery page (`/gallery`, `apps/website/src/gallery/`) lists every preset. Its one `h1` is "Gallery." with the caption "Every ready-made effect. Open one in the Playground to change it."; under it a search box (six of the twelve columns, the full width on a phone) and three rows of chips, Loader, Image and Text, where any number can be chosen. Within a row a chosen option matches any of them, and across rows an effect must match every row that has a choice; the search needs every word in the name or a badge. A row offers only the options some effect has, so no chip leads to nothing. Under the rows are a count ("7 effects", "3 of 7 effects") in a polite status and a ghost "Clear filters" button, unavailable until something is chosen. The tiles are the home page's, three to a row and one on a phone; when nothing matches, a centered line "No effects match these filters." and a secondary "Clear filters" button replace them. The page has no sort, no pagination and no loading state, because there are seven effects and the data is local; the search and the chips are kept in the address (`?q=hex&loader=wave&image=hex&text=scramble`), read at load and rewritten as they change without adding history entries.
 
 ## Iconography
 
@@ -75,7 +77,7 @@ No icon set is chosen yet. When one is, use single-ink line icons at 24 px, inli
 
 ## Footer
 
-Author name placeholder linking to the GitHub profile, navigation links (Playground, Gallery, GitHub), and the license line "MIT License". MIT is a permissive open-source license: anyone may use, change, distribute and sell the software, including in commercial projects, as long as the copyright and license notice are kept.
+The footer is built (`apps/website/src/site/site-footer.tsx`): "Made by" and the author's name linking to the GitHub profile, navigation links (Playground, Gallery, GitHub), and the license line "MIT License". One row above 900 px, wrapping on a phone; side padding matches the Nav's. MIT is a permissive open-source license: anyone may use, change, distribute and sell the software, including in commercial projects, as long as the copyright and license notice are kept.
 
 ## Tokens
 
@@ -115,9 +117,9 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 | ----------- | ------- | ------ | ------------------ | ------ | -------------- | -------------------------------------------------------------------- |
 | `h1`        | Display | sans   | 56px / 60px        | 700    | -0.02em        | Hero headline, one per page.                                         |
 | `h1-mobile` | Display | sans   | 40px / 46px        | 700    | -0.02em        | `h1` on the 375 px layout.                                           |
-| `h2`        | Display | sans   | 40px / 46px        | 700    | -0.015em       | Section titles such as 'Why it's useful.'                            |
+| `h2`        | Display | sans   | 40px / 46px        | 700    | -0.015em       | Section titles such as 'Loading states that stay out of your way.'   |
 | `h2-mobile` | Display | sans   | 32px / 38px        | 700    | -0.015em       | `h2` on the 375 px layout.                                           |
-| `h3`        | Display | sans   | 28px / 34px        | 700    | -0.01em        | Step titles in How it works (Design., Preview., Export.).            |
+| `h3`        | Display | sans   | 28px / 34px        | 700    | -0.01em        | Step titles in How it works (Tune., Preview., Export.).              |
 | `body-lg`   | Text    | sans   | 20px / 30px        | 400    | none           | Hero and section supporting text.                                    |
 | `body`      | Text    | sans   | 16px / 24px        | 400    | none           | Default body copy.                                                   |
 | `label`     | Text    | sans   | 16px / 24px        | 500    | none           | Button, tab and nav labels.                                          |
@@ -209,16 +211,22 @@ Every value below comes from `packages/ui/src/tokens.ts`. Colors have a dark and
 
 Components marked _(planned)_ are specified here but not built yet in `packages/ui`.
 
-### Nav _(planned)_
+### Kbd
 
-Nav is the top header: logo and wordmark with a version badge, the three page links, GitHub, and the theme switch.
+Kbd is a keycap (`Kbd` in `@veilo-ui/ui`) that shows a keyboard shortcut next to a control, for example `R` on a Replay button. It is a 20 px square (`size-icon-md`) with a `border-strong` hairline, `text-muted` mono type and `radius-base`.
 
-Provide the current page via `aria-current="page"` on one link. Pages are Home, Playground and Gallery. The header is `space-8` (64 px) high with the grid margin as side padding (the same margins as `Grid`: 120 px at 1440, at least 32 px down to 901 px, 20 px at 900 px and below; in the playground, the playground's gutter) and a `border` hairline below.
+It only shows the hint. The caller handles the key and names it for assistive technology with `aria-keyshortcuts` on the control. Ignore the shortcut while the user types in a field, and when Ctrl, Cmd or Alt are held (the browser owns those).
 
-- The active link is an inverted `accent` fill with `on-accent` text; other links are plain `text` with a `secondary` hover fill.
-- The wordmark is set lowercase, `veilo`, in the nav only; the mark beside it is the dotted ghost logo. Until the logo SVG is added to `assets/Logo/`, show a plain `accent` square.
-- The theme switch is a small segmented bar (System, Light, Dark; see Chip). It follows the system theme by default and stores the user's choice. Until the Nav exists, the playground shows it in its header.
-- On the 375 px mobile layout show the logo and a menu button only; move the page links, GitHub and the theme switch into the menu.
+### Nav
+
+Nav is the top header (`Nav` in `@veilo-ui/ui`): the brand link, the page links and a trailing slot for controls such as the theme switch.
+
+Pass the current page with `current: true` on one link, which sets `aria-current="page"`. The header is `space-8` (64 px) high with the grid margin as side padding (the same margins as `Grid`: 120 px at 1440, at least 32 px down to 901 px, 20 px at 900 px and below) and a `border` hairline below. The brand is a `brand` node (logo and wordmark) plus a `brandLabel` that names the home link.
+
+- The current link is an inverted `accent` fill with `on-accent` text; other links are plain `text` with a `secondary` hover fill. A link may carry a decorative icon (hidden from screen readers; the label names the link).
+- The logo is a single-ink SVG (see Logo); never redraw the ghost in code.
+- The theme switch goes in the `trailing` slot as a segmented bar (System, Light, Dark; see Chip). It follows the system theme by default and stores the user's choice. The playground keeps its own switch beside the title.
+- At 900 px and below the bar shows the brand and a 44 px menu button; the links and the trailing controls open in a panel under the bar. The button has `aria-expanded` and `aria-controls`; Escape, a tap outside and choosing a link close the panel, and Escape returns focus to the button.
 
 ### Button
 
@@ -244,8 +252,8 @@ Provide a visible text label (a verb or short phrase: "Open Playground", "Browse
 Chip is a compact control with `radius-base` corners, `size-chip` high, in `label-sm`, used as a choice (preset, effect, direction) or as a toggle.
 
 - **Toggle chip** (`Chip`): one chip that turns on and off, with `aria-pressed`.
-- **Chip group** (`ChipGroup` with `ChipGroupItem`): a single choice. It is a `radiogroup` with `radio` items and an `aria-label`; exactly one item is chosen, arrow keys move between items, Space or Enter chooses, and pressing the chosen item keeps it chosen. Items wrap with `space-1` gaps.
-- **Segmented bar** (`ChipGroup variant="segmented"`): the same chip group inside a raised bar that looks like the tab bar: `card` fill, `border` hairline, `radius-md`, `space-1` padding, `shadow-soft`. Chips inside are transparent and `text-muted` at rest, `text` on hover, and the chosen one gets a `secondary` fill, `border` hairline and `text`. Use it for small settings that sit apart from the main controls, such as the theme switch; a test keeps it identical to the tab bar.
+- **Chip group** (`ChipGroup` with `ChipGroupItem`): a single choice. It is a `radiogroup` with `radio` items and an `aria-label`; exactly one item is chosen, arrow keys move between items, Space or Enter chooses, and pressing the chosen item keeps it chosen. Items wrap with `space-1` gaps. With `followFocus` an arrow key also chooses the item it lands on, as a native radio group does; use it where choosing is cheap (the website's framework switcher), and leave it off where a choice replays an animation or loads settings (the playground's presets).
+- **Segmented bar** (`ChipGroup variant="segmented"`): the same chip group inside a raised bar that looks like the tab bar: `card` fill, `border` hairline, `radius-md`, `space-1` padding, `shadow-soft`. Chips inside are transparent and `text-muted` at rest and `text` on hover. A pill with a `secondary` fill and `border` hairline slides under the chosen chip (`duration-base`, `ease-out`; placed without motion on first paint, and still under reduced motion because the duration token is 0), and the chosen chip's label is `text`. Use it for small settings that sit apart from the main controls, such as the theme switch; a test keeps it identical to the tab bar.
 
 Rules:
 
@@ -260,7 +268,7 @@ Tabs is a segmented bar for switching between views of the same content (the pla
 Provide the tab list with an `aria-label`, one trigger per view and the matching content panels. Radix handles `role="tablist"`, `aria-selected`, arrow keys, Home and End.
 
 - The bar is a `card` with a `border` hairline, `radius-md` and `shadow-soft`. Tabs are `size-tab` (40 px) high with `radius-base`, so the bar is 8 + 8 padding = 16.
-- The selected tab has a `secondary` fill, `text` color and a `border` hairline; unselected tabs are `text-muted` and become `text` on hover. State never rests on color alone: the fill marks the selected tab.
+- The selected tab is `text`; its `secondary` fill with a `border` hairline is a pill that slides to the newly selected tab (`duration-base`, `ease-out`; the first placement has no motion). Unselected tabs are `text-muted` and become `text` on hover. State never rests on color alone: the pill marks the selected tab. Segmented chip groups use the same pill. The open panel arrives with a short rise out of a 2 px blur; under reduced motion all of it is instant, because the duration tokens are 0.
 - `TabsList stretch` spans the container and the tabs share it evenly, like a segmented control, with `space-0-5` side padding (16 otherwise), `label-sm` labels and `space-0-5` gaps, at every width. The playground panel uses it, because its five tabs do not fit the 380 px panel (or the 375 px layout) at the usual size. Other bars keep the usual size.
 - The bar is never wider than its container: tabs that still do not fit wrap onto a second row. It does not scroll, because a scrolling bar would clip the focus ring.
 - Keep labels to one or two words and the count to five or fewer. For page navigation use the Nav, not Tabs.
@@ -293,9 +301,9 @@ Provide a label, `min`, `max`, `step`, and the unit or end values (`0.5x` and `2
 
 Toggle is an on/off switch (Radix Switch) with a visible label, for settings such as Loop. Use a toggle chip instead when the setting sits among chips.
 
-### Badge _(planned)_
+### Badge _(compact variant built; status badges planned)_
 
-Badge is a small label for versions and status. Status badges use a soft or outlined style and a dot or an icon.
+Badge is a small label for versions and status. The compact badge is built (`Badge` in `@veilo-ui/ui`, `outline` or `solid`); the status badges below are not. Status badges use a soft or outlined style and a dot or an icon.
 
 Provide a one to three word label. Status badges take a tone: default, info (Processing), success, warning, danger (Error), in a soft or outlined style, with a dot or a 16 px icon before the label.
 
@@ -305,9 +313,9 @@ Provide a one to three word label. Status badges take a tone: default, info (Pro
 - Soft style (tinted `*-soft` fill, toned text) for tables and lists; outlined style (`border` hairline, `text` label, toned icon or dot with a soft halo) on busy surfaces.
 - Use "Coming soon" instead of caveats in public copy. A badge is not interactive; use a chip for filters.
 
-### Card _(planned)_
+### Card
 
-Card is a flat container on `card` with a hairline border, in a standard size and a large panel size.
+Card is a flat container on `card` with a hairline border, in a standard size and a large panel size (`Card` in `@veilo-ui/ui`: `size="card" | "panel"`, `raised`, and `as` for `div`, `article`, `section` or `li`).
 
 Provide the content as children. Use the standard card (`radius-lg`, `space-2` padding) for features, tiles and the playground's transport bar and control panel, and the panel (`radius-xl`, `space-4` padding) for the hero demo and the playground stage.
 
@@ -324,7 +332,9 @@ Provide the text. Add the `$` prompt only for shell commands. The Copy button co
 
 - Fill is `secondary` with a `border` hairline and `radius-md`, because the copy button sits 8 px inside the corner (8 + 8 = 16); type is `code` in `text`, the prompt in `text-muted`.
 - Long lines scroll horizontally inside the block; never wrap a command. Inside a grid the block keeps `min-width: 0`, so it never widens its cell.
+- For an example a reader should see in full on a phone, `narrow="wrap"` changes the narrow layout (900 px and below): the Copy button moves above the code, which takes the block's whole width and wraps. Wider screens still scroll. The playground's export blocks keep the default.
 - The success label uses `success` together with the word "Copied", never color alone.
+- The label swaps from Copy to Copied with a short fade out of a 2 px blur (`duration-fast`).
 
 ### TextArea, TextField and ColorField
 
@@ -337,6 +347,22 @@ CurveEditor edits a `cubic-bezier()` easing on a square graph. The playground sh
 - The box is square and as wide as the field. The unit square fills most of it, with y from -0.1 to 1.1 around it for overshoot. A handle beyond that range (for example from imported settings) is drawn at the edge and keeps its real value until moved.
 - Drag a handle (pointer capture, a hit area about 32 px across), or focus it and use the arrow keys: 0.01 per press, 0.1 with Shift. Each handle is a slider read as "x 0.22, y 1.00".
 - The curve is `accent`, the unit square `border-strong`, the linear diagonal `border`, the box `secondary` with a `border` hairline and `radius-base`. Inside the unit square only, a dot grid in `grid-dot` (`size-grid-dot`) marks every 0.1 of x and y (0.1 to 0.9; none on the square's edges). The CSS value is in a tooltip on an info button in the label row.
+
+### Popover
+
+Popover (Radix Popover, `Popover`, `PopoverTrigger`, `PopoverContent`) holds a small group of related controls that open from a button and close on outside click or Escape, such as the playground's saved presets and Preview options. It is `card` with a `border` hairline, `radius-md` and `shadow-soft`; focus moves into it on open and back to the trigger on close. Keep it to one short task; anything longer belongs in a Drawer.
+
+### Drawer
+
+Drawer (Vaul, `Drawer`) is a modal panel that slides in from the edge for a longer task, such as the playground's Export and Share. It dims the page, traps focus, closes on Escape, overlay click or Close, and returns focus to the opener. Use it when the page behind should not be used meanwhile; otherwise use DockedSheet.
+
+### DockedSheet
+
+DockedSheet (`DockedSheet`) is a non-modal bottom sheet for phones: the page behind stays visible and usable, nothing is hidden from screen readers, and it is a labelled `section`. It takes a `title` and `height` (a share of the screen), slides in with `duration-slow` and `ease-out`, moves focus to Close on open, back to the opener on close, and closes on Escape. The playground uses it for the settings so a slider can be moved while the card stays in view.
+
+### Toaster
+
+Toaster (Sonner, `Toaster` and `toast`) shows short messages that need no decision, with an optional Undo action, such as "Settings reset to the defaults." Render one `Toaster` outside any CSS grid. A message stays up to 10 seconds when it has Undo; never put the only copy of important information in a toast.
 
 ### Tooltip
 
@@ -362,7 +388,7 @@ Grid is the website's column grid: `Grid` (the row container, full width with it
 - `Grid` takes `rowGap` as a spacing token name (such as `space-4`); columns always use the grid gutters.
 - `as` picks the element: `Grid as="ul"` with `GridCell as="li"` for lists such as gallery tiles, `section`, `header` or `footer` for page blocks.
 - Use one `Grid` per page block, directly under the page, not inside a card: its margins are the page margins. The widths it follows are in the Layout section.
-- The playground does not use it: it is a tool with its own fluid two-column layout.
+- The playground page does not use it: it is a tool with its own fluid, full-screen layout under the site header.
 
 ### VideoFrame _(planned)_
 
@@ -403,3 +429,7 @@ Add the logo as a single-ink SVG on a transparent background, 512x512. Because S
 - Tokens: `packages/ui/src/tokens.ts` (edit) and `packages/ui/tokens.css` (generated; import `@veilo-ui/ui/tokens.css` once per app).
 - Components: `packages/ui/src/components/`, exported from `@veilo-ui/ui`. Preview them with `pnpm --filter @veilo-ui/ui dev`.
 - Skeletons: `@veilo-ui/css`.
+
+### Clips (How it works)
+
+Tune and Export show screen recordings of the real playground, not mock-ups (`DemoPlayer`, `apps/website/src/home/demo-player.tsx`). Each is one H.264 MP4 (1280 px wide, no audio, under 1.5 MB) with a JPEG poster in `src/home/assets/clips/`, made by hand from a screen capture with ffmpeg. The video loads and plays, muted and looped, once it is on screen. Under it are a Play and Pause button (the two icons cross-fade), a draggable timeline and the time. Clicking the video opens a larger watch mode in a native dialog with the browser's own controls and sound; it scales from 0.97 to 1 on opening and back on closing. A visitor who asks for less motion gets the poster until they press Play, and the dialog opens and closes without animation. Each has a text description.

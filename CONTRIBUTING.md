@@ -40,20 +40,33 @@ pnpm format:check  # report unformatted files without changing them
 
 ## Visual tests
 
-The playground has screenshot tests with [Playwright Test](https://playwright.dev/docs/test-snapshots) in `apps/playground/e2e/`: every preset at progress 0, 0.25, 0.5, 0.75 and 1 plus its Loading view, in the dark and light themes, and the reduced-motion checks. The playground opens paused on a frame with `?preset=<id>&p=<0..1>`.
+The playground has screenshot tests with [Playwright Test](https://playwright.dev/docs/test-snapshots) in `apps/website/e2e/`: every preset at progress 0, 0.25, 0.5, 0.75 and 1 plus its Loading view, in the dark and light themes, and the reduced-motion checks. The playground page (`/playground`) opens paused on a frame with `?preset=<id>&p=<0..1>`.
 
 Baselines are made only in the [official Playwright Docker image](https://playwright.dev/docs/docker), the same Linux that CI uses, because fonts render differently on each OS. Start Docker Desktop, then:
 
 ```sh
-pnpm --filter playground visual          # compare with the baselines
-pnpm --filter playground visual:update   # write new baselines after an intended change
+pnpm --filter website visual          # compare with the baselines
+pnpm --filter website visual:update   # write new baselines after an intended change
 ```
 
 The scripts copy the repository into the container (your `node_modules` stays untouched) and write back only `e2e/__screenshots__/`, `playwright-report/` and `test-results/`. Nothing writes a baseline without `--update-snapshots`, so a run outside Docker fails on a missing baseline instead of creating one for the wrong OS. `pnpm e2e` runs the tests on your own OS, which is useful for checks that take no screenshot; for a single spec without writing anything, run `pnpm exec playwright test e2e/<file> --update-snapshots=none` in `apps/playground`.
 
 After `visual:update`, review the changed PNGs in the git diff before committing them, and commit them together with the change that caused them. Screenshot names come from `e2e/support/baselines.ts`; `e2e/baselines.spec.ts` fails when a baseline has no screenshot (for example after renaming a preset) or a screenshot has no baseline. Delete orphans by hand.
 
-When the `e2e` job fails in CI, open the run's summary and download the `playwright-report` artifact. Unzip it and run `pnpm --filter playground exec playwright show-report <unzipped folder>/playwright-report`; each failed screenshot shows the expected, actual and diff images side by side.
+When the `e2e` job fails in CI, open the run's summary and download the `playwright-report` artifact. Unzip it and run `pnpm --filter website exec playwright show-report <unzipped folder>/playwright-report`; each failed screenshot shows the expected, actual and diff images side by side.
+
+## Size budget
+
+Growth is checked in CI after the build, with the sizes gzipped. The packages are measured with [size-limit](https://github.com/ai/size-limit): the limits are in `.size-limit.json`, each about 10% above the size when set, and the files are measured as built (not minified), so the numbers are for watching growth, not what a bundler ships. The website has its own check, because its files have hashed names: `apps/website/scripts/check-size.mjs` limits the first-load JavaScript and CSS, the lazy grid chunk, and every clip, poster and image. The docs have one too, `apps/docs/scripts/check-size.mjs`.
+
+```sh
+pnpm build
+pnpm size                  # the packages
+pnpm --filter website size # the website
+pnpm --filter docs size    # the docs
+```
+
+When a check fails, first find out why the size grew. Raising a limit means editing `.size-limit.json` or `check-size.mjs` and saying why in the commit message.
 
 ## Core layers
 

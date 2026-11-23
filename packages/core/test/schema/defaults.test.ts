@@ -10,7 +10,8 @@ const SPEC_EXAMPLE = {
   effect: "shimmer",
   lDur: 1.2,
   lGap: 0.2,
-  lEase: "out",
+  // The spec says "out"; the default was changed to "inOut" in the freeze review (D4).
+  lEase: "inOut",
   lx1: 0.22,
   ly1: 1,
   lx2: 0.36,
