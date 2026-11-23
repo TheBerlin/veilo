@@ -9,6 +9,9 @@ import { PLAYGROUND_URL } from "../../src/site/links.ts";
 import { EXPORT_INSTALL, PreviewVisual } from "../../src/home/how-visuals.tsx";
 
 afterEach(async () => {
+  // Back to the top at once, which also stops a smooth scroll still running from the test (a
+  // pressed step title starts one): on a slow machine it would carry on into the next test.
+  window.scrollTo({ top: 0, behavior: "instant" });
   await page.viewport(414, 896);
   vi.useRealTimers();
   vi.restoreAllMocks();
