@@ -19,9 +19,10 @@ describe("App", () => {
     await page.viewport(1440, 900);
     history.replaceState(null, "", "/gallery");
     render(<App />);
-    expect(screen.getAllByRole("heading", { level: 1 }).map((h) => h.textContent)).toEqual([
-      "Gallery.",
-    ]);
+    // The gallery's code loads on demand.
+    expect((await screen.findAllByRole("heading", { level: 1 })).map((h) => h.textContent)).toEqual(
+      ["Gallery."],
+    );
     expect(document.title).toBe("Gallery · Veilo UI");
     const current = screen
       .getAllByRole("link", { name: "Gallery" })
