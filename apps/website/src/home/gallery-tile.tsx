@@ -1,11 +1,19 @@
 // gallery-tile.tsx: one tile of the home page's gallery preview: a frame with the demo card on the
 // real engine, the effect's name, its badges and a link that opens it in the playground. The tile
-// rests on one frame of its effect; hover, keyboard focus or a press plays the effect once.
+// rests on one frame of its effect; hover, keyboard focus or a press plays the whole effect once,
+// and the tile then ignores every trigger until the effect has ended and a pause has passed.
 
 import { findPreset } from "@veilo-ui/presets";
 import { useReveal } from "@veilo-ui/react";
 import { Badge, Button, Card } from "@veilo-ui/ui";
-import { useEffect, useState, type FocusEvent, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type PointerEvent,
+} from "react";
 import { PLAYGROUND_URL } from "../site/links.ts";
 import { DemoPhoto } from "./demo-photo.tsx";
 import { presetBadges, type GalleryTileSpec } from "./gallery-tiles.ts";
@@ -22,6 +30,9 @@ const CARD_LAYOUT = {
     meta: { role: "text", width: 65 },
   },
 } as const;
+
+/** How long a tile ignores new triggers after its effect has ended, in milliseconds. */
+export const REPLAY_PAUSE_MS = 3000;
 
 /** Props of {@link GalleryTile}. */
 export interface GalleryTileProps {
@@ -43,32 +54,37 @@ export function playgroundLinkFor(id: string): string {
 interface DemoCardProps {
   /** The tile's effect and how it rests. */
   spec: GalleryTileSpec;
-  /** Whether the effect is playing now; otherwise the card rests. */
-  playing: boolean;
-  /** A counter that makes a press play the effect again. */
+  /** How many runs have been started; 0 means the card still rests. */
   run: number;
+  /** Called when a run has reached its last frame. */
+  onDone: () => void;
 }
 
 /**
  * The demo card inside the frame: a real reveal with the tile's preset, resting on a held frame
- * (or the still skeleton) and playing once when asked. One reveal serves the tile for its whole
- * life: a change of state only tells it what to show, so nothing is rebuilt and nothing flashes.
+ * (or the still skeleton) and playing the whole sequence when asked. One reveal serves the tile for
+ * its whole life: a change of state only tells it what to show, so nothing is rebuilt and nothing
+ * flashes. A run is never cut short: nothing here stops it before its last frame.
  *
- * Side effects: creates a reveal through `useReveal` and destroys it on unmount; seeks, shows the
- * skeleton or plays whenever `playing`, `run` or the rest state change.
+ * Side effects: creates a reveal through `useReveal` and destroys it on unmount; plays the sequence
+ * whenever `run` grows, otherwise shows the rest frame; listens to the reveal's `complete` event.
  *
- * @param props - The tile, whether it is playing, and a counter that replays a run.
+ * @param props - The tile, the run counter and the callback for the end of a run.
  * @returns The card, hidden from assistive technology.
  */
 function DemoCard(props: DemoCardProps) {
-  const { spec, playing, run } = props;
+  const { spec, run, onDone } = props;
   const { ref, reveal } = useReveal<HTMLDivElement>({ preset: spec.id, layout: CARD_LAYOUT });
+  // The latest callback, so the listener below is attached once per reveal.
+  const done = useRef(onDone);
+  done.current = onDone;
+  useEffect(() => reveal?.on("complete", () => done.current()), [reveal]);
   useEffect(() => {
     if (!reveal) return;
-    if (playing) reveal.playSequence();
+    if (run > 0) reveal.playSequence();
     else if (spec.rest === "loading") reveal.showLoading();
     else reveal.seek(spec.rest);
-  }, [reveal, playing, run, spec.rest]);
+  }, [reveal, run, spec.rest]);
   return (
     <div ref={ref} className={styles.card} aria-hidden="true">
       <DemoPhoto scene="album" ratio={3 / 2} slot="photo" className={styles.photo} />
@@ -83,12 +99,13 @@ function DemoCard(props: DemoCardProps) {
 }
 
 /**
- * One gallery tile. The frame is a button: hover, keyboard focus or a press plays the effect, and
- * leaving or blurring returns it to its resting frame. The link under it opens the effect in the
- * playground.
+ * One gallery tile. The frame is a button: hover, keyboard focus or a press plays the whole effect.
+ * Leaving does not stop it. Until the effect has ended and {@link REPLAY_PAUSE_MS} have passed, every
+ * further trigger is ignored; then the next one plays it again. The link under it opens the effect
+ * in the playground.
  *
  * Side effects: loads the shared cover photograph; creates the tile's engine once the tile has been
- * scrolled into view.
+ * scrolled into view; holds one timer for the pause, cleared on unmount.
  *
  * @param props - The tile's spec.
  * @returns The tile's article.
@@ -100,33 +117,41 @@ export function GalleryTile(props: GalleryTileProps) {
   // The engine starts only once the tile has been scrolled near, so a page of many tiles does not
   // start them all at once.
   const { ref, seen } = useSeen<HTMLElement>();
-  const [playing, setPlaying] = useState(false);
   const [run, setRun] = useState(0);
+  // Locked from the start of a run until its end plus the pause. A ref, because a trigger must see
+  // the lock at once, before React has rendered again.
+  const locked = useRef(false);
+  const pause = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(pause.current), []);
+  const start = useCallback(() => {
+    if (locked.current) return;
+    locked.current = true;
+    setRun((count) => count + 1);
+  }, []);
+  const finish = useCallback(() => {
+    clearTimeout(pause.current);
+    pause.current = setTimeout(() => {
+      locked.current = false;
+    }, REPLAY_PAUSE_MS);
+  }, []);
   return (
     <Card as="article" ref={ref} className={styles.tile} aria-label={preset.name}>
       <button
         type="button"
         className={styles.frame}
-        data-rest={playing ? undefined : "true"}
+        data-rest={run === 0 ? "true" : undefined}
         aria-label={`Play the ${preset.name} effect`}
         onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
           // Only a mouse hovers: a finger's tap arrives as a click.
-          if (event.pointerType === "mouse") setPlaying(true);
-        }}
-        onPointerLeave={(event: PointerEvent<HTMLButtonElement>) => {
-          if (event.pointerType === "mouse") setPlaying(false);
+          if (event.pointerType === "mouse") start();
         }}
         onFocus={(event: FocusEvent<HTMLButtonElement>) => {
           // Keyboard focus plays it, like a hover; a mouse press is handled by the click.
-          if (event.currentTarget.matches(":focus-visible")) setPlaying(true);
+          if (event.currentTarget.matches(":focus-visible")) start();
         }}
-        onBlur={() => setPlaying(false)}
-        onClick={() => {
-          setPlaying(true);
-          setRun((count) => count + 1);
-        }}
+        onClick={start}
       >
-        {ready && seen ? <DemoCard spec={spec} playing={playing} run={run} /> : null}
+        {ready && seen ? <DemoCard spec={spec} run={run} onDone={finish} /> : null}
       </button>
       <h3 className={styles.name}>{preset.name}</h3>
       <ul className={styles.badges} aria-label="Effects">

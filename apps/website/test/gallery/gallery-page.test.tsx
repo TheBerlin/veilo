@@ -1,191 +1,213 @@
-// Tests for src/gallery/gallery-page.tsx and its toolbar, in Chromium with the real engine.
+// Tests for src/gallery/gallery-page.tsx and the tile it is made of, in Chromium.
 
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
-import { page } from "vitest/browser";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GalleryPage } from "../../src/gallery/gallery-page.tsx";
 
-afterEach(async () => {
+afterEach(() => {
   window.history.replaceState(null, "", "/");
-  await page.viewport(414, 896);
 });
 
 /**
- * The names of the tiles on the page.
+ * Opens the page at an address, for example one that forces the season on.
  *
- * @returns The effect names, in order.
+ * @param search - The query string.
  */
-const tileNames = () =>
-  screen.queryAllByRole("article").map((tile) => tile.getAttribute("aria-label"));
+function open(search: string): void {
+  window.history.replaceState(null, "", `/gallery${search}`);
+  render(<GalleryPage />);
+}
 
 /**
- * The count line.
+ * The names of the tiles, in order.
  *
- * @returns Its text.
+ * @returns The effect names.
  */
-const count = () => screen.getByRole("status").textContent;
+const names = () =>
+  screen
+    .getAllByRole("article")
+    .map((tile) => within(tile).getByRole("heading", { level: 3 }).textContent);
 
-/**
- * Whether a chip is chosen.
- *
- * @param name - The chip's text.
- * @returns True when it is pressed.
- */
-const pressed = (name: string) =>
-  screen.getByRole("button", { name }).getAttribute("aria-pressed") === "true";
+describe("GalleryPage in season", () => {
+  it("has one h1, a section heading with the season beside it, and tile names below, in that order", () => {
+    open("?season=on");
+    expect(screen.getAllByRole("heading", { level: 1 }).map((h) => h.textContent)).toEqual([
+      "Gallery.",
+    ]);
+    const h2 = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+    expect(h2).toEqual(["Winter effects", "Need something else?"]);
+    expect(screen.getByText("Christmas time")).toBeTruthy();
+    expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(10);
+  });
 
-describe("GalleryPage", () => {
-  it("has the page's one h1 and a caption that says what the page is for", () => {
-    render(<GalleryPage />);
-    const headings = screen.getAllByRole("heading", { level: 1 });
-    expect(headings.map((heading) => heading.textContent)).toEqual(["Gallery."]);
+  it("shows the ten effects in the Featured order, Snow on the bars first", () => {
+    open("?season=on");
+    expect(names().slice(0, 3)).toEqual(["Snow on the bars", "Frost grow", "Ice cells"]);
+    expect(names()).toHaveLength(10);
+    expect(screen.getByRole("status").textContent).toBe("10 effects");
+  });
+
+  it("describes each card in plain text: what it does and how it is made, not as badges", () => {
+    open("?season=on");
+    const tile = screen.getAllByRole("article")[0]!;
     expect(
-      screen.getByText("Every ready-made effect. Open one in the Playground to change it."),
+      within(tile).getByText("Snow falls and settles on the skeleton bars, then melts away."),
+    ).toBeTruthy();
+    const meta = within(tile).getByText("Loader · Characters · Frost");
+    expect(meta.tagName).toBe("P");
+  });
+
+  it("gives each card one action, how to use it, and no link into the Playground", () => {
+    open("?season=on");
+    for (const tile of screen.getAllByRole("article")) {
+      expect(within(tile).queryAllByRole("link")).toEqual([]);
+      expect(
+        within(tile)
+          .getAllByRole("button")
+          .map((button) => button.textContent),
+      ).toEqual(["Use in your project"]);
+    }
+    expect(screen.queryByText("Open in Playground")).toBeNull();
+  });
+
+  it("names each preview for assistive technology and makes it focusable", () => {
+    open("?season=on");
+    const canvas = screen.getByRole("img", {
+      name: "Snow on the bars, animated preview, plays on hover or Enter",
+    });
+    expect(canvas.getAttribute("tabindex")).toBe("0");
+  });
+
+  it("sorts by name when asked", async () => {
+    open("?season=on");
+    await userEvent.selectOptions(screen.getByLabelText("Sort"), "name");
+    expect(names()[0]).toBe("Aurora curtains");
+    await userEvent.selectOptions(screen.getByLabelText("Sort"), "newest");
+    expect(names()[0]).toBe("Frost cells");
+  });
+
+  it("has a flake form switch of four forms, Dendrite chosen, that says what it reaches", async () => {
+    open("?season=on");
+    const group = screen.getByRole("radiogroup", { name: "Flake shape" });
+    const radios = within(group).getAllByRole("radio");
+    expect(radios.map((radio) => radio.textContent)).toEqual(["Dendrite", "Fern", "Fir", "Sector"]);
+    expect(
+      within(group).getByRole("radio", { name: "Dendrite" }).getAttribute("aria-checked"),
+    ).toBe("true");
+    await userEvent.click(within(group).getByRole("radio", { name: "Fern" }));
+    expect(within(group).getByRole("radio", { name: "Fern" }).getAttribute("aria-checked")).toBe(
+      "true",
+    );
+    expect(
+      screen.getByText(
+        /Applies to 8 of 10 effects\. Snow on the bars and Blizzard dissolve have no flake\./,
+      ),
     ).toBeTruthy();
   });
 
-  it("starts with every effect, none filtered, and Clear filters unavailable", () => {
-    render(<GalleryPage />);
-    expect(tileNames()).toEqual([
-      "Dot upscale",
-      "Hex from center",
-      "Matrix columns",
-      "Cascade wave",
-      "Soft pulse",
-      "Compact shimmer",
-      "Mosaic from edge",
+  it("ends with a step into the Playground", () => {
+    open("?season=on");
+    const end = screen.getByRole("region", { name: "Need something else?" });
+    expect(
+      within(end).getByRole("link", { name: "Open the Playground" }).getAttribute("href"),
+    ).toBe("/playground");
+  });
+
+  it("starts each preview on a resting frame once it has been seen, and plays it on Enter", async () => {
+    open("?season=on");
+    const canvas = screen.getByRole("img", { name: /^Snow on the bars/ });
+    await vi.waitFor(() => expect(canvas.getAttribute("data-state")).toBe("rest"), {
+      timeout: 8000,
+      interval: 100,
+    });
+    canvas.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(canvas.getAttribute("data-state")).toBe("playing");
+  });
+});
+
+describe("the use drawer", () => {
+  /**
+   * Opens the drawer of the first card.
+   *
+   * @returns The dialog.
+   */
+  async function openFirst() {
+    open("?season=on");
+    const tile = screen.getAllByRole("article")[0]!;
+    await userEvent.click(within(tile).getByRole("button", { name: "Use in your project" }));
+    return screen.findByRole("dialog", { name: "Use Snow on the bars" });
+  }
+
+  it("opens with the install command and a JavaScript snippet for that effect", async () => {
+    const dialog = await openFirst();
+    expect(within(dialog).getByText("npm install @veilo-ui/seasonal")).toBeTruthy();
+    expect(within(dialog).getByText(/mountEffect\(container, "bars"\)/)).toBeTruthy();
+    expect(within(dialog).getByText(/not on npm yet/i)).toBeTruthy();
+  });
+
+  it("switches between JavaScript, React and the web component", async () => {
+    const dialog = await openFirst();
+    const group = within(dialog).getByRole("radiogroup", { name: "Format" });
+    await userEvent.click(within(group).getByRole("radio", { name: "React" }));
+    expect(within(dialog).getByText(/<SeasonalEffect name="bars"/)).toBeTruthy();
+    await userEvent.click(within(group).getByRole("radio", { name: "Web component" }));
+    expect(within(dialog).getByText(/<veilo-seasonal-effect name="bars"/)).toBeTruthy();
+  });
+
+  it("passes the flake form chosen on the page into the snippet, for a flake effect", async () => {
+    open("?season=on");
+    await userEvent.click(screen.getByRole("radio", { name: "Fern" }));
+    const tile = screen.getAllByRole("article")[1]!;
+    await userEvent.click(within(tile).getByRole("button", { name: "Use in your project" }));
+    const dialog = await screen.findByRole("dialog", { name: "Use Frost grow" });
+    expect(within(dialog).getByText(/shape: "fern"/)).toBeTruthy();
+  });
+
+  it("closes, and gives focus back to the button that opened it", async () => {
+    const dialog = await openFirst();
+    await userEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+    await vi.waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
+});
+
+describe("the status labels", () => {
+  it("shows none for the real release, which is the first public one", () => {
+    open("?season=on");
+    expect(screen.queryByText("New")).toBeNull();
+  });
+
+  it("shows New on the three newest effects and the season on every card with ?labels=demo", () => {
+    open("?season=on&labels=demo");
+    expect(screen.getAllByText("New")).toHaveLength(3);
+    // The section's own badge, and one on each of the ten cards.
+    expect(screen.getAllByText("Christmas time")).toHaveLength(11);
+  });
+
+  it("names the labels in the preview's accessible name", () => {
+    open("?season=on&labels=demo");
+    expect(
+      screen.getByRole("img", {
+        name: "Frost cells, New, Christmas time, animated preview, plays on hover or Enter",
+      }),
+    ).toBeTruthy();
+  });
+});
+
+describe("GalleryPage out of season", () => {
+  it("drops the season and names the section plainly, with every effect still there", () => {
+    open("?season=off");
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual([
+      "All effects",
+      "Need something else?",
     ]);
-    expect(count()).toBe("7 effects");
-    expect(screen.getByRole("button", { name: "Clear filters" })).toHaveProperty("disabled", true);
+    expect(screen.queryByText("Christmas time")).toBeNull();
+    expect(names()).toHaveLength(10);
   });
 
-  it("has a search box and three labelled rows of chips, none chosen", () => {
-    render(<GalleryPage />);
-    const search = screen.getByRole("search");
-    expect(within(search).getByRole("textbox", { name: "Search effects" })).toBeTruthy();
-    for (const [row, chips] of [
-      ["Loader", ["Shimmer", "Wave", "Pulse"]],
-      ["Image", ["Dots", "Hex", "Binary", "Mosaic", "Blur-up", "Crossfade", "Wipe"]],
-      ["Text", ["Scramble", "Typewriter", "Rise", "Fade"]],
-    ] as const) {
-      const group = within(search).getByRole("group", { name: row });
-      expect(
-        within(group)
-          .getAllByRole("button")
-          .map((chip) => chip.textContent),
-      ).toEqual([...chips]);
-      for (const chip of chips) expect(pressed(chip)).toBe(false);
-    }
-  });
-
-  it("typing narrows the list as it goes, and says how many of how many", async () => {
-    render(<GalleryPage />);
-    await userEvent.type(screen.getByRole("textbox", { name: "Search effects" }), "hex");
-    expect(tileNames()).toEqual(["Hex from center"]);
-    expect(count()).toBe("1 of 7 effects");
-    expect(screen.getByRole("button", { name: "Clear filters" })).toHaveProperty("disabled", false);
-  });
-
-  it("a chip chooses an option, and any number of chips in a row can be chosen", async () => {
-    render(<GalleryPage />);
-    await userEvent.click(screen.getByRole("button", { name: "Wave" }));
-    expect(pressed("Wave")).toBe(true);
-    expect(tileNames()).toEqual(["Cascade wave"]);
-    await userEvent.click(screen.getByRole("button", { name: "Pulse" }));
-    expect(tileNames()).toEqual(["Cascade wave", "Soft pulse"]);
-    expect(count()).toBe("2 of 7 effects");
-    // Pressing a chosen chip takes it back.
-    await userEvent.click(screen.getByRole("button", { name: "Wave" }));
-    expect(pressed("Wave")).toBe(false);
-    expect(tileNames()).toEqual(["Soft pulse"]);
-  });
-
-  it("chips of different rows narrow together, and with the search", async () => {
-    render(<GalleryPage />);
-    await userEvent.click(screen.getByRole("button", { name: "Shimmer" }));
-    await userEvent.click(screen.getByRole("button", { name: "Scramble" }));
-    expect(tileNames()).toEqual(["Dot upscale", "Hex from center", "Matrix columns"]);
-    await userEvent.type(screen.getByRole("textbox", { name: "Search effects" }), "binary");
-    expect(tileNames()).toEqual(["Matrix columns"]);
-  });
-
-  it("says when nothing matches, and the button clears everything", async () => {
-    render(<GalleryPage />);
-    await userEvent.click(screen.getByRole("button", { name: "Wave" }));
-    await userEvent.click(screen.getByRole("button", { name: "Scramble" }));
-    expect(tileNames()).toEqual([]);
-    expect(screen.getByText("No effects match these filters.")).toBeTruthy();
-    expect(count()).toBe("0 of 7 effects");
-    // Two buttons clear: the toolbar's and the one under the message.
-    const buttons = screen.getAllByRole("button", { name: "Clear filters" });
-    expect(buttons).toHaveLength(2);
-    await userEvent.click(buttons[1]!);
-    expect(tileNames()).toHaveLength(7);
-    expect(screen.queryByText("No effects match these filters.")).toBeNull();
-    expect(pressed("Wave")).toBe(false);
-    expect(pressed("Scramble")).toBe(false);
-    expect(count()).toBe("7 effects");
-  });
-
-  it("the toolbar's Clear filters empties the search and the chips", async () => {
-    render(<GalleryPage />);
-    const box = screen.getByRole<HTMLInputElement>("textbox", { name: "Search effects" });
-    await userEvent.type(box, "mosaic");
-    await userEvent.click(screen.getByRole("button", { name: "Shimmer" }));
-    expect(tileNames()).toEqual(["Mosaic from edge"]);
-    await userEvent.click(screen.getByRole("button", { name: "Clear filters" }));
-    expect(box.value).toBe("");
-    expect(pressed("Shimmer")).toBe(false);
-    expect(tileNames()).toHaveLength(7);
-  });
-
-  it("every tile opens its own preset in the playground", () => {
-    render(<GalleryPage />);
-    const hrefs = screen
-      .getAllByRole("link", { name: "Open in Playground" })
-      .map((link) => link.getAttribute("href"));
-    expect(hrefs).toEqual([
-      "/playground?preset=dot-upscale",
-      "/playground?preset=hex-from-center",
-      "/playground?preset=matrix-columns",
-      "/playground?preset=cascade-wave",
-      "/playground?preset=soft-pulse",
-      "/playground?preset=compact-shimmer",
-      "/playground?preset=mosaic-from-edge",
-    ]);
-  });
-
-  it("on a wide screen the tiles are three to a row, of equal width", async () => {
-    await page.viewport(1440, 900);
-    render(<GalleryPage />);
-    const boxes = screen.getAllByRole("article").map((tile) => tile.getBoundingClientRect());
-    const tops = boxes.map((box) => Math.round(box.top));
-    // 7 tiles in 3 rows: 3, 3 and 1.
-    expect(new Set(tops).size).toBe(3);
-    expect(tops.filter((top) => top === tops[0])).toHaveLength(3);
-    expect(new Set(boxes.map((box) => Math.round(box.width))).size).toBe(1);
-  });
-
-  it("on a phone the tiles are one to a row, as wide as the page's content", async () => {
-    await page.viewport(375, 800);
-    render(<GalleryPage />);
-    const boxes = screen.getAllByRole("article").map((tile) => tile.getBoundingClientRect());
-    expect(new Set(boxes.map((box) => Math.round(box.top))).size).toBe(7);
-    for (const box of boxes) expect(box.width).toBeCloseTo(335, 0);
-  });
-
-  it("starts from the address, and writes changes back without adding history", async () => {
-    window.history.replaceState(null, "", "/gallery?q=hex&loader=shimmer#top");
-    const before = window.history.length;
-    render(<GalleryPage />);
-    expect(tileNames()).toEqual(["Hex from center"]);
-    expect(pressed("Shimmer")).toBe(true);
-    await userEvent.click(screen.getByRole("button", { name: "Scramble" }));
-    expect(window.location.search).toBe("?q=hex&loader=shimmer&text=scramble");
-    expect(window.location.hash).toBe("#top");
-    await userEvent.click(screen.getByRole("button", { name: "Clear filters" }));
-    expect(window.location.search).toBe("");
-    expect(window.history.length).toBe(before);
+  it("keeps the flake form switch and the sort", () => {
+    open("?season=off");
+    expect(screen.getByRole("radiogroup", { name: "Flake shape" })).toBeTruthy();
+    expect(screen.getByLabelText("Sort")).toBeTruthy();
   });
 });

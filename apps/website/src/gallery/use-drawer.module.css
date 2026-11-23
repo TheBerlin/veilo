@@ -1,0 +1,23 @@
+/* The use drawer's content: two numbered steps and a closing note, 32 px apart. */
+.body {
+  display: grid;
+  gap: var(--veilo-space-4);
+}
+
+.section {
+  display: grid;
+  gap: var(--veilo-space-2);
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.note {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}

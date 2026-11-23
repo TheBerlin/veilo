@@ -12,6 +12,9 @@ const NODE_TESTS = [
   "test/home/why-copy.test.ts",
   "test/home/gallery-tiles.test.ts",
   "test/gallery/gallery-filter.test.ts",
+  // Pure rules: no canvas.
+  "test/gallery/effects.test.ts",
+  "test/gallery/use-snippets.test.ts",
 ];
 
 export default defineProject({

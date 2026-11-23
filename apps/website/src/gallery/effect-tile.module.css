@@ -1,0 +1,111 @@
+/* A gallery card: preview, text and one action, stacked with the standard 16 px gap. Cards in a
+   row share a height, so the action sits at the bottom whatever the text length. */
+.tile {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--veilo-space-2);
+  height: 100%;
+}
+
+/* The preview: a square canvas on the card surface, with the labels and the play cue over it. */
+.preview {
+  position: relative;
+}
+
+.canvas {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--veilo-border);
+  border-radius: var(--veilo-radius-base);
+  background: var(--veilo-card);
+  cursor: pointer;
+}
+
+.canvas:focus-visible {
+  outline: 2px solid var(--veilo-accent);
+  outline-offset: 2px;
+}
+
+/* Status labels, top left, 8 px in. */
+.labels {
+  position: absolute;
+  top: var(--veilo-space-1);
+  left: var(--veilo-space-1);
+  display: flex;
+  gap: var(--veilo-space-1);
+}
+
+/* The play cue, bottom right: a round mark that fades out while the effect runs. */
+.cue {
+  position: absolute;
+  right: var(--veilo-space-1);
+  bottom: var(--veilo-space-1);
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--veilo-size-badge);
+  height: var(--veilo-size-badge);
+  border: 1px solid var(--veilo-border-strong);
+  border-radius: var(--veilo-radius-pill);
+  background: var(--veilo-secondary);
+  color: var(--veilo-text);
+  pointer-events: none;
+  transition: opacity var(--veilo-duration-base) var(--veilo-ease-out);
+}
+
+.canvas[data-state="playing"] ~ .cue {
+  opacity: 0;
+}
+
+/* The text: name, one sentence, and the plain meta line. */
+.text {
+  display: grid;
+  align-content: start;
+  gap: var(--veilo-space-1);
+}
+
+.name {
+  margin: 0;
+  font: var(--veilo-type-label);
+  letter-spacing: var(--veilo-type-label-tracking);
+}
+
+.does {
+  margin: 0;
+  color: var(--veilo-text);
+  font: var(--veilo-type-caption);
+}
+
+.meta {
+  margin: 0;
+  color: var(--veilo-text-muted);
+  font: var(--veilo-type-caption);
+}
+
+/* The one action takes the card's width: a clear next step, but quieter than the accent. */
+.action {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Hover: the whole card grows 3% while the pointer is on it and eases back when it leaves.
+   Real hover devices only, so a tap does not leave it scaled; none under reduced motion. The
+   transform does not move the layout. */
+@media (hover: hover) {
+  .tile {
+    transition: transform var(--veilo-duration-base) var(--veilo-ease-out);
+    will-change: transform;
+  }
+
+  .tile:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile:hover {
+    transform: none;
+  }
+}

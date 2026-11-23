@@ -60,6 +60,22 @@
     "gzip": true
   },
   {
+    "name": "seasonal",
+    "path": [
+      "packages/seasonal/dist/*.mjs",
+      "!packages/seasonal/dist/react.mjs",
+      "!packages/seasonal/dist/element.mjs"
+    ],
+    "limit": "12000 B",
+    "gzip": true
+  },
+  {
+    "name": "seasonal: react and element entries",
+    "path": ["packages/seasonal/dist/react.mjs", "packages/seasonal/dist/element.mjs"],
+    "limit": "1900 B",
+    "gzip": true
+  },
+  {
     "name": "element",
     "path": ["packages/element/dist/*.mjs"],
     "limit": "3400 B",
