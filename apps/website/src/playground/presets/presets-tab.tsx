@@ -1,8 +1,8 @@
 // presets-tab.tsx: the Presets tab: save the current settings under a name; apply, rename,
-// update or delete saved presets; export and import them as a file. Delete, Update and Import
-// offer Undo until the next action here.
+// update or delete saved presets; export and import them as a file. Every action answers with a
+// toast at the top centre, like Reset to defaults; Delete, Update and Import offer Undo in it.
 
-import { Button, TextField } from "@veilo-ui/ui";
+import { Button, TextField, toast, toastCountdown } from "@veilo-ui/ui";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useStore } from "zustand";
 import styles from "../panel/panel.module.css";
@@ -28,18 +28,17 @@ export const NOT_KEPT =
 /** Shown while the list is empty. */
 export const EMPTY_LIST = "No saved presets yet. They stay in this browser.";
 
-/** The result of the last action, and what Undo puts back. */
-interface Notice {
-  /** The message. */
-  text: string;
-  /** The list before the action, when it can be undone. */
-  undo?: UserPreset[];
-  /** The section whose result line shows it. Defaults to the list. */
-  place?: NoticePlace;
-}
+/** The id shared by this tab's messages, so a new one replaces the one on screen. */
+const MESSAGE_ID = "my-presets";
 
-/** Where a notice shows: under the My presets heading, or in the File section. */
-type NoticePlace = "list" | "file";
+/** How long a plain message stays, in milliseconds. */
+const MESSAGE_MS = 4000;
+
+/** How long a message that offers Undo stays, in milliseconds. */
+export const UNDO_MESSAGE_MS = 10_000;
+
+/** The id of the Import file button, where focus goes when the list has no row left. */
+const IMPORT_ID = "presets-import";
 
 /** Props of {@link PresetsTab}. */
 export interface PresetsTabProps {
@@ -62,27 +61,57 @@ export function PresetsTab(props: PresetsTabProps) {
   const presets = useStore(presetsStore, (state) => state.presets);
   const persistent = useStore(presetsStore, (state) => state.persistent);
 
+  // The rows there were when the tab opened: only rows added later (saved, imported, restored by
+  // Undo) slide in, so opening the tab does not animate the whole list.
+  const [initialIds] = useState(() => new Set(presetsStore.getState().presets.map((p) => p.id)));
   const [name, setName] = useState("");
   // The empty-name message waits for a save attempt; a taken name shows while typing.
   const [tried, setTried] = useState(false);
-  const [notice, setNotice] = useState<Notice | null>(null);
   const [editing, setEditing] = useState<{ id: string; draft: string; tried: boolean } | null>(
     null,
   );
-  const undoRef = useRef<HTMLButtonElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   // Where focus goes after the row it was in changes (a finished rename, a delete).
   const [focusTarget, setFocusTarget] = useState<string | null>(null);
 
   useEffect(() => {
     if (focusTarget === null) return;
-    if (focusTarget === "undo") undoRef.current?.focus();
-    else document.getElementById(focusTarget)?.focus();
+    document.getElementById(focusTarget)?.focus();
     setFocusTarget(null);
   }, [focusTarget]);
 
   const actions = presetsStore.getState();
   const saveError = nameError(name, presets);
+
+  /**
+   * Shows a message as a toast. With `before`, the toast offers Undo, which puts that list back,
+   * and stays longer. Every message shows the time left on a line along its bottom edge, as Reset to
+   * defaults does.
+   *
+   * @param text - The message.
+   * @param before - The list before the action, when it can be undone.
+   */
+  const say = (text: string, before?: UserPreset[]) => {
+    const ms = before ? UNDO_MESSAGE_MS : MESSAGE_MS;
+    toast(text, {
+      id: MESSAGE_ID,
+      duration: ms,
+      ...toastCountdown(ms),
+      action: before
+        ? {
+            label: "Undo",
+            onClick: () => {
+              actions.replaceAll(before);
+              toast("Undone.", {
+                id: MESSAGE_ID,
+                duration: MESSAGE_MS,
+                ...toastCountdown(MESSAGE_MS),
+              });
+            },
+          }
+        : undefined,
+    });
+  };
 
   const save = (event: FormEvent) => {
     event.preventDefault();
@@ -91,31 +120,26 @@ export function PresetsTab(props: PresetsTabProps) {
     const preset = actions.add(name, store.getState().settings);
     setName("");
     setTried(false);
-    setNotice({ text: `Saved “${preset.name}”.` });
+    say(`Saved “${preset.name}”.`);
   };
 
   const apply = (preset: UserPreset) => {
     store.getState().load(preset.settings);
-    setNotice({ text: `Applied “${preset.name}”.` });
+    say(`Applied “${preset.name}”.`);
   };
 
   const update = (preset: UserPreset) => {
     const before = presets;
     actions.update(preset.id, store.getState().settings);
-    setNotice({ text: `Updated “${preset.name}” with the current settings.`, undo: before });
+    say(`Updated “${preset.name}” with the current settings.`, before);
   };
 
   const remove = (preset: UserPreset) => {
     const before = presets;
     actions.remove(preset.id);
-    setNotice({ text: `Deleted “${preset.name}”.`, undo: before });
-    setFocusTarget("undo");
-  };
-
-  const undo = () => {
-    if (!notice?.undo) return;
-    actions.replaceAll(notice.undo);
-    setNotice({ text: "Undone.", place: notice.place });
+    say(`Deleted “${preset.name}”.`, before);
+    const next = presets.find((item) => item.id !== preset.id);
+    setFocusTarget(next ? renameId(next) : IMPORT_ID);
   };
 
   const finishRename = (event: FormEvent, preset: UserPreset) => {
@@ -128,7 +152,7 @@ export function PresetsTab(props: PresetsTabProps) {
     }
     actions.rename(preset.id, editing.draft);
     setEditing(null);
-    setNotice({ text: `Renamed to “${editing.draft.trim()}”.` });
+    say(`Renamed to “${editing.draft.trim()}”.`);
     setFocusTarget(renameId(preset));
   };
 
@@ -141,7 +165,7 @@ export function PresetsTab(props: PresetsTabProps) {
     const fileName = presetsFileName(presets);
     downloadText(presetsFileText(presets), fileName);
     const count = `${presets.length} ${presets.length === 1 ? "preset" : "presets"}`;
-    setNotice({ text: `Exported ${count} to ${fileName}.`, place: "file" });
+    say(`Exported ${count} to ${fileName}.`);
   };
 
   const importFile = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -151,43 +175,18 @@ export function PresetsTab(props: PresetsTabProps) {
     input.value = "";
     if (!file) return;
     if (file.size > PRESETS_FILE_LIMITS.bytes) {
-      setNotice({ text: PRESETS_FILE_ERRORS.large, place: "file" });
+      say(PRESETS_FILE_ERRORS.large);
       return;
     }
     const result = readPresetsFile(await file.text());
     if (!result.ok) {
-      setNotice({ text: PRESETS_FILE_ERRORS[result.error], place: "file" });
+      say(PRESETS_FILE_ERRORS[result.error]);
       return;
     }
     // Read after the await: the list may have changed while the file was read.
     const before = presetsStore.getState().presets;
     actions.replaceAll(mergePresets(before, result.entries));
-    setNotice({
-      text: importMessage(result.entries.length, result.skipped),
-      undo: before,
-      place: "file",
-    });
-  };
-
-  /**
-   * The result line of one section. Both lines are always rendered (a live region that appears
-   * with its text is often not read out); the notice shows in the section it belongs to.
-   *
-   * @param place - The section.
-   * @returns The polite live region.
-   */
-  const noticeLine = (place: NoticePlace) => {
-    const shown = notice && (notice.place ?? "list") === place ? notice : null;
-    return (
-      <p className={tab.notice} aria-live="polite">
-        {shown?.text}
-        {shown?.undo ? (
-          <Button ref={undoRef} size="sm" variant="ghost" onClick={undo}>
-            Undo
-          </Button>
-        ) : null}
-      </p>
-    );
+    say(importMessage(result.entries.length, result.skipped), before);
   };
 
   return (
@@ -212,7 +211,6 @@ export function PresetsTab(props: PresetsTabProps) {
       <section className={styles.group}>
         <h3 className={styles.legend}>My presets</h3>
         {persistent ? null : <p className={styles.message}>{NOT_KEPT}</p>}
-        {noticeLine("list")}
         {presets.length === 0 ? (
           <p className={styles.message}>{EMPTY_LIST}</p>
         ) : (
@@ -222,7 +220,10 @@ export function PresetsTab(props: PresetsTabProps) {
               const renaming = editing?.id === preset.id;
               const renameError = renaming ? nameError(editing.draft, presets, preset.id) : "";
               return (
-                <li key={preset.id} className={tab.row}>
+                <li
+                  key={preset.id}
+                  className={initialIds.has(preset.id) ? tab.row : `${tab.row} ${tab.rowNew}`}
+                >
                   {renaming ? (
                     <form
                       className={tab.form}
@@ -310,7 +311,7 @@ export function PresetsTab(props: PresetsTabProps) {
           <Button size="sm" onClick={exportFile} disabled={presets.length === 0}>
             Export file
           </Button>
-          <Button size="sm" onClick={() => fileInput.current?.click()}>
+          <Button id={IMPORT_ID} size="sm" onClick={() => fileInput.current?.click()}>
             Import file
           </Button>
           {/* The native picker, opened by Import file; hidden, as the button names it. */}
@@ -322,7 +323,6 @@ export function PresetsTab(props: PresetsTabProps) {
             onChange={(event) => void importFile(event)}
           />
         </div>
-        {noticeLine("file")}
       </section>
     </>
   );

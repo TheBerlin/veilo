@@ -1,6 +1,7 @@
 // Tests for src/presets/presets-tab.tsx, in Chromium with real storage.
 
 import { defaultSettings } from "@veilo-ui/core";
+import { Toaster } from "@veilo-ui/ui";
 import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -23,7 +24,12 @@ import { createSettingsStore } from "../../../src/playground/state/settings-stor
 function renderTab(withStorage = true) {
   const store = createSettingsStore();
   const presets = createUserPresetsStore(withStorage ? browserStorage() : null);
-  render(<PresetsTab store={store} presets={presets} />);
+  render(
+    <>
+      <PresetsTab store={store} presets={presets} />
+      <Toaster />
+    </>,
+  );
   return { store, presets };
 }
 
@@ -151,15 +157,15 @@ describe("PresetsTab", () => {
     expect(screen.getByText("Undone.")).toBeTruthy();
   });
 
-  it("deletes at once, moves focus to Undo, and Undo brings the preset back in place", async () => {
+  it("deletes at once, keeps focus in the list, and Undo brings the preset back in place", async () => {
     const { presets } = renderTab();
     await saveAs("A");
     await saveAs("B");
     await userEvent.click(screen.getByRole("button", { name: "Delete A" }));
     expect(presets.getState().presets.map((p) => p.name)).toEqual(["B"]);
     expect(screen.getByText("Deleted “A”.")).toBeTruthy();
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Undo" }));
-    await userEvent.keyboard("{Enter}");
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Rename B" }));
+    await userEvent.click(screen.getByRole("button", { name: "Undo" }));
     expect(presets.getState().presets.map((p) => p.name)).toEqual(["A", "B"]);
   });
 
