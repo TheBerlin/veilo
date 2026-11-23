@@ -34,7 +34,7 @@ export interface GalleryEffect {
   rank: number;
   /** Order of arrival: a higher number was added later. Drives the Newest sort. */
   added: number;
-  /** The release the effect was added in, for example `"0.8.0"`. */
+  /** The release the effect was added in, for example `"0.9.0"`. */
   since: string;
   /** The season it belongs to, if any. */
   season?: SeasonId;
@@ -50,7 +50,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Frost",
     rank: 1,
     added: 6,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "Snow falls and settles on the skeleton bars, then melts away.",
   },
@@ -62,7 +62,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Mono",
     rank: 2,
     added: 1,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "A snowflake grows arm by arm in one ink, then fades.",
   },
@@ -74,7 +74,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Frost",
     rank: 3,
     added: 2,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "The same flake, with an ice-blue cell behind every character.",
   },
@@ -86,7 +86,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Aurora",
     rank: 4,
     added: 3,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "Characters shift from green to violet as the flake grows.",
   },
@@ -98,7 +98,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Aurora",
     rank: 5,
     added: 4,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "Bands of color flow across the flake like northern lights.",
   },
@@ -110,7 +110,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Aurora",
     rank: 6,
     added: 5,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "A soft colored glow shows through white characters.",
   },
@@ -122,7 +122,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Frost",
     rank: 7,
     added: 7,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "A whiteout of characters thins out until your content shows.",
   },
@@ -134,7 +134,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Mono",
     rank: 8,
     added: 8,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "Scrambled characters lock into dots, then erode away.",
   },
@@ -146,7 +146,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Mono",
     rank: 9,
     added: 9,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "Scrambled characters lock into shaded cells on a grid.",
   },
@@ -158,7 +158,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
     palette: "Frost",
     rank: 10,
     added: 10,
-    since: "0.8.0",
+    since: "0.9.0",
     season: "christmas",
     does: "Frost-tinted cells with a few blinking sparkles.",
   },
@@ -168,7 +168,7 @@ export const EFFECTS: readonly GalleryEffect[] = [
  * The first public release. Every effect that ships with it would be "new", which tells the
  * visitor nothing, so no effect is labeled "New" while this is the latest release.
  */
-export const FIRST_PUBLIC_RELEASE = "0.8.0";
+export const FIRST_PUBLIC_RELEASE = "0.9.0";
 
 /** A yearly window, from a month and day to a month and day, that may wrap over New Year. */
 export interface SeasonWindow {
