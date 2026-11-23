@@ -110,7 +110,13 @@ for (const layoutId of LAYOUT_IDS) {
   const expected = Object.fromEntries(
     layout.texts.map((part) => [part.slot, texts[part.slot] ?? part.text]),
   );
-  const base = { layoutId, width, expected, grid: GRID_EFFECTS.has(settings.imageFx) };
+  // A grid effect draws on the picture, so a layout without one (the inbox) has no canvas.
+  const base = {
+    layoutId,
+    width,
+    expected,
+    grid: GRID_EFFECTS.has(settings.imageFx) && Boolean(layout.picture),
+  };
   cases.push({ ...base, kind: "vanilla", html: vanillaSnippet(input) });
   cases.push({ ...base, kind: "element", html: elementSnippet(input) });
   cases.push({ ...base, kind: "cdn", html: cdnSnippet(input) });
