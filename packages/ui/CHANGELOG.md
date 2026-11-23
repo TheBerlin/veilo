@@ -1,5 +1,17 @@
 # @veilo-ui/ui
 
+## 0.9.0
+
+### Minor Changes
+
+- 88c940f: Add the `followFocus` option to ChipGroup: with it, an arrow key chooses the item it moves onto, as a native radio group does. Off by default.
+- 2c6505f: Add the `narrow` option to CodeBlock: with `wrap`, a narrow screen puts the Copy button above the code and wraps long lines instead of scrolling them.
+- ec87cdf: Add Popover, Drawer, DockedSheet and Toaster components, a sliding pill for Tabs and segmented chips, a soft panel and label change, and the toast and sheet styles.
+
+### Patch Changes
+
+- dbcfca6: Name the CodeBlock's Copy button after its block ("Copy Install command"), so a page with several code blocks has Copy buttons that can be told apart. The visible label is unchanged.
+
 ## 0.7.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@veilo-ui/react",
-  "version": "0.7.1",
+  "version": "0.9.0",
   "private": true,
   "description": "React components and a hook for Veilo skeleton loaders and reveal animations.",
   "type": "module",

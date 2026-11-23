@@ -1,5 +1,15 @@
 # @veilo-ui/angular
 
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies [8198678]
+- Updated dependencies [2d81c67]
+- Updated dependencies [8888181]
+  - @veilo-ui/core@0.9.0
+  - @veilo-ui/presets@0.9.0
+
 ## 0.7.1
 
 ### Patch Changes
