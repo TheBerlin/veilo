@@ -9,24 +9,6 @@
   justify-self: stretch;
 }
 
-/* Result of the last action, with Undo beside it. Always rendered: a live region that appears
-   with its text is often not read out. */
-.notice {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--veilo-space-1);
-  margin: 0;
-  color: var(--veilo-text-muted);
-  font: var(--veilo-type-caption);
-  letter-spacing: var(--veilo-type-caption-tracking);
-}
-
-/* Empty: out of the flow, so it adds no gap, but still rendered. */
-.notice:empty {
-  position: absolute;
-}
-
 /* List: one row per preset, divided by hairlines. */
 .list {
   display: grid;
@@ -69,4 +51,69 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--veilo-space-0-5);
+}
+
+/* Buttons: a smooth press. The shared button moves 1 px with no transition; here the press shrinks
+   the button a little and eases back (transitions.dev tokens: fast, smooth out). */
+.form button,
+.actions button {
+  transition:
+    transform var(--veilo-duration-fast) var(--veilo-ease-out),
+    opacity var(--veilo-duration-fast) var(--veilo-ease-out),
+    border-color var(--veilo-duration-fast) var(--veilo-ease-out),
+    background-color var(--veilo-duration-fast) var(--veilo-ease-out);
+}
+
+.form button:active:not(:disabled),
+.actions button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* New row: a preset that was just saved, imported or restored rises in and fades. */
+.rowNew {
+  animation: row-in var(--veilo-duration-slow) var(--veilo-ease-out) both;
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* In use: the mark fades and scales in when a preset becomes the current one. */
+.inUse {
+  animation: in-use var(--veilo-duration-fast) var(--veilo-ease-out) both;
+}
+
+@keyframes in-use {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowNew,
+  .inUse {
+    animation: none;
+  }
+
+  .form button,
+  .actions button {
+    transition: none;
+  }
+
+  .form button:active:not(:disabled),
+  .actions button:active:not(:disabled) {
+    transform: none;
+  }
 }
