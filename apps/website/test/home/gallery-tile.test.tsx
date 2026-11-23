@@ -4,7 +4,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { userEvent as realUser } from "vitest/browser";
-import { GalleryTile, playgroundLinkFor } from "../../src/home/gallery-tile.tsx";
+import { GalleryTile, playgroundLinkFor, REPLAY_PAUSE_MS } from "../../src/home/gallery-tile.tsx";
 import { GALLERY_PREVIEW } from "../../src/home/gallery-tiles.ts";
 import { reduceMotion } from "../support/media.ts";
 
@@ -95,34 +95,56 @@ describe("GalleryTile", () => {
     }
   }, 20000);
 
-  it("hovering plays the effect once, and leaving returns it to its resting frame", async () => {
+  it("hovering plays the whole effect, even when the pointer leaves", async () => {
     render(<GalleryTile spec={HEX} />);
     const tile = screen.getByRole("article");
     const frame = screen.getByRole("button", { name: /Play the Hex/ });
     await vi.waitFor(() => expect(canvases(tile)).toBe(2), POLL);
     await realUser.hover(frame);
-    // The sequence: the skeleton, then the reveal, then the finished card (one canvas).
+    await vi.waitFor(() => expect(skeletons(tile)).toBeGreaterThan(0), POLL);
+    // Leaving mid-run does not cut it short: it goes on to the finished card (one canvas).
+    await realUser.unhover(frame);
+    await vi.waitFor(() => expect(skeletons(tile)).toBe(0), POLL);
+    await vi.waitFor(() => expect(canvases(tile)).toBe(1), POLL);
+    // Park the pointer elsewhere, so the next test's tile does not mount under it.
+    await realUser.unhover(frame);
+  }, 30000);
+
+  it("ignores hovers until the effect has ended and the pause has passed", async () => {
+    render(<GalleryTile spec={HEX} />);
+    const tile = screen.getByRole("article");
+    const frame = screen.getByRole("button", { name: /Play the Hex/ });
+    await vi.waitFor(() => expect(canvases(tile)).toBe(2), POLL);
+    await realUser.hover(frame);
     await vi.waitFor(() => expect(skeletons(tile)).toBeGreaterThan(0), POLL);
     await vi.waitFor(() => expect(skeletons(tile)).toBe(0), POLL);
     await vi.waitFor(() => expect(canvases(tile)).toBe(1), POLL);
+    const endedAt = performance.now();
+    // Hovering again inside the pause does nothing.
     await realUser.unhover(frame);
-    // Back on the held frame.
-    await vi.waitFor(() => expect(canvases(tile)).toBe(2), POLL);
-  }, 30000);
+    await realUser.hover(frame);
+    await wait(500);
+    expect(skeletons(tile)).toBe(0);
+    // After the pause a new hover plays it again.
+    await wait(Math.max(0, REPLAY_PAUSE_MS + 200 - (performance.now() - endedAt)));
+    await realUser.unhover(frame);
+    await realUser.hover(frame);
+    await vi.waitFor(() => expect(skeletons(tile)).toBeGreaterThan(0), POLL);
+    await realUser.unhover(frame);
+  }, 40000);
 
-  it("keyboard focus plays it, like a hover, and a blur returns it to rest", async () => {
+  it("keyboard focus plays it, like a hover", async () => {
     render(<GalleryTile spec={HEX} />);
     const tile = screen.getByRole("article");
     await vi.waitFor(() => expect(canvases(tile)).toBe(2), POLL);
     await userEvent.tab();
     expect(document.activeElement).toBe(screen.getByRole("button", { name: /Play the Hex/ }));
     await vi.waitFor(() => expect(skeletons(tile)).toBeGreaterThan(0), POLL);
-    await userEvent.tab();
     await vi.waitFor(() => expect(skeletons(tile)).toBe(0), POLL);
-    await vi.waitFor(() => expect(canvases(tile)).toBe(2), POLL);
+    await vi.waitFor(() => expect(canvases(tile)).toBe(1), POLL);
   }, 30000);
 
-  it("a press plays it, and a second press plays it again", async () => {
+  it("a press plays it, and a press during the pause does nothing", async () => {
     render(<GalleryTile spec={HEX} />);
     const tile = screen.getByRole("article");
     const frame = screen.getByRole("button", { name: /Play the Hex/ });
@@ -130,9 +152,11 @@ describe("GalleryTile", () => {
     // A tap: no hover, as on a touch screen, so only the click plays it.
     frame.click();
     await vi.waitFor(() => expect(skeletons(tile)).toBeGreaterThan(0), POLL);
+    await vi.waitFor(() => expect(skeletons(tile)).toBe(0), POLL);
     await vi.waitFor(() => expect(canvases(tile)).toBe(1), POLL);
     frame.click();
-    await vi.waitFor(() => expect(skeletons(tile)).toBeGreaterThan(0), POLL);
+    await wait(500);
+    expect(skeletons(tile)).toBe(0);
   }, 30000);
 
   it("for a visitor who asks for less motion the effect plays once and the content appears at once", async () => {

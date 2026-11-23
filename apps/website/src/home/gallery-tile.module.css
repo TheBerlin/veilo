@@ -37,6 +37,26 @@
   outline-offset: 2px;
 }
 
+/* Hover: the whole card grows 3% while the pointer is on it and eases back when it leaves, like the
+   hero's card. Real hover devices only, so a tap does not leave it scaled; no scale under reduced
+   motion. The same duration and curve both ways; the transform does not move the layout. */
+@media (hover: hover) {
+  .tile {
+    transition: transform var(--veilo-duration-base) var(--veilo-ease-out);
+    will-change: transform;
+  }
+
+  .tile:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile:hover {
+    transform: none;
+  }
+}
+
 /* At rest the engine's skeleton stands still: its animation is held at the start, so the bars are
    plain. Playing releases it. */
 .frame[data-rest] :global([data-veilo-skeleton]) {
