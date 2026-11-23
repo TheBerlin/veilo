@@ -37,6 +37,7 @@ export default defineConfig({
             { slug: "guides/svelte" },
             { slug: "guides/angular" },
             { slug: "guides/web-components" },
+            { slug: "guides/seasonal" },
             { slug: "guides/javascript" },
             { slug: "guides/css" },
             { slug: "guides/accessibility" },

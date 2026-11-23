@@ -1,0 +1,114 @@
+---
+title: Seasonal effects
+description: Loading animations drawn with text characters for Christmas and New Year, from plain JavaScript, React or a web component.
+---
+
+import { GALLERY_URL } from "../../../site.mjs";
+
+`@veilo-ui/seasonal` is a set of loading animations drawn with text characters: snowflakes that grow, frost and aurora colors, snow that settles on skeleton bars, a blizzard that dissolves into your content, and flakes that assemble from scrambled characters into cells and dots. The first set is for Christmas and New Year. More seasons can be added as more effects.
+
+See every effect running in the <a href={GALLERY_URL}>gallery</a>.
+
+Each effect draws on its own `<canvas>`. Use it where you would put a spinner. It does not animate your own elements: for skeletons and reveals on your own markup, use [`@veilo-ui/core`](/guides/javascript/) and the other packages.
+
+## Install
+
+```sh
+npm install @veilo-ui/seasonal
+```
+
+The package is not on npm yet. It is published with the first public release.
+
+## The effects
+
+| Id           | Name              | What it does                                                  |
+| ------------ | ----------------- | ------------------------------------------------------------- |
+| `bars`       | Snow on the bars  | Snow falls and settles on skeleton bars, then melts away.     |
+| `frost`      | Frost grow        | A snowflake grows arm by arm in one ink, then fades.          |
+| `ice`        | Ice cells         | The same flake, with an ice-blue cell behind every character. |
+| `aurora`     | Aurora flake      | Characters shift from green to violet as the flake grows.     |
+| `curtains`   | Aurora curtains   | Bands of color flow across the flake like northern lights.    |
+| `glow`       | Aurora glow       | A soft colored glow shows through white characters.           |
+| `blizzard`   | Blizzard dissolve | A whiteout of characters thins out until the content shows.   |
+| `cell-dots`  | Dot matrix        | Scrambled characters lock into dots, then erode away.         |
+| `cell-cells` | Cell grid         | Scrambled characters lock into shaded cells on a grid.        |
+| `cell-frost` | Frost cells       | Frost-tinted cells with a few blinking sparkles.              |
+
+The flake effects (all but `bars` and `blizzard`) can draw one of four flake forms: `dendrite` (the default), `fern`, `fir` and `sector`.
+
+## JavaScript
+
+```js
+import { mountEffect } from "@veilo-ui/seasonal";
+
+// A container with a size: the effect fills it.
+const container = document.querySelector("#loading");
+const effect = mountEffect(container, "frost", { shape: "fern" });
+
+// When your content has arrived:
+effect.destroy();
+```
+
+`mountEffect(target, id, options?)` takes a container element, in which it creates a canvas that fills it, or a `<canvas>` that already has a CSS width and height. It returns a handle.
+
+| Option          | Meaning                                                                                                                                                                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`          | `loop` (default) runs until destroyed, and pauses while off screen or the tab is hidden. `hover` rests on a still frame; hover, press or Enter plays one full run, then ignores triggers for 3 seconds. `still` draws the resting frame only. |
+| `shape`         | The flake form. Defaults to `dendrite`.                                                                                                                                                                                                       |
+| `host`          | In `hover` mode, the element that takes hover and press. Defaults to the canvas.                                                                                                                                                              |
+| `reducedMotion` | Stay on the resting frame. Defaults to the visitor's `prefers-reduced-motion` setting.                                                                                                                                                        |
+| `label`         | The canvas's accessible name. Defaults to the id plus "animation".                                                                                                                                                                            |
+
+| Handle            | Meaning                                                                         |
+| ----------------- | ------------------------------------------------------------------------------- |
+| `canvas`          | The canvas it draws on.                                                         |
+| `play()`          | In `hover` mode, plays one full run.                                            |
+| `setShape(shape)` | Changes the flake form.                                                         |
+| `refresh()`       | Re-reads the page's colors. This also happens by itself when the theme changes. |
+| `destroy()`       | Stops everything and removes the canvas if the package created it.              |
+
+The package also exports `EFFECT_IDS`, `FLAKE_SHAPES`, `usesFlakeShape(id)`, `REPLAY_PAUSE_MS` and `loadEffectFonts()`.
+
+## React
+
+```jsx
+import { SeasonalEffect } from "@veilo-ui/seasonal/react";
+
+export function Loading() {
+  // The effect fills its canvas, so give it a size.
+  return <SeasonalEffect name="frost" shape="fern" style={{ width: 240, height: 240 }} />;
+}
+```
+
+Props: `name`, `shape`, `mode`, `label`, `className` and `style`. React 18 and 19 are supported, and the entry is a client component.
+
+## Web component
+
+```html
+<script type="module">
+  import { defineSeasonalEffect } from "@veilo-ui/seasonal/element";
+  defineSeasonalEffect();
+</script>
+
+<veilo-seasonal-effect
+  name="frost"
+  shape="fern"
+  style="width: 240px; height: 240px"
+></veilo-seasonal-effect>
+```
+
+Attributes: `name`, `shape`, `mode` and `label`. The element is `display: block` and has no size of its own, so give it one.
+
+## Fonts and colors
+
+The effects draw characters in IBM Plex Mono and, for the Blizzard dissolve's text, in Geist. The package does not ship them. Load them on your page, for example with [Fontsource](https://fontsource.org). Without them the effects use your system's monospace and sans-serif fonts, and they redraw once the fonts have loaded.
+
+Colors come from your page's custom properties, each with a fallback: `--veilo-bg`, `--veilo-text`, `--veilo-text-muted`, `--veilo-card`, `--veilo-base`, `--veilo-accent`, `--veilo-on-accent`, `--veilo-border` and `--veilo-border-strong`. These are the properties the Veilo design tokens define, so on a Veilo page the effects match it. Without them, the effects follow the browser's light or dark color scheme, and they follow `data-theme` on `<html>` when it changes.
+
+## Accessibility
+
+The canvas has `role="img"` and an accessible name. Under `prefers-reduced-motion`, an effect stays on one resting frame. In `hover` mode the canvas can be focused and played with Enter or Space.
+
+## Server rendering
+
+Importing any entry is safe on a server: nothing touches `window` or `document` until an effect is mounted. The React component and the web component draw after mount, so a server renders an empty canvas or element. See [server rendering](/guides/server-rendering/) for the rest of the packages.
